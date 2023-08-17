@@ -9,7 +9,9 @@ import { credentials, user } from "lib/schema/auth";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
-    const { username, password, email } = credentials.parse(req.body);
+    const { username, password, email } = credentials
+      .partial({ username: true })
+      .parse(req.body);
 
     const token = await surreal.signup({
       NS: "crm",

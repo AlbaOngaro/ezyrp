@@ -10,7 +10,11 @@
   box-sizing: border-box;
 }
 
+html,
 body {
-  font-family: "Open Sans", sans-serif;
-  margin: 0;
+  @apply h-full;
+}
+
+#__next {
+  @apply h-full bg-white font-sans;
 }

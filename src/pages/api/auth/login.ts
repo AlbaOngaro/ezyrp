@@ -10,11 +10,13 @@ import { credentials, user } from "lib/schema/auth";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
-    const { password, email } = credentials.parse(req.body);
+    const { password, email } = credentials
+      .omit({ username: true })
+      .parse(req.body);
 
     const token = await surreal.signin({
-      NS: "test",
-      DB: "test",
+      NS: "crm",
+      DB: "crm",
       SC: "allusers",
       email,
       password,

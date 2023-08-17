@@ -14,7 +14,7 @@ interface AuthContextValue {
   register: (credentials: Credentials) => Promise<unknown>;
   logout: () => Promise<void>;
   login: (
-    credentials: Omit<Credentials, "passwordConfirm">,
+    credentials: Omit<Credentials, "username">,
   ) => Promise<unknown>;
   user: User | null;
 }
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const login = useCallback(
-    async (credentials: Omit<Credentials, "passwordConfirm">) => {
+    async (credentials: Omit<Credentials, "username">) => {
       try {
         await fetch("/api/auth/login", {
           method: "POST",
