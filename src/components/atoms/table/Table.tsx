@@ -1,13 +1,17 @@
+import { useCustomers } from "hooks/useCustomers";
 import { Customer } from "lib/types";
 import { twMerge } from "lib/utils/twMerge";
 
 interface Props {
+  className?: string;
   people: Customer[];
 }
 
-export function Table({ people }: Props) {
+export function Table({ className, people }: Props) {
+  const { mutate } = useCustomers();
+
   return (
-    <div className="mt-8 flow-root">
+    <div className={twMerge("mt-8 flow-root", className)}>
       <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 align-middle">
           <table className="min-w-full border-separate border-spacing-0">
@@ -99,12 +103,40 @@ export function Table({ people }: Props) {
                       "relative whitespace-nowrap py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-8 lg:pr-8",
                     )}
                   >
-                    <a
-                      href="#"
+                    <button
+                      onClick={() =>
+                        mutate(async () => {
+                          await fetch(`/api/customers/${person.id}`, {
+                            method: "PATCH",
+                            headers: {
+                              "content-type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              name: "Amina Piatti",
+                            }),
+                          });
+                        })
+                      }
                       className="text-indigo-600 hover:text-indigo-900"
                     >
                       Edit<span className="sr-only">, {person.name}</span>
-                    </a>
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        mutate(async () => {
+                          await fetch(`/api/customers/${person.id}`, {
+                            method: "DELETE",
+                            headers: {
+                              "content-type": "application/json",
+                            },
+                          });
+                        })
+                      }
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Delete<span className="sr-only">, {person.name}</span>
+                    </button>
                   </td>
                 </tr>
               ))}

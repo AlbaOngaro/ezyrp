@@ -34,3 +34,9 @@ DEFINE FIELD email ON user TYPE string;
 DEFINE FIELD username ON user TYPE string;
 
 DEFINE INDEX idx_user ON user FIELDS email UNIQUE;
+
+-- ------------------------------
+-- TABLE: customer
+-- ------------------------------
+
+DEFINE TABLE customer SCHEMALESS PERMISSIONS FOR select, create, update, delete WHERE true;

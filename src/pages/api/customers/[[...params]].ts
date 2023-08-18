@@ -1,22 +1,78 @@
+import { ACCESS_TOKEN_ID } from "lib/constants";
+import { customer } from "lib/schema/customer";
 import { Customer } from "lib/types";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const CUSTOMERS: Customer[] = [
-  {
-    id: "asdf",
-    email: "amina.piatti@gmail.com",
-    name: "Amina Piatti",
-    phone: 41_79_690_79_67,
-  },
-];
+import { CustomersService } from "services/customers";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const customersService = new CustomersService(
+    req.cookies[ACCESS_TOKEN_ID] as string,
+  );
+
   switch (req.method) {
+    case "POST": {
+      try {
+        const data = customer.omit({ id: true }).parse(req.body);
+        const record = await customersService.create(data);
+        res.status(201).json(record);
+      } catch (error: unknown) {
+        res.status(400).end();
+      }
+      break;
+    }
     case "GET": {
-      res.json(CUSTOMERS);
+      const params = req.query.params;
+
+      if (params && params.length === 1) {
+        const [id] = params;
+        const customer = await customersService.read(id);
+
+        if (customer) {
+          res.json(customer);
+          break;
+        }
+
+        res.status(404).end();
+        break;
+      }
+
+      const customers = await customersService.list();
+      res.json(customers);
+      break;
+    }
+    case "PATCH": {
+      try {
+        const params = req.query.params;
+        if (!params || params.length !== 1) {
+          throw Error("missing id param, aborting");
+        }
+
+        const data = customer
+          .omit({ id: true })
+          .partial({ email: true, phone: true, name: true })
+          .parse(req.body);
+        const record = await customersService.update(params[0], data);
+        res.json(record);
+      } catch (error: unknown) {
+        console.error(error);
+        res.status(400).end();
+      }
+      break;
+    }
+    case "DELETE": {
+      const params = req.query.params;
+
+      if (!params || params.length !== 1) {
+        res.status(400).end();
+        break;
+      }
+
+      await customersService.delete(params[0]);
+      res.status(204).end();
       break;
     }
     default:
