@@ -82,7 +82,8 @@ export function HomePage() {
         </header>
 
         <Table<Customer>
-          className="px-12"
+          withMultiSelect
+          className="px-12 mt-8"
           columns={[
             {
               id: "email",
