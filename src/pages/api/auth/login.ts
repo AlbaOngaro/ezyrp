@@ -3,7 +3,7 @@ import { setCookie } from "nookies";
 
 import { Credentials, User } from "lib/types";
 import { surreal } from "lib/surreal";
-import { AUTH_COOKIE_ID } from "lib/constants";
+import { ACCESS_TOKEN_ID } from "lib/constants";
 import { Surreal } from "surrealdb.js";
 import { z } from "zod";
 import { credentials, user } from "lib/schema/auth";
@@ -26,7 +26,7 @@ const handler: NextApiHandler = async (req, res) => {
       throw new Error("Something wrong, in the neighborhood");
     }
 
-    setCookie({ res }, AUTH_COOKIE_ID, token, {
+    setCookie({ res }, ACCESS_TOKEN_ID, token, {
       secure: true,
       sameSite: true,
       httpOnly: true,

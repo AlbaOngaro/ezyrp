@@ -1,1 +1,2 @@
-export const AUTH_COOKIE_ID = `${process.env.NODE_ENV}-crm-auth`;
+export const ACCESS_TOKEN_ID = `${process.env.NODE_ENV}-crm-at`;
+export const REFRESH_TOKEN_ID = `${process.env.NODE_ENV}-crm-rt`;

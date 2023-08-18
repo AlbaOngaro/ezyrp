@@ -13,9 +13,7 @@ import { Credentials, User } from "lib/types";
 interface AuthContextValue {
   register: (credentials: Credentials) => Promise<unknown>;
   logout: () => Promise<void>;
-  login: (
-    credentials: Omit<Credentials, "username">,
-  ) => Promise<unknown>;
+  login: (credentials: Omit<Credentials, "username">) => Promise<unknown>;
   user: User | null;
 }
 
