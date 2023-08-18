@@ -5,6 +5,7 @@ import * as Menu from "@radix-ui/react-navigation-menu";
 import { useCustomers } from "hooks/useCustomers";
 import { twMerge } from "lib/utils/twMerge";
 import { Table } from "components/atoms/table/Table";
+import { Customer } from "lib/types";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -80,7 +81,27 @@ export function HomePage() {
           </div>
         </header>
 
-        <Table className="px-12" people={customers} />
+        <Table<Customer>
+          className="px-12"
+          columns={[
+            {
+              id: "email",
+              field: "email",
+              headerName: "E-mail",
+            },
+            {
+              id: "name",
+              field: "name",
+              headerName: "Name",
+            },
+            {
+              id: "",
+              field: "phone",
+              headerName: "Phone",
+            },
+          ]}
+          rows={customers}
+        />
       </section>
     </main>
   );
