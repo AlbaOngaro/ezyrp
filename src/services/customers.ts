@@ -13,7 +13,7 @@ export class CustomersService {
 
     const result = await surreal.query<Customer[]>(`
       INSERT INTO customer (email, name, phone) VALUES ${customers
-        .map(({ email, name, phone }) => `('${email}', '${name}', ${phone})`)
+        .map(({ email, name, phone }) => `('${email}', '${name}', '${phone}')`)
         .join(",")};
     `);
 
@@ -40,7 +40,7 @@ export class CustomersService {
   ): Promise<void> {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.query(`
+    await surreal.query(`
       BEGIN TRANSACTION;
 
       ${customers

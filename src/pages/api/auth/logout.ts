@@ -1,6 +1,6 @@
-import { ACCESS_TOKEN_ID } from "lib/constants";
 import { NextApiRequest, NextApiResponse } from "next";
 import { destroyCookie } from "nookies";
+import { ACCESS_TOKEN_ID } from "lib/constants";
 
 export default async function handler(
   _req: NextApiRequest,

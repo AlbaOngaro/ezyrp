@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-import { twMerge } from "lib/utils/twMerge";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -12,6 +11,7 @@ import {
 } from "@radix-ui/react-icons";
 
 import { Props, Row, Sort } from "./types";
+import { twMerge } from "lib/utils/twMerge";
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
 
 const DEFAULT_PAGE_SIZE = 10;

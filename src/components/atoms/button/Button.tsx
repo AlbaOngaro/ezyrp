@@ -1,20 +1,18 @@
+import { ButtonHTMLAttributes, forwardRef } from "react";
 import { twMerge } from "lib/utils/twMerge";
-import { ButtonHTMLAttributes } from "react";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
-export function Button({
-  variant = "primary",
-  size = "md",
-  children,
-  className,
-  ...props
-}: Props) {
+export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
+  { variant = "primary", size = "md", children, className, ...props },
+  ref,
+) {
   return (
     <button
+      ref={ref}
       className={twMerge(
         "rounded font-semibold shadow-sm transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
         {
@@ -37,4 +35,4 @@ export function Button({
       {children}
     </button>
   );
-}
+});

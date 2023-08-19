@@ -1,5 +1,5 @@
-import { twMerge } from "lib/utils/twMerge";
 import { InputHTMLAttributes, forwardRef } from "react";
+import { twMerge } from "lib/utils/twMerge";
 
 export const Checkbox = forwardRef<
   HTMLInputElement,

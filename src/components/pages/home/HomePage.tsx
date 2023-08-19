@@ -1,12 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
+import { Trigger, Root } from "@radix-ui/react-dialog";
+import { useState } from "react";
 
 import { useCustomers } from "hooks/useCustomers";
 import { twMerge } from "lib/utils/twMerge";
 import { Table } from "components/organisms/table/Table";
 import { Customer } from "lib/types";
 import { Button } from "components/atoms/button/Button";
+import { CreateCustomerDialog } from "components/organisms/create-customer-dialog/CreateCustomerDialog";
+
+import { Sidebar } from "components/organisms/sidebar/Sidebar";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -16,17 +21,11 @@ const userNavigation = [
 export function HomePage() {
   const customers = useCustomers();
 
+  const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
+
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
-      <aside className=" flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 py-4">
-        <header>
-          <img
-            className="h-8 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=white"
-            alt="Your Company"
-          />
-        </header>
-      </aside>
+      <Sidebar />
 
       <section>
         <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-end gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -82,9 +81,33 @@ export function HomePage() {
           </div>
         </header>
 
+        <div className="px-12 py-8 sm:flex sm:items-center ">
+          <div className="sm:flex-auto">
+            <h1 className="text-base font-semibold leading-6 text-gray-900">
+              Customers
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
+              A list of all the customers in your account including their name,
+              email, and phone number.
+            </p>
+          </div>
+          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+            <Root
+              open={isCreatingCustomer}
+              onOpenChange={setIsCreatingCustomer}
+            >
+              <Trigger asChild>
+                <Button size="md">Add customer</Button>
+              </Trigger>
+
+              <CreateCustomerDialog setIsOpen={setIsCreatingCustomer} />
+            </Root>
+          </div>
+        </div>
+
         <Table<Customer>
           withMultiSelect
-          className="px-12 mt-8"
+          className="px-12"
           columns={[
             {
               id: "email",

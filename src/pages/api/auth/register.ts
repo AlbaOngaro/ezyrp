@@ -1,10 +1,10 @@
 import { NextApiHandler } from "next";
 import { setCookie } from "nookies";
 
+import { Surreal } from "surrealdb.js";
 import { User } from "lib/types";
 import { surreal } from "lib/surreal";
 import { ACCESS_TOKEN_ID } from "lib/constants";
-import { Surreal } from "surrealdb.js";
 import { credentials, user } from "lib/schema/auth";
 
 const handler: NextApiHandler = async (req, res) => {

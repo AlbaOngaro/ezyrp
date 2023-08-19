@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { Credentials } from "lib/types";
 import Link from "next/link";
-import { useAuth } from "providers/auth/AuthProvider";
 import { FormEventHandler, useState } from "react";
+import { Credentials } from "lib/types";
+import { useAuth } from "providers/auth/AuthProvider";
 
 export function LoginPage() {
   const { login } = useAuth();

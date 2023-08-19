@@ -1,5 +1,5 @@
-import { Customer } from "lib/types";
 import useSWR from "swr";
+import { Customer } from "lib/types";
 
 async function getCustomers() {
   return fetch("/api/customers").then((res) => res.json());

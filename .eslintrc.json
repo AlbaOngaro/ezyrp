@@ -1,7 +1,21 @@
 {
   "extends": "next/core-web-vitals",
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "@typescript-eslint", "import"],
+  "parser": "@typescript-eslint/parser",
   "rules": {
-    "prettier/prettier": "error"
+    "@next/next/no-img-element": "off",
+    "prettier/prettier": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "import/order": "error"
+  },
+  "settings": {
+    "import/internal-regex": "^@scope/"
   }
 }
