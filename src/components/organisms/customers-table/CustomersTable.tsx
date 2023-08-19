@@ -16,7 +16,12 @@ function Actions({ customer }: { customer: Customer }) {
   return (
     <Root open={isOpen} onOpenChange={setIsOpen}>
       <Trigger asChild>
-        <Button size="sm">Edit</Button>
+        <Button
+          className="invisible group-hover:visible transition-colors duration-300"
+          size="sm"
+        >
+          Edit
+        </Button>
       </Trigger>
       <EditCustomerDialog {...customer} setIsOpen={setIsOpen} />
     </Root>

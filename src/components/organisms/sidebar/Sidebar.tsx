@@ -1,9 +1,16 @@
-import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
+import {
+  EnvelopeClosedIcon,
+  GearIcon,
+  PersonIcon,
+} from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { twMerge } from "lib/utils/twMerge";
 
-const navigation = [{ name: "Customers", href: "/", icon: PersonIcon }];
+const navigation = [
+  { name: "Customers", href: "/", icon: PersonIcon },
+  { name: "Invoices", href: "/invoices", icon: EnvelopeClosedIcon },
+];
 
 export function Sidebar() {
   const router = useRouter();
@@ -27,19 +34,17 @@ export function Sidebar() {
                   <Link
                     href={item.href}
                     className={twMerge(
-                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
+                      "group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-indigo-200 hover:text-white",
                       {
-                        "bg-indigo-700 text-white": router.asPath.match(
-                          item.href,
-                        ),
+                        "bg-indigo-700 text-white": router.asPath === item.href,
                       },
                     )}
                   >
                     <item.icon
                       className={twMerge(
-                        "h-6 w-6 shrink-0 text-indigo-200 group-hover:text-white",
+                        "h-4 w-4 shrink-0 text-indigo-200 group-hover:text-white",
                         {
-                          "text-white": router.asPath.match(item.href),
+                          "text-white": router.asPath === item.href,
                         },
                       )}
                       aria-hidden="true"

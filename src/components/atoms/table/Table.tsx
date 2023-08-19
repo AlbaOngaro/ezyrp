@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { get } from "lodash";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -144,7 +144,7 @@ export function Table<R extends Row = Row>({
             .map((row) => (
               <tr
                 key={row.id}
-                className={twMerge("hover:bg-gray-50", {
+                className={twMerge("hover:bg-gray-50 group", {
                   "bg-gray-50": selectedRows.includes(row),
                 })}
               >
@@ -168,7 +168,7 @@ export function Table<R extends Row = Row>({
                     key={field}
                     className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
                   >
-                    {row[field]}
+                    {get(row, field, null) as ReactNode}
                   </td>
                 ))}
               </tr>

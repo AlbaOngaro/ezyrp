@@ -1,12 +1,21 @@
 import { ReactNode } from "react";
 
-export interface Row extends Record<string, ReactNode> {
+export type FlattenObjectKeys<
+  T extends Record<string, unknown>,
+  Key = keyof T,
+> = Key extends string
+  ? T[Key] extends Record<string, unknown>
+    ? `${Key}.${FlattenObjectKeys<T[Key]>}`
+    : `${Key}`
+  : never;
+
+export interface Row extends Record<string, ReactNode | Row> {
   id: string;
 }
 
 export interface Column<R extends Row = Row> {
   id: string;
-  field: Extract<keyof R, string>;
+  field: FlattenObjectKeys<R>;
   headerName?: string;
   sortable?: boolean;
 }

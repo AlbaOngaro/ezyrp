@@ -40,3 +40,9 @@ DEFINE INDEX idx_user ON user FIELDS email UNIQUE;
 -- ------------------------------
 
 DEFINE TABLE customer SCHEMALESS PERMISSIONS FOR select, create, update, delete WHERE true;
+
+-- ------------------------------
+-- TABLE: invoice
+-- ------------------------------
+
+DEFINE TABLE invoice SCHEMALESS PERMISSIONS FOR select, create, update, delete WHERE true;
