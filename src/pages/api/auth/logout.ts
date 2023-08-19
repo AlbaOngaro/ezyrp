@@ -3,7 +3,7 @@ import { destroyCookie } from "nookies";
 import { ACCESS_TOKEN_ID } from "lib/constants";
 
 export default async function handler(
-  _req: NextApiRequest,
+  req: NextApiRequest,
   res: NextApiResponse,
 ) {
   destroyCookie({ res }, ACCESS_TOKEN_ID, {
@@ -12,5 +12,8 @@ export default async function handler(
     httpOnly: true,
     path: "/",
   });
-  res.end();
+
+  const { redirect_to = "http://localhost:3000/login" } = req.query;
+
+  res.redirect(redirect_to as string);
 }

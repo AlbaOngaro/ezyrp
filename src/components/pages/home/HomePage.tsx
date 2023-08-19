@@ -11,8 +11,11 @@ import { Sidebar } from "components/organisms/sidebar/Sidebar";
 import { CustomersTable } from "components/organisms/customers-table/CustomersTable";
 
 const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "Your profile", href: "/profile" },
+  {
+    name: "Sign out",
+    href: "/api/auth/logout?redirect_to=http://localhost:3000/login",
+  },
 ];
 
 export function HomePage() {

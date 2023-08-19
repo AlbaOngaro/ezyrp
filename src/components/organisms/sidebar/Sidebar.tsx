@@ -1,4 +1,13 @@
+import { GearIcon, PersonIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { twMerge } from "lib/utils/twMerge";
+
+const navigation = [{ name: "Customers", href: "/", icon: PersonIcon }];
+
 export function Sidebar() {
+  const router = useRouter();
+
   return (
     <aside className=" flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 py-4">
       <header>
@@ -8,6 +17,54 @@ export function Sidebar() {
           alt="Your Company"
         />
       </header>
+
+      <nav className="flex flex-1 flex-col">
+        <ul role="list" className="flex flex-1 flex-col gap-y-7">
+          <li>
+            <ul role="list" className="-mx-2 space-y-1">
+              {navigation.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={twMerge(
+                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
+                      {
+                        "bg-indigo-700 text-white": router.asPath.match(
+                          item.href,
+                        ),
+                      },
+                    )}
+                  >
+                    <item.icon
+                      className={twMerge(
+                        "h-6 w-6 shrink-0 text-indigo-200 group-hover:text-white",
+                        {
+                          "text-white": router.asPath.match(item.href),
+                        },
+                      )}
+                      aria-hidden="true"
+                    />
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </li>
+
+          <li className="mt-auto">
+            <a
+              href="#"
+              className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-indigo-200 hover:bg-indigo-700 hover:text-white"
+            >
+              <GearIcon
+                className="h-6 w-6 shrink-0 text-indigo-200 group-hover:text-white"
+                aria-hidden="true"
+              />
+              Settings
+            </a>
+          </li>
+        </ul>
+      </nav>
     </aside>
   );
 }
