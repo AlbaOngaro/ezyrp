@@ -7,6 +7,11 @@ import { twMerge } from "lib/utils/twMerge";
 import { Table } from "components/organisms/table/Table";
 import { Customer } from "lib/types";
 import { Button } from "components/atoms/button/Button";
+import {
+  deleteCustomers,
+  getCustomers,
+  updateCustomers,
+} from "requests/customers";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -14,7 +19,7 @@ const userNavigation = [
 ];
 
 export function HomePage() {
-  const { customers } = useCustomers();
+  const { customers, mutate } = useCustomers();
 
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
@@ -107,10 +112,36 @@ export function HomePage() {
           rows={customers}
           renderSelectedActions={(rows) => (
             <>
-              <Button variant="secondary" size="sm">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  mutate(
+                    async () => {
+                      await updateCustomers(
+                        rows.map((row) => ({
+                          id: row.id,
+                          name: "Jane Doe",
+                        })),
+                      );
+
+                      return getCustomers();
+                    },
+                    {
+                      revalidate: false,
+                    },
+                  )
+                }
+              >
                 Bulk edit
               </Button>
-              <Button variant="danger" size="sm">
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() =>
+                  mutate(() => deleteCustomers(rows.map((row) => row.id)))
+                }
+              >
                 Delete all
               </Button>
             </>

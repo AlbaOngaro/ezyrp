@@ -1,5 +1,4 @@
 import { Customer } from "lib/types";
-
 import { surreal } from "lib/surreal";
 
 export class CustomersService {
@@ -9,15 +8,17 @@ export class CustomersService {
     this.token = token;
   }
 
-  async create(customer: Omit<Customer, "id">): Promise<Customer> {
+  async create(customers: Omit<Customer, "id">[]): Promise<Customer[]> {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.create<Omit<Customer, "id">>(
-      "customer",
-      customer,
-    );
+    const result = await surreal.query<Customer[]>(`
+      INSERT INTO customer (email, name, phone) VALUES ${customers
+        .map(({ email, name, phone }) => `('${email}', '${name}', ${phone})`)
+        .join(",")};
+    `);
 
-    return result[0];
+    // @ts-ignore
+    return result[0].result || [];
   }
 
   async read(id: Customer["id"]): Promise<Customer> {
@@ -34,17 +35,34 @@ export class CustomersService {
     return result;
   }
 
-  async update(id: Customer["id"], data: Partial<Customer>): Promise<Customer> {
+  async update(
+    customers: (Partial<Customer> & { id: Customer["id"] })[],
+  ): Promise<void> {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.merge<Customer>(id, data);
-    return result[0];
+    const result = await surreal.query(`
+      BEGIN TRANSACTION;
+
+      ${customers
+        .map(
+          ({ id, ...customer }) =>
+            `UPDATE ${id} MERGE ${JSON.stringify(customer)}`,
+        )
+        .join(";\n")};
+
+      COMMIT TRANSACTION;
+    `);
   }
 
-  async delete(id: Customer["id"]): Promise<void> {
+  async delete(ids: Customer["id"][]): Promise<void> {
     await surreal.authenticate(this.token);
 
-    await surreal.delete(id);
+    await surreal.query(`
+      BEGIN TRANSACTION;
+      ${ids.map((id) => `DELETE ${id}`).join(";\n")};
+      COMMIT TRANSACTION;
+    `);
+
     return;
   }
 }

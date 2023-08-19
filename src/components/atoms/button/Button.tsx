@@ -11,6 +11,7 @@ export function Button({
   size = "md",
   children,
   className,
+  ...props
 }: Props) {
   return (
     <button
@@ -31,6 +32,7 @@ export function Button({
         },
         className,
       )}
+      {...props}
     >
       {children}
     </button>

@@ -1,4 +1,5 @@
 import { Customer } from "lib/types";
+import { getCustomers } from "requests/customers";
 import useSWR from "swr";
 
 export function useCustomers() {
@@ -7,8 +8,9 @@ export function useCustomers() {
     error,
     isLoading,
     mutate,
-  } = useSWR<Customer[], unknown, "/api/customers">("/api/customers", () =>
-    fetch("/api/customers").then((res) => res.json() as Promise<Customer[]>),
+  } = useSWR<Customer[], unknown, "/api/customers">(
+    "/api/customers",
+    getCustomers,
   );
 
   return {

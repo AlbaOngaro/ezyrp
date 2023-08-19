@@ -4,6 +4,7 @@ import { Customer } from "lib/types";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { CustomersService } from "services/customers";
+import { z } from "zod";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,10 +17,11 @@ export default async function handler(
   switch (req.method) {
     case "POST": {
       try {
-        const data = customer.omit({ id: true }).parse(req.body);
-        const record = await customersService.create(data);
+        const customers = z.array(customer.omit({ id: true })).parse(req.body);
+        const record = await customersService.create(customers);
         res.status(201).json(record);
       } catch (error: unknown) {
+        console.error(error);
         res.status(400).end();
       }
       break;
@@ -46,16 +48,10 @@ export default async function handler(
     }
     case "PATCH": {
       try {
-        const params = req.query.params;
-        if (!params || params.length !== 1) {
-          throw Error("missing id param, aborting");
-        }
-
-        const data = customer
-          .omit({ id: true })
-          .partial({ email: true, phone: true, name: true })
+        const customers = z
+          .array(customer.partial({ email: true, phone: true, name: true }))
           .parse(req.body);
-        const record = await customersService.update(params[0], data);
+        const record = await customersService.update(customers);
         res.json(record);
       } catch (error: unknown) {
         console.error(error);
@@ -64,14 +60,8 @@ export default async function handler(
       break;
     }
     case "DELETE": {
-      const params = req.query.params;
-
-      if (!params || params.length !== 1) {
-        res.status(400).end();
-        break;
-      }
-
-      await customersService.delete(params[0]);
+      const ids = z.array(z.string()).parse(req.body);
+      await customersService.delete(ids);
       res.status(204).end();
       break;
     }
