@@ -7,12 +7,12 @@
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+  @apply box-border;
 }
 
 html,
 body {
-  @apply h-full;
+  @apply h-full transition-all duration-300;
 }
 
 #__next {

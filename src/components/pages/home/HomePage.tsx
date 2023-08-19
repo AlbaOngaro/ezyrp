@@ -4,8 +4,9 @@ import * as Menu from "@radix-ui/react-navigation-menu";
 
 import { useCustomers } from "hooks/useCustomers";
 import { twMerge } from "lib/utils/twMerge";
-import { Table } from "components/atoms/table/Table";
+import { Table } from "components/organisms/table/Table";
 import { Customer } from "lib/types";
+import { Button } from "components/atoms/button/Button";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -106,18 +107,12 @@ export function HomePage() {
           rows={customers}
           renderSelectedActions={(rows) => (
             <>
-              <button
-                type="button"
-                className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-              >
+              <Button variant="secondary" size="sm">
                 Bulk edit
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center rounded bg-red-500 px-2 py-1 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-red-300 transition-all duration-300 hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-red-100"
-              >
+              </Button>
+              <Button variant="danger" size="sm">
                 Delete all
-              </button>
+              </Button>
             </>
           )}
         />

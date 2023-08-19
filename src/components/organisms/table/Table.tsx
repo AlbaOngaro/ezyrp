@@ -12,6 +12,7 @@ import {
 } from "@radix-ui/react-icons";
 
 import { Props, Row, Sort } from "./types";
+import { Checkbox } from "components/atoms/checkbox/Checkbox";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -66,9 +67,7 @@ export function Table<R extends Row = Row>({
           <tr>
             {withMultiSelect && (
               <th className="relative px-7 sm:w-12 sm:px-6">
-                <input
-                  className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                  type="checkbox"
+                <Checkbox
                   ref={checkbox}
                   checked={checked}
                   onChange={toggleAll}
@@ -145,9 +144,7 @@ export function Table<R extends Row = Row>({
               >
                 {withMultiSelect && (
                   <td className="relative px-7 sm:w-12 sm:px-6">
-                    <input
-                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      type="checkbox"
+                    <Checkbox
                       checked={selectedRows.includes(row)}
                       onChange={(e) =>
                         setSelectedRows(
@@ -200,11 +197,12 @@ export function Table<R extends Row = Row>({
                     </p>
                   )}
                 </div>
+
                 <div className="flex flex-1 justify-between sm:justify-end">
                   <button
                     disabled={page === 0}
                     onClick={() => setPage(0)}
-                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                    className="relative cursor-pointer inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
                   >
                     <DoubleArrowLeftIcon className="h-5 w-5" />
                   </button>
@@ -220,7 +218,7 @@ export function Table<R extends Row = Row>({
                         return curr;
                       })
                     }
-                    className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                    className="relative cursor-pointer inline-flex items-center px-2 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
                   >
                     <ChevronLeftIcon className="h-5 w-5" />
                   </button>
@@ -236,7 +234,7 @@ export function Table<R extends Row = Row>({
                         return curr;
                       })
                     }
-                    className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                    className="relative cursor-pointer inline-flex items-center px-2 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
                   >
                     <ChevronRightIcon className="h-5 w-5" />
                   </button>
@@ -244,7 +242,7 @@ export function Table<R extends Row = Row>({
                   <button
                     disabled={page === (rows.length - pageSize) / pageSize}
                     onClick={() => setPage((rows.length - pageSize) / pageSize)}
-                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                    className="relative cursor-pointer inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
                   >
                     <DoubleArrowRightIcon className="h-5 w-5" />
                   </button>
