@@ -1,31 +1,19 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 
 import { twMerge } from "lib/utils/twMerge";
-import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+  MinusIcon,
+} from "@radix-ui/react-icons";
 
-interface Row extends Record<string, ReactNode> {
-  id: string;
-}
+import { Props, Row, Sort } from "./types";
 
-export interface Column<R extends Row = Row> {
-  id: string;
-  field: Extract<keyof R, string>;
-  headerName?: string;
-  sortable?: boolean;
-}
-
-interface Props<R extends Row = Row> {
-  className?: string;
-  columns: Column<R>[];
-  rows: R[];
-  withMultiSelect?: boolean;
-  onSelect?: (rows: R[]) => void;
-}
-
-interface Sort<R extends Row = Row> {
-  field: Extract<keyof R, string>;
-  order: "ASC" | "DESC";
-}
+const DEFAULT_PAGE_SIZE = 10;
 
 export function Table<R extends Row = Row>({
   className,
@@ -33,11 +21,14 @@ export function Table<R extends Row = Row>({
   rows,
   withMultiSelect,
   onSelect,
+  pagination,
 }: Props<R>) {
   const [checked, setChecked] = useState(false);
   const [selectedRows, _setSelectedRows] = useState<R[]>([]);
-
+  const [page, setPage] = useState(pagination?.initialPage || 0);
   const [sort, setSort] = useState<Sort<R> | null>(null);
+
+  const pageSize = pagination?.pageSize || DEFAULT_PAGE_SIZE;
 
   const setSelectedRows = (rows: R[]) => {
     _setSelectedRows(rows);
@@ -94,13 +85,12 @@ export function Table<R extends Row = Row>({
                       }
                       className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200"
                     >
-                      {sort?.order === "ASC" ? (
-                        <ChevronDownIcon
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
+                      {!sort ? (
+                        <MinusIcon className="h-5 w-5" />
+                      ) : sort.order === "ASC" ? (
+                        <ChevronDownIcon className="h-5 w-5" />
                       ) : (
-                        <ChevronUpIcon className="h-5 w-5" aria-hidden="true" />
+                        <ChevronUpIcon className="h-5 w-5" />
                       )}
                     </button>
                   )}
@@ -109,6 +99,7 @@ export function Table<R extends Row = Row>({
             ))}
           </tr>
         </thead>
+
         <tbody className="divide-y divide-gray-200 bg-white">
           {rows
             .sort((a, b) => {
@@ -126,6 +117,7 @@ export function Table<R extends Row = Row>({
                 a[sort.field] as string,
               );
             })
+            .slice(page * pageSize, (page + 1) * pageSize)
             .map((row) => (
               <tr
                 key={row.id}
@@ -161,6 +153,81 @@ export function Table<R extends Row = Row>({
               </tr>
             ))}
         </tbody>
+
+        <tfoot>
+          <tr>
+            <td colSpan={withMultiSelect ? columns.length + 1 : columns.length}>
+              <nav
+                className="flex items-center justify-between bg-white px-4 py-3 sm:px-6"
+                aria-label="Pagination"
+              >
+                <div className="hidden sm:block">
+                  <p className="text-sm text-gray-700">
+                    Showing{" "}
+                    <span className="font-medium">{page * pageSize + 1}</span>{" "}
+                    to{" "}
+                    <span className="font-medium">
+                      {(page + 1) * pageSize <= rows.length
+                        ? (page + 1) * pageSize
+                        : rows.length}
+                    </span>{" "}
+                    of <span className="font-medium">{rows.length}</span>{" "}
+                    results
+                  </p>
+                </div>
+                <div className="flex flex-1 justify-between sm:justify-end">
+                  <button
+                    disabled={page === 0}
+                    onClick={() => setPage(0)}
+                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <DoubleArrowLeftIcon className="h-5 w-5" />
+                  </button>
+
+                  <button
+                    disabled={page === 0}
+                    onClick={() =>
+                      setPage((curr) => {
+                        if (curr - 1 >= 0) {
+                          return curr - 1;
+                        }
+
+                        return curr;
+                      })
+                    }
+                    className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <ChevronLeftIcon className="h-5 w-5" />
+                  </button>
+
+                  <button
+                    disabled={page * pageSize >= rows.length}
+                    onClick={() =>
+                      setPage((curr) => {
+                        if ((curr + 1) * pageSize < rows.length) {
+                          return curr + 1;
+                        }
+
+                        return curr;
+                      })
+                    }
+                    className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <ChevronRightIcon className="h-5 w-5" />
+                  </button>
+
+                  <button
+                    disabled={page === (rows.length - pageSize) / pageSize}
+                    onClick={() => setPage((rows.length - pageSize) / pageSize)}
+                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                  >
+                    <DoubleArrowRightIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </nav>
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   );
