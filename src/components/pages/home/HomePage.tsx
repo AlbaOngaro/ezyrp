@@ -95,6 +95,7 @@ export function HomePage() {
               id: "name",
               field: "name",
               headerName: "Name",
+              sortable: true,
             },
             {
               id: "",
