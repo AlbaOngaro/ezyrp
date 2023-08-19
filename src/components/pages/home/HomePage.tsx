@@ -7,11 +7,6 @@ import { twMerge } from "lib/utils/twMerge";
 import { Table } from "components/organisms/table/Table";
 import { Customer } from "lib/types";
 import { Button } from "components/atoms/button/Button";
-import {
-  deleteCustomers,
-  getCustomers,
-  updateCustomers,
-} from "requests/customers";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -19,7 +14,7 @@ const userNavigation = [
 ];
 
 export function HomePage() {
-  const { customers, mutate } = useCustomers();
+  const customers = useCustomers();
 
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
@@ -88,8 +83,7 @@ export function HomePage() {
         </header>
 
         <Table<Customer>
-          withMultiSelect={true}
-          onSelect={console.debug}
+          withMultiSelect
           className="px-12 mt-8"
           columns={[
             {
@@ -109,38 +103,16 @@ export function HomePage() {
               headerName: "Phone",
             },
           ]}
-          rows={customers}
+          rows={customers.data}
           renderSelectedActions={(rows) => (
             <>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() =>
-                  mutate(
-                    async () => {
-                      await updateCustomers(
-                        rows.map((row) => ({
-                          id: row.id,
-                          name: "Jane Doe",
-                        })),
-                      );
-
-                      return getCustomers();
-                    },
-                    {
-                      revalidate: false,
-                    },
-                  )
-                }
-              >
+              <Button variant="secondary" size="sm">
                 Bulk edit
               </Button>
               <Button
                 variant="danger"
                 size="sm"
-                onClick={() =>
-                  mutate(() => deleteCustomers(rows.map((row) => row.id)))
-                }
+                onClick={() => customers.delete(rows.map((row) => row.id))}
               >
                 Delete all
               </Button>
