@@ -1,8 +1,7 @@
-import { ReactNode, useLayoutEffect, useRef, useState } from "react";
+import { ReactNode, useState } from "react";
 
-import { useCustomers } from "hooks/useCustomers";
-import { Customer } from "lib/types";
 import { twMerge } from "lib/utils/twMerge";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 
 interface Row extends Record<string, ReactNode> {
   id: string;
@@ -19,6 +18,7 @@ interface Props<R extends Row = Row> {
   columns: Column<R>[];
   rows: R[];
   withMultiSelect?: boolean;
+  onSelect?: (rows: R[]) => void;
 }
 
 export function Table<R extends Row = Row>({
@@ -26,9 +26,17 @@ export function Table<R extends Row = Row>({
   columns,
   rows,
   withMultiSelect,
+  onSelect,
 }: Props<R>) {
   const [checked, setChecked] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<R[]>([]);
+  const [selectedRows, _setSelectedRows] = useState<R[]>([]);
+
+  const setSelectedRows = (rows: R[]) => {
+    _setSelectedRows(rows);
+    if (typeof onSelect === "function") {
+      onSelect(rows);
+    }
+  };
 
   function toggleAll() {
     setSelectedRows(checked ? [] : rows);
@@ -57,7 +65,9 @@ export function Table<R extends Row = Row>({
                 scope="col"
                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
-                {column.headerName || column.field}
+                <span className="group inline-flex">
+                  {column.headerName || column.field}
+                </span>
               </th>
             ))}
           </tr>
@@ -77,10 +87,10 @@ export function Table<R extends Row = Row>({
                     type="checkbox"
                     checked={selectedRows.includes(row)}
                     onChange={(e) =>
-                      setSelectedRows((curr) =>
+                      setSelectedRows(
                         e.target.checked
-                          ? [...curr, row]
-                          : curr.filter((r) => r !== row),
+                          ? [...selectedRows, row]
+                          : selectedRows.filter((r) => r !== row),
                       )
                     }
                   />

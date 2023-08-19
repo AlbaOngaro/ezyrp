@@ -82,7 +82,8 @@ export function HomePage() {
         </header>
 
         <Table<Customer>
-          withMultiSelect
+          withMultiSelect={true}
+          onSelect={console.debug}
           className="px-12 mt-8"
           columns={[
             {
