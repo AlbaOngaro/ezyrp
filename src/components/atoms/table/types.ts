@@ -22,6 +22,7 @@ export interface Props<R extends Row = Row> {
   rows: R[];
   withMultiSelect?: boolean;
   onSelect?: (rows: R[]) => void;
+  renderSelectedActions?: (rows: Row[]) => ReactNode;
   pagination?: Pagination;
 }
 

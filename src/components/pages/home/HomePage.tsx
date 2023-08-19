@@ -13,7 +13,7 @@ const userNavigation = [
 ];
 
 export function HomePage() {
-  const { customers, mutate } = useCustomers();
+  const { customers } = useCustomers();
 
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
@@ -104,6 +104,22 @@ export function HomePage() {
             },
           ]}
           rows={customers}
+          renderSelectedActions={(rows) => (
+            <>
+              <button
+                type="button"
+                className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+              >
+                Bulk edit
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center rounded bg-red-500 px-2 py-1 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-red-300 transition-all duration-300 hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-red-100"
+              >
+                Delete all
+              </button>
+            </>
+          )}
         />
       </section>
     </main>

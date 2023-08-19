@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { twMerge } from "lib/utils/twMerge";
 import {
@@ -22,13 +22,25 @@ export function Table<R extends Row = Row>({
   withMultiSelect,
   onSelect,
   pagination,
+  renderSelectedActions,
 }: Props<R>) {
+  const checkbox = useRef<HTMLInputElement | null>(null);
+
   const [checked, setChecked] = useState(false);
   const [selectedRows, _setSelectedRows] = useState<R[]>([]);
   const [page, setPage] = useState(pagination?.initialPage || 0);
   const [sort, setSort] = useState<Sort<R> | null>(null);
 
   const pageSize = pagination?.pageSize || DEFAULT_PAGE_SIZE;
+
+  useEffect(() => {
+    if (selectedRows.length > 0 && selectedRows.length < rows.length) {
+      if (checkbox.current) {
+        checkbox.current.indeterminate = true;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRows]);
 
   const setSelectedRows = (rows: R[]) => {
     _setSelectedRows(rows);
@@ -43,7 +55,12 @@ export function Table<R extends Row = Row>({
   };
 
   return (
-    <div className={twMerge("flow-root", className)}>
+    <div className={twMerge("flow-root relative", className)}>
+      {selectedRows.length > 0 && renderSelectedActions && (
+        <div className="absolute left-[6.5rem] top-0 flex h-12 items-center space-x-3 bg-white">
+          {renderSelectedActions(selectedRows)}
+        </div>
+      )}
       <table className="min-w-full table-fixed divide-y divide-gray-300">
         <thead>
           <tr>
@@ -52,6 +69,7 @@ export function Table<R extends Row = Row>({
                 <input
                   className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   type="checkbox"
+                  ref={checkbox}
                   checked={checked}
                   onChange={toggleAll}
                 />
@@ -83,14 +101,14 @@ export function Table<R extends Row = Row>({
                           };
                         })
                       }
-                      className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200"
+                      className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200 p-1"
                     >
                       {!sort ? (
-                        <MinusIcon className="h-5 w-5" />
+                        <MinusIcon />
                       ) : sort.order === "ASC" ? (
-                        <ChevronDownIcon className="h-5 w-5" />
+                        <ChevronDownIcon />
                       ) : (
-                        <ChevronUpIcon className="h-5 w-5" />
+                        <ChevronUpIcon />
                       )}
                     </button>
                   )}
@@ -162,18 +180,25 @@ export function Table<R extends Row = Row>({
                 aria-label="Pagination"
               >
                 <div className="hidden sm:block">
-                  <p className="text-sm text-gray-700">
-                    Showing{" "}
-                    <span className="font-medium">{page * pageSize + 1}</span>{" "}
-                    to{" "}
-                    <span className="font-medium">
-                      {(page + 1) * pageSize <= rows.length
-                        ? (page + 1) * pageSize
-                        : rows.length}
-                    </span>{" "}
-                    of <span className="font-medium">{rows.length}</span>{" "}
-                    results
-                  </p>
+                  {withMultiSelect && selectedRows.length > 0 ? (
+                    <p className="text-sm text-gray-700">
+                      <span className="font-medium">{selectedRows.length}</span>{" "}
+                      rows elected
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-700">
+                      Showing{" "}
+                      <span className="font-medium">{page * pageSize + 1}</span>{" "}
+                      to{" "}
+                      <span className="font-medium">
+                        {(page + 1) * pageSize <= rows.length
+                          ? (page + 1) * pageSize
+                          : rows.length}
+                      </span>{" "}
+                      of <span className="font-medium">{rows.length}</span>{" "}
+                      results
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-1 justify-between sm:justify-end">
                   <button
