@@ -144,7 +144,7 @@ export function Table<R extends Row = Row>({
             .map((row) => (
               <tr
                 key={row.id}
-                className={twMerge({
+                className={twMerge("hover:bg-gray-50", {
                   "bg-gray-50": selectedRows.includes(row),
                 })}
               >

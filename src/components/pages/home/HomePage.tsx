@@ -1,17 +1,14 @@
-/* eslint-disable @next/next/no-img-element */
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
 import { Trigger, Root } from "@radix-ui/react-dialog";
 import { useState } from "react";
 
-import { useCustomers } from "hooks/useCustomers";
 import { twMerge } from "lib/utils/twMerge";
-import { Table } from "components/organisms/table/Table";
-import { Customer } from "lib/types";
 import { Button } from "components/atoms/button/Button";
 import { CreateCustomerDialog } from "components/organisms/create-customer-dialog/CreateCustomerDialog";
 
 import { Sidebar } from "components/organisms/sidebar/Sidebar";
+import { CustomersTable } from "components/organisms/customers-table/CustomersTable";
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -19,8 +16,6 @@ const userNavigation = [
 ];
 
 export function HomePage() {
-  const customers = useCustomers();
-
   const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
 
   return (
@@ -105,43 +100,7 @@ export function HomePage() {
           </div>
         </div>
 
-        <Table<Customer>
-          withMultiSelect
-          className="px-12"
-          columns={[
-            {
-              id: "email",
-              field: "email",
-              headerName: "E-mail",
-            },
-            {
-              id: "name",
-              field: "name",
-              headerName: "Name",
-              sortable: true,
-            },
-            {
-              id: "",
-              field: "phone",
-              headerName: "Phone",
-            },
-          ]}
-          rows={customers.data}
-          renderSelectedActions={(rows) => (
-            <>
-              <Button variant="secondary" size="sm">
-                Bulk edit
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={() => customers.delete(rows.map((row) => row.id))}
-              >
-                Delete all
-              </Button>
-            </>
-          )}
-        />
+        <CustomersTable />
       </section>
     </main>
   );
