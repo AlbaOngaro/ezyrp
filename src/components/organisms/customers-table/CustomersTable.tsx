@@ -37,6 +37,11 @@ export function CustomersTable() {
       className="px-12"
       columns={[
         {
+          id: "id",
+          field: "id",
+          headerName: "ID",
+        },
+        {
           id: "email",
           field: "email",
           headerName: "E-mail",

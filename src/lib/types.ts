@@ -14,3 +14,17 @@ export type Customer = z.infer<typeof customer>;
 export type Invoice = z.infer<typeof invoice>;
 
 export type Profile = z.infer<typeof profile>;
+
+export interface Country {
+  name: {
+    common: string;
+    official: string;
+    nativeName: Record<
+      string,
+      {
+        common: string;
+        official: string;
+      }
+    >;
+  };
+}

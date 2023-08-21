@@ -43,7 +43,7 @@ export function Select({
             )}
           </label>
         )}
-        <RUISelect.Trigger className="flex justify-between m-0 resize-none py-2 px-4 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500 data-[invalid=true]:text-red-400 data-[invalid=true]:border-red-400">
+        <RUISelect.Trigger className="flex justify-between items-center m-0 resize-none py-2 px-4 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500 data-[invalid=true]:text-red-400 data-[invalid=true]:border-red-400">
           <RUISelect.Value placeholder="Select a fruit" />
           <RUISelect.Icon>
             <ChevronDownIcon />
@@ -56,7 +56,7 @@ export function Select({
             sideOffset={8}
             className="overflow-hidden bg-white rounded-md shadow-[0px_10px_40px_-7px_rgba(55,_63,_104,_0.35)] w-[var(--radix-select-trigger-width)] z-50"
           >
-            <RUISelect.Viewport>
+            <RUISelect.Viewport className="overflow-scroll max-h-40">
               {options.map((option) => (
                 <RUISelect.Item
                   key={option.value}

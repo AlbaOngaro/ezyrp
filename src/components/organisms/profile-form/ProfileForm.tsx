@@ -5,6 +5,8 @@ import { Profile } from "lib/types";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 import { useProfile } from "hooks/useProfile";
+import { useCountries } from "hooks/useCountries";
+import { Select } from "components/atoms/select/Select";
 
 interface Props {
   profile: Profile;
@@ -12,6 +14,8 @@ interface Props {
 
 export function ProfileForm({ profile: initialProfile }: Props) {
   const { update } = useProfile();
+  const { data: countries } = useCountries();
+
   const [profile, setProfile] = useState(initialProfile);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -22,7 +26,7 @@ export function ProfileForm({ profile: initialProfile }: Props) {
 
   return (
     <Form
-      className="px-12 py-8 flex flex-col gap-4 w-2/3"
+      className="px-12 py-8 flex flex-col gap-4 lg:w-2/3"
       onSubmit={handleSubmit}
     >
       <Input
@@ -62,17 +66,23 @@ export function ProfileForm({ profile: initialProfile }: Props) {
           }
         />
 
-        <Input
-          label="Country"
-          name="country"
-          value={profile.country}
-          onChange={(e) =>
-            setProfile((curr) => ({
-              ...curr,
-              country: e.target.value,
-            }))
-          }
-        />
+        {countries && (
+          <Select
+            label="Country"
+            name="country"
+            defaultValue={profile.country}
+            options={countries.map((country) => ({
+              label: country.name.common,
+              value: country.name.common,
+            }))}
+            onChange={(country) =>
+              setProfile((curr) => ({
+                ...curr,
+                country,
+              }))
+            }
+          />
+        )}
       </div>
 
       <Button size="lg" className="ml-auto px-6">
