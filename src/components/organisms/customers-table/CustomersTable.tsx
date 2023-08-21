@@ -10,7 +10,7 @@ import { useCustomers } from "hooks/useCustomers";
 import { Table } from "components/atoms/table/Table";
 import { Button } from "components/atoms/button/Button";
 
-function Actions({ customer }: { customer: Customer }) {
+function Actions({ customer }: { customer: Omit<Customer, "workspace"> }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -32,7 +32,7 @@ export function CustomersTable() {
   const customers = useCustomers();
 
   return (
-    <Table<Customer & { actions: ReactElement }>
+    <Table<Omit<Customer, "workspace"> & { actions: ReactElement }>
       withMultiSelect
       className="px-12"
       columns={[

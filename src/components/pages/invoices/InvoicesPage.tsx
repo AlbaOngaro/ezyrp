@@ -1,19 +1,13 @@
 import { ReactElement, useState } from "react";
 import { Trigger, Root } from "@radix-ui/react-dialog";
 
-import { Invoice } from "lib/types";
-
-import { useInvoices } from "hooks/useInvoices";
-
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
-import { Table } from "components/atoms/table/Table";
 import { Button } from "components/atoms/button/Button";
 import { CreateInvoiceDialog } from "components/organisms/create-invoice-dialog/CreateInvoiceDialog";
+import { InvoicesTable } from "components/organisms/invoices-table/InvoicesTable";
 
 export function InvoicesPage() {
-  const invoices = useInvoices();
-
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
 
   return (
@@ -38,23 +32,7 @@ export function InvoicesPage() {
         </div>
       </div>
 
-      <Table<Invoice>
-        withMultiSelect
-        className="px-12"
-        columns={[
-          {
-            id: "id",
-            field: "id",
-            headerName: "ID",
-          },
-          {
-            id: "customer",
-            field: "customer.name",
-            headerName: "Customer",
-          },
-        ]}
-        rows={invoices.data}
-      />
+      <InvoicesTable />
     </>
   );
 }

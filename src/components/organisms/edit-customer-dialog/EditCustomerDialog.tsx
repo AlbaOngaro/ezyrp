@@ -7,7 +7,7 @@ import { Dialog } from "components/atoms/dialog/Dialog";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 
-interface Props extends Customer {
+interface Props extends Omit<Customer, "workspace"> {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -20,7 +20,7 @@ export function EditCustomerDialog({
 }: Props) {
   const { update } = useCustomers();
 
-  const [customer, setCustomer] = useState<Customer>({
+  const [customer, setCustomer] = useState<Omit<Customer, "workspace">>({
     id,
     name,
     email,
