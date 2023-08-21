@@ -17,6 +17,7 @@ export function EditInvoiceDialog({
   id,
   customer,
   description,
+  status,
   setIsOpen,
 }: Props) {
   const customers = useCustomers();
@@ -26,6 +27,7 @@ export function EditInvoiceDialog({
     id,
     customer,
     description,
+    status,
   });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -59,6 +61,32 @@ export function EditInvoiceDialog({
           validations={{
             valueMissing: "This field is required",
           }}
+        />
+
+        <Select
+          label="Status"
+          name="status"
+          defaultValue={invoice.status}
+          onChange={(status) =>
+            setInvoice((curr) => ({
+              ...curr,
+              status: status as Invoice["status"],
+            }))
+          }
+          options={[
+            {
+              label: "Pending",
+              value: "pending",
+            },
+            {
+              label: "Paid",
+              value: "paid",
+            },
+            {
+              label: "Overdue",
+              value: "overdue",
+            },
+          ]}
         />
 
         <Select

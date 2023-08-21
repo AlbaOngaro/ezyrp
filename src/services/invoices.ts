@@ -17,9 +17,10 @@ export class InvoicesService {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Invoice[]>(`
-      INSERT INTO invoice (customer, description) VALUES ${invoices
+      INSERT INTO invoice (customer, description, status) VALUES ${invoices
         .map(
-          ({ customer, description }) => `('${customer.id}', '${description}')`,
+          ({ customer, description, status }) =>
+            `('${customer.id}', '${description}', '${status}')`,
         )
         .join(",")};
     `);
@@ -27,6 +28,7 @@ export class InvoicesService {
     try {
       return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
     } catch (error: unknown) {
+      console.error(error);
       return [];
     }
   }
@@ -48,6 +50,7 @@ export class InvoicesService {
     try {
       return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
     } catch (error: unknown) {
+      console.debug(error);
       return [];
     }
   }

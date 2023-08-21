@@ -1,4 +1,10 @@
-import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  FormEventHandler,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
 import { Invoice, Customer } from "lib/types";
@@ -21,8 +27,16 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
 
   const [invoice, setInvoice] = useState<Omit<Invoice, "id" | "workspace">>({
     description: "",
+    status: "pending",
     customer: customers.data[0],
   });
+
+  useEffect(() => {
+    setInvoice((curr) => ({
+      ...curr,
+      customer: customers.data[0],
+    }));
+  }, [customers.data, customers.isLoading]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -31,6 +45,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
       await invoices.create([invoice]);
       setInvoice({
         description: "",
+        status: "pending",
         customer: customers.data[0],
       });
       setIsOpen(false);
@@ -59,6 +74,32 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
           validations={{
             valueMissing: "This field is required",
           }}
+        />
+
+        <Select
+          label="Status"
+          name="status"
+          defaultValue={invoice.status}
+          onChange={(status) =>
+            setInvoice((curr) => ({
+              ...curr,
+              status: status as Invoice["status"],
+            }))
+          }
+          options={[
+            {
+              label: "Pending",
+              value: "pending",
+            },
+            {
+              label: "Paid",
+              value: "paid",
+            },
+            {
+              label: "Overdue",
+              value: "overdue",
+            },
+          ]}
         />
 
         <Select

@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { Trigger, Root } from "@radix-ui/react-dialog";
 
 import { Table } from "components/atoms/table/Table";
@@ -6,6 +6,7 @@ import { Invoice } from "lib/types";
 import { useInvoices } from "hooks/useInvoices";
 import { Button } from "components/atoms/button/Button";
 import { EditInvoiceDialog } from "components/organisms/edit-invoice-dialog/EditInvoiceDialog";
+import { Badge } from "components/atoms/badge/Badge";
 
 function Actions({ invoice }: { invoice: Omit<Invoice, "workspace"> }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +30,7 @@ export function InvoicesTable() {
   const invoices = useInvoices();
 
   return (
-    <Table<Omit<Invoice, "workspace"> & { actions: ReactNode }>
+    <Table
       withMultiSelect
       className="px-12"
       columns={[
@@ -44,6 +45,11 @@ export function InvoicesTable() {
           headerName: "Customer",
         },
         {
+          id: "status",
+          field: "status",
+          headerName: "Status",
+        },
+        {
           id: "actions",
           field: "actions",
           headerName: " ",
@@ -51,6 +57,22 @@ export function InvoicesTable() {
       ]}
       rows={invoices.data.map((invoice) => ({
         ...invoice,
+        status: (
+          <Badge
+            variant={(() => {
+              switch (invoice.status) {
+                case "overdue":
+                  return "danger";
+                case "paid":
+                  return "success";
+                case "pending":
+                  return "info";
+              }
+            })()}
+          >
+            {invoice.status}
+          </Badge>
+        ),
         actions: <Actions invoice={invoice} />,
       }))}
       renderSelectedActions={(rows) => (
