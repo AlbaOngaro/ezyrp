@@ -24,6 +24,14 @@ SIGNIN (
 );
 
 -- ------------------------------
+-- EVENTS
+-- ------------------------------
+
+DEFINE EVENT profile ON TABLE user WHEN $before == NONE THEN (
+	CREATE profile SET user = $value.id
+);
+
+-- ------------------------------
 -- TABLE: user
 -- ------------------------------
 
@@ -34,6 +42,12 @@ DEFINE FIELD email ON user TYPE string;
 DEFINE FIELD username ON user TYPE string;
 
 DEFINE INDEX idx_user ON user FIELDS email UNIQUE;
+
+-- ------------------------------
+-- TABLE: profile
+-- ------------------------------
+
+DEFINE TABLE profile SCHEMALESS PERMISSIONS FOR select, update WHERE user = $auth.id, FOR create, delete NONE;
 
 -- ------------------------------
 -- TABLE: customer

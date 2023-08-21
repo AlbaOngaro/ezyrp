@@ -10,7 +10,6 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Table } from "components/atoms/table/Table";
 import { Button } from "components/atoms/button/Button";
 import { CreateInvoiceDialog } from "components/organisms/create-invoice-dialog/CreateInvoiceDialog";
-import { Select } from "components/atoms/select/Select";
 
 export function InvoicesPage() {
   const invoices = useInvoices();
