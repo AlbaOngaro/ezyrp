@@ -9,14 +9,15 @@ import { credentials, user } from "lib/schema/auth";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
-    const { username, password, email } = credentials
-      .partial({ username: true })
+    const { username, password, email, workspace } = credentials
+      .partial({ username: true, workspace: true })
       .parse(req.body);
 
     const token = await surreal.signup({
       NS: "crm",
       DB: "crm",
       SC: "allusers",
+      workspace,
       username,
       password,
       email,
