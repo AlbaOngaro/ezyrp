@@ -30,6 +30,20 @@ export function ProfileForm({ profile: initialProfile }: Props) {
       onSubmit={handleSubmit}
     >
       <Input
+        label="Name"
+        name="name"
+        value={profile.name}
+        onChange={(e) =>
+          setProfile((curr) => ({
+            ...curr,
+            name: e.target.value,
+          }))
+        }
+      />
+
+      <hr />
+
+      <Input
         label="Address"
         name="address"
         value={profile?.address}

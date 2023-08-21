@@ -20,6 +20,7 @@ export class ProfileService {
           city: true,
           code: true,
           country: true,
+          name: true,
         })
         .omit({ user: true })
         // @ts-ignore
