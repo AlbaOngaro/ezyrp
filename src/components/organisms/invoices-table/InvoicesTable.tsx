@@ -53,6 +53,20 @@ export function InvoicesTable() {
         ...invoice,
         actions: <Actions invoice={invoice} />,
       }))}
+      renderSelectedActions={(rows) => (
+        <>
+          <Button variant="secondary" size="sm">
+            Bulk edit
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => invoices.delete(rows.map((row) => row.id))}
+          >
+            Delete all
+          </Button>
+        </>
+      )}
     />
   );
 }
