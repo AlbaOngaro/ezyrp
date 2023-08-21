@@ -17,7 +17,9 @@ export default async function handler(
   switch (req.method) {
     case "POST": {
       try {
-        const customers = z.array(customer.omit({ id: true })).parse(req.body);
+        const customers = z
+          .array(customer.omit({ id: true, workspace: true }))
+          .parse(req.body);
         const record = await customersService.create(customers);
         res.status(201).json(record);
       } catch (error: unknown) {
@@ -49,7 +51,11 @@ export default async function handler(
     case "PATCH": {
       try {
         const customers = z
-          .array(customer.partial({ email: true, phone: true, name: true }))
+          .array(
+            customer
+              .omit({ workspace: true })
+              .partial({ email: true, phone: true, name: true }),
+          )
           .parse(req.body);
         const record = await customersService.update(customers);
         res.json(record);

@@ -17,7 +17,7 @@ export function useInvoices() {
     data,
     error,
     isLoading,
-    create: (customers: Omit<Invoice, "id">[]) =>
+    create: (customers: Omit<Invoice, "id" | "workspace">[]) =>
       mutate(() => {
         fetch("/api/invoices", {
           method: "POST",
@@ -30,7 +30,9 @@ export function useInvoices() {
         return getInvoices();
       }),
     read: () => mutate(() => getInvoices()),
-    update: (customers: Partial<Invoice> & { id: Invoice["id"] }[]) =>
+    update: (
+      customers: Partial<Omit<Invoice, "workspace">> & { id: Invoice["id"] }[],
+    ) =>
       mutate(() => {
         fetch("/api/invoices", {
           method: "PATCH",

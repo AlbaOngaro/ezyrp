@@ -19,7 +19,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
   const invoices = useInvoices();
   const customers = useCustomers();
 
-  const [invoice, setInvoice] = useState<Omit<Invoice, "id">>({
+  const [invoice, setInvoice] = useState<Omit<Invoice, "id" | "workspace">>({
     description: "",
     customer: customers.data[0],
   });

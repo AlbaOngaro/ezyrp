@@ -1,6 +1,8 @@
+import { z } from "zod";
 import { Invoice } from "lib/types";
 
 import { surreal } from "lib/surreal";
+import { invoice } from "lib/schema/invoice";
 
 export class InvoicesService {
   private token: string;
@@ -9,7 +11,9 @@ export class InvoicesService {
     this.token = token;
   }
 
-  async create(invoices: Omit<Invoice, "id">[]) {
+  async create(
+    invoices: Omit<Invoice, "id" | "workspace">[],
+  ): Promise<Omit<Invoice, "workspace">[]> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Invoice[]>(`
@@ -20,30 +24,36 @@ export class InvoicesService {
         .join(",")};
     `);
 
-    // @ts-ignore
-    return result[0].result || [];
+    try {
+      return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
+    } catch (error: unknown) {
+      return [];
+    }
   }
 
-  async read(id: Invoice["id"]): Promise<Invoice> {
+  async read(id: Invoice["id"]): Promise<Omit<Invoice, "workspace">> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.select<Invoice>(id);
-    return result[0];
+    return invoice.omit({ workspace: true }).parse(result[0]);
   }
 
-  async list(): Promise<Invoice[]> {
+  async list(): Promise<Omit<Invoice, "workspace">[]> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Invoice[]>(
       `SELECT * FROM invoice FETCH customer`,
     );
 
-    // @ts-ignore
-    return result[0].result || [];
+    try {
+      return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
+    } catch (error: unknown) {
+      return [];
+    }
   }
 
   async update(
-    invoices: (Partial<Invoice> & { id: Invoice["id"] })[],
+    invoices: (Partial<Omit<Invoice, "workspace">> & { id: Invoice["id"] })[],
   ): Promise<void> {
     await surreal.authenticate(this.token);
 
@@ -69,7 +79,5 @@ export class InvoicesService {
       ${ids.map((id) => `DELETE ${id}`).join(";\n")};
       COMMIT TRANSACTION;
     `);
-
-    return;
   }
 }

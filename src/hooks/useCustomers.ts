@@ -11,7 +11,7 @@ export function useCustomers() {
     error,
     isLoading,
     mutate,
-  } = useSWR<Customer[], unknown, "/api/customers">(
+  } = useSWR<Omit<Customer, "workspace">[], unknown, "/api/customers">(
     "/api/customers",
     getCustomers,
   );
@@ -20,7 +20,7 @@ export function useCustomers() {
     data,
     error,
     isLoading,
-    create: (customers: Omit<Customer, "id">[]) =>
+    create: (customers: Omit<Customer, "id" | "workspace">[]) =>
       mutate(() => {
         fetch("/api/customers", {
           method: "POST",
@@ -33,7 +33,10 @@ export function useCustomers() {
         return getCustomers();
       }),
     read: () => mutate(() => getCustomers()),
-    update: (customers: Partial<Customer> & { id: Customer["id"] }[]) =>
+    update: (
+      customers: Partial<Omit<Customer, "workspace">> &
+        { id: Customer["id"] }[],
+    ) =>
       mutate(() => {
         fetch("/api/customers", {
           method: "PATCH",

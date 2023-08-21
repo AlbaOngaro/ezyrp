@@ -1,5 +1,7 @@
+import { z } from "zod";
 import { Customer } from "lib/types";
 import { surreal } from "lib/surreal";
+import { customer } from "lib/schema/customer";
 
 export class CustomersService {
   private token: string;
@@ -8,7 +10,9 @@ export class CustomersService {
     this.token = token;
   }
 
-  async create(customers: Omit<Customer, "id">[]): Promise<Customer[]> {
+  async create(
+    customers: Omit<Customer, "id" | "workspace">[],
+  ): Promise<Omit<Customer, "workspace">[]> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Customer[]>(`
@@ -17,22 +21,31 @@ export class CustomersService {
         .join(",")};
     `);
 
-    // @ts-ignore
-    return result[0].result || [];
+    try {
+      return z
+        .array(customer.omit({ workspace: true }))
+        .parse(result[0].result);
+    } catch (error: unknown) {
+      return [];
+    }
   }
 
-  async read(id: Customer["id"]): Promise<Customer> {
+  async read(id: Customer["id"]): Promise<Omit<Customer, "workspace">> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.select<Customer>(id);
-    return result[0];
+    return customer.omit({ workspace: true }).parse(result[0]);
   }
 
-  async list(): Promise<Customer[]> {
+  async list(): Promise<Omit<Customer, "workspace">[]> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.select<Customer>("customer");
-    return result;
+    try {
+      return z.array(customer.omit({ workspace: true })).parse(result);
+    } catch (error: unknown) {
+      return [];
+    }
   }
 
   async update(
@@ -62,7 +75,5 @@ export class CustomersService {
       ${ids.map((id) => `DELETE ${id}`).join(";\n")};
       COMMIT TRANSACTION;
     `);
-
-    return;
   }
 }

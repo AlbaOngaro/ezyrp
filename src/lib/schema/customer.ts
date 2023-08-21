@@ -5,4 +5,5 @@ export const customer = z.object({
   email: z.string().email(),
   name: z.string(),
   phone: z.string(),
+  workspace: z.string(),
 });
