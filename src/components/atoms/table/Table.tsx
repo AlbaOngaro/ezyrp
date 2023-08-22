@@ -130,15 +130,33 @@ export function Table<R extends Row = Row>({
                 return 0;
               }
 
-              if (sort.order === "ASC") {
-                return (a[sort.field] as string).localeCompare(
-                  b[sort.field] as string,
+              if (
+                typeof a[sort.field] === "string" &&
+                typeof b[sort.field] === "string"
+              ) {
+                if (sort.order === "ASC") {
+                  return (a[sort.field] as string).localeCompare(
+                    b[sort.field] as string,
+                  );
+                }
+
+                return (b[sort.field] as string).localeCompare(
+                  a[sort.field] as string,
                 );
               }
 
-              return (b[sort.field] as string).localeCompare(
-                a[sort.field] as string,
-              );
+              if (
+                typeof a[sort.field] === "number" &&
+                typeof b[sort.field] === "number"
+              ) {
+                if (sort.order === "ASC") {
+                  return (a[sort.field] as number) - (b[sort.field] as number);
+                }
+
+                return (b[sort.field] as number) - (a[sort.field] as number);
+              }
+
+              return 0;
             })
             .slice(page * pageSize, (page + 1) * pageSize)
             .map((row) => (
@@ -163,12 +181,14 @@ export function Table<R extends Row = Row>({
                   </td>
                 )}
 
-                {columns.map(({ field }) => (
+                {columns.map(({ field, render }) => (
                   <td
                     key={field}
                     className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
                   >
-                    {get(row, field, null) as ReactNode}
+                    {typeof render === "function"
+                      ? render(row)
+                      : (get(row, field, null) as ReactNode)}
                   </td>
                 ))}
               </tr>

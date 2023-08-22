@@ -18,6 +18,7 @@ export interface Column<R extends Row = Row> {
   field: FlattenObjectKeys<R>;
   headerName?: string;
   sortable?: boolean;
+  render?: (row: R) => ReactNode;
 }
 
 interface Pagination {

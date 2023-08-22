@@ -16,6 +16,7 @@ import { Button } from "components/atoms/button/Button";
 import { Select } from "components/atoms/select/Select";
 import { useCustomers } from "hooks/useCustomers";
 import { TextArea } from "components/atoms/textarea/TextArea";
+import { Input } from "components/atoms/input/Input";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -29,6 +30,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
     description: "",
     status: "pending",
     customer: customers.data[0],
+    amount: 0,
   });
 
   useEffect(() => {
@@ -47,6 +49,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
         description: "",
         status: "pending",
         customer: customers.data[0],
+        amount: 0,
       });
       setIsOpen(false);
     } catch (error: unknown) {
@@ -60,22 +63,6 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
       description="Add a new invoice to your database"
     >
       <Form className="mt-2 flex flex-col gap-2" onSubmit={handleSubmit}>
-        <TextArea
-          label="Description"
-          name="description"
-          value={invoice.description}
-          onChange={(e) =>
-            setInvoice((curr) => ({
-              ...curr,
-              description: e.target.value,
-            }))
-          }
-          required
-          validations={{
-            valueMissing: "This field is required",
-          }}
-        />
-
         <Select
           label="Status"
           name="status"
@@ -113,6 +100,35 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
             setInvoice((curr) => ({
               ...curr,
               customer: customers.data.find((c) => c.id === id) as Customer,
+            }))
+          }
+        />
+
+        <TextArea
+          label="Description"
+          name="description"
+          value={invoice.description}
+          onChange={(e) =>
+            setInvoice((curr) => ({
+              ...curr,
+              description: e.target.value,
+            }))
+          }
+          required
+          validations={{
+            valueMissing: "This field is required",
+          }}
+        />
+
+        <Input
+          label="Amount"
+          name="amount"
+          type="number"
+          value={invoice.amount}
+          onChange={(e) =>
+            setInvoice((curr) => ({
+              ...curr,
+              amount: Number(e.target.value),
             }))
           }
         />

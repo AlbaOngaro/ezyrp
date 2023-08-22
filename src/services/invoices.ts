@@ -17,10 +17,10 @@ export class InvoicesService {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Invoice[]>(`
-      INSERT INTO invoice (customer, description, status) VALUES ${invoices
+      INSERT INTO invoice (customer, description, status, amount) VALUES ${invoices
         .map(
-          ({ customer, description, status }) =>
-            `('${customer.id}', '${description}', '${status}')`,
+          ({ customer, description, status, amount }) =>
+            `('${customer.id}', '${description}', '${status}', ${amount})`,
         )
         .join(",")};
     `);

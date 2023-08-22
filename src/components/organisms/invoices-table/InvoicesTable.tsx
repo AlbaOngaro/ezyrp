@@ -48,32 +48,40 @@ export function InvoicesTable() {
           id: "status",
           field: "status",
           headerName: "Status",
+          sortable: true,
+          render: (invoice) => (
+            <Badge
+              variant={(() => {
+                switch (invoice.status) {
+                  case "overdue":
+                    return "danger";
+                  case "paid":
+                    return "success";
+                  case "pending":
+                    return "info";
+                }
+              })()}
+            >
+              {invoice.status}
+            </Badge>
+          ),
+        },
+        {
+          id: "amount",
+          field: "amount",
+          headerName: "Amount",
+          sortable: true,
         },
         {
           id: "actions",
           field: "actions",
           headerName: " ",
+          render: (invoice) => <Actions invoice={invoice} />,
         },
       ]}
       rows={invoices.data.map((invoice) => ({
         ...invoice,
-        status: (
-          <Badge
-            variant={(() => {
-              switch (invoice.status) {
-                case "overdue":
-                  return "danger";
-                case "paid":
-                  return "success";
-                case "pending":
-                  return "info";
-              }
-            })()}
-          >
-            {invoice.status}
-          </Badge>
-        ),
-        actions: <Actions invoice={invoice} />,
+        actions: "fake",
       }))}
       renderSelectedActions={(rows) => (
         <>

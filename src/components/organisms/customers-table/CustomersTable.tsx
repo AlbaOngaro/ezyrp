@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { useState } from "react";
 import { Trigger, Root } from "@radix-ui/react-dialog";
 
 import { EditCustomerDialog } from "../edit-customer-dialog/EditCustomerDialog";
@@ -32,7 +32,7 @@ export function CustomersTable() {
   const customers = useCustomers();
 
   return (
-    <Table<Omit<Customer, "workspace"> & { actions: ReactElement }>
+    <Table<Omit<Customer, "workspace"> & { actions: string }>
       withMultiSelect
       className="px-12"
       columns={[
@@ -61,11 +61,12 @@ export function CustomersTable() {
           id: "actions",
           field: "actions",
           headerName: " ",
+          render: (customer) => <Actions customer={customer} />,
         },
       ]}
       rows={customers.data.map((customer) => ({
         ...customer,
-        actions: <Actions customer={customer} />,
+        actions: "fake",
       }))}
       renderSelectedActions={(rows) => (
         <>
