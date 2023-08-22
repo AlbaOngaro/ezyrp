@@ -16,11 +16,15 @@ export class InvoicesService {
   ): Promise<Omit<Invoice, "workspace">[]> {
     await surreal.authenticate(this.token);
 
+    console.debug(JSON.stringify(invoices));
+
     const result = await surreal.query<Invoice[]>(`
-      INSERT INTO invoice (customer, description, status, amount) VALUES ${invoices
+      INSERT INTO invoice (customer, description, status, items) VALUES ${invoices
         .map(
-          ({ customer, description, status, amount }) =>
-            `('${customer.id}', '${description}', '${status}', ${amount})`,
+          ({ customer, description, status, items }) =>
+            `('${customer.id}', '${description}', '${status}', ${JSON.stringify(
+              items,
+            )})`,
         )
         .join(",")};
     `);
@@ -36,7 +40,13 @@ export class InvoicesService {
   async read(id: Invoice["id"]): Promise<Omit<Invoice, "workspace">> {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.select<Invoice>(id);
+    const result = await surreal.query<Invoice[]>(
+      `SELECT 
+        *, 
+        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount
+      FROM ${id}
+      FETCH customer`,
+    );
     return invoice.omit({ workspace: true }).parse(result[0]);
   }
 
@@ -44,7 +54,11 @@ export class InvoicesService {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Invoice[]>(
-      `SELECT * FROM invoice FETCH customer`,
+      `SELECT 
+        *, 
+        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount
+      FROM invoice
+      FETCH customer`,
     );
 
     try {
@@ -56,7 +70,9 @@ export class InvoicesService {
   }
 
   async update(
-    invoices: (Partial<Omit<Invoice, "workspace">> & { id: Invoice["id"] })[],
+    invoices: (Partial<Omit<Invoice, "workspace" | "amount">> & {
+      id: Invoice["id"];
+    })[],
   ): Promise<void> {
     await surreal.authenticate(this.token);
 

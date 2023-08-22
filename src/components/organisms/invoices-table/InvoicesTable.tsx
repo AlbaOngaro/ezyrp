@@ -30,8 +30,8 @@ export function InvoicesTable() {
   const invoices = useInvoices();
 
   return (
-    <Table
-      withMultiSelect
+    // @ts-ignore
+    <Table<Omit<Invoice, "workspace"> & { actions: string }>
       className="px-12"
       columns={[
         {
@@ -71,6 +71,7 @@ export function InvoicesTable() {
           field: "amount",
           headerName: "Amount",
           sortable: true,
+          render: (row) => (row.amount / 100).toFixed(2),
         },
         {
           id: "actions",

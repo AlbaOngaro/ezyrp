@@ -17,14 +17,22 @@ export function useInvoices() {
     data,
     error,
     isLoading,
-    create: (customers: Omit<Invoice, "id" | "workspace">[]) =>
+    create: (invoices: Omit<Invoice, "id" | "workspace">[]) =>
       mutate(() => {
         fetch("/api/invoices", {
           method: "POST",
           headers: {
             "content-type": "application/json",
           },
-          body: JSON.stringify(customers),
+          body: JSON.stringify(
+            invoices.map((invoice) => ({
+              ...invoice,
+              items: invoice.items.map((item) => ({
+                ...item,
+                price: item.price * 100,
+              })),
+            })),
+          ),
         }).then((res) => res.json());
 
         return getInvoices();

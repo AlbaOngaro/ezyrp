@@ -31,6 +31,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
     status: "pending",
     customer: customers.data[0],
     amount: 0,
+    items: [],
   });
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
         status: "pending",
         customer: customers.data[0],
         amount: 0,
+        items: [],
       });
       setIsOpen(false);
     } catch (error: unknown) {
@@ -63,32 +65,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
       description="Add a new invoice to your database"
     >
       <Form className="mt-2 flex flex-col gap-2" onSubmit={handleSubmit}>
-        <Select
-          label="Status"
-          name="status"
-          defaultValue={invoice.status}
-          onChange={(status) =>
-            setInvoice((curr) => ({
-              ...curr,
-              status: status as Invoice["status"],
-            }))
-          }
-          options={[
-            {
-              label: "Pending",
-              value: "pending",
-            },
-            {
-              label: "Paid",
-              value: "paid",
-            },
-            {
-              label: "Overdue",
-              value: "overdue",
-            },
-          ]}
-        />
-
+        <h6 className="uppercase text-indigo-700 font-bold my-2">bill to</h6>
         <Select
           label="Customer"
           name="customer"
@@ -105,7 +82,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
         />
 
         <TextArea
-          label="Description"
+          label="Project Description"
           name="description"
           value={invoice.description}
           onChange={(e) =>
@@ -114,26 +91,113 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
               description: e.target.value,
             }))
           }
-          required
-          validations={{
-            valueMissing: "This field is required",
-          }}
         />
 
-        <Input
-          label="Amount"
-          name="amount"
-          type="number"
-          value={invoice.amount}
-          onChange={(e) =>
-            setInvoice((curr) => ({
-              ...curr,
-              amount: Number(e.target.value),
-            }))
-          }
-        />
+        <h6 className="uppercase text-indigo-700 font-bold my-2">
+          invoice items
+        </h6>
+        <ul className="flex flex-col gap-2">
+          <li className="grid grid-cols-12 gap-2">
+            <label className="col-span-4 flex flex-col text-sm font-bold text-gray-800">
+              Item name
+            </label>
+            <label className="col-span-2 flex flex-col text-sm font-bold text-gray-800">
+              Qty
+            </label>
+            <label className="col-span-3 flex flex-col text-sm font-bold text-gray-800">
+              Price
+            </label>
+            <label className="flex flex-col text-sm font-bold text-gray-800">
+              Total
+            </label>
+          </li>
+          {invoice.items.map((item, i) => (
+            <li key={i} className="grid grid-cols-12 gap-2">
+              <Input
+                className="min-w-0 col-span-4"
+                name={`item.${i}.name`}
+                value={item.name}
+                onChange={(e) =>
+                  setInvoice((curr) => ({
+                    ...curr,
+                    items: curr.items.toSpliced(i, 1, {
+                      ...curr.items[i],
+                      name: e.target.value,
+                    }),
+                  }))
+                }
+              />
 
-        <Button size="lg" className="w-fit min-w-[100px] mt-4 ml-auto">
+              <Input
+                className="min-w-0 col-span-2"
+                name={`item.${i}.quantity`}
+                type="number"
+                min={0}
+                value={item.quantity}
+                onChange={(e) =>
+                  setInvoice((curr) => ({
+                    ...curr,
+                    items: curr.items.toSpliced(i, 1, {
+                      ...curr.items[i],
+                      quantity: Number(e.target.value),
+                    }),
+                  }))
+                }
+              />
+
+              <Input
+                className="min-w-0 col-span-3"
+                name={`item.${i}.price`}
+                type="number"
+                value={item.price}
+                min={0}
+                step={0.01}
+                onChange={(e) =>
+                  setInvoice((curr) => ({
+                    ...curr,
+                    items: curr.items.toSpliced(i, 1, {
+                      ...curr.items[i],
+                      price: Number(e.target.value),
+                    }),
+                  }))
+                }
+              />
+
+              <strong className="flex items-center col-span-3">
+                {(item.quantity * item.price).toFixed(2)}
+              </strong>
+            </li>
+          ))}
+
+          <li>
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={() =>
+                setInvoice((curr) => ({
+                  ...curr,
+                  items: [
+                    ...curr.items,
+                    {
+                      name: "",
+                      quantity: 0,
+                      price: 0,
+                    },
+                  ],
+                }))
+              }
+            >
+              Add item
+            </Button>
+          </li>
+        </ul>
+
+        <Button
+          type="submit"
+          size="lg"
+          className="w-fit min-w-[100px] mt-4 ml-auto"
+        >
           Save
         </Button>
       </Form>

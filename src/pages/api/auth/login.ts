@@ -10,6 +10,7 @@ import { credentials, user } from "lib/schema/auth";
 const handler: NextApiHandler = async (req, res) => {
   try {
     const { password, email } = credentials
+      .partial({ workspace: true })
       .omit({ username: true })
       .parse(req.body);
 
@@ -35,7 +36,6 @@ const handler: NextApiHandler = async (req, res) => {
     const record = await (surreal as Surreal).info<User>();
     res.json(user.omit({ password: true }).parse(record));
   } catch (error: unknown) {
-    console.error(error);
     res.status(401);
   }
 

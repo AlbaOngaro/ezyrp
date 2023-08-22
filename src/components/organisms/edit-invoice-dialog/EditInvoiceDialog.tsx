@@ -9,7 +9,7 @@ import { TextArea } from "components/atoms/textarea/TextArea";
 import { Select } from "components/atoms/select/Select";
 import { useCustomers } from "hooks/useCustomers";
 
-interface Props extends Omit<Invoice, "workspace"> {
+interface Props extends Omit<Invoice, "workspace" | "amount"> {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -18,17 +18,21 @@ export function EditInvoiceDialog({
   customer,
   description,
   status,
+  items,
   setIsOpen,
 }: Props) {
   const customers = useCustomers();
   const invoices = useInvoices();
 
-  const [invoice, setInvoice] = useState<Omit<Invoice, "workspace">>({
-    id,
-    customer,
-    description,
-    status,
-  });
+  const [invoice, setInvoice] = useState<Omit<Invoice, "workspace" | "amount">>(
+    {
+      id,
+      customer,
+      description,
+      status,
+      items,
+    },
+  );
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
