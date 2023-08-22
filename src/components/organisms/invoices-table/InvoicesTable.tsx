@@ -32,6 +32,7 @@ export function InvoicesTable() {
   return (
     // @ts-ignore
     <Table<Omit<Invoice, "workspace"> & { actions: string }>
+      withMultiSelect
       className="px-12"
       columns={[
         {

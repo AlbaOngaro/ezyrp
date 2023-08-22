@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { Root as Form } from "@radix-ui/react-form";
+import { format } from "date-fns";
 
 import { Invoice, Customer } from "lib/types";
 
@@ -32,6 +33,8 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
     customer: customers.data[0],
     amount: 0,
     items: [],
+    due: new Date().toISOString(),
+    emitted: new Date().toISOString(),
   });
 
   useEffect(() => {
@@ -52,6 +55,8 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
         customer: customers.data[0],
         amount: 0,
         items: [],
+        due: new Date().toISOString(),
+        emitted: new Date().toISOString(),
       });
       setIsOpen(false);
     } catch (error: unknown) {
@@ -81,6 +86,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
           }
         />
 
+        <h6 className="uppercase text-indigo-700 font-bold my-2">details</h6>
         <TextArea
           label="Project Description"
           name="description"
@@ -92,6 +98,35 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
             }))
           }
         />
+
+        <div className="flex flex-row w-full gap-2">
+          <Input
+            className="w-full"
+            label="Invoice Date"
+            name="emitted"
+            type="date"
+            value={format(new Date(invoice.emitted), "yyyy-MM-dd")}
+            onChange={(e) =>
+              setInvoice((curr) => ({
+                ...curr,
+                emitted: new Date(e.target.value).toISOString(),
+              }))
+            }
+          />
+          <Input
+            className="w-full"
+            label="Due Date"
+            name="due"
+            type="date"
+            value={format(new Date(invoice.due), "yyyy-MM-dd")}
+            onChange={(e) =>
+              setInvoice((curr) => ({
+                ...curr,
+                due: new Date(e.target.value).toISOString(),
+              }))
+            }
+          />
+        </div>
 
         <h6 className="uppercase text-indigo-700 font-bold my-2">
           invoice items

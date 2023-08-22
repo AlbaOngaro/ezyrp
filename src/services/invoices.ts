@@ -16,15 +16,13 @@ export class InvoicesService {
   ): Promise<Omit<Invoice, "workspace">[]> {
     await surreal.authenticate(this.token);
 
-    console.debug(JSON.stringify(invoices));
-
     const result = await surreal.query<Invoice[]>(`
-      INSERT INTO invoice (customer, description, status, items) VALUES ${invoices
+      INSERT INTO invoice (customer, description, status, items, due, emitted) VALUES ${invoices
         .map(
-          ({ customer, description, status, items }) =>
+          ({ customer, description, status, items, due, emitted }) =>
             `('${customer.id}', '${description}', '${status}', ${JSON.stringify(
               items,
-            )})`,
+            )}, '${due}' ,'${emitted}')`,
         )
         .join(",")};
     `);
@@ -32,7 +30,6 @@ export class InvoicesService {
     try {
       return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
     } catch (error: unknown) {
-      console.error(error);
       return [];
     }
   }
@@ -43,7 +40,8 @@ export class InvoicesService {
     const result = await surreal.query<Invoice[]>(
       `SELECT 
         *, 
-        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount
+        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+        IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
       FROM ${id}
       FETCH customer`,
     );
@@ -56,7 +54,8 @@ export class InvoicesService {
     const result = await surreal.query<Invoice[]>(
       `SELECT 
         *, 
-        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount
+        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+        IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
       FROM invoice
       FETCH customer`,
     );
@@ -64,7 +63,6 @@ export class InvoicesService {
     try {
       return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
     } catch (error: unknown) {
-      console.debug(error);
       return [];
     }
   }

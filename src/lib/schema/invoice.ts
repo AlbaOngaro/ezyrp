@@ -18,4 +18,7 @@ export const invoice = z.object({
 
   items: z.array(item).default([]),
   amount: z.number().default(0),
+
+  due: z.string().datetime().default(new Date().toISOString()),
+  emitted: z.string().datetime().default(new Date().toISOString()),
 });

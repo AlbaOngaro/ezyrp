@@ -5,6 +5,7 @@ import { twMerge } from "lib/utils/twMerge";
 interface Option {
   label: string;
   value: string;
+  disabled?: boolean;
 }
 
 interface Props {
@@ -60,9 +61,10 @@ export function Select({
               {options.map((option) => (
                 <RUISelect.Item
                   key={option.value}
+                  disabled={option.disabled}
                   value={option.value}
                   className={twMerge(
-                    "text-dark-800 px-4 py-1 flex items-center justify-between relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-indigo-500 data-[highlighted]:text-white",
+                    "text-dark-800 px-4 py-1 flex items-center justify-between relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-indigo-500 data-[highlighted]:text-white data-[disabled]:text-gray-300",
                   )}
                 >
                   <RUISelect.ItemText>{option.label}</RUISelect.ItemText>

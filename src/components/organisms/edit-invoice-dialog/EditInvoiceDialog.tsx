@@ -19,6 +19,8 @@ export function EditInvoiceDialog({
   description,
   status,
   items,
+  emitted,
+  due,
   setIsOpen,
 }: Props) {
   const customers = useCustomers();
@@ -31,6 +33,8 @@ export function EditInvoiceDialog({
       description,
       status,
       items,
+      emitted,
+      due,
     },
   );
 
@@ -61,10 +65,6 @@ export function EditInvoiceDialog({
               description: e.target.value,
             }))
           }
-          required
-          validations={{
-            valueMissing: "This field is required",
-          }}
         />
 
         <Select
@@ -81,14 +81,16 @@ export function EditInvoiceDialog({
             {
               label: "Pending",
               value: "pending",
-            },
-            {
-              label: "Paid",
-              value: "paid",
+              disabled: true,
             },
             {
               label: "Overdue",
               value: "overdue",
+              disabled: true,
+            },
+            {
+              label: "Paid",
+              value: "paid",
             },
           ]}
         />
