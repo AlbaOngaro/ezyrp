@@ -5,16 +5,102 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  DotsVerticalIcon,
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
   MinusIcon,
 } from "@radix-ui/react-icons";
+import * as ContextMenu from "@radix-ui/react-context-menu";
 
 import { Props, Row, Sort } from "./types";
 import { twMerge } from "lib/utils/twMerge";
+
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
 
 const DEFAULT_PAGE_SIZE = 10;
+
+function TableRowRenderer<R extends Row = Row>({
+  withContextMenu,
+  withMultiSelect,
+  selectedRows,
+  setSelectedRows,
+  columns,
+  row,
+}: Pick<Props<R>, "withContextMenu" | "withMultiSelect" | "columns"> & {
+  row: R;
+  selectedRows: R[];
+  setSelectedRows: (rows: R[]) => void;
+}) {
+  const button = useRef<HTMLButtonElement | null>(null);
+  const tr = useRef<HTMLTableRowElement | null>(null);
+
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger disabled={!withContextMenu} asChild>
+        <tr
+          ref={tr}
+          className={twMerge("hover:bg-gray-50 group", {
+            "bg-gray-50": selectedRows.includes(row),
+          })}
+        >
+          {withMultiSelect && (
+            <td className="relative px-7 sm:w-12 sm:px-6">
+              <Checkbox
+                checked={selectedRows.includes(row)}
+                onChange={(e) =>
+                  setSelectedRows(
+                    e.target.checked
+                      ? [...selectedRows, row]
+                      : selectedRows.filter((r) => r !== row),
+                  )
+                }
+              />
+            </td>
+          )}
+
+          {columns.map(({ field, render }) => (
+            <td
+              key={field}
+              className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+            >
+              {typeof render === "function"
+                ? render(row)
+                : (get(row, field, null) as ReactNode)}
+            </td>
+          ))}
+
+          {withContextMenu && (
+            <td>
+              <button
+                className="flex justify-center items-center p-2 text-gray-700 rounded-md transition-colors duration-300 hover:bg-gray-200"
+                ref={button}
+                onClick={() => {
+                  tr.current?.dispatchEvent(
+                    new MouseEvent("contextmenu", {
+                      bubbles: true,
+                      clientX: button.current?.getBoundingClientRect().x,
+                      clientY: button.current?.getBoundingClientRect().y,
+                    }),
+                  );
+                }}
+              >
+                <DotsVerticalIcon />
+              </button>
+            </td>
+          )}
+        </tr>
+      </ContextMenu.Trigger>
+
+      <ContextMenu.Portal>
+        <ContextMenu.Content className="min-w-[220px] bg-white rounded-md overflow-hidden shadow-lg">
+          <ContextMenu.Item className="text-sm flex flex-row justify-between px-4 py-1 text-gray-800 hover:bg-gray-100 data-[disabled]:text-gray-400 data-[disabled]:bg-gray-50 data-[disabled]:hover:bg-gray-50">
+            Back <div className="flex justify-center items-center">⌘+[</div>
+          </ContextMenu.Item>
+        </ContextMenu.Content>
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
+}
 
 export function Table<R extends Row = Row>({
   className,
@@ -24,6 +110,7 @@ export function Table<R extends Row = Row>({
   onSelect,
   pagination,
   renderSelectedActions,
+  withContextMenu,
 }: Props<R>) {
   const checkbox = useRef<HTMLInputElement | null>(null);
 
@@ -160,38 +247,15 @@ export function Table<R extends Row = Row>({
             })
             .slice(page * pageSize, (page + 1) * pageSize)
             .map((row) => (
-              <tr
+              <TableRowRenderer
                 key={row.id}
-                className={twMerge("hover:bg-gray-50 group", {
-                  "bg-gray-50": selectedRows.includes(row),
-                })}
-              >
-                {withMultiSelect && (
-                  <td className="relative px-7 sm:w-12 sm:px-6">
-                    <Checkbox
-                      checked={selectedRows.includes(row)}
-                      onChange={(e) =>
-                        setSelectedRows(
-                          e.target.checked
-                            ? [...selectedRows, row]
-                            : selectedRows.filter((r) => r !== row),
-                        )
-                      }
-                    />
-                  </td>
-                )}
-
-                {columns.map(({ field, render }) => (
-                  <td
-                    key={field}
-                    className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                  >
-                    {typeof render === "function"
-                      ? render(row)
-                      : (get(row, field, null) as ReactNode)}
-                  </td>
-                ))}
-              </tr>
+                row={row}
+                withContextMenu={withContextMenu}
+                withMultiSelect={withMultiSelect}
+                columns={columns}
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+              />
             ))}
         </tbody>
 

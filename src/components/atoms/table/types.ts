@@ -34,6 +34,7 @@ export interface Props<R extends Row = Row> {
   onSelect?: (rows: R[]) => void;
   renderSelectedActions?: (rows: Row[]) => ReactNode;
   pagination?: Pagination;
+  withContextMenu?: boolean;
 }
 
 export interface Sort<R extends Row = Row> {
