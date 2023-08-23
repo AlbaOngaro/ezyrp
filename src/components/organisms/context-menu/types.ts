@@ -1,38 +1,38 @@
 import { ContextMenuSubContentProps } from "@radix-ui/react-context-menu";
-import { ReactElement } from "react";
+import { ReactNode } from "react";
 
 interface ContextMenuLabelItem {
   type: "label";
-  label: ReactElement;
+  label: ReactNode;
 }
 
 interface ContextMenuBaseItem {
   type: "item";
-  label: ReactElement;
+  label: ReactNode;
   onClick: () => void;
 }
 
 interface ContextMenuGroupItem {
   type: "group";
-  label: ReactElement;
+  label: ReactNode;
   children: ContextMenuBaseItem[];
 }
 
 interface ContextMenuCheckboxItem {
   type: "checkbox";
-  label: ReactElement;
+  label: ReactNode;
   checked?: boolean;
   onCheckedChange?: (state: boolean) => void;
 }
 
 interface ContextMenuRadioItem {
   type: "radio";
-  label: ReactElement;
+  label: ReactNode;
   value: string;
   onValueChange: (value: string) => void;
   children: {
     value: string;
-    label: ReactElement;
+    label: ReactNode;
   }[];
 }
 
@@ -42,7 +42,7 @@ interface ContextMenuSeparatorItem {
 
 interface ContextMenuSubItem {
   type: "sub";
-  label: ReactElement;
+  label: ReactNode;
   children: ContextMenuItem[];
 }
 

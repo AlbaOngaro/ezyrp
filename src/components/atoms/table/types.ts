@@ -29,9 +29,9 @@ interface Pagination {
   pageSize?: number;
 }
 
-type TableContextMenuBaseItem<R extends Row = Row> = Extract<
-  ContextMenuItem,
-  { type: "item" }
+type TableContextMenuBaseItem<R extends Row = Row> = Omit<
+  Extract<ContextMenuItem, { type: "item" }>,
+  "onClick"
 > & {
   onClick: (row: R) => void;
 };
@@ -51,7 +51,10 @@ type TableContextMenuRadioItem<R extends Row = Row> = Extract<
 };
 
 export type TableContextMenuItem<R extends Row = Row> =
-  | ContextMenuItem
+  | Exclude<
+      ContextMenuItem,
+      { type: "item" } | { type: "checkbox" } | { type: "radio" }
+    >
   | TableContextMenuBaseItem<R>
   | TableContextMenuCheckboxItem<R>
   | TableContextMenuRadioItem<R>;
