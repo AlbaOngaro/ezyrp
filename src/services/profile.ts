@@ -1,12 +1,11 @@
 import { profile } from "lib/schema/profile";
 import { surreal } from "lib/surreal";
 import { Profile } from "lib/types";
+import { Service } from "services/service";
 
-export class ProfileService {
-  private token: string;
-
+export class ProfileService extends Service {
   constructor(token: string) {
-    this.token = token;
+    super(token);
   }
 
   async read() {

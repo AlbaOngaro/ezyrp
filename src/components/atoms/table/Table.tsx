@@ -5,16 +5,134 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  DotsVerticalIcon,
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
   MinusIcon,
 } from "@radix-ui/react-icons";
+import { Trigger, Portal, Root } from "@radix-ui/react-context-menu";
 
-import { Props, Row, Sort } from "./types";
+import { Props, Row, Sort, TableContextMenuItem } from "./types";
 import { twMerge } from "lib/utils/twMerge";
+
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
+import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
 
 const DEFAULT_PAGE_SIZE = 10;
+
+function wrapWithRow<R extends Row = Row>(
+  item: TableContextMenuItem<R>,
+  row: R,
+): TableContextMenuItem<R> {
+  return Object.entries(item).reduce<TableContextMenuItem<R>>(
+    (acc, [key, value]) => {
+      if (typeof value === "function") {
+        return {
+          ...acc,
+          [key]: (...args: unknown[]) => value(row, ...args),
+        };
+      }
+
+      if (Array.isArray(value)) {
+        return {
+          ...acc,
+          [key]: value.map((entry) => wrapWithRow(entry, row)),
+        };
+      }
+
+      return {
+        ...acc,
+        [key]: value,
+      };
+    },
+    {} as TableContextMenuItem<R>,
+  );
+}
+
+function TableRowRenderer<R extends Row = Row>({
+  withContextMenu,
+  withMultiSelect,
+  selectedRows,
+  setSelectedRows,
+  columns,
+  row,
+  contextMenuItems = [],
+}: Pick<
+  Props<R>,
+  "withContextMenu" | "withMultiSelect" | "columns" | "contextMenuItems"
+> & {
+  row: R;
+  selectedRows: R[];
+  setSelectedRows: (rows: R[]) => void;
+}) {
+  const button = useRef<HTMLButtonElement | null>(null);
+  const tr = useRef<HTMLTableRowElement | null>(null);
+
+  return (
+    <Root>
+      <Trigger disabled={!withContextMenu} asChild>
+        <tr
+          ref={tr}
+          className={twMerge("hover:bg-gray-50 group", {
+            "bg-gray-50": selectedRows.includes(row),
+          })}
+        >
+          {withMultiSelect && (
+            <td className="relative px-7 sm:w-12 sm:px-6">
+              <Checkbox
+                checked={selectedRows.includes(row)}
+                onChange={(e) =>
+                  setSelectedRows(
+                    e.target.checked
+                      ? [...selectedRows, row]
+                      : selectedRows.filter((r) => r !== row),
+                  )
+                }
+              />
+            </td>
+          )}
+
+          {columns.map(({ field, render }) => (
+            <td
+              key={field}
+              className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+            >
+              {typeof render === "function"
+                ? render(row)
+                : (get(row, field, null) as ReactNode)}
+            </td>
+          ))}
+
+          {withContextMenu && (
+            <td>
+              <button
+                className="flex justify-center items-center p-2 text-gray-700 rounded-md transition-colors duration-300 hover:bg-gray-200"
+                ref={button}
+                onClick={() => {
+                  tr.current?.dispatchEvent(
+                    new MouseEvent("contextmenu", {
+                      bubbles: true,
+                      clientX: button.current?.getBoundingClientRect().x,
+                      clientY: button.current?.getBoundingClientRect().y,
+                    }),
+                  );
+                }}
+              >
+                <DotsVerticalIcon />
+              </button>
+            </td>
+          )}
+        </tr>
+      </Trigger>
+
+      <Portal>
+        <ContextMenu
+          items={contextMenuItems.map((item) => wrapWithRow(item, row))}
+        />
+      </Portal>
+    </Root>
+  );
+}
 
 export function Table<R extends Row = Row>({
   className,
@@ -24,6 +142,8 @@ export function Table<R extends Row = Row>({
   onSelect,
   pagination,
   renderSelectedActions,
+  withContextMenu,
+  contextMenuItems,
 }: Props<R>) {
   const checkbox = useRef<HTMLInputElement | null>(null);
 
@@ -160,38 +280,16 @@ export function Table<R extends Row = Row>({
             })
             .slice(page * pageSize, (page + 1) * pageSize)
             .map((row) => (
-              <tr
+              <TableRowRenderer
                 key={row.id}
-                className={twMerge("hover:bg-gray-50 group", {
-                  "bg-gray-50": selectedRows.includes(row),
-                })}
-              >
-                {withMultiSelect && (
-                  <td className="relative px-7 sm:w-12 sm:px-6">
-                    <Checkbox
-                      checked={selectedRows.includes(row)}
-                      onChange={(e) =>
-                        setSelectedRows(
-                          e.target.checked
-                            ? [...selectedRows, row]
-                            : selectedRows.filter((r) => r !== row),
-                        )
-                      }
-                    />
-                  </td>
-                )}
-
-                {columns.map(({ field, render }) => (
-                  <td
-                    key={field}
-                    className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-                  >
-                    {typeof render === "function"
-                      ? render(row)
-                      : (get(row, field, null) as ReactNode)}
-                  </td>
-                ))}
-              </tr>
+                row={row}
+                withContextMenu={withContextMenu}
+                withMultiSelect={withMultiSelect}
+                columns={columns}
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+                contextMenuItems={contextMenuItems}
+              />
             ))}
         </tbody>
 
