@@ -13,6 +13,7 @@ export function InvoicesTable() {
     <Table<Omit<Invoice, "workspace"> & { actions: string }>
       withMultiSelect
       withContextMenu
+      contextMenuItems={[]}
       className="px-12"
       columns={[
         {

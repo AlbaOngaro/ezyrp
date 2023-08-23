@@ -3,12 +3,11 @@ import { Invoice } from "lib/types";
 
 import { surreal } from "lib/surreal";
 import { invoice } from "lib/schema/invoice";
+import { Service } from "services/service";
 
-export class InvoicesService {
-  private token: string;
-
+export class InvoicesService extends Service {
   constructor(token: string) {
-    this.token = token;
+    super(token);
   }
 
   async create(

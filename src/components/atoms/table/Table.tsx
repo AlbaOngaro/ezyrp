@@ -10,14 +10,44 @@ import {
   DoubleArrowRightIcon,
   MinusIcon,
 } from "@radix-ui/react-icons";
-import * as ContextMenu from "@radix-ui/react-context-menu";
+import { Trigger, Portal, Root } from "@radix-ui/react-context-menu";
 
-import { Props, Row, Sort } from "./types";
+import { Props, Row, Sort, TableContextMenuItem } from "./types";
 import { twMerge } from "lib/utils/twMerge";
 
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
+import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
 
 const DEFAULT_PAGE_SIZE = 10;
+
+function wrapWithRow<R extends Row = Row>(
+  item: TableContextMenuItem<R>,
+  row: R,
+): TableContextMenuItem<R> {
+  return Object.entries(item).reduce<TableContextMenuItem<R>>(
+    (acc, [key, value]) => {
+      if (typeof value === "function") {
+        return {
+          ...acc,
+          [key]: (...args: unknown[]) => value(row, ...args),
+        };
+      }
+
+      if (Array.isArray(value)) {
+        return {
+          ...acc,
+          [key]: value.map((entry) => wrapWithRow(entry, row)),
+        };
+      }
+
+      return {
+        ...acc,
+        [key]: value,
+      };
+    },
+    {} as TableContextMenuItem<R>,
+  );
+}
 
 function TableRowRenderer<R extends Row = Row>({
   withContextMenu,
@@ -26,7 +56,11 @@ function TableRowRenderer<R extends Row = Row>({
   setSelectedRows,
   columns,
   row,
-}: Pick<Props<R>, "withContextMenu" | "withMultiSelect" | "columns"> & {
+  contextMenuItems = [],
+}: Pick<
+  Props<R>,
+  "withContextMenu" | "withMultiSelect" | "columns" | "contextMenuItems"
+> & {
   row: R;
   selectedRows: R[];
   setSelectedRows: (rows: R[]) => void;
@@ -35,8 +69,8 @@ function TableRowRenderer<R extends Row = Row>({
   const tr = useRef<HTMLTableRowElement | null>(null);
 
   return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger disabled={!withContextMenu} asChild>
+    <Root>
+      <Trigger disabled={!withContextMenu} asChild>
         <tr
           ref={tr}
           className={twMerge("hover:bg-gray-50 group", {
@@ -89,16 +123,14 @@ function TableRowRenderer<R extends Row = Row>({
             </td>
           )}
         </tr>
-      </ContextMenu.Trigger>
+      </Trigger>
 
-      <ContextMenu.Portal>
-        <ContextMenu.Content className="min-w-[220px] bg-white rounded-md overflow-hidden shadow-lg">
-          <ContextMenu.Item className="text-sm flex flex-row justify-between px-4 py-1 text-gray-800 hover:bg-gray-100 data-[disabled]:text-gray-400 data-[disabled]:bg-gray-50 data-[disabled]:hover:bg-gray-50">
-            Back <div className="flex justify-center items-center">⌘+[</div>
-          </ContextMenu.Item>
-        </ContextMenu.Content>
-      </ContextMenu.Portal>
-    </ContextMenu.Root>
+      <Portal>
+        <ContextMenu
+          items={contextMenuItems.map((item) => wrapWithRow(item, row))}
+        />
+      </Portal>
+    </Root>
   );
 }
 
@@ -111,6 +143,7 @@ export function Table<R extends Row = Row>({
   pagination,
   renderSelectedActions,
   withContextMenu,
+  contextMenuItems,
 }: Props<R>) {
   const checkbox = useRef<HTMLInputElement | null>(null);
 
@@ -255,6 +288,7 @@ export function Table<R extends Row = Row>({
                 columns={columns}
                 selectedRows={selectedRows}
                 setSelectedRows={setSelectedRows}
+                contextMenuItems={contextMenuItems}
               />
             ))}
         </tbody>
