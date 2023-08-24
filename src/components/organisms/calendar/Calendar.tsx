@@ -51,9 +51,38 @@ const views = [
   {
     value: "year",
     label: "Year view",
-    disabled: true,
+    disabled: false,
   },
 ];
+
+function generateMonth(base: Date): Day[] {
+  const total = getDaysInMonth(base);
+
+  const year = base.getFullYear();
+  const month = base.getMonth();
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const lastDay = new Date(year, month, total).getDay();
+
+  return [
+    Array.from(
+      { length: firstDay - 1 > 0 ? firstDay - 1 : 6 },
+      (_, day) => new Date(year, month, day * -1),
+    ).reverse(),
+    Array.from({ length: total }, (_, day) => new Date(year, month, day + 1)),
+    Array.from(
+      { length: lastDay !== 0 ? 7 - lastDay : 0 },
+      (_, day) => new Date(year, month, total + (day + 1)),
+    ),
+  ].flatMap((dates) =>
+    dates.map((date) => ({
+      date,
+      isCurrentMonth: isSameMonth(date, base),
+      isToday: isToday(date),
+      events: [],
+    })),
+  );
+}
 
 export function Calendar({ className }: Props) {
   const [selected, setSelected] = useState(() => new Date());
@@ -63,35 +92,7 @@ export function Calendar({ className }: Props) {
     switch (view) {
       case "month":
       case "day": {
-        const total = getDaysInMonth(selected);
-
-        const year = selected.getFullYear();
-        const month = selected.getMonth();
-
-        const firstDay = new Date(year, month, 1).getDay();
-        const lastDay = new Date(year, month, total).getDay();
-
-        return [
-          Array.from(
-            { length: firstDay - 1 > 0 ? firstDay - 1 : 6 },
-            (_, day) => new Date(year, month, day * -1),
-          ).reverse(),
-          Array.from(
-            { length: total },
-            (_, day) => new Date(year, month, day + 1),
-          ),
-          Array.from(
-            { length: lastDay !== 0 ? 7 - lastDay : 0 },
-            (_, day) => new Date(year, month, total + (day + 1)),
-          ),
-        ].flatMap((dates) =>
-          dates.map((date) => ({
-            date,
-            isCurrentMonth: isSameMonth(date, selected),
-            isToday: isToday(date),
-            events: [],
-          })),
-        );
+        return generateMonth(selected);
       }
       case "week": {
         const year = selected.getFullYear();
@@ -138,6 +139,14 @@ export function Calendar({ className }: Props) {
                   </p>
                 </div>
               );
+            case "year":
+              return (
+                <h1 className="text-base font-semibold leading-6 text-gray-900">
+                  <time dateTime={selected.toISOString()}>
+                    {selected.getFullYear()}
+                  </time>
+                </h1>
+              );
             default:
               return (
                 <h1 className="text-base font-semibold leading-6 text-gray-900">
@@ -166,6 +175,8 @@ export function Calendar({ className }: Props) {
                       return new Date(year, month, date - 7);
                     case "day":
                       return new Date(year, month, date - 1);
+                    case "year":
+                      return new Date(year - 1, month, date);
                     default:
                       return curr;
                   }
@@ -199,6 +210,8 @@ export function Calendar({ className }: Props) {
                       return new Date(year, month, date + 7);
                     case "day":
                       return new Date(year, month, date + 1);
+                    case "year":
+                      return new Date(year + 1, month, date);
                     default:
                       return curr;
                   }
@@ -1025,6 +1038,64 @@ export function Calendar({ className }: Props) {
                     ))}
                   </div>
                 </div>
+              </div>
+            );
+          case "year":
+            return (
+              <div className="grid overflow-scroll max-w-3xl grid-cols-1 gap-x-8 gap-y-16 px-1 py-16 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 2xl:grid-cols-4">
+                {Array.from({ length: 12 }, (_, i) => {
+                  const month = selected;
+                  month.setMonth(i);
+
+                  return {
+                    name: format(month, "MMMM"),
+                    days: generateMonth(month),
+                  };
+                }).map((month) => (
+                  <section key={month.name} className="text-center">
+                    <h2 className="text-sm font-semibold text-gray-900">
+                      {month.name}
+                    </h2>
+                    <div className="mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500">
+                      <div>M</div>
+                      <div>T</div>
+                      <div>W</div>
+                      <div>T</div>
+                      <div>F</div>
+                      <div>S</div>
+                      <div>S</div>
+                    </div>
+                    <div className="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
+                      {month.days.map((day, dayIdx) => (
+                        <button
+                          key={day.date.toISOString()}
+                          type="button"
+                          className={twMerge(
+                            day.isCurrentMonth
+                              ? "bg-white text-gray-900"
+                              : "bg-gray-50 text-gray-400",
+                            dayIdx === 0 && "rounded-tl-lg",
+                            dayIdx === 6 && "rounded-tr-lg",
+                            dayIdx === month.days.length - 7 && "rounded-bl-lg",
+                            dayIdx === month.days.length - 1 && "rounded-br-lg",
+                            "py-1.5 hover:bg-gray-100 focus:z-10",
+                          )}
+                        >
+                          <time
+                            dateTime={day.date.toISOString()}
+                            className={twMerge(
+                              day.isToday &&
+                                "bg-indigo-600 font-semibold text-white",
+                              "mx-auto flex h-7 w-7 items-center justify-center rounded-full",
+                            )}
+                          >
+                            {format(day.date, "d")}
+                          </time>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                ))}
               </div>
             );
           default:
