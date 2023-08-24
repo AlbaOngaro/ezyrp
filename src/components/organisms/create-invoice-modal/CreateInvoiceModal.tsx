@@ -12,7 +12,7 @@ import { Invoice, Customer } from "lib/types";
 
 import { useInvoices } from "hooks/useInvoices";
 
-import { Dialog } from "components/atoms/dialog/Dialog";
+import { Modal } from "components/atoms/modal/Modal";
 import { Button } from "components/atoms/button/Button";
 import { Select } from "components/atoms/select/Select";
 import { useCustomers } from "hooks/useCustomers";
@@ -23,7 +23,7 @@ interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function CreateInvoiceDialog({ setIsOpen }: Props) {
+export function CreateInvoiceModal({ setIsOpen }: Props) {
   const invoices = useInvoices();
   const customers = useCustomers();
 
@@ -65,7 +65,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
   };
 
   return (
-    <Dialog
+    <Modal
       title="Create new invoice"
       description="Add a new invoice to your database"
     >
@@ -155,6 +155,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
                 onChange={(e) =>
                   setInvoice((curr) => ({
                     ...curr,
+                    // @ts-ignore
                     items: curr.items.toSpliced(i, 1, {
                       ...curr.items[i],
                       name: e.target.value,
@@ -172,6 +173,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
                 onChange={(e) =>
                   setInvoice((curr) => ({
                     ...curr,
+                    // @ts-ignore
                     items: curr.items.toSpliced(i, 1, {
                       ...curr.items[i],
                       quantity: Number(e.target.value),
@@ -190,6 +192,7 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
                 onChange={(e) =>
                   setInvoice((curr) => ({
                     ...curr,
+                    // @ts-ignore
                     items: curr.items.toSpliced(i, 1, {
                       ...curr.items[i],
                       price: Number(e.target.value),
@@ -236,6 +239,6 @@ export function CreateInvoiceDialog({ setIsOpen }: Props) {
           Save
         </Button>
       </Form>
-    </Dialog>
+    </Modal>
   );
 }

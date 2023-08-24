@@ -1,4 +1,8 @@
-import { Root } from "@radix-ui/react-dialog";
+import { Root as ModalRoot } from "@radix-ui/react-dialog";
+import {
+  Root as DialogRoot,
+  Trigger as DialogTrigger,
+} from "@radix-ui/react-alert-dialog";
 
 import { useState } from "react";
 import { Table } from "components/atoms/table/Table";
@@ -7,17 +11,20 @@ import { useInvoices } from "hooks/useInvoices";
 
 import { Button } from "components/atoms/button/Button";
 import { Badge } from "components/atoms/badge/Badge";
-import { EditInvoiceDialog } from "components/organisms/edit-invoice-dialog/EditInvoiceDialog";
+import { EditInvoiceModal } from "components/organisms/edit-invoice-modal/EditInvoiceModal";
+import { Dialog } from "components/atoms/dialog/Dialog";
 
 export function InvoicesTable() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const invoices = useInvoices();
 
   return (
     <>
-      {/* @ts-ignore */}
-      <Table<Invoice>
+      <Table<Omit<Invoice, "items">>
         withMultiSelect
         withContextMenu
         contextMenuItems={[
@@ -25,7 +32,8 @@ export function InvoicesTable() {
             type: "item",
             label: "Edit",
             onClick: (row) => {
-              setInvoice(row);
+              setInvoice(row as Invoice);
+              setIsModalOpen(true);
             },
           },
           {
@@ -34,7 +42,10 @@ export function InvoicesTable() {
           {
             type: "item",
             label: "Delete",
-            onClick: (row) => invoices.delete([row.id]),
+            onClick: (row) => {
+              setInvoice(row as Invoice);
+              setIsDialogOpen(true);
+            },
           },
         ]}
         className="px-12"
@@ -79,31 +90,41 @@ export function InvoicesTable() {
             render: (row) => (row.amount / 100).toFixed(2),
           },
         ]}
-        rows={invoices.data.map((invoice) => ({
-          ...invoice,
-          actions: "fake",
-        }))}
+        rows={invoices.data}
         renderSelectedActions={(rows) => (
-          <>
-            <Button variant="secondary" size="sm">
-              Bulk edit
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => invoices.delete(rows.map((row) => row.id))}
-            >
-              Delete all
-            </Button>
-          </>
+          <DialogRoot>
+            <DialogTrigger asChild>
+              <Button variant="danger" size="sm">
+                Delete all
+              </Button>
+            </DialogTrigger>
+
+            <Dialog
+              overlayClassname="!ml-0"
+              title="Do you really want to delete all the selected invoices?"
+              description="This action cannot be undone"
+              onConfirm={() => invoices.delete(rows.map((row) => row.id))}
+            />
+          </DialogRoot>
         )}
       />
-      <Root open={invoice !== null} onOpenChange={() => setInvoice(null)}>
-        <EditInvoiceDialog
+      <ModalRoot open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <EditInvoiceModal
           {...(invoice as Invoice)}
-          setIsOpen={() => setInvoice(null)}
+          setIsOpen={setIsModalOpen}
         />
-      </Root>
+      </ModalRoot>
+      <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog
+          title="Do you really want to delete this invoice?"
+          description="This action cannot be undone"
+          onConfirm={() => {
+            if (invoice) {
+              return invoices.delete([invoice.id]);
+            }
+          }}
+        />
+      </DialogRoot>
     </>
   );
 }

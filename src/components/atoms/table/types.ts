@@ -68,7 +68,7 @@ export interface Props<R extends Row = Row> {
   renderSelectedActions?: (rows: Row[]) => ReactNode;
   pagination?: Pagination;
   withContextMenu?: boolean;
-  contextMenuItems?: TableContextMenuItem[];
+  contextMenuItems?: TableContextMenuItem<R>[];
 }
 
 export interface Sort<R extends Row = Row> {

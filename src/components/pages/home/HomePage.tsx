@@ -2,7 +2,7 @@ import { Trigger, Root } from "@radix-ui/react-dialog";
 import { ReactElement, useState } from "react";
 
 import { Button } from "components/atoms/button/Button";
-import { CreateCustomerDialog } from "components/organisms/create-customer-dialog/CreateCustomerDialog";
+import { CreateCustomerModal } from "components/organisms/create-customer-modal/CreateCustomerModal";
 
 import { CustomersTable } from "components/organisms/customers-table/CustomersTable";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
@@ -28,7 +28,7 @@ export function HomePage() {
               <Button size="md">Add customer</Button>
             </Trigger>
 
-            <CreateCustomerDialog setIsOpen={setIsCreatingCustomer} />
+            <CreateCustomerModal setIsOpen={setIsCreatingCustomer} />
           </Root>
         </div>
       </div>

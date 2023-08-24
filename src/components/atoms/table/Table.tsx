@@ -17,36 +17,34 @@ import { twMerge } from "lib/utils/twMerge";
 
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
 import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
+import { ContextMenuItem } from "components/organisms/context-menu/types";
 
 const DEFAULT_PAGE_SIZE = 10;
 
 function wrapWithRow<R extends Row = Row>(
   item: TableContextMenuItem<R>,
   row: R,
-): TableContextMenuItem<R> {
-  return Object.entries(item).reduce<TableContextMenuItem<R>>(
-    (acc, [key, value]) => {
-      if (typeof value === "function") {
-        return {
-          ...acc,
-          [key]: (...args: unknown[]) => value(row, ...args),
-        };
-      }
-
-      if (Array.isArray(value)) {
-        return {
-          ...acc,
-          [key]: value.map((entry) => wrapWithRow(entry, row)),
-        };
-      }
-
+): ContextMenuItem {
+  return Object.entries(item).reduce<ContextMenuItem>((acc, [key, value]) => {
+    if (typeof value === "function") {
       return {
         ...acc,
-        [key]: value,
+        [key]: (...args: unknown[]) => value(row, ...args),
       };
-    },
-    {} as TableContextMenuItem<R>,
-  );
+    }
+
+    if (Array.isArray(value)) {
+      return {
+        ...acc,
+        [key]: value.map((entry) => wrapWithRow(entry, row)),
+      };
+    }
+
+    return {
+      ...acc,
+      [key]: value,
+    };
+  }, {} as ContextMenuItem);
 }
 
 function TableRowRenderer<R extends Row = Row>({

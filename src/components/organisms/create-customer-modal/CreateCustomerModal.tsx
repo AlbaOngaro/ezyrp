@@ -5,7 +5,7 @@ import { Customer } from "lib/types";
 
 import { useCustomers } from "hooks/useCustomers";
 
-import { Dialog } from "components/atoms/dialog/Dialog";
+import { Modal } from "components/atoms/modal/Modal";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 
@@ -13,17 +13,17 @@ interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const EMPTY_CUSTOMER: Omit<Customer, "id"> = {
+const EMPTY_CUSTOMER: Omit<Customer, "id" | "workspace"> = {
   email: "",
   name: "",
   phone: "",
 };
 
-export function CreateCustomerDialog({ setIsOpen }: Props) {
+export function CreateCustomerModal({ setIsOpen }: Props) {
   const { create } = useCustomers();
 
   const [customer, setCustomer] =
-    useState<Omit<Customer, "id">>(EMPTY_CUSTOMER);
+    useState<Omit<Customer, "id" | "workspace">>(EMPTY_CUSTOMER);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -38,7 +38,7 @@ export function CreateCustomerDialog({ setIsOpen }: Props) {
   };
 
   return (
-    <Dialog
+    <Modal
       title="Create new customer"
       description="Add a new customer to your database"
     >
@@ -99,6 +99,6 @@ export function CreateCustomerDialog({ setIsOpen }: Props) {
           Save
         </Button>
       </Form>
-    </Dialog>
+    </Modal>
   );
 }

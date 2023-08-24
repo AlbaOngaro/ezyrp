@@ -4,7 +4,7 @@ import { Trigger, Root } from "@radix-ui/react-dialog";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { Button } from "components/atoms/button/Button";
-import { CreateInvoiceDialog } from "components/organisms/create-invoice-dialog/CreateInvoiceDialog";
+import { CreateInvoiceModal } from "components/organisms/create-invoice-modal/CreateInvoiceModal";
 import { InvoicesTable } from "components/organisms/invoices-table/InvoicesTable";
 
 export function InvoicesPage() {
@@ -27,7 +27,7 @@ export function InvoicesPage() {
               <Button size="md">Add invoice</Button>
             </Trigger>
 
-            <CreateInvoiceDialog setIsOpen={setIsCreatingInvoice} />
+            <CreateInvoiceModal setIsOpen={setIsCreatingInvoice} />
           </Root>
         </div>
       </div>
