@@ -17,6 +17,7 @@ export function RegisterPage() {
     email: "",
     username: "",
     password: "",
+    workspace: "",
   });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {

@@ -13,7 +13,9 @@ import { Credentials, User } from "lib/types";
 interface AuthContextValue {
   register: (credentials: Credentials) => Promise<unknown>;
   logout: () => Promise<void>;
-  login: (credentials: Omit<Credentials, "username">) => Promise<unknown>;
+  login: (
+    credentials: Omit<Credentials, "username" | "workspace">,
+  ) => Promise<unknown>;
   user: User | null;
 }
 
@@ -84,7 +86,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const login = useCallback(
-    async (credentials: Omit<Credentials, "username">) => {
+    async (credentials: Omit<Credentials, "username" | "workspace">) => {
       try {
         await fetch("/api/auth/login", {
           method: "POST",

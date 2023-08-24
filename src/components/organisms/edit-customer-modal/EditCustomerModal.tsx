@@ -3,7 +3,7 @@ import { Root as Form } from "@radix-ui/react-form";
 
 import { Customer } from "lib/types";
 import { useCustomers } from "hooks/useCustomers";
-import { Dialog } from "components/atoms/dialog/Dialog";
+import { Modal } from "components/atoms/modal/Modal";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 
@@ -11,7 +11,7 @@ interface Props extends Omit<Customer, "workspace"> {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function EditCustomerDialog({
+export function EditCustomerModal({
   id,
   name,
   email,
@@ -39,7 +39,7 @@ export function EditCustomerDialog({
   };
 
   return (
-    <Dialog
+    <Modal
       title="Edit customer"
       description="Update a new customer in your database"
     >
@@ -100,6 +100,6 @@ export function EditCustomerDialog({
           Save
         </Button>
       </Form>
-    </Dialog>
+    </Modal>
   );
 }

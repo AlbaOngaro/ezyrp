@@ -2,7 +2,7 @@ import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
 import { Customer, Invoice } from "lib/types";
-import { Dialog } from "components/atoms/dialog/Dialog";
+import { Modal } from "components/atoms/modal/Modal";
 import { Button } from "components/atoms/button/Button";
 import { useInvoices } from "hooks/useInvoices";
 import { TextArea } from "components/atoms/textarea/TextArea";
@@ -13,7 +13,7 @@ interface Props extends Omit<Invoice, "workspace" | "amount"> {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function EditInvoiceDialog({
+export function EditInvoiceModal({
   id,
   customer,
   description,
@@ -50,7 +50,7 @@ export function EditInvoiceDialog({
   };
 
   return (
-    <Dialog
+    <Modal
       title="Edit invoice"
       description="Update an invoice in your database"
     >
@@ -114,6 +114,6 @@ export function EditInvoiceDialog({
           Save
         </Button>
       </Form>
-    </Dialog>
+    </Modal>
   );
 }

@@ -7,7 +7,7 @@ import { useInvoices } from "hooks/useInvoices";
 
 import { Button } from "components/atoms/button/Button";
 import { Badge } from "components/atoms/badge/Badge";
-import { EditInvoiceDialog } from "components/organisms/edit-invoice-dialog/EditInvoiceDialog";
+import { EditInvoiceModal } from "components/organisms/edit-invoice-modal/EditInvoiceModal";
 
 export function InvoicesTable() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
@@ -99,7 +99,7 @@ export function InvoicesTable() {
         )}
       />
       <Root open={invoice !== null} onOpenChange={() => setInvoice(null)}>
-        <EditInvoiceDialog
+        <EditInvoiceModal
           {...(invoice as Invoice)}
           setIsOpen={() => setInvoice(null)}
         />

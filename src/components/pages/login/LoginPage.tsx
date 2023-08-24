@@ -12,12 +12,12 @@ import { CenteredLayout } from "components/layouts/centered/CenteredLayout";
 export function LoginPage() {
   const { login } = useAuth();
 
-  const [credentials, setCredentials] = useState<Omit<Credentials, "username">>(
-    {
-      email: "",
-      password: "",
-    },
-  );
+  const [credentials, setCredentials] = useState<
+    Omit<Credentials, "username" | "workspace">
+  >({
+    email: "",
+    password: "",
+  });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();

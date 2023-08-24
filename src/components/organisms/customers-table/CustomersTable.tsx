@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trigger, Root } from "@radix-ui/react-dialog";
 
-import { EditCustomerDialog } from "../edit-customer-dialog/EditCustomerDialog";
+import { EditCustomerModal } from "../edit-customer-modal/EditCustomerModal";
 
 import { Customer } from "lib/types";
 
@@ -23,7 +23,7 @@ function Actions({ customer }: { customer: Omit<Customer, "workspace"> }) {
           Edit
         </Button>
       </Trigger>
-      <EditCustomerDialog {...customer} setIsOpen={setIsOpen} />
+      <EditCustomerModal {...customer} setIsOpen={setIsOpen} />
     </Root>
   );
 }
