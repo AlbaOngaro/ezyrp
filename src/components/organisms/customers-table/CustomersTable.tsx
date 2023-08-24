@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Root as ModalRoot } from "@radix-ui/react-dialog";
-import { Root as DialogRoot } from "@radix-ui/react-alert-dialog";
+import {
+  Root as DialogRoot,
+  Trigger as DialogTrigger,
+} from "@radix-ui/react-alert-dialog";
 
 import { EditCustomerModal } from "../edit-customer-modal/EditCustomerModal";
 
@@ -77,18 +80,20 @@ export function CustomersTable() {
           actions: "fake",
         }))}
         renderSelectedActions={(rows) => (
-          <>
-            <Button variant="secondary" size="sm">
-              Bulk edit
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => customers.delete(rows.map((row) => row.id))}
-            >
-              Delete all
-            </Button>
-          </>
+          <DialogRoot>
+            <DialogTrigger asChild>
+              <Button variant="danger" size="sm">
+                Delete all
+              </Button>
+            </DialogTrigger>
+
+            <Dialog
+              overlayClassname="!ml-0"
+              title="Do you really want to delete all the selected customers?"
+              description="This action cannot be undone"
+              onConfirm={() => customers.delete(rows.map((row) => row.id))}
+            />
+          </DialogRoot>
         )}
       />
 
