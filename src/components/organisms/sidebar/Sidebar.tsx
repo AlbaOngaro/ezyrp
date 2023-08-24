@@ -16,7 +16,7 @@ export function Sidebar() {
   const router = useRouter();
 
   return (
-    <aside className=" flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 py-4">
+    <aside className="left-0 flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 py-4 h-full">
       <header>
         <img
           className="h-8 w-auto"
