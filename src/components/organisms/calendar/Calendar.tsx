@@ -7,7 +7,7 @@ import { Button } from "components/atoms/button/Button";
 import { Select } from "components/atoms/select/Select";
 
 type Day = {
-  date: string;
+  date: Date;
   events: {
     id: number;
     name: string;
@@ -79,7 +79,7 @@ export function Calendar({ className }: Props) {
           ),
         ].flatMap((dates) =>
           dates.map((date) => ({
-            date: format(date, "dd/MM/yyyy"),
+            date,
             isCurrentMonth: isSameMonth(date, selected),
             isToday: isToday(date),
             events: [],
@@ -99,7 +99,7 @@ export function Calendar({ className }: Props) {
 
           return new Date(year, month, date - (day - index));
         }).map((date) => ({
-          date: format(date, "EEE d"),
+          date, // format(date, "EEE d"),
           isCurrentMonth: isSameMonth(date, selected),
           isToday: isToday(date),
           events: [],
@@ -220,7 +220,7 @@ export function Calendar({ className }: Props) {
                   <div className="hidden w-full lg:grid lg:grid-cols-7 lg:gap-px">
                     {days.map((day) => (
                       <div
-                        key={day.date}
+                        key={day.date.toISOString()}
                         className={twMerge(
                           "relative px-3 py-2 bg-gray-50 text-gray-500",
                           {
@@ -229,13 +229,13 @@ export function Calendar({ className }: Props) {
                         )}
                       >
                         <time
-                          dateTime={day.date}
+                          dateTime={day.date.toISOString()}
                           className={twMerge({
                             "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white":
                               day.isToday,
                           })}
                         >
-                          {day.date}
+                          {format(day.date, "dd/MM/yyyy")}
                         </time>
                         {day.events.length > 0 && (
                           <ol className="mt-2">
@@ -267,7 +267,7 @@ export function Calendar({ className }: Props) {
                   <div className="isolate grid w-full grid-cols-7 grid-rows-6 gap-px lg:hidden">
                     {days.map((day) => (
                       <button
-                        key={day.date}
+                        key={day.date.toISOString()}
                         type="button"
                         className={twMerge(
                           "bg-gray-50 flex h-14 flex-col px-3 py-2 hover:bg-gray-100 focus:z-10",
@@ -288,7 +288,7 @@ export function Calendar({ className }: Props) {
                         )}
                       >
                         <time
-                          dateTime={day.date}
+                          dateTime={day.date.toISOString()}
                           className={twMerge(
                             day.isSelected &&
                               "flex h-6 w-6 items-center justify-center rounded-full",
@@ -297,7 +297,7 @@ export function Calendar({ className }: Props) {
                             "ml-auto",
                           )}
                         >
-                          {day.date}
+                          {format(day.date, "dd/MM/yyyy")}
                         </time>
                         <span className="sr-only">
                           {day.events.length} events
@@ -330,9 +330,15 @@ export function Calendar({ className }: Props) {
                       {days.map((day) => (
                         <button
                           className="mt-1 flex h-8 w-8 items-center justify-center font-semibold text-gray-900"
-                          key={day.date}
+                          key={day.date.toISOString()}
                         >
-                          {day.date}
+                          <span className="flex items-baseline">
+                            {format(day.date, "EEE")}
+
+                            <span className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
+                              {format(day.date, "d")}
+                            </span>
+                          </span>
                         </button>
                       ))}
                     </div>
@@ -342,15 +348,23 @@ export function Calendar({ className }: Props) {
 
                       {days.map((day) => (
                         <div
-                          key={day.date}
+                          key={day.date.toISOString()}
                           className="flex items-center justify-center py-3"
                         >
-                          <span>
-                            {/* Mon{" "}
-                            <span className="items-center justify-center font-semibold text-gray-900">
-                              10
-                            </span> */}
-                            {day.date}
+                          <span className="flex items-baseline gap-2">
+                            {format(day.date, "EEE")}
+
+                            <span
+                              className={twMerge(
+                                "items-center justify-center font-semibold text-gray-900",
+                                {
+                                  "flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white":
+                                    day.isToday,
+                                },
+                              )}
+                            >
+                              {format(day.date, "d")}
+                            </span>
                           </span>
                         </div>
                       ))}
