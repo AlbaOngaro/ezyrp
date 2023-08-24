@@ -10,7 +10,7 @@ interface Option {
 
 interface Props {
   name: string;
-  label: string;
+  label?: string;
   description?: string;
   options: Option[];
   onChange: (value: string) => void;
