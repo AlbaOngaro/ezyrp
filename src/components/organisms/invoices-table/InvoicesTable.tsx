@@ -1,4 +1,5 @@
-import { Root } from "@radix-ui/react-dialog";
+import { Root as ModalRoot } from "@radix-ui/react-dialog";
+import { Root as DialogRoot } from "@radix-ui/react-alert-dialog";
 
 import { useState } from "react";
 import { Table } from "components/atoms/table/Table";
@@ -8,9 +9,13 @@ import { useInvoices } from "hooks/useInvoices";
 import { Button } from "components/atoms/button/Button";
 import { Badge } from "components/atoms/badge/Badge";
 import { EditInvoiceModal } from "components/organisms/edit-invoice-modal/EditInvoiceModal";
+import { Dialog } from "components/atoms/dialog/Dialog";
 
 export function InvoicesTable() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const invoices = useInvoices();
 
@@ -26,6 +31,7 @@ export function InvoicesTable() {
             label: "Edit",
             onClick: (row) => {
               setInvoice(row);
+              setIsModalOpen(true);
             },
           },
           {
@@ -34,7 +40,10 @@ export function InvoicesTable() {
           {
             type: "item",
             label: "Delete",
-            onClick: (row) => invoices.delete([row.id]),
+            onClick: (row) => {
+              setInvoice(row);
+              setIsDialogOpen(true);
+            },
           },
         ]}
         className="px-12"
@@ -98,12 +107,23 @@ export function InvoicesTable() {
           </>
         )}
       />
-      <Root open={invoice !== null} onOpenChange={() => setInvoice(null)}>
+      <ModalRoot open={isModalOpen} onOpenChange={setIsModalOpen}>
         <EditInvoiceModal
           {...(invoice as Invoice)}
-          setIsOpen={() => setInvoice(null)}
+          setIsOpen={setIsModalOpen}
         />
-      </Root>
+      </ModalRoot>
+      <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog
+          title="Do you really want to delete this invoice?"
+          description="This action cannot be undone"
+          onConfirm={() => {
+            if (invoice) {
+              return invoices.delete([invoice.id]);
+            }
+          }}
+        />
+      </DialogRoot>
     </>
   );
 }
