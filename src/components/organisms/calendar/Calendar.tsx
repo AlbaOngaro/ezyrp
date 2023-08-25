@@ -2,7 +2,7 @@ import { Dispatch, createContext, useContext } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
 import { View } from "./types";
-import { State, initialState, Action } from "./useCalendarReducer";
+import { State, defaultInitialState, Action } from "./useCalendarReducer";
 
 import { useCalendarReducer } from "./useCalendarReducer";
 
@@ -19,7 +19,7 @@ const CalendarContext = createContext<{
   state: State;
   dispatch: Dispatch<Action>;
 }>({
-  state: initialState,
+  state: defaultInitialState,
   dispatch: () => {},
 });
 

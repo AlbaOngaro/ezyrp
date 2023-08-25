@@ -86,13 +86,16 @@ export function generateWeek(base: Date): Day[] {
   }));
 }
 
-export const initialState: State = {
+export const defaultInitialState: State = {
   selected: new Date(),
-  view: "month",
+  view: "year",
   days: generateMonth(new Date()),
 };
 
-const reducer: Reducer<State, Action> = (state = initialState, action) => {
+const reducer: Reducer<State, Action> = (
+  state = defaultInitialState,
+  action,
+) => {
   switch (action.type) {
     case "SET_SELECTED": {
       const { selected } = action.payload;
@@ -252,6 +255,6 @@ const reducer: Reducer<State, Action> = (state = initialState, action) => {
   }
 };
 
-export function useCalendarReducer() {
+export function useCalendarReducer(initialState = defaultInitialState) {
   return useReducer<Reducer<State, Action>>(reducer, initialState);
 }
