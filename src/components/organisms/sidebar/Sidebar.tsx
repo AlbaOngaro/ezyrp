@@ -1,4 +1,5 @@
 import {
+  CalendarIcon,
   EnvelopeClosedIcon,
   GearIcon,
   PersonIcon,
@@ -10,6 +11,7 @@ import { twMerge } from "lib/utils/twMerge";
 const navigation = [
   { name: "Customers", href: "/", icon: PersonIcon },
   { name: "Invoices", href: "/invoices", icon: EnvelopeClosedIcon },
+  { name: "Schedule", href: "/schedule", icon: CalendarIcon },
 ];
 
 export function Sidebar() {
