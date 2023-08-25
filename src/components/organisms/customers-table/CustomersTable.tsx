@@ -97,12 +97,17 @@ export function CustomersTable() {
         )}
       />
 
-      <ModalRoot open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <EditCustomerModal
-          {...(customer as Customer)}
-          setIsOpen={setIsModalOpen}
-        />
-      </ModalRoot>
+      {customer && (
+        <ModalRoot
+          open={isModalOpen}
+          onOpenChange={(state) => {
+            setIsModalOpen(state);
+            setCustomer(null);
+          }}
+        >
+          <EditCustomerModal {...customer} setIsOpen={setIsModalOpen} />
+        </ModalRoot>
+      )}
 
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Dialog

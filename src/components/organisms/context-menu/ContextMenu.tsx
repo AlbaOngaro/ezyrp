@@ -4,11 +4,14 @@ import {
   ChevronRightIcon,
   DotFilledIcon,
 } from "@radix-ui/react-icons";
-import { Fragment } from "react";
+import { Fragment, forwardRef } from "react";
 
 import { Props } from "./types";
 
-export function ContextMenu({ items, type, ...rest }: Props) {
+export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
+  { items, type, ...rest },
+  ref,
+) {
   const Content =
     type === "sub" ? RUIContextMenu.SubContent : RUIContextMenu.Content;
 
@@ -18,7 +21,7 @@ export function ContextMenu({ items, type, ...rest }: Props) {
       asChild
       {...rest}
     >
-      <nav>
+      <nav ref={ref}>
         {items.map((item, i) => {
           switch (item.type) {
             case "item":
@@ -131,4 +134,4 @@ export function ContextMenu({ items, type, ...rest }: Props) {
       </nav>
     </Content>
   );
-}
+});

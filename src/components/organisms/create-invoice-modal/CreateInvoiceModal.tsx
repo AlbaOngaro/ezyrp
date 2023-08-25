@@ -2,6 +2,7 @@ import {
   Dispatch,
   FormEventHandler,
   SetStateAction,
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -38,17 +39,18 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
   });
 
   useEffect(() => {
-    setInvoice((curr) => ({
-      ...curr,
-      customer: customers.data[0],
-    }));
-  }, [customers.data, customers.isLoading]);
+    if (!customers.isLoading && customers.data) {
+      setInvoice((curr) => ({
+        ...curr,
+        customer: customers.data[0],
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customers.isLoading]);
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-
-    try {
-      await invoices.create([invoice]);
+  const _setIsOpen = useCallback(
+    (state: boolean) => {
+      setIsOpen(state);
       setInvoice({
         description: "",
         status: "pending",
@@ -58,7 +60,16 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
         due: new Date().toISOString(),
         emitted: new Date().toISOString(),
       });
-      setIsOpen(false);
+    },
+    [customers, setIsOpen],
+  );
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    try {
+      await invoices.create([invoice]);
+      _setIsOpen(false);
     } catch (error: unknown) {
       console.error(error);
     }
