@@ -1,4 +1,10 @@
-import { Dispatch, createContext, useContext } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+} from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
 import { View } from "./types";
@@ -12,8 +18,9 @@ import * as DayView from "./views/Day";
 import * as YearView from "./views/Year";
 
 import { twMerge } from "lib/utils/twMerge";
-import { Button } from "components/atoms/button/Button";
+
 import { Select } from "components/atoms/select/Select";
+import { Event } from "lib/types";
 
 const CalendarContext = createContext<{
   state: State;
@@ -29,6 +36,12 @@ export function useCalendarContext() {
 
 interface Props {
   className?: string;
+  actions?: ReactNode;
+  events?: Event[];
+  onPrevious?: () => void;
+  onToday?: () => void;
+  onNext?: () => void;
+  onChange?: (date: Date) => void;
 }
 
 const views = [
@@ -54,8 +67,35 @@ const views = [
   },
 ];
 
-export function Calendar({ className }: Props) {
+export function Calendar({
+  className,
+  actions,
+  events,
+  onPrevious,
+  onToday,
+  onNext,
+  onChange,
+}: Props) {
   const [{ selected, days, view }, dispatch] = useCalendarReducer();
+
+  useEffect(() => {
+    if (events) {
+      dispatch({
+        type: "SET_EVENTS",
+        payload: {
+          events,
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [events, selected]);
+
+  useEffect(() => {
+    if (typeof onChange === "function") {
+      onChange(selected);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
 
   return (
     <div className={twMerge("lg:flex lg:h-full lg:flex-col", className)}>
@@ -90,11 +130,15 @@ export function Calendar({ className }: Props) {
               <button
                 type="button"
                 className="flex h-9 w-12 items-center justify-center rounded-l-md border-y border-l border-gray-300 pr-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pr-0 md:hover:bg-gray-50"
-                onClick={() =>
+                onClick={() => {
                   dispatch({
                     type: "VIEW_PREVIOUS",
-                  })
-                }
+                  });
+
+                  if (typeof onPrevious === "function") {
+                    onPrevious();
+                  }
+                }}
               >
                 <span className="sr-only">Previous {view}</span>
                 <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -102,14 +146,18 @@ export function Calendar({ className }: Props) {
               <button
                 type="button"
                 className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
-                onClick={() =>
+                onClick={() => {
                   dispatch({
                     type: "SET_SELECTED",
                     payload: {
                       selected: new Date(),
                     },
-                  })
-                }
+                  });
+
+                  if (typeof onToday === "function") {
+                    onToday();
+                  }
+                }}
               >
                 Today
               </button>
@@ -117,17 +165,21 @@ export function Calendar({ className }: Props) {
               <button
                 type="button"
                 className="flex h-9 w-12 items-center justify-center rounded-r-md border-y border-r border-gray-300 pl-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pl-0 md:hover:bg-gray-50"
-                onClick={() =>
+                onClick={() => {
                   dispatch({
                     type: "VIEW_NEXT",
-                  })
-                }
+                  });
+
+                  if (typeof onNext === "function") {
+                    onNext();
+                  }
+                }}
               >
                 <span className="sr-only">Next {view}</span>
                 <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
-            <div className="hidden md:ml-4 md:flex md:items-center">
+            <div className="hidden md:ml-4 md:flex md:items-center gap-4">
               <Select
                 name="views"
                 className="min-w-[150px]"
@@ -143,8 +195,7 @@ export function Calendar({ className }: Props) {
                 }
               />
 
-              <div className="ml-6 h-6 w-px bg-gray-300" />
-              <Button size="lg">Add event</Button>
+              {actions}
             </div>
           </div>
         </header>

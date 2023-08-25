@@ -1,7 +1,14 @@
 import { Reducer, useReducer } from "react";
-import { getDaysInMonth, isSameMonth, isToday } from "date-fns";
+import {
+  getDaysInMonth,
+  isSameMonth,
+  isToday,
+  isWithinInterval,
+} from "date-fns";
 
 import { Day, View } from "./types";
+
+import { Event } from "lib/types";
 
 export type State = {
   selected: Date;
@@ -31,11 +38,19 @@ type ViewPreviousAction = {
   type: "VIEW_PREVIOUS";
 };
 
+type SetEventsAction = {
+  type: "SET_EVENTS";
+  payload: {
+    events: Event[];
+  };
+};
+
 export type Action =
   | SetSelectedAction
   | SetViewAction
   | ViewNextAction
-  | ViewPreviousAction;
+  | ViewPreviousAction
+  | SetEventsAction;
 
 export function generateMonth(base: Date): Day[] {
   const total = getDaysInMonth(base);
@@ -88,7 +103,7 @@ export function generateWeek(base: Date): Day[] {
 
 export const defaultInitialState: State = {
   selected: new Date(),
-  view: "year",
+  view: "day",
   days: generateMonth(new Date()),
 };
 
@@ -249,6 +264,29 @@ const reducer: Reducer<State, Action> = (
         default:
           return state;
       }
+    }
+    case "SET_EVENTS": {
+      return {
+        ...state,
+        days: state.days.map((day) => ({
+          ...day,
+          events: action.payload.events.filter((event) => {
+            const date = day.date;
+            date.setHours(0, 0);
+
+            const start = new Date(event.start);
+            start.setHours(0, 0);
+
+            const end = new Date(event.end);
+            end.setHours(0, 0);
+
+            return isWithinInterval(date, {
+              start,
+              end,
+            });
+          }),
+        })),
+      };
     }
     default:
       return state;

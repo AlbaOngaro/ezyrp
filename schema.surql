@@ -44,6 +44,12 @@ DEFINE EVENT invoice_workspace ON TABLE invoice WHEN $event = "CREATE" THEN {
 	} WHERE id = $after.id;
 };
 
+DEFINE EVENT event_workspace ON TABLE event WHEN $event = "CREATE" THEN {
+	UPDATE event MERGE {
+		workspace: $auth.workspace
+	} WHERE id = $after.id;
+};
+
 -- ------------------------------
 -- TABLE: user
 -- ------------------------------
@@ -74,3 +80,9 @@ DEFINE TABLE customer SCHEMALESS PERMISSIONS FOR select, update, delete WHERE wo
 -- ------------------------------
 
 DEFINE TABLE invoice SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+
+-- ------------------------------
+-- TABLE: event
+-- ------------------------------
+
+DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;

@@ -1,5 +1,5 @@
 export abstract class Service {
-  token: string;
+  protected token: string;
 
   constructor(token: string) {
     this.token = token;

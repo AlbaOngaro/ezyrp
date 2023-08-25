@@ -1,10 +1,14 @@
-import { format } from "date-fns";
-import { useCalendarContext } from "components/organisms/calendar/Calendar";
+import { differenceInMinutes, format, isSameDay } from "date-fns";
+
+import { twMerge } from "lib/utils/twMerge";
+
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
+
+import { useCalendarContext } from "components/organisms/calendar/Calendar";
 
 export function Body() {
   const {
-    state: { selected },
+    state: { selected, days },
     dispatch,
   } = useCalendarContext();
 
@@ -241,60 +245,55 @@ export function Body() {
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
             >
-              <li
-                className="relative mt-px flex"
-                style={{ gridRow: "74 / span 12" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100"
-                >
-                  <p className="order-1 font-semibold text-blue-700">
-                    Breakfast
-                  </p>
-                  <p className="text-blue-500 group-hover:text-blue-700">
-                    <time dateTime="2022-01-22T06:00">6:00 AM</time>
-                  </p>
-                </a>
-              </li>
-              <li
-                className="relative mt-px flex"
-                style={{ gridRow: "92 / span 30" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-pink-50 p-2 text-xs leading-5 hover:bg-pink-100"
-                >
-                  <p className="order-1 font-semibold text-pink-700">
-                    Flight to Paris
-                  </p>
-                  <p className="order-1 text-pink-500 group-hover:text-pink-700">
-                    John F. Kennedy International Airport
-                  </p>
-                  <p className="text-pink-500 group-hover:text-pink-700">
-                    <time dateTime="2022-01-22T07:30">7:30 AM</time>
-                  </p>
-                </a>
-              </li>
-              <li
-                className="relative mt-px flex"
-                style={{ gridRow: "134 / span 18" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-indigo-50 p-2 text-xs leading-5 hover:bg-indigo-100"
-                >
-                  <p className="order-1 font-semibold text-indigo-700">
-                    Sightseeing
-                  </p>
-                  <p className="order-1 text-indigo-500 group-hover:text-indigo-700">
-                    Eiffel Tower
-                  </p>
-                  <p className="text-indigo-500 group-hover:text-indigo-700">
-                    <time dateTime="2022-01-22T11:00">11:00 AM</time>
-                  </p>
-                </a>
-              </li>
+              {days
+                .find((day) => isSameDay(day.date, selected))
+                ?.events.map((event) => {
+                  const startdate = new Date(event.start);
+                  const endDate = new Date(event.end);
+
+                  const start = isSameDay(startdate, selected)
+                    ? (startdate.getHours() * 60) / 5 +
+                      1 +
+                      startdate.getMinutes() / 5 +
+                      1
+                    : 2;
+
+                  const end = !isSameDay(endDate, selected)
+                    ? 288
+                    : isSameDay(startdate, endDate)
+                    ? differenceInMinutes(endDate, startdate) / 5
+                    : (endDate.getHours() * 60) / 5 + endDate.getMinutes() / 5;
+
+                  return (
+                    <li
+                      key={event.id}
+                      className={twMerge(
+                        "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
+                        {
+                          "rounded-b-none":
+                            !isSameDay(startdate, endDate) &&
+                            !isSameDay(endDate, selected),
+                          "rounded-t-none":
+                            !isSameDay(startdate, endDate) &&
+                            isSameDay(endDate, selected),
+                          "rounded-none":
+                            !isSameDay(startdate, selected) &&
+                            !isSameDay(endDate, selected),
+                        },
+                      )}
+                      style={{ gridRow: `${start} / span ${end}` }}
+                    >
+                      <p className="order-1 font-semibold text-blue-700">
+                        {event.title}
+                      </p>
+                      <p className="text-blue-500 group-hover:text-blue-700">
+                        <time dateTime={event.start}>
+                          {format(new Date(event.start), "HH:mm aa")}
+                        </time>
+                      </p>
+                    </li>
+                  );
+                })}
             </ol>
           </div>
         </div>

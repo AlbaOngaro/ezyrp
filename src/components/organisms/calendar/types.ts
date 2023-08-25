@@ -1,12 +1,8 @@
+import { Event } from "lib/types";
+
 export type Day = {
   date: Date;
-  events: {
-    id: number;
-    name: string;
-    time: string;
-    datetime: string;
-    href: string;
-  }[];
+  events: Event[];
   isCurrentMonth?: boolean;
   isToday?: boolean;
   isSelected?: boolean;

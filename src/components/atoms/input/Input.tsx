@@ -65,7 +65,12 @@ const DateTimeInput = forwardRef<HTMLInputElement, Props>(
             }
             onDayClick={(selected) => {
               if (input.current) {
-                input.current.value = format(selected, "yyyy-MM-dd");
+                input.current.value = format(
+                  selected,
+                  type === "datetime-local"
+                    ? "yyyy-MM-dd'T'HH:mm"
+                    : "yyyy-MM-dd",
+                );
 
                 if (typeof onChange === "function") {
                   onChange({
