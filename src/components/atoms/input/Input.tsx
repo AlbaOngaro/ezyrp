@@ -46,7 +46,7 @@ const DateTimeInput = forwardRef<HTMLInputElement, Props>(
                 e.preventDefault();
                 setIsOpen(true);
               }}
-              className="absolute bg-white right-4 top-1/2 -translate-y-1/2"
+              className="absolute bg-white pl-2 right-4 top-1/2 -translate-y-1/2"
             >
               <CalendarIcon />
             </button>
