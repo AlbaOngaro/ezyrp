@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import { twMerge } from "lib/utils/twMerge";
 
 export interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "danger";
+  variant?: "primary" | "secondary" | "tertiary" | "danger";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
@@ -27,6 +27,8 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
             variant === "secondary",
           "text-white bg-red-500 hover:bg-red-400 focus-visible:ring-red-300":
             variant === "danger",
+          "text-gray-900 bg-white ring-1 ring-inset ring-gray-300":
+            variant === "tertiary",
         },
         className,
       )}

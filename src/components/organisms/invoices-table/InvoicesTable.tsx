@@ -108,12 +108,17 @@ export function InvoicesTable() {
           </DialogRoot>
         )}
       />
-      <ModalRoot open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <EditInvoiceModal
-          {...(invoice as Invoice)}
-          setIsOpen={setIsModalOpen}
-        />
-      </ModalRoot>
+      {invoice && (
+        <ModalRoot
+          open={isModalOpen}
+          onOpenChange={(state) => {
+            setIsModalOpen(state);
+            setInvoice(null);
+          }}
+        >
+          <EditInvoiceModal {...invoice} setIsOpen={setIsModalOpen} />
+        </ModalRoot>
+      )}
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Dialog
           title="Do you really want to delete this invoice?"
