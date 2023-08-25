@@ -3,7 +3,7 @@ import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { generateMonth } from "components/organisms/calendar/useCalendarReducer";
 import { twMerge } from "lib/utils/twMerge";
 
-export function YearView() {
+export function Body() {
   const {
     state: { selected },
   } = useCalendarContext();
@@ -61,5 +61,17 @@ export function YearView() {
         </section>
       ))}
     </div>
+  );
+}
+
+export function Header() {
+  const {
+    state: { selected },
+  } = useCalendarContext();
+
+  return (
+    <h1 className="text-base font-semibold leading-6 text-gray-900">
+      <time dateTime={selected.toISOString()}>{selected.getFullYear()}</time>
+    </h1>
   );
 }

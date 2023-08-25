@@ -3,7 +3,7 @@ import { format, isSameDay } from "date-fns";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
 
-export function DayView() {
+export function Body() {
   const {
     state: { days, selected },
     dispatch,
@@ -390,6 +390,26 @@ export function DayView() {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+export function Header() {
+  const {
+    state: { selected },
+  } = useCalendarContext();
+
+  return (
+    <div>
+      <h1 className="text-base font-semibold leading-6 text-gray-900">
+        <time dateTime="2022-01-22" className="sm:hidden">
+          {format(selected, "MMM d, yyyy")}
+        </time>
+        <time dateTime="2022-01-22" className="hidden sm:inline">
+          {format(selected, "MMMM d, yyyy")}
+        </time>
+      </h1>
+      <p className="mt-1 text-sm text-gray-500">{format(selected, "EEEE")}</p>
     </div>
   );
 }

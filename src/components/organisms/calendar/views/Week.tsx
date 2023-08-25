@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
 
-export function WeekView() {
+export function Body() {
   const {
     state: { days },
   } = useCalendarContext();
@@ -288,5 +288,19 @@ export function WeekView() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function Header() {
+  const {
+    state: { selected },
+  } = useCalendarContext();
+
+  return (
+    <h1 className="text-base font-semibold leading-6 text-gray-900">
+      <time dateTime={selected.toISOString()}>
+        {format(selected, "MMMM yyyy")}
+      </time>
+    </h1>
   );
 }
