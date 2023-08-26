@@ -1,10 +1,14 @@
-import { differenceInMinutes, format, isSameDay } from "date-fns";
+import { format, isSameDay } from "date-fns";
 
 import { twMerge } from "lib/utils/twMerge";
 
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
 
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
+import {
+  getGridRow,
+  getIsLongerThan24Hours,
+} from "components/organisms/calendar/utils";
 
 export function Body() {
   const {
@@ -248,22 +252,14 @@ export function Body() {
               {days
                 .find((day) => isSameDay(day.date, selected))
                 ?.events.map((event) => {
-                  const startdate = new Date(event.start);
+                  const startDate = new Date(event.start);
                   const endDate = new Date(event.end);
 
-                  const start = isSameDay(startdate, selected)
-                    ? (startdate.getHours() * 60) / 5 +
-                      1 +
-                      startdate.getMinutes() / 5 +
-                      1
-                    : 2;
-
-                  const end = !isSameDay(endDate, selected)
-                    ? 288
-                    : isSameDay(startdate, endDate)
-                    ? differenceInMinutes(endDate, startdate) / 5
-                    : (endDate.getHours() * 60) / 5 + endDate.getMinutes() / 5;
-
+                  const gridRow = getGridRow(startDate, endDate, selected);
+                  const isLongerThan24Hours = getIsLongerThan24Hours(
+                    startDate,
+                    endDate,
+                  );
                   return (
                     <li
                       key={event.id}
@@ -271,26 +267,33 @@ export function Body() {
                         "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
                         {
                           "rounded-b-none":
-                            !isSameDay(startdate, endDate) &&
+                            !isSameDay(startDate, endDate) &&
                             !isSameDay(endDate, selected),
                           "rounded-t-none":
-                            !isSameDay(startdate, endDate) &&
+                            !isSameDay(startDate, endDate) &&
                             isSameDay(endDate, selected),
                           "rounded-none":
-                            !isSameDay(startdate, selected) &&
-                            !isSameDay(endDate, selected),
+                            (!isSameDay(startDate, selected) &&
+                              !isSameDay(endDate, selected)) ||
+                            isLongerThan24Hours,
+                          "py-0 justify-center": isLongerThan24Hours,
                         },
                       )}
-                      style={{ gridRow: `${start} / span ${end}` }}
+                      style={{
+                        gridRow,
+                      }}
                     >
-                      <p className="order-1 font-semibold text-blue-700">
+                      <p className="font-semibold text-blue-700">
                         {event.title}
                       </p>
-                      <p className="text-blue-500 group-hover:text-blue-700">
-                        <time dateTime={event.start}>
-                          {format(new Date(event.start), "HH:mm aa")}
-                        </time>
-                      </p>
+                      {!isLongerThan24Hours && (
+                        <p className="text-blue-500 group-hover:text-blue-700">
+                          <time dateTime={event.start}>
+                            {format(new Date(event.start), "HH:mm aa")} -{" "}
+                            {format(new Date(event.end), "HH:mm aa")}
+                          </time>
+                        </p>
+                      )}
                     </li>
                   );
                 })}
