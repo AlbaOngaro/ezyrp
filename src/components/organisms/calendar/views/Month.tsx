@@ -11,6 +11,8 @@ export function Body() {
     state: { days },
   } = useCalendarContext();
 
+  const events = days.flatMap((day) => day.events);
+
   return (
     <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
       <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
@@ -37,11 +39,11 @@ export function Body() {
         </div>
       </div>
       <div className="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
-        <div className="hidden w-full lg:grid lg:grid-cols-7 lg:gap-px">
+        <div className="hidden w-full relative lg:grid lg:grid-cols-7 lg:gap-px">
           {days.map((day) => (
             <div
               key={day.date.toISOString()}
-              className={twMerge(" px-3 py-2 bg-gray-50 text-gray-500", {
+              className={twMerge("px-3 py-2 bg-gray-50 text-gray-500", {
                 "bg-white": day.isCurrentMonth,
               })}
             >
@@ -54,43 +56,43 @@ export function Body() {
               >
                 {format(day.date, "dd")}
               </time>
-              {day.events.length > 0 && (
-                <ol className="mt-2">
-                  {day.events.slice(0, 2).map((event) => {
-                    return (
-                      <li
-                        key={event.id}
-                        className={twMerge(
-                          "group mt-px cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
-                          {
-                            "bg-blue-100": hovering === event.id,
-                          },
-                        )}
-                        onMouseEnter={() => setHovering(event.id)}
-                        onMouseLeave={() => setHovering("")}
-                      >
-                        <p className="font-semibold text-blue-700 truncate">
-                          {event.title}
-                        </p>
-                        <time
-                          dateTime={event.start}
-                          className="text-blue-500 group-hover:text-blue-700"
-                        >
-                          {format(new Date(event.start), "hh aa")}
-                        </time>
-                      </li>
-                    );
-                  })}
-                  {day.events.length > 2 && (
-                    <li className="text-gray-500">
-                      + {day.events.length - 2} more
-                    </li>
-                  )}
-                </ol>
-              )}
             </div>
           ))}
+
+          <ol
+            className="absolute h-full w-full col-span-7 row-span-6 grid grid-cols-7 "
+            style={{
+              gridTemplateRows: `repeat(${days.length / 7}, minmax(0, 1fr))`,
+            }}
+          >
+            {events.map((event) => {
+              return (
+                <li
+                  key={event.id}
+                  className={twMerge(
+                    "group mt-px cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
+                    {
+                      "bg-blue-100": hovering === event.id,
+                    },
+                  )}
+                  onMouseEnter={() => setHovering(event.id)}
+                  onMouseLeave={() => setHovering("")}
+                >
+                  <p className="font-semibold text-blue-700 truncate">
+                    {event.title}
+                  </p>
+                  <time
+                    dateTime={event.start}
+                    className="text-blue-500 group-hover:text-blue-700"
+                  >
+                    {format(new Date(event.start), "hh aa")}
+                  </time>
+                </li>
+              );
+            })}
+          </ol>
         </div>
+
         <div className="isolate grid w-full grid-cols-7 grid-rows-6 gap-px lg:hidden">
           {days.map((day) => (
             <button
@@ -120,7 +122,7 @@ export function Body() {
                   "ml-auto",
                 )}
               >
-                {format(day.date, "dd/MM/yyyy")}
+                {format(day.date, "dd")}
               </time>
               <span className="sr-only">{day.events.length} events</span>
               {day.events.length > 0 && (
