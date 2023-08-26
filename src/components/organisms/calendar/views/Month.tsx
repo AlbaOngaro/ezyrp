@@ -41,12 +41,9 @@ export function Body() {
           {days.map((day) => (
             <div
               key={day.date.toISOString()}
-              className={twMerge(
-                "relative px-3 py-2 bg-gray-50 text-gray-500",
-                {
-                  "bg-white": day.isCurrentMonth,
-                },
-              )}
+              className={twMerge(" px-3 py-2 bg-gray-50 text-gray-500", {
+                "bg-white": day.isCurrentMonth,
+              })}
             >
               <time
                 dateTime={day.date.toISOString()}
@@ -59,29 +56,31 @@ export function Body() {
               </time>
               {day.events.length > 0 && (
                 <ol className="mt-2">
-                  {day.events.slice(0, 2).map((event) => (
-                    <li
-                      key={event.id}
-                      className={twMerge(
-                        "group mt-px cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
-                        {
-                          "bg-blue-100": hovering === event.id,
-                        },
-                      )}
-                      onMouseEnter={() => setHovering(event.id)}
-                      onMouseLeave={() => setHovering("")}
-                    >
-                      <p className="font-semibold text-blue-700 truncate">
-                        {event.title}
-                      </p>
-                      <time
-                        dateTime={event.start}
-                        className="text-blue-500 group-hover:text-blue-700"
+                  {day.events.slice(0, 2).map((event) => {
+                    return (
+                      <li
+                        key={event.id}
+                        className={twMerge(
+                          "group mt-px cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
+                          {
+                            "bg-blue-100": hovering === event.id,
+                          },
+                        )}
+                        onMouseEnter={() => setHovering(event.id)}
+                        onMouseLeave={() => setHovering("")}
                       >
-                        {format(new Date(event.start), "hh aa")}
-                      </time>
-                    </li>
-                  ))}
+                        <p className="font-semibold text-blue-700 truncate">
+                          {event.title}
+                        </p>
+                        <time
+                          dateTime={event.start}
+                          className="text-blue-500 group-hover:text-blue-700"
+                        >
+                          {format(new Date(event.start), "hh aa")}
+                        </time>
+                      </li>
+                    );
+                  })}
                   {day.events.length > 2 && (
                     <li className="text-gray-500">
                       + {day.events.length - 2} more
