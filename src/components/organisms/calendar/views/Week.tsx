@@ -1,7 +1,78 @@
-import { differenceInMinutes, format, isSameDay } from "date-fns";
+import {
+  differenceInHours,
+  differenceInMinutes,
+  eachDayOfInterval,
+  format,
+  isSameDay,
+  isSameWeek,
+} from "date-fns";
 import { Fragment, useState } from "react";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
+
+function getEventStartRow(startDate: Date, endDate: Date, currentDate: Date) {
+  const isLongerThan24Hours = differenceInHours(endDate, startDate) > 24;
+
+  if (isLongerThan24Hours) {
+    return 1;
+  }
+
+  if (isSameDay(startDate, currentDate)) {
+    return (startDate.getHours() * 60) / 5 + 1 + startDate.getMinutes() / 5 + 1;
+  }
+
+  return 2;
+}
+
+function getEventEndRow(startDate: Date, endDate: Date, currentDate: Date) {
+  const isLongerThan24Hours = differenceInHours(endDate, startDate) > 24;
+
+  if (isLongerThan24Hours) {
+    return 1;
+  }
+
+  if (!isSameDay(endDate, currentDate)) {
+    return 288;
+  }
+
+  if (isSameDay(startDate, endDate)) {
+    return differenceInMinutes(endDate, startDate) / 5;
+  }
+
+  return (endDate.getHours() * 60) / 5 + endDate.getMinutes() / 5;
+}
+
+function getGridRow(startDate: Date, endDate: Date, currentDate: Date) {
+  return `${getEventStartRow(
+    startDate,
+    endDate,
+    currentDate,
+  )} / span ${getEventEndRow(startDate, endDate, currentDate)}`;
+}
+
+function getIsLongerThan24Hours(startDate: Date, endDate: Date) {
+  return differenceInHours(endDate, startDate) > 24;
+}
+
+function getGridColumn(startDate: Date, endDate: Date, currentDate: Date) {
+  const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
+
+  if (
+    isLongerThan24Hours &&
+    isSameWeek(startDate, currentDate, {
+      weekStartsOn: 1,
+    })
+  ) {
+    return `${startDate.getDay() === 0 ? 7 : startDate.getDay()} / span ${
+      eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      }).length
+    }`;
+  }
+
+  return currentDate.getDay() === 0 ? 7 : currentDate.getDay();
+}
 
 export function Body() {
   const [hovering, setHovering] = useState("");
@@ -241,23 +312,30 @@ export function Body() {
               {days.map((day) => (
                 <Fragment key={day.date.toISOString()}>
                   {day.events.map((event) => {
-                    const { date } = day;
-                    const startdate = new Date(event.start);
+                    const startDate = new Date(event.start);
                     const endDate = new Date(event.end);
 
-                    const start = isSameDay(startdate, date)
-                      ? (startdate.getHours() * 60) / 5 +
-                        1 +
-                        startdate.getMinutes() / 5 +
-                        1
-                      : 2;
+                    const gridRow = getGridRow(startDate, endDate, day.date);
+                    const gridColumn = getGridColumn(
+                      startDate,
+                      endDate,
+                      day.date,
+                    );
 
-                    const end = !isSameDay(endDate, date)
-                      ? 288
-                      : isSameDay(startdate, endDate)
-                      ? differenceInMinutes(endDate, startdate) / 5
-                      : (endDate.getHours() * 60) / 5 +
-                        endDate.getMinutes() / 5;
+                    const isLongerThan24Hours = getIsLongerThan24Hours(
+                      startDate,
+                      endDate,
+                    );
+
+                    if (
+                      isLongerThan24Hours &&
+                      isSameWeek(day.date, startDate, {
+                        weekStartsOn: 1,
+                      }) &&
+                      !isSameDay(day.date, startDate)
+                    ) {
+                      return null;
+                    }
 
                     return (
                       <li
@@ -266,36 +344,37 @@ export function Body() {
                           "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
                           {
                             "rounded-b-none":
-                              !isSameDay(startdate, endDate) &&
+                              !isSameDay(startDate, endDate) &&
                               !isSameDay(endDate, day.date),
                             "rounded-t-none":
-                              !isSameDay(startdate, endDate) &&
+                              !isSameDay(startDate, endDate) &&
                               isSameDay(endDate, day.date),
                             "rounded-none":
-                              !isSameDay(startdate, day.date) &&
-                              !isSameDay(endDate, day.date),
+                              (!isSameDay(startDate, day.date) &&
+                                !isSameDay(endDate, day.date)) ||
+                              isLongerThan24Hours,
                             "bg-blue-100": hovering === event.id,
+                            "py-0 justify-center": isLongerThan24Hours,
                           },
                         )}
                         onMouseEnter={() => setHovering(event.id)}
                         onMouseLeave={() => setHovering("")}
                         style={{
-                          gridRow: `${Math.round(start)} / span ${Math.round(
-                            end,
-                          )}`,
-                          gridColumn:
-                            day.date.getDay() === 0 ? 7 : day.date.getDay(),
+                          gridRow,
+                          gridColumn,
                         }}
                       >
                         <p className="font-semibold text-blue-700">
                           {event.title}
                         </p>
-                        <p className="text-blue-500 group-hover:text-blue-700">
-                          <time dateTime={event.start}>
-                            {format(new Date(event.start), "HH:mm aa")} -{" "}
-                            {format(new Date(event.end), "HH:mm aa")}
-                          </time>
-                        </p>
+                        {!isLongerThan24Hours && (
+                          <p className="text-blue-500 group-hover:text-blue-700">
+                            <time dateTime={event.start}>
+                              {format(new Date(event.start), "HH:mm aa")} -{" "}
+                              {format(new Date(event.end), "HH:mm aa")}
+                            </time>
+                          </p>
+                        )}
                       </li>
                     );
                   })}

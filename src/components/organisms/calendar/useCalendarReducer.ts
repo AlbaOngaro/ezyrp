@@ -292,6 +292,7 @@ const reducer: Reducer<State, Action> = (
                     end,
                   });
                 } catch (error: unknown) {
+                  console.error(error);
                   return false;
                 }
               }
