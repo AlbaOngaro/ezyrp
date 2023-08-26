@@ -103,8 +103,8 @@ export function generateWeek(base: Date): Day[] {
 
 export const defaultInitialState: State = {
   selected: new Date(),
-  view: "day",
-  days: generateMonth(new Date()),
+  view: "week",
+  days: generateWeek(new Date()),
 };
 
 const reducer: Reducer<State, Action> = (
@@ -271,19 +271,23 @@ const reducer: Reducer<State, Action> = (
         days: state.days.map((day) => ({
           ...day,
           events: action.payload.events.filter((event) => {
-            const date = day.date;
-            date.setHours(0, 0);
+            switch (state.view) {
+              default: {
+                const date = day.date;
+                date.setHours(0, 0);
 
-            const start = new Date(event.start);
-            start.setHours(0, 0);
+                const start = new Date(event.start);
+                start.setHours(0, 0);
 
-            const end = new Date(event.end);
-            end.setHours(0, 0);
+                const end = new Date(event.end);
+                end.setHours(0, 0);
 
-            return isWithinInterval(date, {
-              start,
-              end,
-            });
+                return isWithinInterval(date, {
+                  start,
+                  end,
+                });
+              }
+            }
           }),
         })),
       };

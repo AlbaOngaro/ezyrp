@@ -88,7 +88,7 @@ export function Calendar({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events, selected]);
+  }, [events, selected, view]);
 
   useEffect(() => {
     if (typeof onChange === "function") {

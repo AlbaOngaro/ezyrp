@@ -1,4 +1,5 @@
-import { format } from "date-fns";
+import { differenceInMinutes, format, isSameDay } from "date-fns";
+import { Fragment } from "react";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
 
@@ -235,54 +236,64 @@ export function Body() {
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
             >
-              <li
-                className="relative mt-px flex sm:col-start-3"
-                style={{ gridRow: "74 / span 12" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100"
-                >
-                  <p className="order-1 font-semibold text-blue-700">
-                    Breakfast
-                  </p>
-                  <p className="text-blue-500 group-hover:text-blue-700">
-                    <time dateTime="2022-01-12T06:00">6:00 AM</time>
-                  </p>
-                </a>
-              </li>
-              <li
-                className="relative mt-px flex sm:col-start-3"
-                style={{ gridRow: "92 / span 30" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-pink-50 p-2 text-xs leading-5 hover:bg-pink-100"
-                >
-                  <p className="order-1 font-semibold text-pink-700">
-                    Flight to Paris
-                  </p>
-                  <p className="text-pink-500 group-hover:text-pink-700">
-                    <time dateTime="2022-01-12T07:30">7:30 AM</time>
-                  </p>
-                </a>
-              </li>
-              <li
-                className="relative mt-px hidden sm:col-start-6 sm:flex"
-                style={{ gridRow: "122 / span 24" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-gray-100 p-2 text-xs leading-5 hover:bg-gray-200"
-                >
-                  <p className="order-1 font-semibold text-gray-700">
-                    Meeting with design team at Disney
-                  </p>
-                  <p className="text-gray-500 group-hover:text-gray-700">
-                    <time dateTime="2022-01-15T10:00">10:00 AM</time>
-                  </p>
-                </a>
-              </li>
+              {days.map((day) => (
+                <Fragment key={day.date.toISOString()}>
+                  {day.events.map((event) => {
+                    const startdate = new Date(event.start);
+                    const endDate = new Date(event.end);
+
+                    const start = isSameDay(startdate, day.date)
+                      ? (startdate.getHours() * 60) / 5 +
+                        1 +
+                        startdate.getMinutes() / 5 +
+                        1
+                      : 2;
+
+                    const end = !isSameDay(endDate, day.date)
+                      ? 288
+                      : isSameDay(startdate, endDate)
+                      ? differenceInMinutes(endDate, startdate) / 5
+                      : (endDate.getHours() * 60) / 5 +
+                        endDate.getMinutes() / 5;
+
+                    console.debug(days);
+
+                    return (
+                      <li
+                        key={event.id}
+                        className={twMerge(
+                          "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
+                          {
+                            "rounded-b-none":
+                              !isSameDay(startdate, endDate) &&
+                              !isSameDay(endDate, day.date),
+                            "rounded-t-none":
+                              !isSameDay(startdate, endDate) &&
+                              isSameDay(endDate, day.date),
+                            "rounded-none":
+                              !isSameDay(startdate, day.date) &&
+                              !isSameDay(endDate, day.date),
+                          },
+                        )}
+                        style={{
+                          gridRow: `${start} / span ${end}`,
+                          gridColumn:
+                            day.date.getDay() === 0 ? 7 : day.date.getDay(),
+                        }}
+                      >
+                        <p className="order-1 font-semibold text-blue-700">
+                          {event.title}
+                        </p>
+                        <p className="text-blue-500 group-hover:text-blue-700">
+                          <time dateTime={event.start}>
+                            {format(new Date(event.start), "HH:mm aa")}
+                          </time>
+                        </p>
+                      </li>
+                    );
+                  })}
+                </Fragment>
+              ))}
             </ol>
           </div>
         </div>
