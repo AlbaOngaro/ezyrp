@@ -1,8 +1,18 @@
-import { format } from "date-fns";
+import {
+  eachDayOfInterval,
+  format,
+  getWeekOfMonth,
+  isSameDay,
+  isSameWeek,
+} from "date-fns";
 
 import { useState } from "react";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
+import {
+  getGridColumn,
+  getIsLongerThan24Hours,
+} from "components/organisms/calendar/utils";
 
 export function Body() {
   const [hovering, setHovering] = useState("");
@@ -66,29 +76,58 @@ export function Body() {
             }}
           >
             {events.map((event) => {
-              return (
-                <li
-                  key={event.id}
-                  className={twMerge(
-                    "group mt-px cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
-                    {
-                      "bg-blue-100": hovering === event.id,
-                    },
-                  )}
-                  onMouseEnter={() => setHovering(event.id)}
-                  onMouseLeave={() => setHovering("")}
-                >
-                  <p className="font-semibold text-blue-700 truncate">
-                    {event.title}
-                  </p>
-                  <time
-                    dateTime={event.start}
-                    className="text-blue-500 group-hover:text-blue-700"
+              const startDate = new Date(event.start);
+              const endDate = new Date(event.end);
+
+              return eachDayOfInterval({
+                start: startDate,
+                end: endDate,
+              }).map((day) => {
+                const gridColumn = getGridColumn(startDate, endDate, day);
+
+                const isLongerThan24Hours = getIsLongerThan24Hours(
+                  startDate,
+                  endDate,
+                );
+
+                if (
+                  isLongerThan24Hours &&
+                  isSameWeek(day, startDate, {
+                    weekStartsOn: 1,
+                  }) &&
+                  !isSameDay(day, startDate)
+                ) {
+                  return null;
+                }
+
+                return (
+                  <li
+                    key={event.id}
+                    className={twMerge(
+                      "group mt-10 h-fit cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
+                      {
+                        "bg-blue-100": hovering === event.id,
+                      },
+                    )}
+                    onMouseEnter={() => setHovering(event.id)}
+                    onMouseLeave={() => setHovering("")}
+                    style={{
+                      gridColumn,
+                      gridRow: getWeekOfMonth(day),
+                    }}
                   >
-                    {format(new Date(event.start), "hh aa")}
-                  </time>
-                </li>
-              );
+                    <p className="font-semibold text-blue-700 truncate">
+                      {event.title}
+                    </p>
+                    <time
+                      dateTime={event.start}
+                      className="text-blue-500 group-hover:text-blue-700"
+                    >
+                      {format(new Date(event.start), "hh aa")}
+                    </time>
+                  </li>
+                );
+              });
             })}
           </ol>
         </div>
