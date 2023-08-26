@@ -1,9 +1,11 @@
 import { differenceInMinutes, format, isSameDay } from "date-fns";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
 
 export function Body() {
+  const [hovering, setHovering] = useState("");
+
   const {
     state: { days },
   } = useCalendarContext();
@@ -239,24 +241,23 @@ export function Body() {
               {days.map((day) => (
                 <Fragment key={day.date.toISOString()}>
                   {day.events.map((event) => {
+                    const { date } = day;
                     const startdate = new Date(event.start);
                     const endDate = new Date(event.end);
 
-                    const start = isSameDay(startdate, day.date)
+                    const start = isSameDay(startdate, date)
                       ? (startdate.getHours() * 60) / 5 +
                         1 +
                         startdate.getMinutes() / 5 +
                         1
                       : 2;
 
-                    const end = !isSameDay(endDate, day.date)
+                    const end = !isSameDay(endDate, date)
                       ? 288
                       : isSameDay(startdate, endDate)
                       ? differenceInMinutes(endDate, startdate) / 5
                       : (endDate.getHours() * 60) / 5 +
                         endDate.getMinutes() / 5;
-
-                    console.debug(days);
 
                     return (
                       <li
@@ -273,20 +274,26 @@ export function Body() {
                             "rounded-none":
                               !isSameDay(startdate, day.date) &&
                               !isSameDay(endDate, day.date),
+                            "bg-blue-100": hovering === event.id,
                           },
                         )}
+                        onMouseEnter={() => setHovering(event.id)}
+                        onMouseLeave={() => setHovering("")}
                         style={{
-                          gridRow: `${start} / span ${end}`,
+                          gridRow: `${Math.round(start)} / span ${Math.round(
+                            end,
+                          )}`,
                           gridColumn:
                             day.date.getDay() === 0 ? 7 : day.date.getDay(),
                         }}
                       >
-                        <p className="order-1 font-semibold text-blue-700">
+                        <p className="font-semibold text-blue-700">
                           {event.title}
                         </p>
                         <p className="text-blue-500 group-hover:text-blue-700">
                           <time dateTime={event.start}>
-                            {format(new Date(event.start), "HH:mm aa")}
+                            {format(new Date(event.start), "HH:mm aa")} -{" "}
+                            {format(new Date(event.end), "HH:mm aa")}
                           </time>
                         </p>
                       </li>

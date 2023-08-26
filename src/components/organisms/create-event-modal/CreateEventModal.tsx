@@ -1,7 +1,7 @@
 import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { add, format } from "date-fns";
+import { add, format, isValid } from "date-fns";
 import { Event } from "lib/types";
 
 import { Modal } from "components/atoms/modal/Modal";
@@ -29,6 +29,13 @@ export function CreateEventModal({ setIsOpen }: Props) {
 
     try {
       await events.create(event);
+      setEvent({
+        start: new Date().toISOString(),
+        end: add(new Date(), {
+          hours: 0.5,
+        }).toISOString(),
+        title: "",
+      });
     } catch (error: unknown) {
       console.error(error);
     } finally {
@@ -63,12 +70,14 @@ export function CreateEventModal({ setIsOpen }: Props) {
             name="start"
             step={60 * 5} // 5 minutes
             value={format(new Date(event.start), "yyyy-MM-dd'T'HH:mm")}
-            onChange={(e) =>
-              setEvent((curr) => ({
-                ...curr,
-                start: new Date(e.target.value).toISOString(),
-              }))
-            }
+            onChange={(e) => {
+              if (isValid(new Date(e.target.value))) {
+                setEvent((curr) => ({
+                  ...curr,
+                  start: new Date(e.target.value).toISOString(),
+                }));
+              }
+            }}
           />
 
           <Input
@@ -79,12 +88,14 @@ export function CreateEventModal({ setIsOpen }: Props) {
             step={60 * 5} // 5 minutes
             min={format(new Date(event.start), "yyyy-MM-dd'T'HH:mm")}
             value={format(new Date(event.end), "yyyy-MM-dd'T'HH:mm")}
-            onChange={(e) =>
-              setEvent((curr) => ({
-                ...curr,
-                end: new Date(e.target.value).toISOString(),
-              }))
-            }
+            onChange={(e) => {
+              if (isValid(new Date(e.target.value))) {
+                setEvent((curr) => ({
+                  ...curr,
+                  end: new Date(e.target.value).toISOString(),
+                }));
+              }
+            }}
             validations={{
               tooLong: "too long",
             }}

@@ -1,6 +1,7 @@
 import { Reducer, useReducer } from "react";
 import {
   getDaysInMonth,
+  isSameDay,
   isSameMonth,
   isToday,
   isWithinInterval,
@@ -273,19 +274,26 @@ const reducer: Reducer<State, Action> = (
           events: action.payload.events.filter((event) => {
             switch (state.view) {
               default: {
-                const date = day.date;
-                date.setHours(0, 0);
-
+                const { date } = day;
                 const start = new Date(event.start);
-                start.setHours(0, 0);
-
                 const end = new Date(event.end);
+
+                if (isSameDay(start, end)) {
+                  return isSameDay(start, date);
+                }
+
+                date.setHours(0, 0);
+                start.setHours(0, 0);
                 end.setHours(0, 0);
 
-                return isWithinInterval(date, {
-                  start,
-                  end,
-                });
+                try {
+                  return isWithinInterval(date, {
+                    start,
+                    end,
+                  });
+                } catch (error: unknown) {
+                  return false;
+                }
               }
             }
           }),
