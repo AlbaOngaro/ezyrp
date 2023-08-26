@@ -104,7 +104,7 @@ export function generateWeek(base: Date): Day[] {
 
 export const defaultInitialState: State = {
   selected: new Date(),
-  view: "week",
+  view: "month",
   days: generateWeek(new Date()),
 };
 

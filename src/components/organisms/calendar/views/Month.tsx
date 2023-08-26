@@ -1,9 +1,12 @@
 import { format } from "date-fns";
 
+import { useState } from "react";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
 
 export function Body() {
+  const [hovering, setHovering] = useState("");
+
   const {
     state: { days },
   } = useCalendarContext();
@@ -57,18 +60,26 @@ export function Body() {
               {day.events.length > 0 && (
                 <ol className="mt-2">
                   {day.events.slice(0, 2).map((event) => (
-                    <li key={event.id}>
-                      <a href={event.href} className="group flex">
-                        <p className="flex-auto truncate font-medium text-gray-900 group-hover:text-indigo-600">
-                          {event.name}
-                        </p>
-                        <time
-                          dateTime={event.datetime}
-                          className="ml-3 hidden flex-none text-gray-500 group-hover:text-indigo-600 xl:block"
-                        >
-                          {event.time}
-                        </time>
-                      </a>
+                    <li
+                      key={event.id}
+                      className={twMerge(
+                        "group mt-px cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
+                        {
+                          "bg-blue-100": hovering === event.id,
+                        },
+                      )}
+                      onMouseEnter={() => setHovering(event.id)}
+                      onMouseLeave={() => setHovering("")}
+                    >
+                      <p className="font-semibold text-blue-700 truncate">
+                        {event.title}
+                      </p>
+                      <time
+                        dateTime={event.start}
+                        className="text-blue-500 group-hover:text-blue-700"
+                      >
+                        {format(new Date(event.start), "hh aa")}
+                      </time>
                     </li>
                   ))}
                   {day.events.length > 2 && (
