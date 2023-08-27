@@ -1,10 +1,12 @@
 import { format, isSameDay, isSameWeek } from "date-fns";
 import { Fragment, useState } from "react";
+import { Root, Trigger } from "@radix-ui/react-popover";
 
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../utils";
 import { twMerge } from "lib/utils/twMerge";
 
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
+import { EventPopover } from "components/organisms/calendar/components/EventPopover";
 
 export function Body() {
   const [hovering, setHovering] = useState("");
@@ -270,44 +272,49 @@ export function Body() {
                     }
 
                     return (
-                      <li
-                        key={event.id}
-                        className={twMerge(
-                          "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
-                          {
-                            "rounded-b-none":
-                              !isSameDay(startDate, endDate) &&
-                              !isSameDay(endDate, day.date),
-                            "rounded-t-none":
-                              !isSameDay(startDate, endDate) &&
-                              isSameDay(endDate, day.date),
-                            "rounded-none":
-                              (!isSameDay(startDate, day.date) &&
-                                !isSameDay(endDate, day.date)) ||
-                              isLongerThan24Hours,
-                            "bg-blue-100": hovering === event.id,
-                            "py-0 justify-center": isLongerThan24Hours,
-                          },
-                        )}
-                        onMouseEnter={() => setHovering(event.id)}
-                        onMouseLeave={() => setHovering("")}
-                        style={{
-                          gridRow,
-                          gridColumn,
-                        }}
-                      >
-                        <p className="font-semibold text-blue-700">
-                          {event.title}
-                        </p>
-                        {!isLongerThan24Hours && (
-                          <p className="text-blue-500 group-hover:text-blue-700">
-                            <time dateTime={event.start}>
-                              {format(new Date(event.start), "HH:mm aa")} -{" "}
-                              {format(new Date(event.end), "HH:mm aa")}
-                            </time>
-                          </p>
-                        )}
-                      </li>
+                      <Root key={event.id}>
+                        <Trigger asChild>
+                          <li
+                            className={twMerge(
+                              "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
+                              {
+                                "rounded-b-none":
+                                  !isSameDay(startDate, endDate) &&
+                                  !isSameDay(endDate, day.date),
+                                "rounded-t-none":
+                                  !isSameDay(startDate, endDate) &&
+                                  isSameDay(endDate, day.date),
+                                "rounded-none":
+                                  (!isSameDay(startDate, day.date) &&
+                                    !isSameDay(endDate, day.date)) ||
+                                  isLongerThan24Hours,
+                                "bg-blue-100": hovering === event.id,
+                                "py-0 justify-center": isLongerThan24Hours,
+                              },
+                            )}
+                            onMouseEnter={() => setHovering(event.id)}
+                            onMouseLeave={() => setHovering("")}
+                            style={{
+                              gridRow,
+                              gridColumn,
+                            }}
+                          >
+                            <p className="font-semibold text-blue-700">
+                              {event.title}
+                            </p>
+                            {!isLongerThan24Hours && (
+                              <p className="text-blue-500 group-hover:text-blue-700">
+                                <time dateTime={event.start}>
+                                  {format(new Date(event.start), "HH:mm aa")} -{" "}
+                                  {format(new Date(event.end), "HH:mm aa")}
+                                </time>
+                              </p>
+                            )}
+                          </li>
+                        </Trigger>
+
+                        <EventPopover event={event} />
+                      </Root>
                     );
                   })}
                 </Fragment>

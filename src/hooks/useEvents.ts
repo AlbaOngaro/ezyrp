@@ -19,7 +19,7 @@ export function useEvents() {
     error,
     mutate,
     isLoading,
-    refech: async () => {
+    refetch: async () => {
       try {
         const result = await mutate<Event[]>(getEvents);
 
@@ -41,6 +41,30 @@ export function useEvents() {
             "content-type": "application/json",
           },
           body: JSON.stringify(event),
+        });
+
+        return getEvents();
+      }),
+    update: (event: Partial<Event> & { id: Event["id"] }[]) =>
+      mutate(async () => {
+        await fetch("/api/events", {
+          method: "PATCH",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(event),
+        });
+
+        return getEvents();
+      }),
+    delete: (ids: Event["id"][]) =>
+      mutate(async () => {
+        await fetch("/api/events", {
+          method: "DELETE",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(ids),
         });
 
         return getEvents();

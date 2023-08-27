@@ -17,7 +17,7 @@ export function Dialog({
   confirmText = "Confirm",
 }: Props) {
   return (
-    <>
+    <AlertDialog.Portal>
       <AlertDialog.Overlay
         className={twMerge(
           "bg-black opacity-40 fixed inset-0 z-40",
@@ -55,6 +55,6 @@ export function Dialog({
           </AlertDialog.Action>
         </div>
       </AlertDialog.Content>
-    </>
+    </AlertDialog.Portal>
   );
 }
