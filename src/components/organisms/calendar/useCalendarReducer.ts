@@ -62,14 +62,22 @@ export function generateMonth(base: Date): Day[] {
   const firstDay = new Date(year, month, 1).getDay();
   const lastDay = new Date(year, month, total).getDay();
 
+  const toAddBefore = firstDay === 1 ? 0 : firstDay - 1 > 0 ? firstDay - 1 : 6;
+  const toAddAfter = lastDay !== 0 ? 7 - lastDay : 0;
+
   return [
     Array.from(
-      { length: firstDay - 1 > 0 ? firstDay - 1 : 6 },
+      { length: toAddBefore },
       (_, day) => new Date(year, month, day * -1),
     ).reverse(),
     Array.from({ length: total }, (_, day) => new Date(year, month, day + 1)),
     Array.from(
-      { length: lastDay !== 0 ? 7 - lastDay : 0 },
+      {
+        length:
+          toAddBefore + total + toAddAfter === 42
+            ? toAddAfter
+            : 42 - (toAddBefore + total + toAddAfter) + toAddAfter,
+      },
       (_, day) => new Date(year, month, total + (day + 1)),
     ),
   ].flatMap((dates) =>
