@@ -1,4 +1,5 @@
 import { format, isSameDay } from "date-fns";
+import { Root, Trigger } from "@radix-ui/react-popover";
 
 import { twMerge } from "lib/utils/twMerge";
 
@@ -9,6 +10,7 @@ import {
   getGridRow,
   getIsLongerThan24Hours,
 } from "components/organisms/calendar/utils";
+import { EventPopover } from "components/organisms/calendar/components/EventPopover";
 
 export function Body() {
   const {
@@ -260,41 +262,51 @@ export function Body() {
                     startDate,
                     endDate,
                   );
+
                   return (
-                    <li
-                      key={event.id}
-                      className={twMerge(
-                        "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
-                        {
-                          "rounded-b-none":
-                            !isSameDay(startDate, endDate) &&
-                            !isSameDay(endDate, selected),
-                          "rounded-t-none":
-                            !isSameDay(startDate, endDate) &&
-                            isSameDay(endDate, selected),
-                          "rounded-none":
-                            (!isSameDay(startDate, selected) &&
-                              !isSameDay(endDate, selected)) ||
-                            isLongerThan24Hours,
-                          "py-0 justify-center": isLongerThan24Hours,
-                        },
-                      )}
-                      style={{
-                        gridRow,
-                      }}
-                    >
-                      <p className="font-semibold text-blue-700">
-                        {event.title}
-                      </p>
-                      {!isLongerThan24Hours && (
-                        <p className="text-blue-500 group-hover:text-blue-700">
-                          <time dateTime={event.start}>
-                            {format(new Date(event.start), "HH:mm aa")} -{" "}
-                            {format(new Date(event.end), "HH:mm aa")}
-                          </time>
-                        </p>
-                      )}
-                    </li>
+                    <Root key={event.id}>
+                      <Trigger asChild>
+                        <li
+                          className={twMerge(
+                            "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100",
+                            {
+                              "rounded-b-none":
+                                !isSameDay(startDate, endDate) &&
+                                !isSameDay(endDate, selected),
+                              "rounded-t-none":
+                                !isSameDay(startDate, endDate) &&
+                                isSameDay(endDate, selected),
+                              "rounded-none":
+                                (!isSameDay(startDate, selected) &&
+                                  !isSameDay(endDate, selected)) ||
+                                isLongerThan24Hours,
+                              "py-0 justify-center": isLongerThan24Hours,
+                            },
+                          )}
+                          style={{
+                            gridRow,
+                          }}
+                        >
+                          <p className="font-semibold text-blue-700">
+                            {event.title}
+                          </p>
+                          {!isLongerThan24Hours && (
+                            <p className="text-blue-500 group-hover:text-blue-700">
+                              <time dateTime={event.start}>
+                                {format(new Date(event.start), "HH:mm aa")} -{" "}
+                                {format(new Date(event.end), "HH:mm aa")}
+                              </time>
+                            </p>
+                          )}
+                        </li>
+                      </Trigger>
+
+                      <EventPopover
+                        event={event}
+                        side="bottom"
+                        align="center"
+                      />
+                    </Root>
                   );
                 })}
             </ol>

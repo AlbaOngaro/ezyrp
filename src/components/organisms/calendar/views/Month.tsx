@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   eachDayOfInterval,
   format,
@@ -5,14 +6,15 @@ import {
   isSameDay,
   isSameWeek,
 } from "date-fns";
+import { Root, Trigger } from "@radix-ui/react-popover";
 
-import { useState } from "react";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { twMerge } from "lib/utils/twMerge";
 import {
   getGridColumn,
   getIsLongerThan24Hours,
 } from "components/organisms/calendar/utils";
+import { EventPopover } from "components/organisms/calendar/components/EventPopover";
 
 export function Body() {
   const [hovering, setHovering] = useState("");
@@ -101,31 +103,38 @@ export function Body() {
                 }
 
                 return (
-                  <li
-                    key={event.id}
-                    className={twMerge(
-                      "group mt-10 h-fit cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
-                      {
-                        "bg-blue-100": hovering === event.id,
-                      },
-                    )}
-                    onMouseEnter={() => setHovering(event.id)}
-                    onMouseLeave={() => setHovering("")}
-                    style={{
-                      gridColumn,
-                      gridRow: getWeekOfMonth(day),
-                    }}
-                  >
-                    <p className="font-semibold text-blue-700 truncate">
-                      {event.title}
-                    </p>
-                    <time
-                      dateTime={event.start}
-                      className="text-blue-500 group-hover:text-blue-700"
-                    >
-                      {format(new Date(event.start), "hh aa")}
-                    </time>
-                  </li>
+                  <Root key={event.id}>
+                    <Trigger asChild>
+                      <li
+                        className={twMerge(
+                          "group mt-10 h-fit cursor-pointer flex justify-between rounded-sm bg-blue-50 px-2 text-xs leading-5 hover:bg-blue-100",
+                          {
+                            "bg-blue-100": hovering === event.id,
+                          },
+                        )}
+                        onMouseEnter={() => setHovering(event.id)}
+                        onMouseLeave={() => setHovering("")}
+                        style={{
+                          gridColumn,
+                          gridRow: getWeekOfMonth(day, {
+                            weekStartsOn: 1,
+                          }),
+                        }}
+                      >
+                        <p className="font-semibold text-blue-700 truncate">
+                          {event.title}
+                        </p>
+                        <time
+                          dateTime={event.start}
+                          className="text-blue-500 group-hover:text-blue-700"
+                        >
+                          {format(new Date(event.start), "hh aa")}
+                        </time>
+                      </li>
+                    </Trigger>
+
+                    <EventPopover event={event} />
+                  </Root>
                 );
               });
             })}

@@ -19,9 +19,11 @@ import { EditEventModal } from "components/organisms/edit-event-modal/EditEventM
 
 interface Props {
   event: Event;
+  side?: "left" | "top" | "right" | "bottom";
+  align?: "center" | "start" | "end";
 }
 
-export function EventPopover({ event }: Props) {
+export function EventPopover({ event, side = "left", align = "start" }: Props) {
   const events = useEvents();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -31,8 +33,8 @@ export function EventPopover({ event }: Props) {
       <Popover.Content
         className="rounded-xl p-5 min-w-[300px] bg-white shadow-[0_24px_38px_3px_rgba(0,0,0,.14),_0_9px_46px_8px_rgba(0,0,0,.12),_0_11px_15px_-7px_rgba(0,0,0,.2)] z-10 focus-within:outline-none"
         sideOffset={8}
-        side="left"
-        align="start"
+        side={side}
+        align={align}
       >
         <header className="flex flex-row justify-end gap-2">
           <ModalRoot open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
