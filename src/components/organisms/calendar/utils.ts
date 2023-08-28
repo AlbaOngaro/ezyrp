@@ -6,6 +6,8 @@ import {
   isSameWeek,
 } from "date-fns";
 
+import { Event } from "lib/types";
+
 export function getEventStartRow(
   startDate: Date,
   endDate: Date,
@@ -76,4 +78,8 @@ export function getGridColumn(
   }
 
   return currentDate.getDay() === 0 ? 7 : currentDate.getDay();
+}
+
+export function isSavedEvent(event: Event | Omit<Event, "workspace">): boolean {
+  return /event\:.{20}/.test(event.id);
 }

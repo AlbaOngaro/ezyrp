@@ -1,16 +1,11 @@
 import { format, isSameDay } from "date-fns";
 import { Root, Trigger } from "@radix-ui/react-popover";
 
-import { twMerge } from "lib/utils/twMerge";
+import { EventItem } from "../components/EventItem";
+import { EventPopover } from "../components/EventPopover";
+import { useCalendarContext } from "../Calendar";
 
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
-
-import { useCalendarContext } from "components/organisms/calendar/Calendar";
-import {
-  getGridRow,
-  getIsLongerThan24Hours,
-} from "components/organisms/calendar/utils";
-import { EventPopover } from "components/organisms/calendar/components/EventPopover";
 
 export function Body() {
   const {
@@ -253,148 +248,15 @@ export function Body() {
             >
               {days
                 .find((day) => isSameDay(day.date, selected))
-                ?.events.map((event) => {
-                  const startDate = new Date(event.start);
-                  const endDate = new Date(event.end);
+                ?.events.map((event) => (
+                  <Root key={event.id}>
+                    <Trigger asChild>
+                      <EventItem event={event} currentDate={selected} />
+                    </Trigger>
 
-                  const gridRow = getGridRow(startDate, endDate, selected);
-                  const isLongerThan24Hours = getIsLongerThan24Hours(
-                    startDate,
-                    endDate,
-                  );
-
-                  return (
-                    <Root key={event.id}>
-                      <Trigger asChild>
-                        <li
-                          className={twMerge(
-                            "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg p-2 text-xs leading-5",
-                            {
-                              "rounded-b-none":
-                                !isSameDay(startDate, endDate) &&
-                                !isSameDay(endDate, selected),
-                              "rounded-t-none":
-                                !isSameDay(startDate, endDate) &&
-                                isSameDay(endDate, selected),
-                              "rounded-none":
-                                (!isSameDay(startDate, selected) &&
-                                  !isSameDay(endDate, selected)) ||
-                                isLongerThan24Hours,
-                              "py-0 justify-center": isLongerThan24Hours,
-                              "bg-red-50 hover:bg-red-100":
-                                event.variant === "red",
-                              "bg-orange-50 hover:bg-orange-100":
-                                event.variant === "orange",
-                              "bg-yellow-50 hover:bg-yellow-100":
-                                event.variant === "yellow",
-                              "bg-lime-50 hover:bg-lime-100":
-                                event.variant === "lime",
-                              "bg-green-5 hover:bg-green-1000":
-                                event.variant === "green",
-                              "bg-emerald-50 hover:bg-emerald-100":
-                                event.variant === "emerald",
-                              "bg-teal-50 hover:bg-teal-100":
-                                event.variant === "teal",
-                              "bg-cyan-50 hover:bg-cyan-100":
-                                event.variant === "cyan",
-                              "bg-sky-50 hover:bg-sky-100":
-                                event.variant === "sky",
-                              "bg-blue-50 hover:bg-blue-100":
-                                event.variant === "blue",
-                              "bg-indigo-50 hover:bg-indigo-100":
-                                event.variant === "indigo",
-                              "bg-violet-50 hover:bg-violet-100":
-                                event.variant === "violet",
-                              "bg-purple-50 hover:bg-purple-100":
-                                event.variant === "purple",
-                              "bg-fuchsia-50 hover:bg-fuchsia-100":
-                                event.variant === "fuchsia",
-                              "bg-pink-50 hover:bg-pink-100":
-                                event.variant === "pink",
-                              "bg-rose-50 hover:bg-rose-100":
-                                event.variant === "rose",
-                            },
-                          )}
-                          style={{
-                            gridRow,
-                          }}
-                        >
-                          <p
-                            className={twMerge("font-semibold", {
-                              "text-red-500": event.variant === "red",
-                              "text-orange-500": event.variant === "orange",
-                              "text-yellow-500": event.variant === "yellow",
-                              "text-lime-500": event.variant === "lime",
-                              "text-green-500": event.variant === "green",
-                              "text-emerald-500": event.variant === "emerald",
-                              "text-teal-500": event.variant === "teal",
-                              "text-cyan-500": event.variant === "cyan",
-                              "text-sky-500": event.variant === "sky",
-                              "text-blue-500": event.variant === "blue",
-                              "text-indigo-500": event.variant === "indigo",
-                              "text-violet-500": event.variant === "violet",
-                              "text-purple-500": event.variant === "purple",
-                              "text-fuchsia-500": event.variant === "fuchsia",
-                              "text-pink-500": event.variant === "pink",
-                              "text-rose-500": event.variant === "rose",
-                            })}
-                          >
-                            {event.title}
-                          </p>
-                          {!isLongerThan24Hours && (
-                            <p
-                              className={twMerge({
-                                "text-red-500 group-hover:text-red-700":
-                                  event.variant === "red",
-                                "text-orange-500 group-hover:text-orange-700":
-                                  event.variant === "orange",
-                                "text-yellow-500 group-hover:text-yellow-700":
-                                  event.variant === "yellow",
-                                "text-lime-500 group-hover:text-lime-700":
-                                  event.variant === "lime",
-                                "text-green-500 group-hover:text-green-700":
-                                  event.variant === "green",
-                                "text-emerald-500 group-hover:text-emerald-700":
-                                  event.variant === "emerald",
-                                "text-teal-500 group-hover:text-teal-700":
-                                  event.variant === "teal",
-                                "text-cyan-500 group-hover:text-cyan-700":
-                                  event.variant === "cyan",
-                                "text-sky-500 group-hover:text-sky-700":
-                                  event.variant === "sky",
-                                "text-blue-500 group-hover:text-blue-700":
-                                  event.variant === "blue",
-                                "text-indigo-500 group-hover:text-indigo-700":
-                                  event.variant === "indigo",
-                                "text-violet-500 group-hover:text-violet-700":
-                                  event.variant === "violet",
-                                "text-purple-500 group-hover:text-purple-700":
-                                  event.variant === "purple",
-                                "text-fuchsia-500 group-hover:text-fuchsia-700":
-                                  event.variant === "fuchsia",
-                                "text-pink-500 group-hover:text-pink-700":
-                                  event.variant === "pink",
-                                "text-rose-500 group-hover:text-rose-700":
-                                  event.variant === "rose",
-                              })}
-                            >
-                              <time dateTime={event.start}>
-                                {format(new Date(event.start), "HH:mm aa")} -{" "}
-                                {format(new Date(event.end), "HH:mm aa")}
-                              </time>
-                            </p>
-                          )}
-                        </li>
-                      </Trigger>
-
-                      <EventPopover
-                        event={event}
-                        side="bottom"
-                        align="center"
-                      />
-                    </Root>
-                  );
-                })}
+                    <EventPopover event={event} side="bottom" align="center" />
+                  </Root>
+                ))}
             </ol>
           </div>
         </div>
