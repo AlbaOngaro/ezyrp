@@ -1,17 +1,144 @@
-import { format, isSameDay } from "date-fns";
-import { Root, Trigger } from "@radix-ui/react-popover";
+import { add, format, isSameDay, minutesToHours } from "date-fns";
+import { Root, Trigger, Anchor } from "@radix-ui/react-popover";
+import { MouseEvent } from "react";
 
 import { EventItem } from "../components/EventItem";
 import { EventPopover } from "../components/EventPopover";
 import { useCalendarContext } from "../Calendar";
+import { isSavedEvent } from "../utils";
+
+import { convertRemToPx } from "lib/utils/convertRemToPx";
 
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
+import { Event } from "lib/types";
+import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+
+function EventItemWrapper({
+  event,
+  currentDate,
+}: {
+  event: Omit<Event, "workspace">;
+  currentDate: Date;
+}) {
+  const {
+    state: { days },
+    dispatch,
+  } = useCalendarContext();
+
+  const events = days.flatMap((day) => day.events);
+
+  if (isSavedEvent(event)) {
+    return (
+      <Root>
+        <Trigger
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          asChild
+        >
+          <EventItem event={event} currentDate={currentDate} />
+        </Trigger>
+
+        <EventPopover side="top" align="center" event={event} />
+      </Root>
+    );
+  }
+
+  return (
+    <Root open>
+      <Anchor asChild>
+        <EventItem event={event} currentDate={currentDate} />
+      </Anchor>
+
+      <CreateEventModal
+        event={event}
+        onChange={(updated) =>
+          dispatch({
+            type: "SET_EVENTS",
+            payload: {
+              events: events.map((e) => {
+                if (e.id !== event.id) {
+                  return e;
+                }
+
+                return updated as Event;
+              }),
+            },
+          })
+        }
+        className="z-50"
+        setIsOpen={console.debug}
+        as="popover"
+        side="left"
+        align="start"
+        sideOffset={8}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      />
+    </Root>
+  );
+}
 
 export function Body() {
   const {
     state: { selected, days },
     dispatch,
   } = useCalendarContext();
+
+  const events = days.flatMap((day) => day.events);
+  const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
+
+  const handleGridClick = (e: MouseEvent<HTMLOListElement>) => {
+    if (isCreatingNewEvent) {
+      dispatch({
+        type: "SET_EVENTS",
+        payload: {
+          events: events.filter((event) => isSavedEvent(event)),
+        },
+      });
+      return;
+    }
+
+    const rect = (e.target as HTMLOListElement).getBoundingClientRect();
+    const firstRow = convertRemToPx(1.75);
+    const y = e.clientY - (rect.top + firstRow);
+
+    if (y < 0) {
+      return;
+    }
+
+    const row = (rect.height - firstRow) / 288;
+    const minutes = Math.floor(y / row) * 5;
+
+    const day = selected;
+
+    const start = new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      minutesToHours(minutes),
+      minutes - minutesToHours(minutes) * 60,
+    );
+
+    dispatch({
+      type: "SET_EVENTS",
+      payload: {
+        events: [
+          ...events,
+          {
+            id: crypto.randomUUID(),
+            title: "",
+            start: start.toISOString(),
+            end: add(start, {
+              hours: 1,
+            }).toISOString(),
+            variant: "blue",
+          },
+        ],
+      },
+    });
+  };
 
   return (
     <div className="isolate flex flex-auto overflow-hidden bg-white">
@@ -245,17 +372,16 @@ export function Body() {
               style={{
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
+              onClick={handleGridClick}
             >
               {days
                 .find((day) => isSameDay(day.date, selected))
                 ?.events.map((event) => (
-                  <Root key={event.id}>
-                    <Trigger asChild>
-                      <EventItem event={event} currentDate={selected} />
-                    </Trigger>
-
-                    <EventPopover event={event} side="bottom" align="center" />
-                  </Root>
+                  <EventItemWrapper
+                    key={event.id}
+                    event={event}
+                    currentDate={selected}
+                  />
                 ))}
             </ol>
           </div>
