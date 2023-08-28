@@ -75,7 +75,6 @@ function EventItemWrapper({
                 if (e.id !== event.id) {
                   return e;
                 }
-
                 return updated as Event;
               }),
             },

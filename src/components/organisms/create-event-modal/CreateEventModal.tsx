@@ -9,7 +9,14 @@ import { Root as Form } from "@radix-ui/react-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import * as Popover from "@radix-ui/react-popover";
 
-import { add, format, isValid, roundToNearestMinutes } from "date-fns";
+import {
+  add,
+  format,
+  isAfter,
+  isValid,
+  roundToNearestMinutes,
+  set,
+} from "date-fns";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Event } from "lib/types";
 
@@ -137,9 +144,11 @@ export function CreateEventModal({
                 setEvent((curr) => ({
                   ...curr,
                   start: new Date(e.target.value).toISOString(),
-                  end: add(new Date(e.target.value), {
-                    hours: 1,
-                  }).toISOString(),
+                  end: isAfter(new Date(curr.end), new Date(e.target.value))
+                    ? curr.end
+                    : add(new Date(e.target.value), {
+                        hours: 1,
+                      }).toISOString(),
                 }));
               }
             }}
@@ -157,6 +166,17 @@ export function CreateEventModal({
               }),
               "yyyy-MM-dd'T'HH:mm",
             )}
+            max={
+              as === "popover"
+                ? format(
+                    set(new Date(event.start), {
+                      hours: 23,
+                      minutes: 59,
+                    }),
+                    "yyyy-MM-dd'T'HH:mm",
+                  )
+                : undefined
+            }
             value={format(new Date(event.end), "yyyy-MM-dd'T'HH:mm")}
             onChange={(e) => {
               if (isValid(new Date(e.target.value))) {

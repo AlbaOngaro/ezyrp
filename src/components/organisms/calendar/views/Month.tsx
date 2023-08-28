@@ -212,30 +212,13 @@ export function Body() {
               return eachDayOfInterval({
                 start: startDate,
                 end: endDate,
-              }).map((day) => {
-                const isLongerThan24Hours = getIsLongerThan24Hours(
-                  startDate,
-                  endDate,
-                );
-
-                if (
-                  isLongerThan24Hours &&
-                  isSameWeek(day, startDate, {
-                    weekStartsOn: 1,
-                  }) &&
-                  !isSameDay(day, startDate)
-                ) {
-                  return null;
-                }
-
-                return (
-                  <EventItemWrapper
-                    key={event.id}
-                    event={event}
-                    currentDate={day}
-                  />
-                );
-              });
+              }).map((day) => (
+                <EventItemWrapper
+                  key={event.id}
+                  event={event}
+                  currentDate={day}
+                />
+              ));
             })}
           </ol>
         </div>
