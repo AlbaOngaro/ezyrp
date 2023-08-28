@@ -22,7 +22,7 @@ export function SchedulePage() {
             <Button size="lg">Add event</Button>
           </Trigger>
 
-          <CreateEventModal setIsOpen={setIsCreatingEvent} />
+          <CreateEventModal as="modal" setIsOpen={setIsCreatingEvent} />
         </Root>
       }
       events={events.data}
