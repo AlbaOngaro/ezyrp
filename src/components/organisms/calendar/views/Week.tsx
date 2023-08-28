@@ -105,6 +105,10 @@ export function Body() {
   const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
 
   const handleGridClick = (e: MouseEvent<HTMLOListElement>) => {
+    if ((e.target as HTMLElement).id !== "grid") {
+      return;
+    }
+
     if (isCreatingNewEvent) {
       dispatch({
         type: "SET_EVENTS",
@@ -387,6 +391,7 @@ export function Body() {
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
               onClick={handleGridClick}
+              id="grid"
             >
               {days.map((day) => (
                 <Fragment key={day.date.toISOString()}>
