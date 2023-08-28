@@ -1,4 +1,4 @@
-import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import { Cross1Icon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
 import {
   Root as DialogRoot,
@@ -16,6 +16,7 @@ import { useEvents } from "hooks/useEvents";
 import { Event } from "lib/types";
 import { Dialog } from "components/atoms/dialog/Dialog";
 import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
+import { twMerge } from "lib/utils/twMerge";
 
 interface Props {
   event: Event;
@@ -57,11 +58,36 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
               onConfirm={() => events.delete([event.id])}
             />
           </DialogRoot>
+          <Popover.Close asChild>
+            <button className="p-2.5 rounded-full transition-colors duration-300 hover:bg-gray-100 active:bg-gray-200">
+              <Cross1Icon className="h-4 w-4" />
+            </button>
+          </Popover.Close>
         </header>
 
-        <section>
-          <h6 className="mb-2 font-bold">{event.title}</h6>
-          <p className="flex flex-row gap-2 text-sm text-gray-500">
+        <section className="grid grid-cols-[24px_1fr] gap-2 items-center">
+          <i
+            className={twMerge("w-4 h-4 rounded-md", {
+              "bg-red-500": event.variant === "red",
+              "bg-orange-500": event.variant === "orange",
+              "bg-yellow-500": event.variant === "yellow",
+              "bg-lime-500": event.variant === "lime",
+              "bg-green-500": event.variant === "green",
+              "bg-emerald-500": event.variant === "emerald",
+              "bg-teal-500": event.variant === "teal",
+              "bg-cyan-500": event.variant === "cyan",
+              "bg-sky-500": event.variant === "sky",
+              "bg-blue-500": event.variant === "blue",
+              "bg-indigo-500": event.variant === "indigo",
+              "bg-violet-500": event.variant === "violet",
+              "bg-purple-500": event.variant === "purple",
+              "bg-fuchsia-500": event.variant === "fuchsia",
+              "bg-pink-500": event.variant === "pink",
+              "bg-rose-500": event.variant === "rose",
+            })}
+          />
+          <h6 className="font-bold">{event.title}</h6>
+          <p className="col-start-2 flex flex-row gap-2 text-sm text-gray-500">
             <time dateTime={event.start}>
               {format(new Date(event.start), "dd MMMM yyyy, HH:mm")}
             </time>

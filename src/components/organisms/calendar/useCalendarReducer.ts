@@ -112,8 +112,8 @@ export function generateWeek(base: Date): Day[] {
 
 export const defaultInitialState: State = {
   selected: new Date(),
-  view: "month",
-  days: generateMonth(new Date()),
+  view: "week",
+  days: generateWeek(new Date()),
 };
 
 const reducer: Reducer<State, Action> = (
