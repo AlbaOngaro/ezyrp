@@ -1,11 +1,166 @@
-import { format } from "date-fns";
-import { useCalendarContext } from "components/organisms/calendar/Calendar";
+import { add, format, isSameDay, isSameWeek, minutesToHours } from "date-fns";
+import { Fragment, MouseEvent } from "react";
+import { Anchor, Root, Trigger } from "@radix-ui/react-popover";
+
+import { getIsLongerThan24Hours, isSavedEvent } from "../utils";
+import { useCalendarContext } from "../Calendar";
+import { EventItem } from "../components/EventItem";
+import { EventPopover } from "../components/EventPopover";
+
+import { Event } from "lib/types";
+
 import { twMerge } from "lib/utils/twMerge";
+import { convertRemToPx } from "lib/utils/convertRemToPx";
+
+import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+
+function EventItemWrapper({
+  event,
+  currentDate,
+}: {
+  event: Omit<Event, "workspace">;
+  currentDate: Date;
+}) {
+  const {
+    state: { days },
+    dispatch,
+  } = useCalendarContext();
+
+  const events = days.flatMap((day) => day.events);
+
+  const startDate = new Date(event.start);
+  const endDate = new Date(event.end);
+  const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
+
+  if (
+    isLongerThan24Hours &&
+    isSameWeek(currentDate, startDate, {
+      weekStartsOn: 1,
+    }) &&
+    !isSameDay(currentDate, startDate)
+  ) {
+    return null;
+  }
+
+  if (isSavedEvent(event)) {
+    return (
+      <Root>
+        <Trigger
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          asChild
+        >
+          <EventItem event={event} currentDate={currentDate} />
+        </Trigger>
+
+        <EventPopover event={event} />
+      </Root>
+    );
+  }
+
+  return (
+    <Root open>
+      <Anchor asChild>
+        <EventItem event={event} currentDate={currentDate} />
+      </Anchor>
+
+      <CreateEventModal
+        event={event}
+        onChange={(updated) =>
+          dispatch({
+            type: "SET_EVENTS",
+            payload: {
+              events: events.map((e) => {
+                if (e.id !== event.id) {
+                  return e;
+                }
+                return updated as Event;
+              }),
+            },
+          })
+        }
+        className="z-50"
+        setIsOpen={console.debug}
+        as="popover"
+        side="left"
+        align="start"
+        sideOffset={8}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      />
+    </Root>
+  );
+}
 
 export function Body() {
   const {
     state: { days },
+    dispatch,
   } = useCalendarContext();
+
+  const events = days.flatMap((day) => day.events);
+  const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
+
+  const handleGridClick = (e: MouseEvent<HTMLOListElement>) => {
+    if ((e.target as HTMLElement).id !== "grid") {
+      return;
+    }
+
+    if (isCreatingNewEvent) {
+      dispatch({
+        type: "SET_EVENTS",
+        payload: {
+          events: events.filter((event) => isSavedEvent(event)),
+        },
+      });
+      return;
+    }
+
+    const rect = (e.target as HTMLOListElement).getBoundingClientRect();
+    const firstRow = convertRemToPx(1.75);
+    const y = e.clientY - (rect.top + firstRow);
+
+    if (y < 0) {
+      return;
+    }
+
+    const row = (rect.height - firstRow) / 288;
+    const minutes = Math.floor(y / row) * 5;
+
+    const x = e.clientX - rect.left;
+    const col = rect.width / 7;
+    const weekDay = Math.floor(x / col);
+
+    const day = days[weekDay].date;
+
+    const start = new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      minutesToHours(minutes),
+      minutes - minutesToHours(minutes) * 60,
+    );
+
+    dispatch({
+      type: "SET_EVENTS",
+      payload: {
+        events: [
+          ...events,
+          {
+            id: crypto.randomUUID(),
+            title: "",
+            start: start.toISOString(),
+            end: add(start, {
+              hours: 1,
+            }).toISOString(),
+            variant: "blue",
+          },
+        ],
+      },
+    });
+  };
 
   return (
     <div className="isolate flex flex-auto flex-col overflow-auto bg-white">
@@ -230,59 +385,24 @@ export function Body() {
 
             {/* Events */}
             <ol
-              className="col-start-1 col-end-2 row-start-1 grid grid-cols-1 sm:grid-cols-7 sm:pr-8"
+              className="relative z-20 col-start-1 col-end-2 row-start-1 grid grid-cols-1 sm:grid-cols-7 sm:pr-8"
               style={{
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
+              onClick={handleGridClick}
+              id="grid"
             >
-              <li
-                className="relative mt-px flex sm:col-start-3"
-                style={{ gridRow: "74 / span 12" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-blue-50 p-2 text-xs leading-5 hover:bg-blue-100"
-                >
-                  <p className="order-1 font-semibold text-blue-700">
-                    Breakfast
-                  </p>
-                  <p className="text-blue-500 group-hover:text-blue-700">
-                    <time dateTime="2022-01-12T06:00">6:00 AM</time>
-                  </p>
-                </a>
-              </li>
-              <li
-                className="relative mt-px flex sm:col-start-3"
-                style={{ gridRow: "92 / span 30" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-pink-50 p-2 text-xs leading-5 hover:bg-pink-100"
-                >
-                  <p className="order-1 font-semibold text-pink-700">
-                    Flight to Paris
-                  </p>
-                  <p className="text-pink-500 group-hover:text-pink-700">
-                    <time dateTime="2022-01-12T07:30">7:30 AM</time>
-                  </p>
-                </a>
-              </li>
-              <li
-                className="relative mt-px hidden sm:col-start-6 sm:flex"
-                style={{ gridRow: "122 / span 24" }}
-              >
-                <a
-                  href="#"
-                  className="group absolute inset-1 flex flex-col overflow-y-auto rounded-lg bg-gray-100 p-2 text-xs leading-5 hover:bg-gray-200"
-                >
-                  <p className="order-1 font-semibold text-gray-700">
-                    Meeting with design team at Disney
-                  </p>
-                  <p className="text-gray-500 group-hover:text-gray-700">
-                    <time dateTime="2022-01-15T10:00">10:00 AM</time>
-                  </p>
-                </a>
-              </li>
+              {days.map((day) => (
+                <Fragment key={day.date.toISOString()}>
+                  {day.events.map((event) => (
+                    <EventItemWrapper
+                      key={event.id}
+                      event={event}
+                      currentDate={day.date}
+                    />
+                  ))}
+                </Fragment>
+              ))}
             </ol>
           </div>
         </div>

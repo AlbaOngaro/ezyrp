@@ -1,5 +1,6 @@
 import * as Form from "@radix-ui/react-form";
 import * as Popover from "@radix-ui/react-popover";
+
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { InputHTMLAttributes, forwardRef, useRef, useState } from "react";
 
@@ -65,7 +66,12 @@ const DateTimeInput = forwardRef<HTMLInputElement, Props>(
             }
             onDayClick={(selected) => {
               if (input.current) {
-                input.current.value = format(selected, "yyyy-MM-dd");
+                input.current.value = format(
+                  selected,
+                  type === "datetime-local"
+                    ? "yyyy-MM-dd'T'HH:mm"
+                    : "yyyy-MM-dd",
+                );
 
                 if (typeof onChange === "function") {
                   onChange({

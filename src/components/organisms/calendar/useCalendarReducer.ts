@@ -1,7 +1,15 @@
 import { Reducer, useReducer } from "react";
-import { getDaysInMonth, isSameMonth, isToday } from "date-fns";
+import {
+  getDaysInMonth,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  isWithinInterval,
+} from "date-fns";
 
 import { Day, View } from "./types";
+
+import { Event } from "lib/types";
 
 export type State = {
   selected: Date;
@@ -31,11 +39,19 @@ type ViewPreviousAction = {
   type: "VIEW_PREVIOUS";
 };
 
+type SetEventsAction = {
+  type: "SET_EVENTS";
+  payload: {
+    events: (Event | Omit<Event, "workspace">)[];
+  };
+};
+
 export type Action =
   | SetSelectedAction
   | SetViewAction
   | ViewNextAction
-  | ViewPreviousAction;
+  | ViewPreviousAction
+  | SetEventsAction;
 
 export function generateMonth(base: Date): Day[] {
   const total = getDaysInMonth(base);
@@ -46,14 +62,22 @@ export function generateMonth(base: Date): Day[] {
   const firstDay = new Date(year, month, 1).getDay();
   const lastDay = new Date(year, month, total).getDay();
 
+  const toAddBefore = firstDay === 1 ? 0 : firstDay - 1 > 0 ? firstDay - 1 : 6;
+  const toAddAfter = lastDay !== 0 ? 7 - lastDay : 0;
+
   return [
     Array.from(
-      { length: firstDay - 1 > 0 ? firstDay - 1 : 6 },
+      { length: toAddBefore },
       (_, day) => new Date(year, month, day * -1),
     ).reverse(),
     Array.from({ length: total }, (_, day) => new Date(year, month, day + 1)),
     Array.from(
-      { length: lastDay !== 0 ? 7 - lastDay : 0 },
+      {
+        length:
+          toAddBefore + total + toAddAfter === 42
+            ? toAddAfter
+            : 42 - (toAddBefore + total + toAddAfter) + toAddAfter,
+      },
       (_, day) => new Date(year, month, total + (day + 1)),
     ),
   ].flatMap((dates) =>
@@ -88,8 +112,8 @@ export function generateWeek(base: Date): Day[] {
 
 export const defaultInitialState: State = {
   selected: new Date(),
-  view: "year",
-  days: generateMonth(new Date()),
+  view: "week",
+  days: generateWeek(new Date()),
 };
 
 const reducer: Reducer<State, Action> = (
@@ -249,6 +273,41 @@ const reducer: Reducer<State, Action> = (
         default:
           return state;
       }
+    }
+    case "SET_EVENTS": {
+      return {
+        ...state,
+        days: state.days.map((day) => ({
+          ...day,
+          events: action.payload.events.filter((event) => {
+            switch (state.view) {
+              default: {
+                const { date } = day;
+                const start = new Date(event.start);
+                const end = new Date(event.end);
+
+                if (isSameDay(start, end)) {
+                  return isSameDay(start, date);
+                }
+
+                date.setHours(0, 0);
+                start.setHours(0, 0);
+                end.setHours(0, 0);
+
+                try {
+                  return isWithinInterval(date, {
+                    start,
+                    end,
+                  });
+                } catch (error: unknown) {
+                  console.error(error);
+                  return false;
+                }
+              }
+            }
+          }),
+        })),
+      };
     }
     default:
       return state;

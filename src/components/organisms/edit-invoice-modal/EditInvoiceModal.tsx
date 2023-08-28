@@ -38,8 +38,6 @@ export function EditInvoiceModal({
     },
   );
 
-  console.debug(invoice);
-
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
