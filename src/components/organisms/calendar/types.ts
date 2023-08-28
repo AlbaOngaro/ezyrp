@@ -2,7 +2,7 @@ import { Event } from "lib/types";
 
 export type Day = {
   date: Date;
-  events: Event[];
+  events: (Event | Omit<Event, "workspace">)[];
   isCurrentMonth?: boolean;
   isToday?: boolean;
   isSelected?: boolean;

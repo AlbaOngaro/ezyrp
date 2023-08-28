@@ -2,7 +2,7 @@ import * as RUIModal from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { PropsWithChildren } from "react";
 
-interface Props extends PropsWithChildren {
+export interface Props extends PropsWithChildren {
   title?: string;
   description?: string;
 }

@@ -1,19 +1,285 @@
-import { format, isSameDay, isSameWeek } from "date-fns";
-import { Fragment, useState } from "react";
-import { Root, Trigger } from "@radix-ui/react-popover";
+import { add, format, isSameDay, isSameWeek, minutesToHours } from "date-fns";
+import { Fragment, useState, MouseEvent, forwardRef } from "react";
+import { Anchor, Root, Trigger } from "@radix-ui/react-popover";
 
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../utils";
 import { twMerge } from "lib/utils/twMerge";
 
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
 import { EventPopover } from "components/organisms/calendar/components/EventPopover";
+import { convertRemToPx } from "lib/utils/convertRemToPx";
+import { Event } from "lib/types";
+import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
 
-export function Body() {
+function isSavedEvent(event: Event | Omit<Event, "workspace">): boolean {
+  return /event\:.{20}/.test(event.id);
+}
+
+const EventItem = forwardRef<
+  HTMLLIElement,
+  {
+    event: Omit<Event, "workspace">;
+    currentDate: Date;
+  }
+>(function EventItem({ event, currentDate, ...rest }, ref) {
   const [hovering, setHovering] = useState("");
 
+  const startDate = new Date(event.start);
+  const endDate = new Date(event.end);
+
+  const gridRow = getGridRow(startDate, endDate, currentDate);
+  const gridColumn = getGridColumn(startDate, endDate, currentDate);
+
+  const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
+
+  return (
+    <li
+      ref={ref}
+      className={twMerge(
+        "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg p-2 text-xs leading-5",
+        {
+          "rounded-b-none":
+            !isSameDay(startDate, endDate) && !isSameDay(endDate, currentDate),
+          "rounded-t-none":
+            !isSameDay(startDate, endDate) && isSameDay(endDate, currentDate),
+          "rounded-none":
+            (!isSameDay(startDate, currentDate) &&
+              !isSameDay(endDate, currentDate)) ||
+            isLongerThan24Hours,
+          "py-0 justify-center": isLongerThan24Hours,
+
+          "shadow-sm": hovering === event.id,
+          "bg-red-50 hover:bg-red-100": event.variant === "red",
+          "bg-orange-50 hover:bg-orange-100": event.variant === "orange",
+          "bg-yellow-50 hover:bg-yellow-100": event.variant === "yellow",
+          "bg-lime-50 hover:bg-lime-100": event.variant === "lime",
+          "bg-green-5 hover:bg-green-1000": event.variant === "green",
+          "bg-emerald-50 hover:bg-emerald-100": event.variant === "emerald",
+          "bg-teal-50 hover:bg-teal-100": event.variant === "teal",
+          "bg-cyan-50 hover:bg-cyan-100": event.variant === "cyan",
+          "bg-sky-50 hover:bg-sky-100": event.variant === "sky",
+          "bg-blue-50 hover:bg-blue-100": event.variant === "blue",
+          "bg-indigo-50 hover:bg-indigo-100": event.variant === "indigo",
+          "bg-violet-50 hover:bg-violet-100": event.variant === "violet",
+          "bg-purple-50 hover:bg-purple-100": event.variant === "purple",
+          "bg-fuchsia-50 hover:bg-fuchsia-100": event.variant === "fuchsia",
+          "bg-pink-50 hover:bg-pink-100": event.variant === "pink",
+          "bg-rose-50 hover:bg-rose-100": event.variant === "rose",
+        },
+      )}
+      onMouseEnter={() => setHovering(event.id)}
+      onMouseLeave={() => setHovering("")}
+      style={{
+        gridRow,
+        gridColumn,
+      }}
+      {...rest}
+    >
+      <p
+        className={twMerge("font-semibold", {
+          "text-red-500": event.variant === "red",
+          "text-orange-500": event.variant === "orange",
+          "text-yellow-500": event.variant === "yellow",
+          "text-lime-500": event.variant === "lime",
+          "text-green-500": event.variant === "green",
+          "text-emerald-500": event.variant === "emerald",
+          "text-teal-500": event.variant === "teal",
+          "text-cyan-500": event.variant === "cyan",
+          "text-sky-500": event.variant === "sky",
+          "text-blue-500": event.variant === "blue",
+          "text-indigo-500": event.variant === "indigo",
+          "text-violet-500": event.variant === "violet",
+          "text-purple-500": event.variant === "purple",
+          "text-fuchsia-500": event.variant === "fuchsia",
+          "text-pink-500": event.variant === "pink",
+          "text-rose-500": event.variant === "rose",
+        })}
+      >
+        {event.title}
+      </p>
+      {!isLongerThan24Hours && (
+        <p
+          className={twMerge({
+            "text-red-500 group-hover:text-red-700": event.variant === "red",
+            "text-orange-500 group-hover:text-orange-700":
+              event.variant === "orange",
+            "text-yellow-500 group-hover:text-yellow-700":
+              event.variant === "yellow",
+            "text-lime-500 group-hover:text-lime-700": event.variant === "lime",
+            "text-green-500 group-hover:text-green-700":
+              event.variant === "green",
+            "text-emerald-500 group-hover:text-emerald-700":
+              event.variant === "emerald",
+            "text-teal-500 group-hover:text-teal-700": event.variant === "teal",
+            "text-cyan-500 group-hover:text-cyan-700": event.variant === "cyan",
+            "text-sky-500 group-hover:text-sky-700": event.variant === "sky",
+            "text-blue-500 group-hover:text-blue-700": event.variant === "blue",
+            "text-indigo-500 group-hover:text-indigo-700":
+              event.variant === "indigo",
+            "text-violet-500 group-hover:text-violet-700":
+              event.variant === "violet",
+            "text-purple-500 group-hover:text-purple-700":
+              event.variant === "purple",
+            "text-fuchsia-500 group-hover:text-fuchsia-700":
+              event.variant === "fuchsia",
+            "text-pink-500 group-hover:text-pink-700": event.variant === "pink",
+            "text-rose-500 group-hover:text-rose-700": event.variant === "rose",
+          })}
+        >
+          <time dateTime={event.start}>
+            {format(new Date(event.start), "HH:mm aa")} -{" "}
+            {format(new Date(event.end), "HH:mm aa")}
+          </time>
+        </p>
+      )}
+    </li>
+  );
+});
+
+function EventItemWrapper({
+  event,
+  currentDate,
+}: {
+  event: Omit<Event, "workspace">;
+  currentDate: Date;
+}) {
   const {
     state: { days },
+    dispatch,
   } = useCalendarContext();
+
+  const events = days.flatMap((day) => day.events);
+
+  const startDate = new Date(event.start);
+  const endDate = new Date(event.end);
+  const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
+
+  if (
+    isLongerThan24Hours &&
+    isSameWeek(currentDate, startDate, {
+      weekStartsOn: 1,
+    }) &&
+    !isSameDay(currentDate, startDate)
+  ) {
+    return null;
+  }
+
+  if (isSavedEvent(event)) {
+    return (
+      <Root>
+        <Trigger
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          asChild
+        >
+          <EventItem event={event} currentDate={currentDate} />
+        </Trigger>
+
+        <EventPopover event={event} />
+      </Root>
+    );
+  }
+
+  return (
+    <Root open>
+      <Anchor asChild>
+        <EventItem event={event} currentDate={currentDate} />
+      </Anchor>
+
+      <CreateEventModal
+        event={event}
+        onChange={(updated) =>
+          dispatch({
+            type: "SET_EVENTS",
+            payload: {
+              events: events.map((e) => {
+                if (e.id !== event.id) {
+                  return e;
+                }
+
+                return updated as Event;
+              }),
+            },
+          })
+        }
+        className="z-50"
+        setIsOpen={console.debug}
+        as="popover"
+        side="left"
+        align="start"
+        sideOffset={8}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      />
+    </Root>
+  );
+}
+
+export function Body() {
+  const {
+    state: { days },
+    dispatch,
+  } = useCalendarContext();
+
+  const events = days.flatMap((day) => day.events);
+  const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
+
+  const handleGridClick = (e: MouseEvent<HTMLOListElement>) => {
+    if (isCreatingNewEvent) {
+      dispatch({
+        type: "SET_EVENTS",
+        payload: {
+          events: events.filter((event) => isSavedEvent(event)),
+        },
+      });
+      return;
+    }
+
+    const rect = (e.target as HTMLOListElement).getBoundingClientRect();
+    const firstRow = convertRemToPx(1.75);
+    const y = e.clientY - (rect.top + firstRow);
+
+    if (y < 0) {
+      return;
+    }
+
+    const row = (rect.height - firstRow) / 288;
+    const minutes = Math.floor(y / row) * 5;
+
+    const x = e.clientX - rect.left;
+    const col = rect.width / 7;
+    const weekDay = Math.floor(x / col);
+
+    const day = days[weekDay].date;
+
+    const start = new Date(
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      minutesToHours(minutes),
+      minutes - minutesToHours(minutes) * 60,
+    );
+
+    dispatch({
+      type: "SET_EVENTS",
+      payload: {
+        events: [
+          ...events,
+          {
+            id: crypto.randomUUID(),
+            title: "",
+            start: start.toISOString(),
+            end: add(start, {
+              hours: 1,
+            }).toISOString(),
+            variant: "blue",
+          },
+        ],
+      },
+    });
+  };
 
   return (
     <div className="isolate flex flex-auto flex-col overflow-auto bg-white">
@@ -238,172 +504,21 @@ export function Body() {
 
             {/* Events */}
             <ol
-              className="col-start-1 col-end-2 row-start-1 grid grid-cols-1 sm:grid-cols-7 sm:pr-8"
+              className="relative z-20 col-start-1 col-end-2 row-start-1 grid grid-cols-1 sm:grid-cols-7 sm:pr-8"
               style={{
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
+              onClick={handleGridClick}
             >
               {days.map((day) => (
                 <Fragment key={day.date.toISOString()}>
-                  {day.events.map((event) => {
-                    const startDate = new Date(event.start);
-                    const endDate = new Date(event.end);
-
-                    const gridRow = getGridRow(startDate, endDate, day.date);
-                    const gridColumn = getGridColumn(
-                      startDate,
-                      endDate,
-                      day.date,
-                    );
-
-                    const isLongerThan24Hours = getIsLongerThan24Hours(
-                      startDate,
-                      endDate,
-                    );
-
-                    if (
-                      isLongerThan24Hours &&
-                      isSameWeek(day.date, startDate, {
-                        weekStartsOn: 1,
-                      }) &&
-                      !isSameDay(day.date, startDate)
-                    ) {
-                      return null;
-                    }
-
-                    return (
-                      <Root key={event.id}>
-                        <Trigger asChild>
-                          <li
-                            className={twMerge(
-                              "mt-px cursor-pointer flex flex-col overflow-y-auto rounded-lg p-2 text-xs leading-5",
-                              {
-                                "rounded-b-none":
-                                  !isSameDay(startDate, endDate) &&
-                                  !isSameDay(endDate, day.date),
-                                "rounded-t-none":
-                                  !isSameDay(startDate, endDate) &&
-                                  isSameDay(endDate, day.date),
-                                "rounded-none":
-                                  (!isSameDay(startDate, day.date) &&
-                                    !isSameDay(endDate, day.date)) ||
-                                  isLongerThan24Hours,
-                                "py-0 justify-center": isLongerThan24Hours,
-
-                                "shadow-sm": hovering === event.id,
-                                "bg-red-50 hover:bg-red-100":
-                                  event.variant === "red",
-                                "bg-orange-50 hover:bg-orange-100":
-                                  event.variant === "orange",
-                                "bg-yellow-50 hover:bg-yellow-100":
-                                  event.variant === "yellow",
-                                "bg-lime-50 hover:bg-lime-100":
-                                  event.variant === "lime",
-                                "bg-green-5 hover:bg-green-1000":
-                                  event.variant === "green",
-                                "bg-emerald-50 hover:bg-emerald-100":
-                                  event.variant === "emerald",
-                                "bg-teal-50 hover:bg-teal-100":
-                                  event.variant === "teal",
-                                "bg-cyan-50 hover:bg-cyan-100":
-                                  event.variant === "cyan",
-                                "bg-sky-50 hover:bg-sky-100":
-                                  event.variant === "sky",
-                                "bg-blue-50 hover:bg-blue-100":
-                                  event.variant === "blue",
-                                "bg-indigo-50 hover:bg-indigo-100":
-                                  event.variant === "indigo",
-                                "bg-violet-50 hover:bg-violet-100":
-                                  event.variant === "violet",
-                                "bg-purple-50 hover:bg-purple-100":
-                                  event.variant === "purple",
-                                "bg-fuchsia-50 hover:bg-fuchsia-100":
-                                  event.variant === "fuchsia",
-                                "bg-pink-50 hover:bg-pink-100":
-                                  event.variant === "pink",
-                                "bg-rose-50 hover:bg-rose-100":
-                                  event.variant === "rose",
-                              },
-                            )}
-                            onMouseEnter={() => setHovering(event.id)}
-                            onMouseLeave={() => setHovering("")}
-                            style={{
-                              gridRow,
-                              gridColumn,
-                            }}
-                          >
-                            <p
-                              className={twMerge("font-semibold", {
-                                "text-red-500": event.variant === "red",
-                                "text-orange-500": event.variant === "orange",
-                                "text-yellow-500": event.variant === "yellow",
-                                "text-lime-500": event.variant === "lime",
-                                "text-green-500": event.variant === "green",
-                                "text-emerald-500": event.variant === "emerald",
-                                "text-teal-500": event.variant === "teal",
-                                "text-cyan-500": event.variant === "cyan",
-                                "text-sky-500": event.variant === "sky",
-                                "text-blue-500": event.variant === "blue",
-                                "text-indigo-500": event.variant === "indigo",
-                                "text-violet-500": event.variant === "violet",
-                                "text-purple-500": event.variant === "purple",
-                                "text-fuchsia-500": event.variant === "fuchsia",
-                                "text-pink-500": event.variant === "pink",
-                                "text-rose-500": event.variant === "rose",
-                              })}
-                            >
-                              {event.title}
-                            </p>
-                            {!isLongerThan24Hours && (
-                              <p
-                                className={twMerge({
-                                  "text-red-500 group-hover:text-red-700":
-                                    event.variant === "red",
-                                  "text-orange-500 group-hover:text-orange-700":
-                                    event.variant === "orange",
-                                  "text-yellow-500 group-hover:text-yellow-700":
-                                    event.variant === "yellow",
-                                  "text-lime-500 group-hover:text-lime-700":
-                                    event.variant === "lime",
-                                  "text-green-500 group-hover:text-green-700":
-                                    event.variant === "green",
-                                  "text-emerald-500 group-hover:text-emerald-700":
-                                    event.variant === "emerald",
-                                  "text-teal-500 group-hover:text-teal-700":
-                                    event.variant === "teal",
-                                  "text-cyan-500 group-hover:text-cyan-700":
-                                    event.variant === "cyan",
-                                  "text-sky-500 group-hover:text-sky-700":
-                                    event.variant === "sky",
-                                  "text-blue-500 group-hover:text-blue-700":
-                                    event.variant === "blue",
-                                  "text-indigo-500 group-hover:text-indigo-700":
-                                    event.variant === "indigo",
-                                  "text-violet-500 group-hover:text-violet-700":
-                                    event.variant === "violet",
-                                  "text-purple-500 group-hover:text-purple-700":
-                                    event.variant === "purple",
-                                  "text-fuchsia-500 group-hover:text-fuchsia-700":
-                                    event.variant === "fuchsia",
-                                  "text-pink-500 group-hover:text-pink-700":
-                                    event.variant === "pink",
-                                  "text-rose-500 group-hover:text-rose-700":
-                                    event.variant === "rose",
-                                })}
-                              >
-                                <time dateTime={event.start}>
-                                  {format(new Date(event.start), "HH:mm aa")} -{" "}
-                                  {format(new Date(event.end), "HH:mm aa")}
-                                </time>
-                              </p>
-                            )}
-                          </li>
-                        </Trigger>
-
-                        <EventPopover event={event} />
-                      </Root>
-                    );
-                  })}
+                  {day.events.map((event) => (
+                    <EventItemWrapper
+                      key={event.id}
+                      event={event}
+                      currentDate={day.date}
+                    />
+                  ))}
                 </Fragment>
               ))}
             </ol>

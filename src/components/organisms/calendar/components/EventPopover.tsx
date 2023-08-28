@@ -19,7 +19,7 @@ import { EditEventModal } from "components/organisms/edit-event-modal/EditEventM
 import { twMerge } from "lib/utils/twMerge";
 
 interface Props {
-  event: Event;
+  event: Omit<Event, "workspace">;
   side?: "left" | "top" | "right" | "bottom";
   align?: "center" | "start" | "end";
 }

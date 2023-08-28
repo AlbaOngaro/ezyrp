@@ -1,46 +1,94 @@
-import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  FormEventHandler,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { Root as Form } from "@radix-ui/react-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
+import * as Popover from "@radix-ui/react-popover";
 
-import { add, format, isValid } from "date-fns";
+import { add, format, isValid, roundToNearestMinutes } from "date-fns";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Event } from "lib/types";
 
-import { Modal } from "components/atoms/modal/Modal";
+import { Modal, Props as ModalProps } from "components/atoms/modal/Modal";
 import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 import { variants } from "lib/schema/event";
 import { twMerge } from "lib/utils/twMerge";
 
-interface Props {
+type Props = {
+  as?: "modal" | "popover";
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-}
+  className?: string;
+  event?: Omit<Event, "workspace">;
+  onChange?: (event: Omit<Event, "workspace">) => void;
+} & (
+  | ({
+      as: "modal";
+      onChange?: (event: Omit<Event, "workspace">) => void;
+    } & ModalProps)
+  | ({
+      as: "popover";
+      onChange?: (event: Omit<Event, "workspace">) => void;
+    } & Popover.PopoverContentProps)
+);
 
-export function CreateEventModal({ setIsOpen }: Props) {
+export function CreateEventModal({
+  setIsOpen,
+  as = "modal",
+  className,
+  event: initialEvent,
+  onChange,
+  ...rest
+}: Props) {
   const events = useEvents();
 
-  const [event, setEvent] = useState<Omit<Event, "id" | "workspace">>({
-    start: new Date().toISOString(),
-    end: add(new Date(), {
-      hours: 0.5,
-    }).toISOString(),
-    title: "",
-    variant: "blue",
+  const [event, setEvent] = useState<Omit<Event, "workspace">>(() => {
+    if (initialEvent) {
+      return initialEvent;
+    }
+
+    const start = roundToNearestMinutes(new Date(), { nearestTo: 5 });
+
+    return {
+      id: crypto.randomUUID(),
+      start: start.toISOString(),
+      end: add(start, {
+        hours: 1,
+      }).toISOString(),
+      title: "",
+      variant: "blue",
+    };
   });
+
+  useEffect(() => {
+    if (typeof onChange === "function") {
+      onChange(event);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     try {
       await events.create(event);
-      setEvent({
-        start: new Date().toISOString(),
-        end: add(new Date(), {
-          hours: 0.5,
-        }).toISOString(),
-        title: "",
-        variant: "blue",
+      setEvent(() => {
+        const start = roundToNearestMinutes(new Date(), { nearestTo: 5 });
+
+        return {
+          id: crypto.randomUUID(),
+          start: start.toISOString(),
+          end: add(start, {
+            hours: 1,
+          }).toISOString(),
+          title: "",
+          variant: "blue",
+        };
       });
     } catch (error: unknown) {
       console.error(error);
@@ -49,8 +97,16 @@ export function CreateEventModal({ setIsOpen }: Props) {
     }
   };
 
+  const Component = as === "modal" ? Modal : Popover.Content;
+
   return (
-    <Modal>
+    <Component
+      {...rest}
+      className={twMerge(className, {
+        "rounded-xl p-5 min-w-[300px] bg-white shadow-[0_24px_38px_3px_rgba(0,0,0,.14),_0_9px_46px_8px_rgba(0,0,0,.12),_0_11px_15px_-7px_rgba(0,0,0,.2)] z-10 focus-within:outline-none":
+          as === "popover",
+      })}
+    >
       <Form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           label="Title"
@@ -166,6 +222,6 @@ export function CreateEventModal({ setIsOpen }: Props) {
           Create
         </Button>
       </Form>
-    </Modal>
+    </Component>
   );
 }

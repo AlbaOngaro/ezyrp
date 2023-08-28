@@ -42,7 +42,7 @@ type ViewPreviousAction = {
 type SetEventsAction = {
   type: "SET_EVENTS";
   payload: {
-    events: Event[];
+    events: (Event | Omit<Event, "workspace">)[];
   };
 };
 
