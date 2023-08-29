@@ -115,7 +115,16 @@ const DateTimeInput = forwardRef<HTMLInputElement, Props>(
 );
 
 export const Input = forwardRef<HTMLInputElement, Props>(function Input(
-  { label, description, validations, name, className, type = "text", ...rest },
+  {
+    label,
+    description,
+    validations,
+    name,
+    className,
+    type = "text",
+    children,
+    ...rest
+  },
   ref,
 ) {
   return (
@@ -162,6 +171,8 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
               {message}
             </Form.Message>
           ))}
+
+        {children}
       </fieldset>
     </Form.Field>
   );

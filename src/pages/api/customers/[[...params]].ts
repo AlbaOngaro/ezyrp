@@ -44,7 +44,17 @@ export default async function handler(
         break;
       }
 
-      const customers = await customersService.list();
+      const filters = customer
+        .merge(
+          z.object({
+            email: z.string(),
+          }),
+        )
+        .omit({ workspace: true, id: true })
+        .partial()
+        .parse(req.query);
+
+      const customers = await customersService.list(filters);
       res.json(customers);
       break;
     }

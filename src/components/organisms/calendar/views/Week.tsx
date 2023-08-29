@@ -156,6 +156,7 @@ export function Body() {
               hours: 1,
             }).toISOString(),
             variant: "blue",
+            guests: [],
           },
         ],
       },

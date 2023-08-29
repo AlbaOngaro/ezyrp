@@ -26,6 +26,7 @@ import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 import { variants } from "lib/schema/event";
 import { twMerge } from "lib/utils/twMerge";
+import { Combobox } from "components/atoms/comobobox/Combobox";
 
 type Props = {
   as?: "modal" | "popover";
@@ -69,6 +70,7 @@ export function CreateEventModal({
       }).toISOString(),
       title: "",
       variant: "blue",
+      guests: [],
     };
   });
 
@@ -95,6 +97,7 @@ export function CreateEventModal({
           }).toISOString(),
           title: "",
           variant: "blue",
+          guests: [],
         };
       });
     } catch (error: unknown) {
@@ -191,6 +194,8 @@ export function CreateEventModal({
             }}
           />
         </div>
+
+        <Combobox />
 
         <label className="flex flex-col gap-3 w-2/3 text-sm font-bold text-gray-800">
           Color
