@@ -12,6 +12,7 @@ import { convertRemToPx } from "lib/utils/convertRemToPx";
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
 import { Event } from "lib/types";
 import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+import { Indicator } from "components/organisms/calendar/components/Indicator";
 
 function EventItemWrapper({
   event,
@@ -51,7 +52,10 @@ function EventItemWrapper({
       </Anchor>
 
       <CreateEventModal
-        event={event}
+        event={{
+          ...event,
+          guests: event.guests.map((guest) => guest.id),
+        }}
         onChange={(updated) =>
           dispatch({
             type: "SET_EVENTS",
@@ -61,7 +65,15 @@ function EventItemWrapper({
                   return e;
                 }
 
-                return updated as Event;
+                return {
+                  ...updated,
+                  guests: updated.guests.map((guest) => ({
+                    id: guest,
+                    email: "",
+                    name: "",
+                    phone: "",
+                  })),
+                };
               }),
             },
           })
@@ -373,13 +385,15 @@ export function Body() {
 
             {/* Events */}
             <ol
-              className="col-start-1 col-end-2 row-start-1 grid grid-cols-1"
+              className="relative col-start-1 col-end-2 row-start-1 grid grid-cols-1"
               style={{
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
               onClick={handleGridClick}
               id="grid"
             >
+              <Indicator />
+
               {days
                 .find((day) => isSameDay(day.date, selected))
                 ?.events.map((event) => (

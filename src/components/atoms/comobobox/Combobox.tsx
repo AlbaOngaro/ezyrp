@@ -1,17 +1,75 @@
 import * as Popover from "@radix-ui/react-popover";
-import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
+import {
+  JSXElementConstructor,
+  KeyboardEventHandler,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-import { Cross1Icon } from "@radix-ui/react-icons";
+import { CaretSortIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { twMerge } from "lib/utils/twMerge";
 
-const options = ["Apple", "Banana", "Pear", "Grape", "Peach"];
+interface Option {
+  label: string;
+  value: string;
+}
 
-export function Combobox() {
+interface Props {
+  label?: string;
+  description?: string;
+  className?: string;
+  placeholder?: string;
+  options: Option[];
+  onChange: (options: Option[]) => void;
+  filterOption?: (option: Option, inputValue: string) => boolean;
+  components?: Partial<{
+    Value: JSXElementConstructor<{
+      children: ReactNode;
+      onRemove: () => void;
+    }>;
+  }>;
+}
+
+function DefaultValue({
+  children,
+  onRemove,
+}: {
+  children: ReactNode;
+  onRemove: () => void;
+}) {
+  return (
+    <span className="flex flex-row items-center gap-2 py-1 px-2 bg-red-300 text-white rounded-sm transition-colors duration-300 hover:bg-red-400">
+      {children}
+      <button onClick={() => onRemove()}>
+        <Cross1Icon />
+      </button>
+    </span>
+  );
+}
+
+export function Combobox({
+  label,
+  description,
+  className,
+  placeholder,
+  options,
+  onChange,
+  filterOption = (option, inputValue) =>
+    option.value.toLowerCase().includes(inputValue),
+  components,
+}: Props) {
   const ul = useRef<HTMLUListElement | null>(null);
 
+  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Option[]>([]);
+
+  const filteredOptions = options
+    .filter((option) => !selected.includes(option))
+    .filter((option) => filterOption(option, query));
 
   useEffect(() => {
     ul.current?.scrollTo({
@@ -21,9 +79,10 @@ export function Combobox() {
     });
   }, [active]);
 
-  const filteredOptions = options
-    .filter((option) => !selected.includes(option))
-    .filter((option) => option.toLowerCase().includes(query));
+  useEffect(() => {
+    onChange(selected);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (e) => {
     switch (true) {
@@ -53,9 +112,17 @@ export function Combobox() {
       }
       case e.key === "Enter": {
         e.preventDefault();
-        setSelected((curr) => [...curr, options[0]]);
+        setSelected((curr) => [...curr, filteredOptions[0]]);
         setQuery("");
         setActive(0);
+        setIsOpen(false);
+        break;
+      }
+      case e.key === "Backspace": {
+        if (!query) {
+          e.preventDefault();
+          setSelected((curr) => curr.slice(0, -1));
+        }
         break;
       }
       default:
@@ -63,44 +130,74 @@ export function Combobox() {
     }
   };
 
+  const Value = !!components?.Value ? components.Value : DefaultValue;
+
   return (
-    <Popover.Root open={!!query}>
+    <Popover.Root open={isOpen}>
       <Popover.Anchor asChild>
-        <fieldset className="relative flex flex-row flex-wrap items-center gap-2 m-0 resize-none py-2 px-4 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500">
-          {selected.map((option) => (
-            <span
-              className="flex flex-row items-center gap-2 py-1 px-2 bg-red-300 text-white rounded-sm transition-colors duration-300 hover:bg-red-400"
-              key={option.toLowerCase()}
-            >
-              {option}{" "}
-              <button
-                onClick={() =>
+        <div className={twMerge("flex flex-col gap-2", className)}>
+          {(label || description) && (
+            <label className="flex flex-col text-sm font-bold text-gray-800">
+              {label}
+              {description && (
+                <small className="text-sm font-normal text-dark-blue-gray">
+                  {description}
+                </small>
+              )}
+            </label>
+          )}
+          <fieldset className="relative flex flex-row flex-wrap items-center gap-2 m-0 resize-none py-2 px-4 pr-10 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500">
+            {selected.map((option) => (
+              <Value
+                key={option.value.toLowerCase()}
+                onRemove={() =>
                   setSelected((curr) =>
                     curr.filter(
-                      (o) => o.toLowerCase() !== option.toLowerCase(),
+                      (o) =>
+                        o.value.toLowerCase() !== option.value.toLowerCase(),
                     ),
                   )
                 }
               >
-                <Cross1Icon />
-              </button>
-            </span>
-          ))}
-          <input
-            type="text"
-            className="border-none p-0 w-full flex-shrink-0 flex-grow basis-64 focus:ring-0 focus:outline-none"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-        </fieldset>
+                {option.label}
+              </Value>
+            ))}
+
+            <input
+              type="text"
+              className="border-none p-0 w-full flex-shrink-0 flex-grow basis-14 focus:ring-0 focus:outline-none"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setIsOpen(true);
+              }}
+              onKeyDown={handleKeyDown}
+              onFocus={() => setIsOpen(true)}
+              placeholder={selected.length === 0 ? placeholder : undefined}
+            />
+
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setQuery("");
+                setIsOpen(true);
+              }}
+              className="absolute right-3"
+            >
+              <CaretSortIcon className="h-5 w-5" />
+            </button>
+          </fieldset>
+        </div>
       </Popover.Anchor>
       <Popover.Content
         side="bottom"
         sideOffset={16}
         onOpenAutoFocus={(e) => e.preventDefault()}
-        onInteractOutside={() => setQuery("")}
-        className="w-[var(--radix-popover-trigger-width)] max-h-24 overflow-scroll z-40 bg-white shadow-lg"
+        onPointerDownOutside={() => {
+          setQuery("");
+          setIsOpen(false);
+        }}
+        className="w-[var(--radix-popover-trigger-width)] max-h-24 rounded-sm overflow-scroll z-40 bg-white shadow-lg"
         asChild
       >
         <ul ref={ul}>
@@ -111,10 +208,15 @@ export function Combobox() {
                   className={twMerge("w-full py-1 px-2 hover:bg-gray-100", {
                     "bg-gray-100": i === active,
                   })}
-                  key={option.toLowerCase()}
-                  onClick={() => setSelected((curr) => [...curr, option])}
+                  key={option.value.toLowerCase()}
+                  onClick={() => {
+                    setSelected((curr) => [...curr, option]);
+                    setQuery("");
+                    setActive(0);
+                    setIsOpen(false);
+                  }}
                 >
-                  {option}
+                  {option.label}
                 </li>
               ))}
             </>

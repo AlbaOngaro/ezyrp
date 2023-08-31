@@ -70,7 +70,10 @@ function EventItemWrapper({
       </Anchor>
 
       <CreateEventModal
-        event={event}
+        event={{
+          ...event,
+          guests: event.guests.map((guest) => guest.id),
+        }}
         onChange={(updated) =>
           dispatch({
             type: "SET_EVENTS",
@@ -80,7 +83,15 @@ function EventItemWrapper({
                   return e;
                 }
 
-                return updated as Event;
+                return {
+                  ...updated,
+                  guests: updated.guests.map((guest) => ({
+                    id: guest,
+                    email: "",
+                    name: "",
+                    phone: "",
+                  })),
+                };
               }),
             },
           })

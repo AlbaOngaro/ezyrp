@@ -10,8 +10,7 @@ const item = z.object({
 
 export const invoice = z.object({
   id: z.string(),
-  workspace: z.string(),
-  customer: customer.omit({ workspace: true }),
+  customer,
 
   description: z.string(),
   status: z.enum(["paid", "pending", "overdue"]).default("pending"),

@@ -61,11 +61,7 @@ export default async function handler(
     case "PATCH": {
       try {
         const customers = z
-          .array(
-            customer
-              .omit({ workspace: true })
-              .partial({ email: true, phone: true, name: true }),
-          )
+          .array(customer.partial({ email: true, phone: true, name: true }))
           .parse(req.body);
         const record = await customersService.update(customers);
         res.json(record);

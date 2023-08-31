@@ -21,9 +21,7 @@ export class CustomersService extends Service {
     `);
 
     try {
-      return z
-        .array(customer.omit({ workspace: true }))
-        .parse(result[0].result);
+      return z.array(customer).parse(result[0].result);
     } catch (error: unknown) {
       return [];
     }
@@ -33,7 +31,7 @@ export class CustomersService extends Service {
     await surreal.authenticate(this.token);
 
     const result = await surreal.select<Customer>(id);
-    return customer.omit({ workspace: true }).parse(result[0]);
+    return customer.parse(result[0]);
   }
 
   async list(
@@ -54,9 +52,7 @@ export class CustomersService extends Service {
     );
 
     try {
-      return z
-        .array(customer.omit({ workspace: true }))
-        .parse(result[0].result);
+      return z.array(customer).parse(result[0].result);
     } catch (error: unknown) {
       return [];
     }

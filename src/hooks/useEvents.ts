@@ -1,6 +1,6 @@
 import useSWR from "swr";
 
-import { Event } from "lib/types";
+import { CreateEventInput, Event } from "lib/types";
 
 async function getEvents() {
   return fetch("/api/events").then((res) => res.json());
@@ -33,7 +33,7 @@ export function useEvents() {
         return [];
       }
     },
-    create: (event: Omit<Event, "id" | "workspace">) =>
+    create: (event: CreateEventInput) =>
       mutate(async () => {
         await fetch("/api/events", {
           method: "POST",

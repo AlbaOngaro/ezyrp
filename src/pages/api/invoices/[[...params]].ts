@@ -51,9 +51,7 @@ export default async function handler(
     case "PATCH": {
       try {
         const invoices = z
-          .array(
-            invoice.omit({ workspace: true }).partial({ description: true }),
-          )
+          .array(invoice.partial({ description: true }))
           .parse(req.body);
         const record = await invoicesService.update(invoices);
         res.json(record);

@@ -13,12 +13,13 @@ import { twMerge } from "lib/utils/twMerge";
 import { convertRemToPx } from "lib/utils/convertRemToPx";
 
 import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+import { Indicator } from "components/organisms/calendar/components/Indicator";
 
 function EventItemWrapper({
   event,
   currentDate,
 }: {
-  event: Omit<Event, "workspace">;
+  event: Event;
   currentDate: Date;
 }) {
   const {
@@ -66,7 +67,10 @@ function EventItemWrapper({
       </Anchor>
 
       <CreateEventModal
-        event={event}
+        event={{
+          ...event,
+          guests: event.guests.map((guest) => guest.id),
+        }}
         onChange={(updated) =>
           dispatch({
             type: "SET_EVENTS",
@@ -75,7 +79,16 @@ function EventItemWrapper({
                 if (e.id !== event.id) {
                   return e;
                 }
-                return updated as Event;
+
+                return {
+                  ...updated,
+                  guests: updated.guests.map((guest) => ({
+                    id: guest,
+                    email: "",
+                    name: "",
+                    phone: "",
+                  })),
+                };
               }),
             },
           })
@@ -393,6 +406,8 @@ export function Body() {
               onClick={handleGridClick}
               id="grid"
             >
+              <Indicator />
+
               {days.map((day) => (
                 <Fragment key={day.date.toISOString()}>
                   {day.events.map((event) => (
