@@ -27,7 +27,7 @@ export class InvoicesService extends Service {
     `);
 
     try {
-      return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
+      return z.array(invoice).parse(result[0].result);
     } catch (error: unknown) {
       return [];
     }
@@ -44,7 +44,7 @@ export class InvoicesService extends Service {
       FROM ${id}
       FETCH customer`,
     );
-    return invoice.omit({ workspace: true }).parse(result[0]);
+    return invoice.parse(result[0]);
   }
 
   async list(): Promise<Omit<Invoice, "workspace">[]> {
@@ -60,7 +60,7 @@ export class InvoicesService extends Service {
     );
 
     try {
-      return z.array(invoice.omit({ workspace: true })).parse(result[0].result);
+      return z.array(invoice).parse(result[0].result);
     } catch (error: unknown) {
       return [];
     }

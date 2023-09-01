@@ -44,18 +44,24 @@ export default async function handler(
         break;
       }
 
-      const customers = await customersService.list();
+      const filters = customer
+        .merge(
+          z.object({
+            email: z.string(),
+          }),
+        )
+        .omit({ workspace: true, id: true })
+        .partial()
+        .parse(req.query);
+
+      const customers = await customersService.list(filters);
       res.json(customers);
       break;
     }
     case "PATCH": {
       try {
         const customers = z
-          .array(
-            customer
-              .omit({ workspace: true })
-              .partial({ email: true, phone: true, name: true }),
-          )
+          .array(customer.partial({ email: true, phone: true, name: true }))
           .parse(req.body);
         const record = await customersService.update(customers);
         res.json(record);

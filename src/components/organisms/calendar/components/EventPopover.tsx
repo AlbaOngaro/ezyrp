@@ -1,4 +1,9 @@
-import { Cross1Icon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  Cross1Icon,
+  Pencil1Icon,
+  PersonIcon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
 import {
   Root as DialogRoot,
@@ -96,6 +101,21 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
               {format(new Date(event.end), "dd MMMM yyyy, HH:mm")}
             </time>
           </p>
+
+          {event.guests.length > 0 && (
+            <>
+              <PersonIcon className="self-start mt-1" />
+              <p className="text-sm self-start">
+                {event.guests.length}{" "}
+                {event.guests.length > 1 ? "Guests:" : "Guest:"}
+                <ul className="text-gray-500">
+                  {event.guests.map((guest) => (
+                    <li key={guest.id}>{guest.name}</li>
+                  ))}
+                </ul>
+              </p>
+            </>
+          )}
         </section>
       </Popover.Content>
     </Popover.Portal>

@@ -33,7 +33,7 @@ export default async function handler(
         await profileService.update(data);
         res.status(204).end();
       } catch (error: unknown) {
-        console.debug(error);
+        console.error(error);
         res.status(400).end();
       }
 

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { ACCESS_TOKEN_ID } from "lib/constants";
 
 import { EventsService } from "services/events";
-import { event } from "lib/schema/event";
+import { event, createEventInput } from "lib/schema/event";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +18,7 @@ export default async function handler(
     case "POST": {
       try {
         const record = await eventsService.create(
-          event.omit({ workspace: true, id: true }).parse(req.body),
+          createEventInput.omit({ id: true }).parse(req.body),
         );
         res.status(201).json(record);
       } catch (error: unknown) {
@@ -49,7 +49,7 @@ export default async function handler(
     }
     case "PATCH": {
       try {
-        const events = z.array(event.omit({ workspace: true })).parse(req.body);
+        const events = z.array(event).parse(req.body);
         const record = await eventsService.update(events);
         res.json(record);
       } catch (error: unknown) {

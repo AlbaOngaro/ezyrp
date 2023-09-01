@@ -3,14 +3,14 @@ import { Service } from "./service";
 
 import { event } from "lib/schema/event";
 import { surreal } from "lib/surreal";
-import { Customer, Event } from "lib/types";
+import { CreateEventInput, Customer, Event } from "lib/types";
 
 export class EventsService extends Service {
   constructor(token: string) {
     super(token);
   }
 
-  async create(values: Omit<Event, "id" | "workspace">) {
+  async create(values: Omit<CreateEventInput, "id">) {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Event[]>(
@@ -18,12 +18,8 @@ export class EventsService extends Service {
     );
 
     try {
-      return (
-        event
-          .omit({ workspace: true })
-          // @ts-ignore
-          .parse(result[0].result[0])
-      );
+      // @ts-ignore
+      return this.read(result[0].result[0].id);
     } catch (error: unknown) {
       return null;
     }
@@ -32,16 +28,22 @@ export class EventsService extends Service {
   async read(id: Event["id"]) {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.select<Event>(id);
-    return event.omit({ workspace: true }).parse(result[0]);
+    const result = await surreal.query<Event[]>(
+      `SELECT * FROM ${id} FETCH guests`,
+    );
+
+    return event.parse(result[0]);
   }
 
   async list() {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.select<Event>("event");
+    const result = await surreal.query<Event[]>(
+      `SELECT * FROM event FETCH guests`,
+    );
+
     try {
-      return z.array(event.omit({ workspace: true })).parse(result);
+      return z.array(event).parse(result[0].result);
     } catch (error: unknown) {
       return [];
     }

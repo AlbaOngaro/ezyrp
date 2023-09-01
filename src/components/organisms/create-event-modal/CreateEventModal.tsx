@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  FormEventHandler,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { FormEventHandler, ReactNode, useEffect, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import * as Popover from "@radix-ui/react-popover";
@@ -17,32 +11,38 @@ import {
   roundToNearestMinutes,
   set,
 } from "date-fns";
-import { CheckIcon } from "@radix-ui/react-icons";
-import { Event } from "lib/types";
+import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { Props } from "./types";
+import { CreateEventInput } from "lib/types";
 
-import { Modal, Props as ModalProps } from "components/atoms/modal/Modal";
+import { Modal } from "components/atoms/modal/Modal";
 import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 import { variants } from "lib/schema/event";
 import { twMerge } from "lib/utils/twMerge";
+import { Combobox } from "components/atoms/comobobox/Combobox";
+import { useCustomers } from "hooks/useCustomers";
 
-type Props = {
-  as?: "modal" | "popover";
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  className?: string;
-  event?: Omit<Event, "workspace">;
-  onChange?: (event: Omit<Event, "workspace">) => void;
-} & (
-  | ({
-      as: "modal";
-      onChange?: (event: Omit<Event, "workspace">) => void;
-    } & ModalProps)
-  | ({
-      as: "popover";
-      onChange?: (event: Omit<Event, "workspace">) => void;
-    } & Popover.PopoverContentProps)
-);
+function Value({
+  children,
+  onRemove,
+}: {
+  children: ReactNode;
+  onRemove: () => void;
+}) {
+  return (
+    <span className="flex flex-row gap-2 items-center bg-gray-100 py-1 px-2 rounded-sm">
+      {children}
+      <button
+        className="border-l-gray-400 border-l-[1px] pl-2 opacity-100 transition-opacity duration-300 hover:opacity-50"
+        onClick={onRemove}
+      >
+        <Cross1Icon className="h-3 w-3" />
+      </button>
+    </span>
+  );
+}
 
 export function CreateEventModal({
   setIsOpen,
@@ -53,8 +53,9 @@ export function CreateEventModal({
   ...rest
 }: Props) {
   const events = useEvents();
+  const customers = useCustomers();
 
-  const [event, setEvent] = useState<Omit<Event, "workspace">>(() => {
+  const [event, setEvent] = useState<CreateEventInput>(() => {
     if (initialEvent) {
       return initialEvent;
     }
@@ -69,6 +70,7 @@ export function CreateEventModal({
       }).toISOString(),
       title: "",
       variant: "blue",
+      guests: [],
     };
   });
 
@@ -95,6 +97,7 @@ export function CreateEventModal({
           }).toISOString(),
           title: "",
           variant: "blue",
+          guests: [],
         };
       });
     } catch (error: unknown) {
@@ -191,6 +194,27 @@ export function CreateEventModal({
             }}
           />
         </div>
+
+        <Combobox
+          label="Guests"
+          placeholder="Search for customer"
+          options={customers.data.map((customer) => ({
+            label: customer.name,
+            value: customer.id,
+          }))}
+          onChange={(options) =>
+            setEvent((curr) => ({
+              ...curr,
+              guests: options.map((option) => option.value),
+            }))
+          }
+          filterOption={(optiom, inputValue) =>
+            optiom.label.toLowerCase().includes(inputValue.toLowerCase())
+          }
+          components={{
+            Value,
+          }}
+        />
 
         <label className="flex flex-col gap-3 w-2/3 text-sm font-bold text-gray-800">
           Color
