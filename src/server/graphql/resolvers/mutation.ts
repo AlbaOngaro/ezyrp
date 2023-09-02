@@ -1,11 +1,13 @@
 import { GraphQLError } from "graphql";
-import { setCookie } from "nookies";
+import { destroyCookie, setCookie } from "nookies";
 import { Surreal } from "surrealdb.js";
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 import { ACCESS_TOKEN_ID } from "lib/constants";
 import { surreal } from "server/surreal";
 import { credentials } from "server/schema/auth";
 import { MutationResolvers, User } from "__generated__/server";
+import { CustomersService } from "server/services/customers";
+import { customer } from "server/schema/customer";
 
 export const login: MutationResolvers["login"] = async (_, args, { res }) => {
   const { password, email } = await credentials
@@ -108,4 +110,88 @@ export const register: MutationResolvers["register"] = async (
 
   const record = await (surreal as Surreal).info();
   return record as User;
+};
+
+export const logout: MutationResolvers["logout"] = async (
+  _,
+  __,
+  { req, res },
+) => {
+  destroyCookie({ res }, ACCESS_TOKEN_ID, {
+    secure: true,
+    sameSite: true,
+    httpOnly: true,
+    path: "/",
+  });
+
+  const { redirect_to = "http://localhost:3000/login" } = req.query;
+
+  res.redirect(redirect_to as string);
+
+  return true;
+};
+
+export const createCustomers: MutationResolvers["createCustomers"] = async (
+  _,
+  args,
+  { accessToken },
+) => {
+  const customers = await z
+    .array(customer.omit({ id: true, workspace: true }))
+    .parseAsync(args.createCustomerArgs)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+
+  const customersService = new CustomersService(accessToken as string);
+  return customersService.create(customers);
+};
+
+export const updateCustomers: MutationResolvers["updateCustomers"] = async (
+  _,
+  args,
+  { accessToken },
+) => {
+  const customers = await z
+    .array(customer.partial({ email: true, phone: true, name: true }))
+    .parseAsync(args.updateCustomerArgs)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+
+  const customersService = new CustomersService(accessToken as string);
+  customersService.update(customers);
+  return customersService.list();
+};
+
+export const deleteCustomers: MutationResolvers["deleteCustomers"] = async (
+  _,
+  args,
+  { accessToken },
+) => {
+  const ids = await z
+    .array(z.string())
+    .parseAsync(args.deleteCustomerArgs)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+  const customersService = new CustomersService(accessToken as string);
+  await customersService.delete(ids);
+
+  return ids;
 };

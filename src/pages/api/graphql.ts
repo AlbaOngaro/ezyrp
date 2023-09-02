@@ -1,6 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 
 import { typeDefs } from "server/graphql/schema";
 import { ACCESS_TOKEN_ID } from "lib/constants";
@@ -15,6 +15,7 @@ const resolvers = {
 
 export interface GraphqlContext {
   accessToken?: string;
+  req: NextApiRequest;
   res: NextApiResponse;
 }
 
@@ -26,6 +27,7 @@ const apolloServer = new ApolloServer<GraphqlContext>({
 export default startServerAndCreateNextHandler(apolloServer, {
   context: async (req, res) => ({
     accessToken: req.cookies[ACCESS_TOKEN_ID] as string,
+    req,
     res,
   }),
 });

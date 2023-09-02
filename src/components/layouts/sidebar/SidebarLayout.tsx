@@ -5,7 +5,7 @@ import * as Menu from "@radix-ui/react-navigation-menu";
 import { twMerge } from "tailwind-merge";
 import { Sidebar } from "components/organisms/sidebar/Sidebar";
 import { useProfile } from "hooks/useProfile";
-import { useAuth } from "providers/auth/AuthProvider";
+import { useAuth } from "components/providers/auth/AuthProvider";
 
 const userNavigation = [
   { name: "Your profile", href: "/profile" },

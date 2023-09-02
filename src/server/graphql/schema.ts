@@ -3,23 +3,50 @@ import gql from "graphql-tag";
 export const typeDefs = gql`
   type Query {
     user: User
+
+    customer(id: ID!): Customer
+    customers(filters: InputCustomersFilters): [Customer]
   }
 
   type Mutation {
-    login(credentials: LoginCredentials): User
-    register(credentials: RegisterCredentials): User
+    logout: Boolean
+    login(credentials: InputLoginCredentials): User
+    register(credentials: InputRegisterCredentials): User
+
+    createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
+    updateCustomers(updateCustomerArgs: [InputUpdateCustomerArgs!]!): [Customer]
+    deleteCustomers(deleteCustomerArgs: [ID!]!): [ID]
   }
 
-  input LoginCredentials {
+  input InputLoginCredentials {
     email: String!
     password: String!
   }
 
-  input RegisterCredentials {
+  input InputRegisterCredentials {
     email: String!
     password: String!
     username: String
     workspace: String
+  }
+
+  input InputCustomersFilters {
+    email: String
+    name: String
+    phone: String
+  }
+
+  input InputCreateCustomerArgs {
+    email: String!
+    name: String!
+    phone: String!
+  }
+
+  input InputUpdateCustomerArgs {
+    id: ID!
+    email: String
+    name: String
+    phone: String
   }
 
   type User {
@@ -29,10 +56,10 @@ export const typeDefs = gql`
     username: String!
   }
 
-  type Credentials {
+  type Customer {
+    id: ID!
     email: String!
-    password: String!
-    username: String!
-    workspace: String
+    name: String!
+    phone: String!
   }
 `;

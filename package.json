@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen:watch:server": "graphql-codegen --watch 'src/server/**' --config codegen.ts"
   },
   "dependencies": {
     "@apollo/client": "3.8.2",
@@ -38,8 +39,10 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0",
     "@graphql-codegen/typescript": "4.0.1",
     "@graphql-codegen/typescript-resolvers": "4.0.1",
+    "@parcel/watcher": "2.3.0",
     "@tailwindcss/forms": "0.5.4",
     "@types/lodash": "4.14.197",
     "@types/node": "20.5.0",
@@ -55,7 +58,6 @@
     "postcss": "8.4.28",
     "prettier": "3.0.2",
     "tailwindcss": "3.3.3",
-    "typescript": "5.1.6",
-    "@graphql-codegen/client-preset": "4.1.0"
+    "typescript": "5.1.6"
   }
 }

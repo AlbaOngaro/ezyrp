@@ -1,17 +1,32 @@
 import { z } from "zod";
-import { Customer } from "lib/types";
+
+import { GraphQLError } from "graphql";
 import { surreal } from "server/surreal";
 import { customer } from "server/schema/customer";
 import { Service } from "server/services/service";
+import {
+  Customer,
+  MutationCreateCustomersArgs,
+  QueryCustomerArgs,
+  QueryCustomersArgs,
+} from "__generated__/server";
 
 export class CustomersService extends Service {
   constructor(token: string) {
+    if (!token) {
+      throw new GraphQLError("You are not authorized to perform this action.", {
+        extensions: {
+          code: "FORBIDDEN",
+        },
+      });
+    }
+
     super(token);
   }
 
   async create(
-    customers: Omit<Customer, "id" | "workspace">[],
-  ): Promise<Omit<Customer, "workspace">[]> {
+    customers: MutationCreateCustomersArgs["createCustomerArgs"],
+  ): Promise<Customer[]> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Customer[]>(`
@@ -23,33 +38,41 @@ export class CustomersService extends Service {
     try {
       return z.array(customer).parse(result[0].result);
     } catch (error: unknown) {
+      console.error(error);
       return [];
     }
   }
 
-  async read(id: Customer["id"]): Promise<Omit<Customer, "workspace">> {
+  async read(id: QueryCustomerArgs["id"]): Promise<Customer> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.select<Customer>(id);
     return customer.parse(result[0]);
   }
 
-  async list(
-    filters: Partial<Omit<Customer, "workspace" | "id">>,
-  ): Promise<Omit<Customer, "workspace">[]> {
+  async list(filters?: QueryCustomersArgs["filters"]): Promise<Customer[]> {
     await surreal.authenticate(this.token);
 
-    const tmp = Object.entries(filters);
+    if (filters) {
+      const tmp = Object.entries(filters);
+      const result = await surreal.query<Customer[]>(
+        tmp.length === 0
+          ? `SELECT * FROM customer`
+          : `
+            SELECT * FROM customer
+            WHERE 
+              ${tmp.map(([key, value]) => `${key} ~ "${value}"`).join("AND \n")}
+        `,
+      );
 
-    const result = await surreal.query<Customer[]>(
-      tmp.length === 0
-        ? `SELECT * FROM customer`
-        : `
-          SELECT * FROM customer
-          WHERE 
-            ${tmp.map(([key, value]) => `${key} ~ "${value}"`).join("AND \n")}
-      `,
-    );
+      try {
+        return z.array(customer).parse(result[0].result);
+      } catch (error: unknown) {
+        return [];
+      }
+    }
+
+    const result = await surreal.query<Customer[]>(`SELECT * FROM customer`);
 
     try {
       return z.array(customer).parse(result[0].result);

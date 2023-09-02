@@ -4,7 +4,7 @@ import { Root as Form } from "@radix-ui/react-form";
 
 import { Credentials } from "lib/types";
 
-import { useAuth } from "providers/auth/AuthProvider";
+import { useAuth } from "components/providers/auth/AuthProvider";
 
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
