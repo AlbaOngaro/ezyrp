@@ -12,6 +12,8 @@ import { invoice } from "server/schema/invoice";
 import { InvoicesService } from "server/services/invoices";
 import { createEventInput } from "server/schema/event";
 import { EventsService } from "server/services/events";
+import { ProfileService } from "server/services/profile";
+import { profile } from "server/schema/profile";
 
 export const login: MutationResolvers["login"] = async (_, args, { res }) => {
   const { password, email } = await credentials
@@ -133,6 +135,34 @@ export const logout: MutationResolvers["logout"] = async (
   res.redirect(redirect_to as string);
 
   return true;
+};
+
+export const updateUserProfile: MutationResolvers["updateUserProfile"] = async (
+  _,
+  args,
+  { accessToken },
+) => {
+  const input = await profile
+    .omit({ user: true })
+    .partial({
+      address: true,
+      city: true,
+      code: true,
+      country: true,
+      name: true,
+    })
+    .parseAsync(args.updateUserProfileArgs)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+
+  const profileService = new ProfileService(accessToken as string);
+  return profileService.update(input);
 };
 
 export const createCustomers: MutationResolvers["createCustomers"] = async (

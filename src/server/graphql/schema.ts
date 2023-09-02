@@ -19,6 +19,8 @@ export const typeDefs = gql`
     login(credentials: InputLoginCredentials): User
     register(credentials: InputRegisterCredentials): User
 
+    updateUserProfile(updateUserProfileArgs: InputUpdateUserProfileArgs!): User
+
     createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
     updateCustomers(updateCustomerArgs: [InputUpdateCustomerArgs!]!): [Customer]
     deleteCustomers(deleteCustomerArgs: [ID!]!): [ID]
@@ -44,11 +46,28 @@ export const typeDefs = gql`
     workspace: String
   }
 
+  input InputUpdateUserProfileArgs {
+    address: String
+    city: String
+    code: String
+    country: String
+    name: String
+  }
+
+  type Profile {
+    address: String!
+    city: String!
+    code: String!
+    country: String!
+    name: String!
+  }
+
   type User {
     id: ID!
     email: String!
     password: String!
     username: String!
+    profile: Profile
   }
 
   input InputCustomersFilters {

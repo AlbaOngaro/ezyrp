@@ -114,6 +114,14 @@ export type InputUpdateInvoicesArgs = {
   status?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type InputUpdateUserProfileArgs = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Invoice = {
   __typename?: 'Invoice';
   amount: Scalars['Int']['output'];
@@ -147,6 +155,7 @@ export type Mutation = {
   updateCustomers?: Maybe<Array<Maybe<Customer>>>;
   updateEvents?: Maybe<Array<Maybe<Event>>>;
   updateInvoices?: Maybe<Array<Maybe<Invoice>>>;
+  updateUserProfile?: Maybe<User>;
 };
 
 
@@ -204,6 +213,20 @@ export type MutationUpdateInvoicesArgs = {
   updateInvoicesArgs: Array<InputUpdateInvoicesArgs>;
 };
 
+
+export type MutationUpdateUserProfileArgs = {
+  updateUserProfileArgs: InputUpdateUserProfileArgs;
+};
+
+export type Profile = {
+  __typename?: 'Profile';
+  address: Scalars['String']['output'];
+  city: Scalars['String']['output'];
+  code: Scalars['String']['output'];
+  country: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   customer?: Maybe<Customer>;
@@ -240,6 +263,7 @@ export type User = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   password: Scalars['String']['output'];
+  profile?: Maybe<Profile>;
   username: Scalars['String']['output'];
 };
 
@@ -330,10 +354,12 @@ export type ResolversTypes = ResolversObject<{
   InputUpdateEventsArgs: InputUpdateEventsArgs;
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
+  InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Invoice: ResolverTypeWrapper<Invoice>;
   Item: ResolverTypeWrapper<Item>;
   Mutation: ResolverTypeWrapper<{}>;
+  Profile: ResolverTypeWrapper<Profile>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<User>;
@@ -356,10 +382,12 @@ export type ResolversParentTypes = ResolversObject<{
   InputUpdateEventsArgs: InputUpdateEventsArgs;
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
+  InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: Scalars['Int']['output'];
   Invoice: Invoice;
   Item: Item;
   Mutation: {};
+  Profile: Profile;
   Query: {};
   String: Scalars['String']['output'];
   User: User;
@@ -415,6 +443,16 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   updateCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Customer']>>>, ParentType, ContextType, RequireFields<MutationUpdateCustomersArgs, 'updateCustomerArgs'>>;
   updateEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationUpdateEventsArgs, 'updateEventsInput'>>;
   updateInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationUpdateInvoicesArgs, 'updateInvoicesArgs'>>;
+  updateUserProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserProfileArgs, 'updateUserProfileArgs'>>;
+}>;
+
+export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Profile'] = ResolversParentTypes['Profile']> = ResolversObject<{
+  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -431,6 +469,7 @@ export type UserResolvers<ContextType = GraphqlContext, ParentType extends Resol
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  profile?: Resolver<Maybe<ResolversTypes['Profile']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -441,6 +480,7 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   Invoice?: InvoiceResolvers<ContextType>;
   Item?: ItemResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Profile?: ProfileResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;

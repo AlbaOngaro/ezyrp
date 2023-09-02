@@ -4,11 +4,18 @@ import { QueryResolvers, User } from "__generated__/server";
 import { CustomersService } from "server/services/customers";
 import { InvoicesService } from "server/services/invoices";
 import { EventsService } from "server/services/events";
+import { ProfileService } from "server/services/profile";
 
 export const user: QueryResolvers["user"] = async (_, __, { accessToken }) => {
   await surreal.authenticate(accessToken as string);
-  const record = await (surreal as Surreal).info();
-  return record as User;
+  const user = await (surreal as Surreal).info();
+  const profileService = new ProfileService(accessToken as string);
+  const profile = await profileService.read();
+
+  return {
+    ...(user as Omit<User, "profile">),
+    profile,
+  };
 };
 
 export const customer: QueryResolvers["customer"] = async (

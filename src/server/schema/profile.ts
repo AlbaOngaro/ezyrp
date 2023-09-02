@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const profile = z.object({
   // identifiers
-  id: z.string(),
   user: z.string(),
 
   // location
