@@ -1,12 +1,11 @@
 import { ReactElement, useMemo, useState } from "react";
 
-import { PlusIcon } from "@radix-ui/react-icons";
 import { differenceInDays, sub } from "date-fns";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { twMerge } from "lib/utils/twMerge";
-import { Button } from "components/atoms/button/Button";
 import { useInvoices } from "hooks/useInvoices";
 import { Invoice } from "lib/types";
+import { useCustomers } from "hooks/useCustomers";
 
 const secondaryNavigation = [
   { name: "Last 7 days", value: 7 },
@@ -38,6 +37,7 @@ function getPrecentage(curr: number, prev: number): number {
 
 export function HomePage() {
   const invoices = useInvoices();
+  const customers = useCustomers();
 
   const [timeSpan, setTimeSpan] = useState<number>(7);
 
@@ -111,10 +111,6 @@ export function HomePage() {
               </button>
             ))}
           </div>
-          <Button size="lg" className="ml-auto flex flex-row gap-2">
-            <PlusIcon className="h-5 w-5" aria-hidden="true" />
-            New invoice
-          </Button>
         </div>
       </header>
 
@@ -155,6 +151,71 @@ export function HomePage() {
             );
           })}
         </dl>
+      </div>
+
+      {/* Recent client list*/}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold leading-7 text-gray-900">
+              Recent clients
+            </h2>
+            <a
+              href="#"
+              className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            >
+              View all<span className="sr-only">, clients</span>
+            </a>
+          </div>
+          <ul
+            role="list"
+            className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8"
+          >
+            {customers.data.map((customer) => (
+              <li
+                key={customer.id}
+                className="overflow-hidden rounded-xl border border-gray-200"
+              >
+                <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                  {/* <img
+                    src={client.imageUrl}
+                    alt={customer.name}
+                    className="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10"
+                  /> */}
+                  <div className="text-sm font-medium leading-6 text-gray-900">
+                    {customer.name}
+                  </div>
+                </div>
+
+                {/* <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+                  <div className="flex justify-between gap-x-4 py-3">
+                    <dt className="text-gray-500">Last invoice</dt>
+                    <dd className="text-gray-700">
+                      <time dateTime={client.lastInvoice.dateTime}>
+                        {client.lastInvoice.date}
+                      </time>
+                    </dd>
+                  </div>
+                  <div className="flex justify-between gap-x-4 py-3">
+                    <dt className="text-gray-500">Amount</dt>
+                    <dd className="flex items-start gap-x-2">
+                      <div className="font-medium text-gray-900">
+                        {client.lastInvoice.amount}
+                      </div>
+                      <div
+                        className={twMerge(
+                          "rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset",
+                        )}
+                      >
+                        {client.lastInvoice.status}
+                      </div>
+                    </dd>
+                  </div>
+                </dl> */}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </main>
   );
