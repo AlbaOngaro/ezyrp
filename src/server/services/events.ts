@@ -3,25 +3,39 @@ import { Service } from "./service";
 
 import { event } from "server/schema/event";
 import { surreal } from "server/surreal";
-import { CreateEventInput, Customer, Event } from "lib/types";
+import {
+  Event,
+  MutationCreateEventsArgs,
+  MutationDeleteEventsArgs,
+  MutationUpdateEventsArgs,
+} from "__generated__/server";
 
 export class EventsService extends Service {
   constructor(token: string) {
     super(token);
   }
 
-  async create(values: Omit<CreateEventInput, "id">) {
+  async create(
+    events: MutationCreateEventsArgs["createEventsInput"],
+  ): Promise<Event[]> {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.query<Event[]>(
-      `INSERT INTO event ${JSON.stringify(values)}`,
+    await surreal.query<Event[]>(
+      `INSERT INTO event (start, end, title, variant, guests) VALUES ${events
+        .map(
+          ({ start, end, title, variant, guests }) =>
+            `("${start}", "${end}", "${title}", "${variant}", ${JSON.stringify(
+              guests,
+            )})`,
+        )
+        .join(",")}`,
     );
 
     try {
       // @ts-ignore
-      return this.read(result[0].result[0].id);
+      return this.list();
     } catch (error: unknown) {
-      return null;
+      return [];
     }
   }
 
@@ -35,7 +49,7 @@ export class EventsService extends Service {
     return event.parse(result[0]);
   }
 
-  async list() {
+  async list(): Promise<Event[]> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Event[]>(
@@ -49,7 +63,7 @@ export class EventsService extends Service {
     }
   }
 
-  async update(events: Partial<Event> & { id: Event["id"] }[]) {
+  async update(events: MutationUpdateEventsArgs["updateEventsInput"]) {
     await surreal.authenticate(this.token);
 
     await surreal.query(`
@@ -65,7 +79,7 @@ export class EventsService extends Service {
     `);
   }
 
-  async delete(ids: Customer["id"][]) {
+  async delete(ids: MutationDeleteEventsArgs["deleteEventsInput"]) {
     await surreal.authenticate(this.token);
 
     await surreal.query(`
@@ -73,5 +87,7 @@ export class EventsService extends Service {
       ${ids.map((id) => `DELETE ${id}`).join(";\n")};
       COMMIT TRANSACTION;
     `);
+
+    return ids;
   }
 }

@@ -10,6 +10,8 @@ import { CustomersService } from "server/services/customers";
 import { customer } from "server/schema/customer";
 import { invoice } from "server/schema/invoice";
 import { InvoicesService } from "server/services/invoices";
+import { createEventInput } from "server/schema/event";
+import { EventsService } from "server/services/events";
 
 export const login: MutationResolvers["login"] = async (_, args, { res }) => {
   const { password, email } = await credentials
@@ -283,4 +285,76 @@ export const deleteInvoices: MutationResolvers["deleteInvoices"] = async (
 
   const invoicesService = new InvoicesService(accessToken as string);
   return invoicesService.delete(ids);
+};
+
+export const createEvents: MutationResolvers["createEvents"] = async (
+  _,
+  args,
+  { accessToken },
+) => {
+  const events = await z
+    .array(createEventInput.omit({ id: true }))
+    .parseAsync(args.createEventsInput)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+
+  const eventsService = new EventsService(accessToken as string);
+  return eventsService.create(events);
+};
+
+export const updateEvents: MutationResolvers["updateEvents"] = async (
+  _,
+  args,
+  { accessToken },
+) => {
+  const events = await z
+    .array(
+      createEventInput.partial({
+        start: true,
+        end: true,
+        title: true,
+        variant: true,
+        guests: true,
+      }),
+    )
+    .parseAsync(args.updateEventsInput)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+
+  const eventsService = new EventsService(accessToken as string);
+  // @ts-ignore
+  return eventsService.create(events);
+};
+
+export const deleteEvents: MutationResolvers["deleteEvents"] = async (
+  _,
+  args,
+  { accessToken },
+) => {
+  const events = await z
+    .array(z.string())
+    .parseAsync(args.deleteEventsInput)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+
+  const eventsService = new EventsService(accessToken as string);
+  return eventsService.delete(events);
 };

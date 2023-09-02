@@ -9,6 +9,9 @@ export const typeDefs = gql`
 
     invoice(id: ID!): Invoice
     invoices: [Invoice]
+
+    event(id: ID!): Event
+    events: [Event]
   }
 
   type Mutation {
@@ -23,6 +26,10 @@ export const typeDefs = gql`
     createInvoices(createInvoicesArgs: [InputCreateInvoicesArgs!]!): [Invoice]
     updateInvoices(updateInvoicesArgs: [InputUpdateInvoicesArgs!]!): [Invoice]
     deleteInvoices(deleteInvoicesArgs: [ID!]!): [ID]
+
+    createEvents(createEventsInput: [InputCreateEventsArgs!]!): [Event]
+    updateEvents(updateEventsInput: [InputUpdateEventsArgs!]!): [Event]
+    deleteEvents(deleteEventsInput: [ID!]!): [ID]
   }
 
   input InputLoginCredentials {
@@ -116,5 +123,31 @@ export const typeDefs = gql`
     amount: Int!
     due: String!
     emitted: String!
+  }
+
+  input InputCreateEventsArgs {
+    start: String!
+    end: String!
+    title: String!
+    variant: String!
+    guests: [String]
+  }
+
+  input InputUpdateEventsArgs {
+    id: ID!
+    start: String
+    end: String
+    title: String
+    variant: String
+    guests: [String]
+  }
+
+  type Event {
+    id: ID!
+    start: String!
+    end: String!
+    title: String!
+    variant: String
+    guests: [Customer]
   }
 `;
