@@ -1,9 +1,9 @@
 import { Surreal } from "surrealdb.js";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { surreal } from "lib/surreal";
+import { surreal } from "server/surreal";
 import { ACCESS_TOKEN_ID } from "lib/constants";
-import { user } from "lib/schema/auth";
+import { user } from "server/schema/auth";
 import { User } from "lib/types";
 
 export default async function handler(

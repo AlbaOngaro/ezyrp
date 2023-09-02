@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { Invoice } from "lib/types";
 
-import { surreal } from "lib/surreal";
-import { invoice } from "lib/schema/invoice";
-import { Service } from "services/service";
+import { surreal } from "server/surreal";
+import { invoice } from "server/schema/invoice";
+import { Service } from "server/services/service";
 
 export class InvoicesService extends Service {
   constructor(token: string) {

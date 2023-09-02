@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { Service } from "./service";
 
-import { event } from "lib/schema/event";
-import { surreal } from "lib/surreal";
+import { event } from "server/schema/event";
+import { surreal } from "server/surreal";
 import { CreateEventInput, Customer, Event } from "lib/types";
 
 export class EventsService extends Service {

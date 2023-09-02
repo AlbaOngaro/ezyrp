@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { ACCESS_TOKEN_ID } from "lib/constants";
 
-import { ProfileService } from "services/profile";
-import { profile } from "lib/schema/profile";
+import { ProfileService } from "server/services/profile";
+import { profile } from "server/schema/profile";
 
 export default async function handler(
   req: NextApiRequest,

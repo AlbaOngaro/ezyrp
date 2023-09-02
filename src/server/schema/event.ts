@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { customer } from "lib/schema/customer";
+import { customer } from "server/schema/customer";
 
 export const variants: readonly [string, ...string[]] = [
   "red",

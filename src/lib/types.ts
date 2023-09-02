@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-import { credentials, user } from "lib/schema/auth";
-import { customer } from "lib/schema/customer";
-import { invoice } from "lib/schema/invoice";
-import { profile } from "lib/schema/profile";
+import { credentials, user } from "server/schema/auth";
+import { customer } from "server/schema/customer";
+import { invoice } from "server/schema/invoice";
+import { profile } from "server/schema/profile";
 
-import { createEventInput, event } from "lib/schema/event";
+import { createEventInput, event } from "server/schema/event";
 
 export type Credentials = z.infer<typeof credentials>;
 

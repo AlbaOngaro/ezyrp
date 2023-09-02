@@ -1,7 +1,7 @@
-import { profile } from "lib/schema/profile";
-import { surreal } from "lib/surreal";
+import { profile } from "server/schema/profile";
+import { surreal } from "server/surreal";
 import { Profile } from "lib/types";
-import { Service } from "services/service";
+import { Service } from "server/services/service";
 
 export class ProfileService extends Service {
   constructor(token: string) {

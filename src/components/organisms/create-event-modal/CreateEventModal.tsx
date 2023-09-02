@@ -19,7 +19,7 @@ import { Modal } from "components/atoms/modal/Modal";
 import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
-import { variants } from "lib/schema/event";
+import { variants } from "server/schema/event";
 import { twMerge } from "lib/utils/twMerge";
 import { Combobox } from "components/atoms/comobobox/Combobox";
 import { useCustomers } from "hooks/useCustomers";

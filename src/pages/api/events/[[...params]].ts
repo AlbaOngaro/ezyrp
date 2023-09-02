@@ -3,8 +3,8 @@ import { z } from "zod";
 
 import { ACCESS_TOKEN_ID } from "lib/constants";
 
-import { EventsService } from "services/events";
-import { event, createEventInput } from "lib/schema/event";
+import { EventsService } from "server/services/events";
+import { event, createEventInput } from "server/schema/event";
 
 export default async function handler(
   req: NextApiRequest,

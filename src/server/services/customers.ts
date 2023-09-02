@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { Customer } from "lib/types";
-import { surreal } from "lib/surreal";
-import { customer } from "lib/schema/customer";
-import { Service } from "services/service";
+import { surreal } from "server/surreal";
+import { customer } from "server/schema/customer";
+import { Service } from "server/services/service";
 
 export class CustomersService extends Service {
   constructor(token: string) {

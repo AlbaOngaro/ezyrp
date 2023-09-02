@@ -2,9 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 
 import { ACCESS_TOKEN_ID } from "lib/constants";
-import { invoice } from "lib/schema/invoice";
+import { invoice } from "server/schema/invoice";
 
-import { InvoicesService } from "services/invoices";
+import { InvoicesService } from "server/services/invoices";
 
 export default async function handler(
   req: NextApiRequest,
