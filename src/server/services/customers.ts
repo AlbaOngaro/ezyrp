@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { GraphQLError } from "graphql";
 import { surreal } from "server/surreal";
 import { customer } from "server/schema/customer";
 import { Service } from "server/services/service";
@@ -13,14 +12,6 @@ import {
 
 export class CustomersService extends Service {
   constructor(token: string) {
-    if (!token) {
-      throw new GraphQLError("You are not authorized to perform this action.", {
-        extensions: {
-          code: "FORBIDDEN",
-        },
-      });
-    }
-
     super(token);
   }
 

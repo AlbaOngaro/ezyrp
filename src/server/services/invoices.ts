@@ -1,9 +1,14 @@
 import { z } from "zod";
-import { Invoice } from "lib/types";
 
 import { surreal } from "server/surreal";
 import { invoice } from "server/schema/invoice";
 import { Service } from "server/services/service";
+import {
+  QueryInvoiceArgs,
+  Invoice,
+  MutationCreateInvoicesArgs,
+  MutationUpdateInvoicesArgs,
+} from "__generated__/server";
 
 export class InvoicesService extends Service {
   constructor(token: string) {
@@ -11,15 +16,15 @@ export class InvoicesService extends Service {
   }
 
   async create(
-    invoices: Omit<Invoice, "id" | "workspace">[],
-  ): Promise<Omit<Invoice, "workspace">[]> {
+    invoices: MutationCreateInvoicesArgs["createInvoicesArgs"],
+  ): Promise<Invoice[]> {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.query<Invoice[]>(`
+    await surreal.query<Invoice[]>(`
       INSERT INTO invoice (customer, description, status, items, due, emitted) VALUES ${invoices
         .map(
           ({ customer, description, status, items, due, emitted }) =>
-            `('${customer.id}', '${description}', '${status}', ${JSON.stringify(
+            `('${customer}', '${description}', '${status}', ${JSON.stringify(
               items,
             )}, '${due}' ,'${emitted}')`,
         )
@@ -27,13 +32,14 @@ export class InvoicesService extends Service {
     `);
 
     try {
-      return z.array(invoice).parse(result[0].result);
+      return this.list();
     } catch (error: unknown) {
+      console.error(error);
       return [];
     }
   }
 
-  async read(id: Invoice["id"]): Promise<Omit<Invoice, "workspace">> {
+  async read(id: QueryInvoiceArgs["id"]): Promise<Invoice> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Invoice[]>(
@@ -44,10 +50,11 @@ export class InvoicesService extends Service {
       FROM ${id}
       FETCH customer`,
     );
+
     return invoice.parse(result[0]);
   }
 
-  async list(): Promise<Omit<Invoice, "workspace">[]> {
+  async list(): Promise<Invoice[]> {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Invoice[]>(
@@ -62,15 +69,14 @@ export class InvoicesService extends Service {
     try {
       return z.array(invoice).parse(result[0].result);
     } catch (error: unknown) {
+      console.error(error);
       return [];
     }
   }
 
   async update(
-    invoices: (Partial<Omit<Invoice, "workspace" | "amount">> & {
-      id: Invoice["id"];
-    })[],
-  ): Promise<void> {
+    invoices: MutationUpdateInvoicesArgs["updateInvoicesArgs"],
+  ): Promise<Invoice[]> {
     await surreal.authenticate(this.token);
 
     await surreal.query(`
@@ -85,9 +91,11 @@ export class InvoicesService extends Service {
 
       COMMIT TRANSACTION;
     `);
+
+    return this.list();
   }
 
-  async delete(ids: Invoice["id"][]): Promise<void> {
+  async delete(ids: Invoice["id"][]): Promise<Invoice["id"][]> {
     await surreal.authenticate(this.token);
 
     await surreal.query(`
@@ -95,5 +103,7 @@ export class InvoicesService extends Service {
       ${ids.map((id) => `DELETE ${id}`).join(";\n")};
       COMMIT TRANSACTION;
     `);
+
+    return ids;
   }
 }

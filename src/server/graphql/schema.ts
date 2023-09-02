@@ -6,6 +6,9 @@ export const typeDefs = gql`
 
     customer(id: ID!): Customer
     customers(filters: InputCustomersFilters): [Customer]
+
+    invoice(id: ID!): Invoice
+    invoices: [Invoice]
   }
 
   type Mutation {
@@ -16,6 +19,10 @@ export const typeDefs = gql`
     createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
     updateCustomers(updateCustomerArgs: [InputUpdateCustomerArgs!]!): [Customer]
     deleteCustomers(deleteCustomerArgs: [ID!]!): [ID]
+
+    createInvoices(createInvoicesArgs: [InputCreateInvoicesArgs!]!): [Invoice]
+    updateInvoices(updateInvoicesArgs: [InputUpdateInvoicesArgs!]!): [Invoice]
+    deleteInvoices(deleteInvoicesArgs: [ID!]!): [ID]
   }
 
   input InputLoginCredentials {
@@ -28,6 +35,13 @@ export const typeDefs = gql`
     password: String!
     username: String
     workspace: String
+  }
+
+  type User {
+    id: ID!
+    email: String!
+    password: String!
+    username: String!
   }
 
   input InputCustomersFilters {
@@ -49,17 +63,58 @@ export const typeDefs = gql`
     phone: String
   }
 
-  type User {
-    id: ID!
-    email: String!
-    password: String!
-    username: String!
-  }
-
   type Customer {
     id: ID!
     email: String!
     name: String!
     phone: String!
+  }
+
+  input InputCreateInvoiceItems {
+    name: String!
+    quantity: Int!
+    price: Int!
+  }
+
+  input InputCreateInvoicesArgs {
+    customer: ID!
+    description: String!
+    status: String!
+    items: [InputCreateInvoiceItems!]!
+    due: String!
+    emitted: String!
+  }
+
+  input InputUpdateInvoiceItems {
+    name: String!
+    quantity: Int!
+    price: Int!
+  }
+
+  input InputUpdateInvoicesArgs {
+    id: ID!
+    customer: ID
+    description: String
+    status: String
+    items: [InputUpdateInvoiceItems]
+    due: String
+    emitted: String
+  }
+
+  type Item {
+    name: String!
+    quantity: Int!
+    price: Int!
+  }
+
+  type Invoice {
+    id: ID!
+    customer: Customer!
+    description: String!
+    status: String!
+    items: [Item!]
+    amount: Int!
+    due: String!
+    emitted: String!
   }
 `;
