@@ -20,4 +20,7 @@ export const invoice = z.object({
 
   due: z.string().datetime().default(new Date().toISOString()),
   emitted: z.string().datetime().default(new Date().toISOString()),
+
+  created_at: z.string().datetime().default(new Date().toISOString()),
+  updated_at: z.string().datetime().default(new Date().toISOString()),
 });

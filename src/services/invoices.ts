@@ -79,7 +79,10 @@ export class InvoicesService extends Service {
       ${invoices
         .map(
           ({ id, ...invoice }) =>
-            `UPDATE ${id} MERGE ${JSON.stringify(invoice)}`,
+            `UPDATE ${id} MERGE ${JSON.stringify({
+              ...invoice,
+              updated_at: new Date().toISOString(),
+            })}`,
         )
         .join(";\n")};
 
