@@ -7,13 +7,12 @@ import { useCalendarContext } from "../Calendar";
 import { EventItem } from "../components/EventItem";
 import { EventPopover } from "../components/EventPopover";
 
-import { Event } from "lib/types";
-
 import { twMerge } from "lib/utils/twMerge";
 import { convertRemToPx } from "lib/utils/convertRemToPx";
 
 import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
 import { Indicator } from "components/organisms/calendar/components/Indicator";
+import { Event } from "__generated__/graphql";
 
 function EventItemWrapper({
   event,
@@ -67,10 +66,7 @@ function EventItemWrapper({
       </Anchor>
 
       <CreateEventModal
-        event={{
-          ...event,
-          guests: event.guests.map((guest) => guest.id),
-        }}
+        event={event}
         onChange={(updated) =>
           dispatch({
             type: "SET_EVENTS",
@@ -82,12 +78,13 @@ function EventItemWrapper({
 
                 return {
                   ...updated,
-                  guests: updated.guests.map((guest) => ({
-                    id: guest,
-                    email: "",
-                    name: "",
-                    phone: "",
-                  })),
+                  guests:
+                    updated?.guests?.map((guest) => ({
+                      id: guest as string,
+                      email: "",
+                      name: "",
+                      phone: "",
+                    })) || [],
                 };
               }),
             },

@@ -2,20 +2,13 @@ import { PropsWithChildren } from "react";
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
 
+import Link from "next/link";
 import { Sidebar } from "components/organisms/sidebar/Sidebar";
 import { useUser } from "hooks/useUser";
 import { twMerge } from "lib/utils/twMerge";
 
-const userNavigation = [
-  { name: "Your profile", href: "/profile" },
-  {
-    name: "Sign out",
-    href: "/api/auth/logout?redirect_to=http://localhost:3000/login",
-  },
-];
-
 export function SidebarLayout({ children }: PropsWithChildren) {
-  const { data } = useUser();
+  const { data, logout } = useUser();
 
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
@@ -58,18 +51,26 @@ export function SidebarLayout({ children }: PropsWithChildren) {
                     </span>
                   </Menu.Trigger>
                   <Menu.Content className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                    {userNavigation.map((item) => (
-                      <Menu.Link asChild key={item.name}>
-                        <a
-                          href={item.href}
-                          className={twMerge(
-                            "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-50",
-                          )}
-                        >
-                          {item.name}
-                        </a>
-                      </Menu.Link>
-                    ))}
+                    <Menu.Link asChild>
+                      <Link
+                        href="/profile"
+                        className={twMerge(
+                          "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-50",
+                        )}
+                      >
+                        Your profile
+                      </Link>
+                    </Menu.Link>
+                    <Menu.Link asChild>
+                      <button
+                        onClick={() => logout()}
+                        className={twMerge(
+                          "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-50",
+                        )}
+                      >
+                        Logout
+                      </button>
+                    </Menu.Link>
                   </Menu.Content>
                 </Menu.Item>
               </Menu.List>

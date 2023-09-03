@@ -6,9 +6,15 @@ import { DELETE_EVENTS } from "lib/mutations/DELETE_EVENTS";
 
 export function useEvents() {
   const { data, error, loading: isLoading, refetch } = useQuery(EVENTS);
-  const [create] = useMutation(CREATE_EVENTS);
-  const [update] = useMutation(UPDATE_EVENTS);
-  const [deleteEvents] = useMutation(DELETE_EVENTS);
+  const [create] = useMutation(CREATE_EVENTS, {
+    refetchQueries: [EVENTS],
+  });
+  const [update] = useMutation(UPDATE_EVENTS, {
+    refetchQueries: [EVENTS],
+  });
+  const [deleteEvents] = useMutation(DELETE_EVENTS, {
+    refetchQueries: [EVENTS],
+  });
 
   return {
     data,

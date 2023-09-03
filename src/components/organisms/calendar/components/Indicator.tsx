@@ -17,13 +17,11 @@ export function Indicator() {
     state: { view, selected },
   } = useCalendarContext();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const now = new Date();
-
   const indicator = useRef<HTMLHRElement | null>(null);
 
   useEffect(() => {
     if (indicator.current) {
+      const now = new Date();
       indicator.current.style.gridColumnStart = (
         now.getDay() === 0 ? 7 : now.getDay()
       ).toString();
@@ -44,9 +42,9 @@ export function Indicator() {
     return () => {
       clearInterval(it);
     };
-  }, [now, view]);
+  }, [view]);
 
-  if (!isSameDay(now, selected)) {
+  if (!isSameDay(new Date(), selected)) {
     return null;
   }
 

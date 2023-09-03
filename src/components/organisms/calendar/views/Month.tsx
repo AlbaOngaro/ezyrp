@@ -15,14 +15,14 @@ import { useCalendarContext } from "../Calendar";
 import { getIsLongerThan24Hours, isSavedEvent } from "../utils";
 
 import { twMerge } from "lib/utils/twMerge";
-import { Event } from "lib/types";
 import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+import { Event } from "__generated__/graphql";
 
 function EventItemWrapper({
   event,
   currentDate,
 }: {
-  event: Omit<Event, "workspace">;
+  event: Event;
   currentDate: Date;
 }) {
   const {
@@ -70,10 +70,7 @@ function EventItemWrapper({
       </Anchor>
 
       <CreateEventModal
-        event={{
-          ...event,
-          guests: event.guests.map((guest) => guest.id),
-        }}
+        event={event}
         onChange={(updated) =>
           dispatch({
             type: "SET_EVENTS",
@@ -85,12 +82,13 @@ function EventItemWrapper({
 
                 return {
                   ...updated,
-                  guests: updated.guests.map((guest) => ({
-                    id: guest,
-                    email: "",
-                    name: "",
-                    phone: "",
-                  })),
+                  guests:
+                    updated?.guests?.map((guest) => ({
+                      id: guest as string,
+                      email: "",
+                      name: "",
+                      phone: "",
+                    })) || [],
                 };
               }),
             },

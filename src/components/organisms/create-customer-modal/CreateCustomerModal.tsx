@@ -1,19 +1,18 @@
 import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { Customer } from "lib/types";
-
 import { useCustomers } from "hooks/useCustomers";
 
 import { Modal } from "components/atoms/modal/Modal";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
+import { InputCreateCustomerArgs } from "__generated__/graphql";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const EMPTY_CUSTOMER: Omit<Customer, "id" | "workspace"> = {
+const EMPTY_CUSTOMER: InputCreateCustomerArgs = {
   email: "",
   name: "",
   phone: "",
@@ -23,7 +22,7 @@ export function CreateCustomerModal({ setIsOpen }: Props) {
   const { create } = useCustomers();
 
   const [customer, setCustomer] =
-    useState<Omit<Customer, "id" | "workspace">>(EMPTY_CUSTOMER);
+    useState<InputCreateCustomerArgs>(EMPTY_CUSTOMER);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();

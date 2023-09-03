@@ -116,7 +116,7 @@ export function CustomersTable() {
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Dialog
           title="Do you really want to delete this customer?"
-          description="This action cannot be undone"
+          description="All invoices related to this customer will also be deleted. This action cannot be undone."
           onConfirm={() => {
             if (customer) {
               return customers.delete({

@@ -128,10 +128,10 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
             name="emitted"
             type="date"
             value={format(new Date(invoice.emitted), "yyyy-MM-dd")}
-            onChange={(e) =>
+            onChange={(emitted) =>
               setInvoice((curr) => ({
                 ...curr,
-                emitted: new Date(e.target.value).toISOString(),
+                emitted: emitted.toISOString(),
               }))
             }
           />
@@ -141,10 +141,10 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
             name="due"
             type="date"
             value={format(new Date(invoice.due), "yyyy-MM-dd")}
-            onChange={(e) =>
+            onChange={(due) =>
               setInvoice((curr) => ({
                 ...curr,
-                due: new Date(e.target.value).toISOString(),
+                due: due.toISOString(),
               }))
             }
           />

@@ -52,10 +52,7 @@ function EventItemWrapper({
       </Anchor>
 
       <CreateEventModal
-        event={{
-          ...event,
-          guests: event.guests.map((guest) => guest.id),
-        }}
+        event={event}
         onChange={(updated) =>
           dispatch({
             type: "SET_EVENTS",
@@ -67,12 +64,13 @@ function EventItemWrapper({
 
                 return {
                   ...updated,
-                  guests: updated.guests.map((guest) => ({
-                    id: guest,
-                    email: "",
-                    name: "",
-                    phone: "",
-                  })),
+                  guests:
+                    updated?.guests?.map((guest) => ({
+                      id: guest as string,
+                      email: "",
+                      name: "",
+                      phone: "",
+                    })) || [],
                 };
               }),
             },

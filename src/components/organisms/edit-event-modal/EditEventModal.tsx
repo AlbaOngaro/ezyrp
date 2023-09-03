@@ -1,23 +1,29 @@
 import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { format, isValid } from "date-fns";
+import { format } from "date-fns";
 
 import { Modal } from "components/atoms/modal/Modal";
 import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
-import { Event } from "__generated__/graphql";
+import { Event, InputUpdateEventsArgs } from "__generated__/graphql";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   event: Event;
 }
 
-export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
+export function EditEventModal({
+  setIsOpen,
+  event: { __typename, ...initialEvent },
+}: Props) {
   const events = useEvents();
 
-  const [event, setEvent] = useState<Event>(initialEvent);
+  const [event, setEvent] = useState<InputUpdateEventsArgs>({
+    ...initialEvent,
+    guests: initialEvent.guests.map((guest) => guest.id),
+  });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -47,7 +53,7 @@ export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
           label="Title"
           name="title"
           required
-          value={event.title}
+          value={event.title || ""}
           onChange={(e) =>
             setEvent((curr) => ({
               ...curr,
@@ -66,14 +72,15 @@ export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
             type="datetime-local"
             name="start"
             step={60 * 5} // 5 minutes
-            value={format(new Date(event.start), "yyyy-MM-dd'T'HH:mm")}
-            onChange={(e) => {
-              if (isValid(new Date(e.target.value))) {
-                setEvent((curr) => ({
-                  ...curr,
-                  start: new Date(e.target.value).toISOString(),
-                }));
-              }
+            value={format(
+              event.start ? new Date(event.start) : new Date(),
+              "yyyy-MM-dd'T'HH:mm",
+            )}
+            onChange={(start) => {
+              setEvent((curr) => ({
+                ...curr,
+                start: start.toISOString(),
+              }));
             }}
           />
 
@@ -83,15 +90,19 @@ export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
             type="datetime-local"
             name="end"
             step={60 * 5} // 5 minutes
-            min={format(new Date(event.start), "yyyy-MM-dd'T'HH:mm")}
-            value={format(new Date(event.end), "yyyy-MM-dd'T'HH:mm")}
-            onChange={(e) => {
-              if (isValid(new Date(e.target.value))) {
-                setEvent((curr) => ({
-                  ...curr,
-                  end: new Date(e.target.value).toISOString(),
-                }));
-              }
+            min={format(
+              event.start ? new Date(event.start) : new Date(),
+              "yyyy-MM-dd'T'HH:mm",
+            )}
+            value={format(
+              event.end ? new Date(event.end) : new Date(),
+              "yyyy-MM-dd'T'HH:mm",
+            )}
+            onChange={(end) => {
+              setEvent((curr) => ({
+                ...curr,
+                end: end.toISOString(),
+              }));
             }}
             validations={{
               tooLong: "too long",

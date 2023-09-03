@@ -118,21 +118,13 @@ export const register: MutationResolvers["register"] = async (
   return record as User;
 };
 
-export const logout: MutationResolvers["logout"] = async (
-  _,
-  __,
-  { req, res },
-) => {
+export const logout: MutationResolvers["logout"] = async (_, __, { res }) => {
   destroyCookie({ res }, ACCESS_TOKEN_ID, {
     secure: true,
     sameSite: true,
     httpOnly: true,
     path: "/",
   });
-
-  const { redirect_to = "http://localhost:3000/login" } = req.query;
-
-  res.redirect(redirect_to as string);
 
   return true;
 };
@@ -364,8 +356,9 @@ export const updateEvents: MutationResolvers["updateEvents"] = async (
     });
 
   const eventsService = new EventsService(accessToken as string);
-  // @ts-ignore
-  return eventsService.create(events);
+  eventsService.update(events);
+
+  return eventsService.list();
 };
 
 export const deleteEvents: MutationResolvers["deleteEvents"] = async (

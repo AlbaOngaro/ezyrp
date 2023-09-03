@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FormEventHandler, ReactElement, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { Credentials } from "lib/types";
+import { InputRegisterCredentials } from "__generated__/graphql";
 
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
@@ -12,7 +12,7 @@ import { useUser } from "hooks/useUser";
 export function RegisterPage() {
   const { register } = useUser();
 
-  const [credentials, setCredentials] = useState<Credentials>({
+  const [credentials, setCredentials] = useState<InputRegisterCredentials>({
     email: "",
     username: "",
     password: "",
