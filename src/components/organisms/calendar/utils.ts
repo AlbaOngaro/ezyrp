@@ -5,8 +5,7 @@ import {
   isSameDay,
   isSameWeek,
 } from "date-fns";
-
-import { Event } from "lib/types";
+import { Event } from "__generated__/graphql";
 
 export function getEventStartRow(
   startDate: Date,
@@ -80,6 +79,6 @@ export function getGridColumn(
   return currentDate.getDay() === 0 ? 7 : currentDate.getDay();
 }
 
-export function isSavedEvent(event: Event | Omit<Event, "workspace">): boolean {
+export function isSavedEvent(event: Event): boolean {
   return /event\:.{20}/.test(event.id);
 }

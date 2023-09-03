@@ -7,27 +7,28 @@ import {
 
 import { EditCustomerModal } from "../edit-customer-modal/EditCustomerModal";
 
-import { Customer } from "lib/types";
-
 import { useCustomers } from "hooks/useCustomers";
 
 import { Table } from "components/atoms/table/Table";
 import { Button } from "components/atoms/button/Button";
 import { Dialog } from "components/atoms/dialog/Dialog";
+import { Customer } from "__generated__/graphql";
 
 export function CustomersTable() {
   const customers = useCustomers();
 
-  const [customer, setCustomer] = useState<Omit<Customer, "workspace"> | null>(
-    null,
-  );
+  const [customer, setCustomer] = useState<Customer | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  if (customers.isLoading || !customers.data) {
+    return null;
+  }
+
   return (
     <>
-      <Table<Omit<Customer, "workspace">>
+      <Table<Customer>
         className="px-12"
         withMultiSelect
         withContextMenu
@@ -75,10 +76,7 @@ export function CustomersTable() {
             headerName: "Phone",
           },
         ]}
-        rows={customers.data.map((customer) => ({
-          ...customer,
-          actions: "fake",
-        }))}
+        rows={customers.data.customers as Customer[]}
         renderSelectedActions={(rows) => (
           <DialogRoot>
             <DialogTrigger asChild>
@@ -91,7 +89,13 @@ export function CustomersTable() {
               overlayClassname="!ml-0"
               title="Do you really want to delete all the selected customers?"
               description="This action cannot be undone"
-              onConfirm={() => customers.delete(rows.map((row) => row.id))}
+              onConfirm={() =>
+                customers.delete({
+                  variables: {
+                    deleteCustomerArgs: rows.map((row) => row.id),
+                  },
+                })
+              }
             />
           </DialogRoot>
         )}
@@ -115,7 +119,11 @@ export function CustomersTable() {
           description="This action cannot be undone"
           onConfirm={() => {
             if (customer) {
-              return customers.delete([customer.id]);
+              return customers.delete({
+                variables: {
+                  deleteCustomerArgs: [customer.id],
+                },
+              });
             }
           }}
         />

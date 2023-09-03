@@ -23,6 +23,7 @@ import { variants } from "server/schema/event";
 import { twMerge } from "lib/utils/twMerge";
 import { Combobox } from "components/atoms/comobobox/Combobox";
 import { useCustomers } from "hooks/useCustomers";
+import { Customer } from "__generated__/graphql";
 
 function Value({
   children,
@@ -85,7 +86,11 @@ export function CreateEventModal({
     e.preventDefault();
 
     try {
-      await events.create(event);
+      await events.create({
+        variables: {
+          createEventsInput: [event],
+        },
+      });
       setEvent(() => {
         const start = roundToNearestMinutes(new Date(), { nearestTo: 5 });
 
@@ -198,10 +203,12 @@ export function CreateEventModal({
         <Combobox
           label="Guests"
           placeholder="Search for customer"
-          options={customers.data.map((customer) => ({
-            label: customer.name,
-            value: customer.id,
-          }))}
+          options={((customers?.data?.customers || []) as Customer[]).map(
+            (customer) => ({
+              label: customer.name,
+              value: customer.id,
+            }),
+          )}
           onChange={(options) =>
             setEvent((curr) => ({
               ...curr,

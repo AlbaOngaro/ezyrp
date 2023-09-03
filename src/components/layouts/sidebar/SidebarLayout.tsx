@@ -2,10 +2,9 @@ import { PropsWithChildren } from "react";
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
 
-import { twMerge } from "tailwind-merge";
 import { Sidebar } from "components/organisms/sidebar/Sidebar";
-import { useProfile } from "hooks/useProfile";
-import { useAuth } from "components/providers/auth/AuthProvider";
+import { useUser } from "hooks/useUser";
+import { twMerge } from "lib/utils/twMerge";
 
 const userNavigation = [
   { name: "Your profile", href: "/profile" },
@@ -16,8 +15,7 @@ const userNavigation = [
 ];
 
 export function SidebarLayout({ children }: PropsWithChildren) {
-  const { user } = useAuth();
-  const { data: profile } = useProfile();
+  const { data } = useUser();
 
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
@@ -49,7 +47,9 @@ export function SidebarLayout({ children }: PropsWithChildren) {
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                         aria-hidden="true"
                       >
-                        {profile?.name || user?.username || ""}
+                        {data?.user?.profile?.name ||
+                          data?.user?.username ||
+                          ""}
                       </span>
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"

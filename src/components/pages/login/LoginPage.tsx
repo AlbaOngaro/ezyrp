@@ -4,13 +4,13 @@ import { Root as Form } from "@radix-ui/react-form";
 
 import { Credentials } from "lib/types";
 
-import { useAuth } from "components/providers/auth/AuthProvider";
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
 import { CenteredLayout } from "components/layouts/centered/CenteredLayout";
+import { useUser } from "hooks/useUser";
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login } = useUser();
 
   const [credentials, setCredentials] = useState<
     Omit<Credentials, "username" | "workspace">
@@ -23,7 +23,11 @@ export function LoginPage() {
     e.preventDefault();
 
     try {
-      await login(credentials);
+      await login({
+        variables: {
+          credentials,
+        },
+      });
     } catch (error: unknown) {
       console.error(error);
     }

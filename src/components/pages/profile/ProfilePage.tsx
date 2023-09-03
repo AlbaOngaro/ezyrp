@@ -1,19 +1,18 @@
 import { ReactElement } from "react";
 
-import { useProfile } from "hooks/useProfile";
-
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { ProfileForm } from "components/organisms/profile-form/ProfileForm";
+import { useUser } from "hooks/useUser";
 
 export function ProfilePage() {
-  const { data } = useProfile();
+  const { data } = useUser();
 
   if (!data) {
     return null;
   }
 
-  return <ProfileForm profile={data} />;
+  return <ProfileForm profile={data?.user?.profile} />;
 }
 
 ProfilePage.getLayout = (page: ReactElement) => (

@@ -31,7 +31,11 @@ export function EditCustomerModal({
     e.preventDefault();
 
     try {
-      await update([customer]);
+      await update({
+        variables: {
+          updateCustomerArgs: [customer],
+        },
+      });
       setIsOpen(false);
     } catch (error: unknown) {
       console.error(error);

@@ -11,6 +11,10 @@ const config: CodegenConfig = {
         contextType: "../pages/api/graphql#GraphqlContext",
       },
     },
+    "src/__generated__/": {
+      preset: "client",
+      documents: ["src/**/*.ts"],
+    },
   },
 };
 

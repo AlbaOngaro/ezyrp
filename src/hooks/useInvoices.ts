@@ -1,68 +1,23 @@
-import useSWR from "swr";
-import { Invoice } from "lib/types";
+import { useMutation, useQuery } from "@apollo/client";
 
-async function getInvoices() {
-  return fetch("/api/invoices").then((res) => res.json());
-}
+import { INVOICES } from "lib/queries/INVOICES";
+import { CREATE_INVOICES } from "lib/mutations/CREATE_INVOICES";
+import { UPDATE_INVOICES } from "lib/mutations/UPDATE_INVOICES";
+import { DELETE_INVOICES } from "lib/mutations/DELETE_INVOICES";
 
 export function useInvoices() {
-  const {
-    data = [],
-    error,
-    isLoading,
-    mutate,
-  } = useSWR<Invoice[], unknown, "/api/invoices">("/api/invoices", getInvoices);
+  const { data, error, loading: isLoading, refetch } = useQuery(INVOICES);
+  const [create] = useMutation(CREATE_INVOICES);
+  const [update] = useMutation(UPDATE_INVOICES);
+  const [deleteInvoices] = useMutation(DELETE_INVOICES);
 
   return {
     data,
     error,
     isLoading,
-    create: (invoices: Omit<Invoice, "id" | "workspace">[]) =>
-      mutate(() => {
-        fetch("/api/invoices", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(
-            invoices.map((invoice) => ({
-              ...invoice,
-              items: invoice.items.map((item) => ({
-                ...item,
-                price: item.price * 100,
-              })),
-            })),
-          ),
-        }).then((res) => res.json());
-
-        return getInvoices();
-      }),
-    read: () => mutate(() => getInvoices()),
-    update: (
-      customers: Partial<Omit<Invoice, "workspace">> & { id: Invoice["id"] }[],
-    ) =>
-      mutate(() => {
-        fetch("/api/invoices", {
-          method: "PATCH",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(customers),
-        });
-
-        return getInvoices();
-      }),
-    delete: (ids: Invoice["id"][]) =>
-      mutate(async () => {
-        await fetch("/api/invoices", {
-          method: "DELETE",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(ids),
-        });
-
-        return getInvoices();
-      }),
+    create,
+    read: refetch,
+    update,
+    delete: deleteInvoices,
   };
 }

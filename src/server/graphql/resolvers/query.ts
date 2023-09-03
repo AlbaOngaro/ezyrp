@@ -1,6 +1,6 @@
 import { Surreal } from "surrealdb.js";
 import { surreal } from "server/surreal";
-import { QueryResolvers, User } from "__generated__/server";
+import { Country, QueryResolvers, User } from "__generated__/server";
 import { CustomersService } from "server/services/customers";
 import { InvoicesService } from "server/services/invoices";
 import { EventsService } from "server/services/events";
@@ -70,4 +70,12 @@ export const events: QueryResolvers["events"] = async (
 ) => {
   const eventsService = new EventsService(accessToken as string);
   return eventsService.list();
+};
+
+export const countries: QueryResolvers["countries"] = async () => {
+  return fetch("https://restcountries.com/v3.1/all")
+    .then((res) => res.json())
+    .then((countries: Country[]) =>
+      countries.sort((a, b) => a.name.common.localeCompare(b.name.common)),
+    );
 };

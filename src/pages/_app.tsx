@@ -1,8 +1,7 @@
 import type { AppProps } from "next/app";
 import { ReactElement, ReactNode } from "react";
 import { NextPage } from "next";
-
-import { AuthProvider } from "components/providers/auth/AuthProvider";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 import "styles/globals.css";
 
@@ -14,8 +13,17 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+const client = new ApolloClient({
+  uri: "/api/graphql",
+  cache: new InMemoryCache(),
+});
+
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  return <AuthProvider>{getLayout(<Component {...pageProps} />)}</AuthProvider>;
+  return (
+    <ApolloProvider client={client}>
+      {getLayout(<Component {...pageProps} />)}
+    </ApolloProvider>
+  );
 }

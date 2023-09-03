@@ -12,6 +12,8 @@ export const typeDefs = gql`
 
     event(id: ID!): Event
     events: [Event]
+
+    countries: [Country]
   }
 
   type Mutation {
@@ -166,7 +168,16 @@ export const typeDefs = gql`
     start: String!
     end: String!
     title: String!
-    variant: String
-    guests: [Customer]
+    variant: String!
+    guests: [Customer!]!
+  }
+
+  type CountryName {
+    common: String!
+    official: String!
+  }
+
+  type Country {
+    name: CountryName!
   }
 `;

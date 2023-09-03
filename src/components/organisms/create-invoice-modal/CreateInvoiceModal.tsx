@@ -9,8 +9,6 @@ import {
 import { Root as Form } from "@radix-ui/react-form";
 import { format } from "date-fns";
 
-import { Invoice, Customer } from "lib/types";
-
 import { useInvoices } from "hooks/useInvoices";
 
 import { Modal } from "components/atoms/modal/Modal";
@@ -19,6 +17,7 @@ import { Select } from "components/atoms/select/Select";
 import { useCustomers } from "hooks/useCustomers";
 import { TextArea } from "components/atoms/textarea/TextArea";
 import { Input } from "components/atoms/input/Input";
+import { Customer, InputCreateInvoicesArgs } from "__generated__/graphql";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -28,11 +27,10 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
   const invoices = useInvoices();
   const customers = useCustomers();
 
-  const [invoice, setInvoice] = useState<Omit<Invoice, "id" | "workspace">>({
+  const [invoice, setInvoice] = useState<InputCreateInvoicesArgs>({
     description: "",
     status: "pending",
-    customer: customers.data[0],
-    amount: 0,
+    customer: customers?.data?.customers?.at(0)?.id || "",
     items: [],
     due: new Date().toISOString(),
     emitted: new Date().toISOString(),
@@ -42,7 +40,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
     if (!customers.isLoading && customers.data) {
       setInvoice((curr) => ({
         ...curr,
-        customer: customers.data[0],
+        customer: customers?.data?.customers?.at(0)?.id || "",
       }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,8 +52,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
       setInvoice({
         description: "",
         status: "pending",
-        customer: customers.data[0],
-        amount: 0,
+        customer: customers?.data?.customers?.at(0)?.id || "",
         items: [],
         due: new Date().toISOString(),
         emitted: new Date().toISOString(),
@@ -68,7 +65,11 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
     e.preventDefault();
 
     try {
-      await invoices.create([invoice]);
+      await invoices.create({
+        variables: {
+          createInvoicesArgs: [invoice],
+        },
+      });
       _setIsOpen(false);
     } catch (error: unknown) {
       console.error(error);
@@ -85,14 +86,19 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
         <Select
           label="Customer"
           name="customer"
-          options={customers.data.map((customer) => ({
-            label: customer.name,
-            value: customer.id,
-          }))}
+          options={((customers?.data?.customers || []) as Customer[]).map(
+            (customer) => ({
+              label: customer.name,
+              value: customer.id,
+            }),
+          )}
           onChange={(id) =>
             setInvoice((curr) => ({
               ...curr,
-              customer: customers.data.find((c) => c.id === id) as Customer,
+              customer:
+                ((customers?.data?.customers || []) as Customer[]).find(
+                  (c) => c.id === id,
+                )?.id || "",
             }))
           }
         />

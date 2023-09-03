@@ -1,6 +1,5 @@
 import { forwardRef, useState } from "react";
 import { format, getWeekOfMonth, isSameDay } from "date-fns";
-import { Event } from "lib/types";
 import {
   getGridColumn,
   getGridRow,
@@ -8,9 +7,10 @@ import {
 } from "components/organisms/calendar/utils";
 import { twMerge } from "lib/utils/twMerge";
 import { useCalendarContext } from "components/organisms/calendar/Calendar";
+import { Event } from "__generated__/graphql";
 
 interface Props {
-  event: Omit<Event, "workspace">;
+  event: Event;
   currentDate: Date;
   className?: string;
 }

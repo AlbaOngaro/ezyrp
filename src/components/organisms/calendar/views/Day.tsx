@@ -10,15 +10,15 @@ import { isSavedEvent } from "../utils";
 import { convertRemToPx } from "lib/utils/convertRemToPx";
 
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
-import { Event } from "lib/types";
 import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
 import { Indicator } from "components/organisms/calendar/components/Indicator";
+import { Event } from "__generated__/graphql";
 
 function EventItemWrapper({
   event,
   currentDate,
 }: {
-  event: Omit<Event, "workspace">;
+  event: Event;
   currentDate: Date;
 }) {
   const {

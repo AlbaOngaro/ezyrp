@@ -4,14 +4,13 @@ import { Root as Form } from "@radix-ui/react-form";
 
 import { Credentials } from "lib/types";
 
-import { useAuth } from "components/providers/auth/AuthProvider";
-
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 import { CenteredLayout } from "components/layouts/centered/CenteredLayout";
+import { useUser } from "hooks/useUser";
 
 export function RegisterPage() {
-  const { register } = useAuth();
+  const { register } = useUser();
 
   const [credentials, setCredentials] = useState<Credentials>({
     email: "",
@@ -24,7 +23,11 @@ export function RegisterPage() {
     e.preventDefault();
 
     try {
-      await register(credentials);
+      await register({
+        variables: {
+          credentials,
+        },
+      });
     } catch (error: unknown) {
       console.error(error);
     }

@@ -1,13 +1,16 @@
 import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { Customer, Invoice } from "lib/types";
 import { Modal } from "components/atoms/modal/Modal";
 import { Button } from "components/atoms/button/Button";
-import { useInvoices } from "hooks/useInvoices";
 import { TextArea } from "components/atoms/textarea/TextArea";
 import { Select } from "components/atoms/select/Select";
+
+import { useInvoices } from "hooks/useInvoices";
 import { useCustomers } from "hooks/useCustomers";
+
+import { Customer, Invoice } from "__generated__/graphql";
+import { InputUpdateInvoicesArgs } from "__generated__/server";
 
 interface Props extends Omit<Invoice, "workspace" | "amount"> {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -26,28 +29,34 @@ export function EditInvoiceModal({
   const customers = useCustomers();
   const invoices = useInvoices();
 
-  const [invoice, setInvoice] = useState<Omit<Invoice, "workspace" | "amount">>(
-    {
-      id,
-      customer,
-      description,
-      status,
-      items,
-      emitted,
-      due,
-    },
-  );
+  const [invoice, setInvoice] = useState<InputUpdateInvoicesArgs>({
+    id,
+    customer: customer.id,
+    description,
+    status,
+    items,
+    emitted,
+    due,
+  });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     try {
-      await invoices.update([invoice]);
+      await invoices.update({
+        variables: {
+          updateInvoicesArgs: [invoice],
+        },
+      });
       setIsOpen(false);
     } catch (error: unknown) {
       console.error(error);
     }
   };
+
+  if (customers.isLoading || !customers.data) {
+    return null;
+  }
 
   return (
     <Modal
@@ -58,7 +67,7 @@ export function EditInvoiceModal({
         <TextArea
           label="Description"
           name="description"
-          value={invoice.description}
+          value={invoice?.description || ""}
           onChange={(e) =>
             setInvoice((curr) => ({
               ...curr,
@@ -70,7 +79,7 @@ export function EditInvoiceModal({
         <Select
           label="Status"
           name="status"
-          defaultValue={invoice.status}
+          defaultValue={invoice.status || "pending"}
           onChange={(status) =>
             setInvoice((curr) => ({
               ...curr,
@@ -98,14 +107,14 @@ export function EditInvoiceModal({
         <Select
           label="Customer"
           name="customer"
-          options={customers.data.map((customer) => ({
+          options={(customers.data.customers as Customer[]).map((customer) => ({
             label: customer.name,
             value: customer.id,
           }))}
-          onChange={(id) =>
+          onChange={(customer) =>
             setInvoice((curr) => ({
               ...curr,
-              customer: customers.data.find((c) => c.id === id) as Customer,
+              customer,
             }))
           }
         />

@@ -29,7 +29,11 @@ export function CreateCustomerModal({ setIsOpen }: Props) {
     e.preventDefault();
 
     try {
-      await create([customer]);
+      await create({
+        variables: {
+          createCustomerArgs: [customer],
+        },
+      });
       setCustomer(EMPTY_CUSTOMER);
       setIsOpen(false);
     } catch (error: unknown) {

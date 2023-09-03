@@ -2,28 +2,37 @@ import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
 import { format, isValid } from "date-fns";
-import { Event } from "lib/types";
 
 import { Modal } from "components/atoms/modal/Modal";
 import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
+import { Event } from "__generated__/graphql";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  event: Omit<Event, "workspace">;
+  event: Event;
 }
 
 export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
   const events = useEvents();
 
-  const [event, setEvent] = useState<Omit<Event, "workspace">>(initialEvent);
+  const [event, setEvent] = useState<Event>(initialEvent);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     try {
-      await events.update([event]);
+      await events.update({
+        variables: {
+          updateEventsInput: [
+            {
+              ...event,
+              guests: [],
+            },
+          ],
+        },
+      });
     } catch (error: unknown) {
       console.error(error);
     } finally {
