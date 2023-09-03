@@ -1,94 +1,35 @@
-import { ReactElement, useMemo, useState } from "react";
+import { ReactElement, useState } from "react";
 
-import { differenceInDays, sub } from "date-fns";
+import { useQuery } from "@apollo/client";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { twMerge } from "lib/utils/twMerge";
-import { useInvoices } from "hooks/useInvoices";
-import { Invoice } from "lib/types";
 import { useCustomers } from "hooks/useCustomers";
+import { Customer } from "__generated__/graphql";
+import { STATS } from "lib/queries/STATS";
 
 const secondaryNavigation = [
   { name: "Last 7 days", value: 7 },
   { name: "Last 30 days", value: 30 },
-  { name: "All-time", value: Infinity },
+  { name: "All-time", value: -1 },
 ];
-
-const stateToLabelMap: Record<Invoice["status"], string> = {
-  pending: "Outstanding invoices",
-  paid: "Revenue",
-  overdue: "Overdue invoices",
-};
 
 const CHF = new Intl.NumberFormat("en-US", {
   currency: "CHF",
   style: "currency",
 });
 
-function getPrecentage(curr: number, prev: number): number {
-  const currInChf = curr / 100;
-  const prevInChf = prev / 100;
-
-  if (prevInChf === 0 || currInChf === 0) {
-    return 0;
-  }
-
-  return ((prevInChf - currInChf) / currInChf) * 100 * -1;
-}
-
 export function HomePage() {
-  const invoices = useInvoices();
   const customers = useCustomers();
 
+  const { data, loading, refetch } = useQuery(STATS, {
+    variables: {
+      filters: {
+        period: 7,
+      },
+    },
+  });
+
   const [timeSpan, setTimeSpan] = useState<number>(7);
-
-  const stats = useMemo(
-    () =>
-      invoices.data
-        .filter(
-          (invoice) =>
-            differenceInDays(new Date(), new Date(invoice.emitted)) < timeSpan,
-        )
-        .reduce<Record<Invoice["status"], number>>(
-          (acc, curr) => ({
-            ...acc,
-            [curr.status]: (acc[curr.status] || 0) + curr.amount,
-          }),
-          {
-            pending: 0,
-            paid: 0,
-            overdue: 0,
-          },
-        ),
-    [invoices, timeSpan],
-  );
-
-  const prevStats = useMemo(
-    () =>
-      invoices.data
-        .filter((invoice) => {
-          const min = differenceInDays(new Date(), new Date(invoice.emitted));
-          const max = differenceInDays(
-            sub(new Date(), {
-              days: timeSpan,
-            }),
-            new Date(invoice.emitted),
-          );
-
-          return min < timeSpan * 2 && max > 0 && max < timeSpan;
-        })
-        .reduce<Record<Invoice["status"], number>>(
-          (acc, curr) => ({
-            ...acc,
-            [curr.status]: (acc[curr.status] || 0) + curr.amount,
-          }),
-          {
-            pending: 0,
-            paid: 0,
-            overdue: 0,
-          },
-        ),
-    [invoices, timeSpan],
-  );
 
   return (
     <main>
@@ -105,7 +46,14 @@ export function HomePage() {
                 className={twMerge("text-gray-700", {
                   "text-indigo-600": item.value === timeSpan,
                 })}
-                onClick={() => setTimeSpan(item.value)}
+                onClick={() => {
+                  setTimeSpan(item.value);
+                  refetch({
+                    filters: {
+                      period: item.value,
+                    },
+                  });
+                }}
               >
                 {item.name}
               </button>
@@ -115,43 +63,44 @@ export function HomePage() {
       </header>
 
       {/* Stats */}
-      <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
-        <dl className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:px-2 xl:px-0">
-          {Object.entries(stats).map(([key, amount], statIdx) => {
-            const change = getPrecentage(
-              amount,
-              prevStats[key as Invoice["status"]],
-            );
+      {!loading && data?.stats && (
+        <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
+          <dl className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:px-2 xl:px-0">
+            {Object.values(data.stats).map((stat, statIdx) => {
+              if (typeof stat === "string") {
+                return null;
+              }
 
-            return (
-              <div
-                key={key}
-                className={twMerge(
-                  {
-                    "sm:border-l": statIdx % 2 === 1,
-                    "lg:border-l": statIdx === 2,
-                  },
-                  "flex items-baseline flex-wrap justify-between gap-y-2 gap-x-4 border-t border-gray-900/5 px-4 py-10 sm:px-6 lg:border-t-0 xl:px-8",
-                )}
-              >
-                <dt className="text-sm font-medium leading-6 text-gray-500">
-                  {stateToLabelMap[key as Invoice["status"]]}
-                </dt>
-                <dd
-                  className={twMerge("text-gray-700 text-xs font-medium", {
-                    "text-rose-600": change < 0,
-                  })}
+              return (
+                <div
+                  key={statIdx}
+                  className={twMerge(
+                    {
+                      "sm:border-l": statIdx % 2 === 1,
+                      "lg:border-l": statIdx === 2,
+                    },
+                    "flex items-baseline flex-wrap justify-between gap-y-2 gap-x-4 border-t border-gray-900/5 px-4 py-10 sm:px-6 lg:border-t-0 xl:px-8",
+                  )}
                 >
-                  {change.toFixed(1)}%
-                </dd>
-                <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-                  {CHF.format(amount / 100)}
-                </dd>
-              </div>
-            );
-          })}
-        </dl>
-      </div>
+                  <dt className="text-sm font-medium leading-6 text-gray-500">
+                    {stat.name}
+                  </dt>
+                  <dd
+                    className={twMerge("text-gray-700 text-xs font-medium", {
+                      "text-rose-600": stat.change < 0,
+                    })}
+                  >
+                    {stat.change.toFixed(1)}%
+                  </dd>
+                  <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                    {CHF.format(stat.value / 100)}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        </div>
+      )}
 
       {/* Recent client list*/}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -171,23 +120,24 @@ export function HomePage() {
             role="list"
             className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8"
           >
-            {customers.data.map((customer) => (
-              <li
-                key={customer.id}
-                className="overflow-hidden rounded-xl border border-gray-200"
-              >
-                <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-                  {/* <img
+            {((customers?.data?.customers || []) as Customer[]).map(
+              (customer) => (
+                <li
+                  key={customer.id}
+                  className="overflow-hidden rounded-xl border border-gray-200"
+                >
+                  <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                    {/* <img
                     src={client.imageUrl}
                     alt={customer.name}
                     className="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10"
                   /> */}
-                  <div className="text-sm font-medium leading-6 text-gray-900">
-                    {customer.name}
+                    <div className="text-sm font-medium leading-6 text-gray-900">
+                      {customer.name}
+                    </div>
                   </div>
-                </div>
 
-                {/* <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+                  {/* <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
                   <div className="flex justify-between gap-x-4 py-3">
                     <dt className="text-gray-500">Last invoice</dt>
                     <dd className="text-gray-700">
@@ -212,8 +162,9 @@ export function HomePage() {
                     </dd>
                   </div>
                 </dl> */}
-              </li>
-            ))}
+                </li>
+              ),
+            )}
           </ul>
         </div>
       </div>
