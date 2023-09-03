@@ -1,18 +1,9 @@
-import useSWR from "swr";
-import { Country } from "lib/types";
+import { useQuery } from "@apollo/client";
+
+import { COUNTRIES } from "lib/queries/COUNTRIES";
 
 export function useCountries() {
-  const { data, error, isLoading } = useSWR<
-    Country[],
-    unknown,
-    "/api/countries"
-  >("/api/countries", () =>
-    fetch("https://restcountries.com/v3.1/all")
-      .then((res) => res.json())
-      .then((countries: Country[]) =>
-        countries.sort((a, b) => a.name.common.localeCompare(b.name.common)),
-      ),
-  );
+  const { data, error, loading: isLoading } = useQuery(COUNTRIES);
 
   return {
     data,

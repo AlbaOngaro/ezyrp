@@ -1,27 +1,41 @@
 import { FormEventHandler, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { Profile } from "lib/types";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
-import { useProfile } from "hooks/useProfile";
 import { useCountries } from "hooks/useCountries";
 import { Select } from "components/atoms/select/Select";
+import { useUser } from "hooks/useUser";
+import {
+  Country,
+  InputUpdateUserProfileArgs,
+  User,
+} from "__generated__/graphql";
 
 interface Props {
-  profile: Profile;
+  profile: User["profile"];
 }
 
 export function ProfileForm({ profile: initialProfile }: Props) {
-  const { update } = useProfile();
-  const { data: countries } = useCountries();
+  const { update } = useUser();
+  const { data } = useCountries();
 
-  const [profile, setProfile] = useState(initialProfile);
+  const [profile, setProfile] = useState<InputUpdateUserProfileArgs>({
+    address: initialProfile?.address || "",
+    city: initialProfile?.city || "",
+    code: initialProfile?.code || "",
+    country: initialProfile?.country || "",
+    name: initialProfile?.name || "",
+  });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    await update(profile);
+    await update({
+      variables: {
+        updateUserProfileArgs: profile,
+      },
+    });
   };
 
   return (
@@ -32,7 +46,7 @@ export function ProfileForm({ profile: initialProfile }: Props) {
       <Input
         label="Name"
         name="name"
-        value={profile.name}
+        value={profile.name || ""}
         onChange={(e) =>
           setProfile((curr) => ({
             ...curr,
@@ -46,7 +60,7 @@ export function ProfileForm({ profile: initialProfile }: Props) {
       <Input
         label="Address"
         name="address"
-        value={profile?.address}
+        value={profile.address || ""}
         onChange={(e) =>
           setProfile((curr) => ({
             ...curr,
@@ -59,7 +73,7 @@ export function ProfileForm({ profile: initialProfile }: Props) {
         <Input
           label="City"
           name="city"
-          value={profile.city}
+          value={profile.city || ""}
           onChange={(e) =>
             setProfile((curr) => ({
               ...curr,
@@ -71,7 +85,7 @@ export function ProfileForm({ profile: initialProfile }: Props) {
         <Input
           label="Post Code"
           name="code"
-          value={profile.code}
+          value={profile.code || ""}
           onChange={(e) =>
             setProfile((curr) => ({
               ...curr,
@@ -80,12 +94,12 @@ export function ProfileForm({ profile: initialProfile }: Props) {
           }
         />
 
-        {countries && (
+        {data?.countries && (
           <Select
             label="Country"
             name="country"
-            defaultValue={profile.country}
-            options={countries.map((country) => ({
+            defaultValue={profile.country || ""}
+            options={((data.countries || []) as Country[]).map((country) => ({
               label: country.name.common,
               value: country.name.common,
             }))}

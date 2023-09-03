@@ -41,9 +41,11 @@ DEFINE EVENT customer_created ON TABLE customer WHEN $event = "CREATE" THEN {
 	} WHERE id = $after.id;
 };
 
-REMOVE EVENT invoice_workspace ON TABLE invoice;
+DEFINE EVENT delete_customer_invoices ON TABLE customer WHEN $event = "DELETE" THEN {
+	DELETE invoice WHERE customer = $before.id;
+};
 
-DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
+DEFINE EVENT invoice_workspace ON TABLE invoice WHEN $event = "CREATE" THEN {
 	UPDATE invoice MERGE {
 		workspace: $auth.workspace,
 		created_at: time::now()

@@ -2,27 +2,20 @@ import { FormEventHandler, ReactNode, useEffect, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import * as Popover from "@radix-ui/react-popover";
-
-import {
-  add,
-  format,
-  isAfter,
-  isValid,
-  roundToNearestMinutes,
-  set,
-} from "date-fns";
+import { add, format, isAfter, roundToNearestMinutes, set } from "date-fns";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
+
 import { Props } from "./types";
-import { CreateEventInput } from "lib/types";
 
 import { Modal } from "components/atoms/modal/Modal";
 import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
-import { variants } from "lib/schema/event";
+import { variants } from "server/schema/event";
 import { twMerge } from "lib/utils/twMerge";
 import { Combobox } from "components/atoms/comobobox/Combobox";
 import { useCustomers } from "hooks/useCustomers";
+import { Customer, InputCreateEventsArgs } from "__generated__/graphql";
 
 function Value({
   children,
@@ -55,28 +48,36 @@ export function CreateEventModal({
   const events = useEvents();
   const customers = useCustomers();
 
-  const [event, setEvent] = useState<CreateEventInput>(() => {
-    if (initialEvent) {
-      return initialEvent;
-    }
+  const [event, setEvent] = useState<InputCreateEventsArgs & { id: string }>(
+    () => {
+      if (initialEvent) {
+        return {
+          ...initialEvent,
+          guests: initialEvent.guests.map((guest) => guest.id),
+        };
+      }
 
-    const start = roundToNearestMinutes(new Date(), { nearestTo: 5 });
+      const start = roundToNearestMinutes(new Date(), { nearestTo: 5 });
 
-    return {
-      id: crypto.randomUUID(),
-      start: start.toISOString(),
-      end: add(start, {
-        hours: 1,
-      }).toISOString(),
-      title: "",
-      variant: "blue",
-      guests: [],
-    };
-  });
+      return {
+        id: crypto.randomUUID(),
+        start: start.toISOString(),
+        end: add(start, {
+          hours: 1,
+        }).toISOString(),
+        title: "",
+        variant: "blue",
+        guests: [],
+      };
+    },
+  );
 
   useEffect(() => {
     if (typeof onChange === "function") {
-      onChange(event);
+      onChange({
+        ...event,
+        guests: event.guests?.map((guest) => guest),
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event]);
@@ -85,7 +86,13 @@ export function CreateEventModal({
     e.preventDefault();
 
     try {
-      await events.create(event);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...rest } = event;
+      await events.create({
+        variables: {
+          createEventsInput: [rest],
+        },
+      });
       setEvent(() => {
         const start = roundToNearestMinutes(new Date(), { nearestTo: 5 });
 
@@ -142,18 +149,16 @@ export function CreateEventModal({
             name="start"
             step={60 * 5} // 5 minutes
             value={format(new Date(event.start), "yyyy-MM-dd'T'HH:mm")}
-            onChange={(e) => {
-              if (isValid(new Date(e.target.value))) {
-                setEvent((curr) => ({
-                  ...curr,
-                  start: new Date(e.target.value).toISOString(),
-                  end: isAfter(new Date(curr.end), new Date(e.target.value))
-                    ? curr.end
-                    : add(new Date(e.target.value), {
-                        hours: 1,
-                      }).toISOString(),
-                }));
-              }
+            onChange={(start) => {
+              setEvent((curr) => ({
+                ...curr,
+                start: start.toISOString(),
+                end: isAfter(new Date(curr.end), start)
+                  ? curr.end
+                  : add(start, {
+                      hours: 1,
+                    }).toISOString(),
+              }));
             }}
           />
 
@@ -181,13 +186,11 @@ export function CreateEventModal({
                 : undefined
             }
             value={format(new Date(event.end), "yyyy-MM-dd'T'HH:mm")}
-            onChange={(e) => {
-              if (isValid(new Date(e.target.value))) {
-                setEvent((curr) => ({
-                  ...curr,
-                  end: new Date(e.target.value).toISOString(),
-                }));
-              }
+            onChange={(end) => {
+              setEvent((curr) => ({
+                ...curr,
+                end: end.toISOString(),
+              }));
             }}
             validations={{
               tooLong: "too long",
@@ -198,10 +201,12 @@ export function CreateEventModal({
         <Combobox
           label="Guests"
           placeholder="Search for customer"
-          options={customers.data.map((customer) => ({
-            label: customer.name,
-            value: customer.id,
-          }))}
+          options={((customers?.data?.customers || []) as Customer[]).map(
+            (customer) => ({
+              label: customer.name,
+              value: customer.id,
+            }),
+          )}
           onChange={(options) =>
             setEvent((curr) => ({
               ...curr,

@@ -1,73 +1,28 @@
-import useSWR from "swr";
-
-import { CreateEventInput, Event } from "lib/types";
-
-async function getEvents() {
-  return fetch("/api/events").then((res) => res.json());
-}
+import { useMutation, useQuery } from "@apollo/client";
+import { EVENTS } from "lib/queries/EVENTS";
+import { CREATE_EVENTS } from "lib/mutations/CREATE_EVENTS";
+import { UPDATE_EVENTS } from "lib/mutations/UPDATE_EVENTS";
+import { DELETE_EVENTS } from "lib/mutations/DELETE_EVENTS";
 
 export function useEvents() {
-  const {
-    data = [],
-    error,
-    isLoading,
-    mutate,
-  } = useSWR<Event[], unknown, "/api/events">("/api/events", getEvents);
+  const { data, error, loading: isLoading, refetch } = useQuery(EVENTS);
+  const [create] = useMutation(CREATE_EVENTS, {
+    refetchQueries: [EVENTS],
+  });
+  const [update] = useMutation(UPDATE_EVENTS, {
+    refetchQueries: [EVENTS],
+  });
+  const [deleteEvents] = useMutation(DELETE_EVENTS, {
+    refetchQueries: [EVENTS],
+  });
 
   return {
     data,
     error,
-    mutate,
     isLoading,
-    refetch: async () => {
-      try {
-        const result = await mutate<Event[]>(getEvents);
-
-        if (!result) {
-          throw Error("no results");
-        }
-
-        return result;
-      } catch (error: unknown) {
-        console.error(error);
-        return [];
-      }
-    },
-    create: (event: CreateEventInput) =>
-      mutate(async () => {
-        await fetch("/api/events", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(event),
-        });
-
-        return getEvents();
-      }),
-    update: (event: Partial<Event> & { id: Event["id"] }[]) =>
-      mutate(async () => {
-        await fetch("/api/events", {
-          method: "PATCH",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(event),
-        });
-
-        return getEvents();
-      }),
-    delete: (ids: Event["id"][]) =>
-      mutate(async () => {
-        await fetch("/api/events", {
-          method: "DELETE",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(ids),
-        });
-
-        return getEvents();
-      }),
+    refetch,
+    create,
+    update,
+    delete: deleteEvents,
   };
 }
