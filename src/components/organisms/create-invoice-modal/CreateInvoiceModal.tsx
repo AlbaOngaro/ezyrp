@@ -67,7 +67,15 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
     try {
       await invoices.create({
         variables: {
-          createInvoicesArgs: [invoice],
+          createInvoicesArgs: [
+            {
+              ...invoice,
+              items: invoice.items.map((item) => ({
+                ...item,
+                price: item.price * 100,
+              })),
+            },
+          ],
         },
       });
       _setIsOpen(false);
@@ -92,13 +100,10 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
               value: customer.id,
             }),
           )}
-          onChange={(id) =>
+          onChange={(customer) =>
             setInvoice((curr) => ({
               ...curr,
-              customer:
-                ((customers?.data?.customers || []) as Customer[]).find(
-                  (c) => c.id === id,
-                )?.id || "",
+              customer,
             }))
           }
         />

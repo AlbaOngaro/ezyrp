@@ -34,7 +34,7 @@ export function EditInvoiceModal({
     customer: customer.id,
     description,
     status,
-    items,
+    items: items?.map(({ __typename, ...item }) => item),
     emitted,
     due,
   });

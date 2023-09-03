@@ -7,9 +7,15 @@ import { DELETE_INVOICES } from "lib/mutations/DELETE_INVOICES";
 
 export function useInvoices() {
   const { data, error, loading: isLoading, refetch } = useQuery(INVOICES);
-  const [create] = useMutation(CREATE_INVOICES);
-  const [update] = useMutation(UPDATE_INVOICES);
-  const [deleteInvoices] = useMutation(DELETE_INVOICES);
+  const [create] = useMutation(CREATE_INVOICES, {
+    refetchQueries: [INVOICES],
+  });
+  const [update] = useMutation(UPDATE_INVOICES, {
+    refetchQueries: [INVOICES],
+  });
+  const [deleteInvoices] = useMutation(DELETE_INVOICES, {
+    refetchQueries: [INVOICES],
+  });
 
   return {
     data,

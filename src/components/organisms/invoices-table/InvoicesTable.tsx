@@ -5,6 +5,7 @@ import {
 } from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
 
+import { format } from "date-fns";
 import { Invoice } from "__generated__/graphql";
 
 import { Table } from "components/atoms/table/Table";
@@ -55,6 +56,20 @@ export function InvoicesTable() {
             id: "id",
             field: "id",
             headerName: "ID",
+          },
+          {
+            id: "emitted",
+            field: "emitted",
+            headerName: "Emitted",
+            sortable: true,
+            render: ({ emitted }) => format(new Date(emitted), "dd/mm/yyyy"),
+          },
+          {
+            id: "due",
+            field: "due",
+            headerName: "Due Date",
+            sortable: true,
+            render: ({ due }) => format(new Date(due), "dd/mm/yyyy"),
           },
           {
             id: "customer",
