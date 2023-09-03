@@ -9,8 +9,6 @@ import {
 import { Root as Form } from "@radix-ui/react-form";
 import { format } from "date-fns";
 
-import { Invoice, Customer } from "lib/types";
-
 import { useInvoices } from "hooks/useInvoices";
 
 import { Modal } from "components/atoms/modal/Modal";
@@ -19,6 +17,7 @@ import { Select } from "components/atoms/select/Select";
 import { useCustomers } from "hooks/useCustomers";
 import { TextArea } from "components/atoms/textarea/TextArea";
 import { Input } from "components/atoms/input/Input";
+import { Customer, InputCreateInvoicesArgs } from "__generated__/graphql";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -28,11 +27,10 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
   const invoices = useInvoices();
   const customers = useCustomers();
 
-  const [invoice, setInvoice] = useState<Omit<Invoice, "id" | "workspace">>({
+  const [invoice, setInvoice] = useState<InputCreateInvoicesArgs>({
     description: "",
     status: "pending",
-    customer: customers.data[0],
-    amount: 0,
+    customer: customers?.data?.customers?.at(0)?.id || "",
     items: [],
     due: new Date().toISOString(),
     emitted: new Date().toISOString(),
@@ -42,7 +40,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
     if (!customers.isLoading && customers.data) {
       setInvoice((curr) => ({
         ...curr,
-        customer: customers.data[0],
+        customer: customers?.data?.customers?.at(0)?.id || "",
       }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,8 +52,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
       setInvoice({
         description: "",
         status: "pending",
-        customer: customers.data[0],
-        amount: 0,
+        customer: customers?.data?.customers?.at(0)?.id || "",
         items: [],
         due: new Date().toISOString(),
         emitted: new Date().toISOString(),
@@ -68,7 +65,19 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
     e.preventDefault();
 
     try {
-      await invoices.create([invoice]);
+      await invoices.create({
+        variables: {
+          createInvoicesArgs: [
+            {
+              ...invoice,
+              items: invoice.items.map((item) => ({
+                ...item,
+                price: item.price * 100,
+              })),
+            },
+          ],
+        },
+      });
       _setIsOpen(false);
     } catch (error: unknown) {
       console.error(error);
@@ -85,14 +94,16 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
         <Select
           label="Customer"
           name="customer"
-          options={customers.data.map((customer) => ({
-            label: customer.name,
-            value: customer.id,
-          }))}
-          onChange={(id) =>
+          options={((customers?.data?.customers || []) as Customer[]).map(
+            (customer) => ({
+              label: customer.name,
+              value: customer.id,
+            }),
+          )}
+          onChange={(customer) =>
             setInvoice((curr) => ({
               ...curr,
-              customer: customers.data.find((c) => c.id === id) as Customer,
+              customer,
             }))
           }
         />
@@ -117,10 +128,10 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
             name="emitted"
             type="date"
             value={format(new Date(invoice.emitted), "yyyy-MM-dd")}
-            onChange={(e) =>
+            onChange={(emitted) =>
               setInvoice((curr) => ({
                 ...curr,
-                emitted: new Date(e.target.value).toISOString(),
+                emitted: emitted.toISOString(),
               }))
             }
           />
@@ -130,10 +141,10 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
             name="due"
             type="date"
             value={format(new Date(invoice.due), "yyyy-MM-dd")}
-            onChange={(e) =>
+            onChange={(due) =>
               setInvoice((curr) => ({
                 ...curr,
-                due: new Date(e.target.value).toISOString(),
+                due: due.toISOString(),
               }))
             }
           />

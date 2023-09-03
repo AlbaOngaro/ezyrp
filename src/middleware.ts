@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { surreal } from "lib/surreal";
+import { surreal } from "server/surreal";
 import { ACCESS_TOKEN_ID } from "lib/constants";
 
 export async function middleware(req: NextRequest) {
@@ -27,5 +27,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico|images).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|images).*)"],
 };

@@ -1,13 +1,13 @@
 import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { Customer } from "lib/types";
 import { useCustomers } from "hooks/useCustomers";
 import { Modal } from "components/atoms/modal/Modal";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
+import { Customer, InputUpdateCustomerArgs } from "__generated__/graphql";
 
-interface Props extends Omit<Customer, "workspace"> {
+interface Props extends Customer {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -20,7 +20,7 @@ export function EditCustomerModal({
 }: Props) {
   const { update } = useCustomers();
 
-  const [customer, setCustomer] = useState<Omit<Customer, "workspace">>({
+  const [customer, setCustomer] = useState<InputUpdateCustomerArgs>({
     id,
     name,
     email,
@@ -31,7 +31,11 @@ export function EditCustomerModal({
     e.preventDefault();
 
     try {
-      await update([customer]);
+      await update({
+        variables: {
+          updateCustomerArgs: [customer],
+        },
+      });
       setIsOpen(false);
     } catch (error: unknown) {
       console.error(error);
@@ -49,7 +53,7 @@ export function EditCustomerModal({
           placeholder="Jane Doe"
           name="name"
           type="text"
-          value={customer.name}
+          value={customer.name || ""}
           onChange={(e) =>
             setCustomer((curr) => ({
               ...curr,
@@ -66,7 +70,7 @@ export function EditCustomerModal({
           placeholder="jane.doe@example.com"
           name="email"
           type="email"
-          value={customer.email}
+          value={customer.email || ""}
           onChange={(e) =>
             setCustomer((curr) => ({
               ...curr,
@@ -83,7 +87,7 @@ export function EditCustomerModal({
           placeholder="0012345678"
           name="phone"
           type="tel"
-          value={customer.phone}
+          value={customer.phone || ""}
           onChange={(e) =>
             setCustomer((curr) => ({
               ...curr,

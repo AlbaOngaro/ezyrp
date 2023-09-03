@@ -38,6 +38,10 @@ DEFINE EVENT customer_workspace ON TABLE customer WHEN $event = "CREATE" THEN {
 	} WHERE id = $after.id;
 };
 
+DEFINE EVENT delete_customer_invoices ON TABLE customer WHEN $event = "DELETE" THEN {
+	DELETE invoice WHERE customer = $before.id;
+};
+
 DEFINE EVENT invoice_workspace ON TABLE invoice WHEN $event = "CREATE" THEN {
 	UPDATE invoice MERGE {
 		workspace: $auth.workspace

@@ -8,8 +8,7 @@ import {
 } from "date-fns";
 
 import { Day, View } from "./types";
-
-import { Event } from "lib/types";
+import { Event } from "__generated__/graphql";
 
 export type State = {
   selected: Date;
@@ -42,7 +41,7 @@ type ViewPreviousAction = {
 type SetEventsAction = {
   type: "SET_EVENTS";
   payload: {
-    events: (Event | Omit<Event, "workspace">)[];
+    events: Event[];
   };
 };
 

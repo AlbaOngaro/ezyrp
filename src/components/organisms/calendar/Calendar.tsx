@@ -20,7 +20,7 @@ import * as YearView from "./views/Year";
 import { twMerge } from "lib/utils/twMerge";
 
 import { Select } from "components/atoms/select/Select";
-import { Event } from "lib/types";
+import { Event } from "__generated__/graphql";
 
 const CalendarContext = createContext<{
   state: State;

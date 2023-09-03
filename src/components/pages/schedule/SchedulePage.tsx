@@ -8,6 +8,7 @@ import { CreateEventModal } from "components/organisms/create-event-modal/Create
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useEvents } from "hooks/useEvents";
+import { Event } from "__generated__/graphql";
 
 export function SchedulePage() {
   const events = useEvents();
@@ -25,7 +26,7 @@ export function SchedulePage() {
           <CreateEventModal as="modal" setIsOpen={setIsCreatingEvent} />
         </Root>
       }
-      events={events.data}
+      events={(events?.data?.events || []) as Event[]}
     />
   );
 }

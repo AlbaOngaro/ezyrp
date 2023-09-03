@@ -3,10 +3,12 @@ import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
-
 import { useState } from "react";
+
+import { format } from "date-fns";
+import { Invoice } from "__generated__/graphql";
+
 import { Table } from "components/atoms/table/Table";
-import { Invoice } from "lib/types";
 import { useInvoices } from "hooks/useInvoices";
 
 import { Button } from "components/atoms/button/Button";
@@ -56,6 +58,20 @@ export function InvoicesTable() {
             headerName: "ID",
           },
           {
+            id: "emitted",
+            field: "emitted",
+            headerName: "Emitted",
+            sortable: true,
+            render: ({ emitted }) => format(new Date(emitted), "dd/mm/yyyy"),
+          },
+          {
+            id: "due",
+            field: "due",
+            headerName: "Due Date",
+            sortable: true,
+            render: ({ due }) => format(new Date(due), "dd/mm/yyyy"),
+          },
+          {
             id: "customer",
             field: "customer.name",
             headerName: "Customer",
@@ -74,6 +90,7 @@ export function InvoicesTable() {
                     case "paid":
                       return "success";
                     case "pending":
+                    default:
                       return "info";
                   }
                 })()}
@@ -90,7 +107,7 @@ export function InvoicesTable() {
             render: (row) => (row.amount / 100).toFixed(2),
           },
         ]}
-        rows={invoices.data}
+        rows={(invoices?.data?.invoices || []) as Invoice[]}
         renderSelectedActions={(rows) => (
           <DialogRoot>
             <DialogTrigger asChild>
@@ -103,7 +120,13 @@ export function InvoicesTable() {
               overlayClassname="!ml-0"
               title="Do you really want to delete all the selected invoices?"
               description="This action cannot be undone"
-              onConfirm={() => invoices.delete(rows.map((row) => row.id))}
+              onConfirm={() =>
+                invoices.delete({
+                  variables: {
+                    deleteInvoicesArgs: rows.map((row) => row.id),
+                  },
+                })
+              }
             />
           </DialogRoot>
         )}
@@ -125,7 +148,11 @@ export function InvoicesTable() {
           description="This action cannot be undone"
           onConfirm={() => {
             if (invoice) {
-              return invoices.delete([invoice.id]);
+              return invoices.delete({
+                variables: {
+                  deleteInvoicesArgs: [invoice.id],
+                },
+              });
             }
           }}
         />

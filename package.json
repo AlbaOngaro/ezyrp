@@ -6,9 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen:watch:server": "graphql-codegen --watch 'src/server/**' --config codegen.ts"
   },
   "dependencies": {
+    "@apollo/client": "3.8.2",
+    "@apollo/server": "4.9.3",
+    "@as-integrations/next": "2.0.2",
     "@radix-ui/react-alert-dialog": "1.0.4",
     "@radix-ui/react-context-menu": "2.1.4",
     "@radix-ui/react-dialog": "1.0.4",
@@ -20,6 +25,8 @@
     "@radix-ui/react-select": "1.2.2",
     "clsx": "2.0.0",
     "date-fns": "2.30.0",
+    "graphql": "16.8.0",
+    "graphql-tag": "2.12.6",
     "lodash": "4.17.21",
     "next": "13.4.16",
     "nookies": "2.5.2",
@@ -31,6 +38,11 @@
     "zod": "3.22.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0",
+    "@graphql-codegen/typescript": "4.0.1",
+    "@graphql-codegen/typescript-resolvers": "4.0.1",
+    "@parcel/watcher": "2.3.0",
     "@tailwindcss/forms": "0.5.4",
     "@types/lodash": "4.14.197",
     "@types/node": "20.5.0",

@@ -13,18 +13,18 @@ import {
   Root as ModalRoot,
   Trigger as ModalTrigger,
 } from "@radix-ui/react-dialog";
-
 import { format } from "date-fns";
 import { useState } from "react";
 import { useEvents } from "hooks/useEvents";
 
-import { Event } from "lib/types";
-import { Dialog } from "components/atoms/dialog/Dialog";
-import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
 import { twMerge } from "lib/utils/twMerge";
 
+import { Dialog } from "components/atoms/dialog/Dialog";
+import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
+import { Event } from "__generated__/graphql";
+
 interface Props {
-  event: Omit<Event, "workspace">;
+  event: Event;
   side?: "left" | "top" | "right" | "bottom";
   align?: "center" | "start" | "end";
 }
@@ -60,7 +60,13 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
             <Dialog
               title="Do you really want to delete this event?"
               description="This action cannot be undone"
-              onConfirm={() => events.delete([event.id])}
+              onConfirm={() =>
+                events.delete({
+                  variables: {
+                    deleteEventsInput: [event.id],
+                  },
+                })
+              }
             />
           </DialogRoot>
           <Popover.Close asChild>
@@ -102,7 +108,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
             </time>
           </p>
 
-          {event.guests.length > 0 && (
+          {event?.guests?.length > 0 && (
             <>
               <PersonIcon className="self-start mt-1" />
               <p className="text-sm self-start">

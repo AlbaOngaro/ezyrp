@@ -1,8 +1,8 @@
-import { Event } from "lib/types";
+import { Event } from "__generated__/graphql";
 
 export type Day = {
   date: Date;
-  events: (Event | Omit<Event, "workspace">)[];
+  events: Event[];
   isCurrentMonth?: boolean;
   isToday?: boolean;
   isSelected?: boolean;
