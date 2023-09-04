@@ -43,6 +43,7 @@ export type Customer = {
   lastInvoice?: Maybe<LastInvoice>;
   name: Scalars['String']['output'];
   phone: Scalars['String']['output'];
+  photoUrl?: Maybe<Scalars['String']['output']>;
 };
 
 export type Event = {
@@ -67,6 +68,7 @@ export type InputCreateCustomerArgs = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   phone: Scalars['String']['input'];
+  photoUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputCreateEventsArgs = {
@@ -119,6 +121,7 @@ export type InputUpdateCustomerArgs = {
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
+  photoUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputUpdateEventsArgs = {
@@ -499,6 +502,7 @@ export type CustomerResolvers<ContextType = GraphqlContext, ParentType extends R
   lastInvoice?: Resolver<Maybe<ResolversTypes['LastInvoice']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -7,6 +7,7 @@ export const CUSTOMERS = graphql(/* GraphQL */ `
       email
       name
       phone
+      photoUrl
     }
   }
 `);

@@ -1,8 +1,6 @@
 import { PropsWithChildren } from "react";
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
-import { createAvatar } from "@dicebear/core";
-import { initials } from "@dicebear/collection";
 import Link from "next/link";
 
 import { twMerge } from "lib/utils/twMerge";
@@ -10,11 +8,12 @@ import { twMerge } from "lib/utils/twMerge";
 import { useUser } from "hooks/useUser";
 
 import { Sidebar } from "components/organisms/sidebar/Sidebar";
+import { Avatar } from "components/atoms/avatar/Avatar";
 
 export function SidebarLayout({ children }: PropsWithChildren) {
   const { data, isLoading, logout } = useUser();
 
-  if (isLoading || !data) {
+  if (isLoading || !data || !data.user) {
     return null;
   }
 
@@ -38,19 +37,10 @@ export function SidebarLayout({ children }: PropsWithChildren) {
                 <Menu.Item>
                   <Menu.Trigger className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
-                    <picture className="relative h-8 w-8 rounded-full overflow-hidden">
-                      <img
-                        className="absolute inset-0 h-full w-full object-cover object-center"
-                        src={
-                          data?.user?.profile?.photoUrl ||
-                          createAvatar(initials, {
-                            seed: data?.user?.email,
-                            scale: 75,
-                          }).toDataUriSync()
-                        }
-                        alt=""
-                      />
-                    </picture>
+                    <Avatar
+                      photoUrl={data.user?.profile?.photoUrl}
+                      seed={data.user.email}
+                    />
                     <span className="hidden lg:flex lg:items-center">
                       <span
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"

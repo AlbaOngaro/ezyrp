@@ -1,6 +1,5 @@
 import { FormEventHandler, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
-import { useLazyQuery } from "@apollo/client";
 
 import {
   Country,
@@ -8,14 +7,13 @@ import {
   User,
 } from "__generated__/graphql";
 
-import { GET_CLOUDINARY_SIGNATURE } from "lib/queries/GET_CLOUDINARY_SIGNATURE";
-
 import { useCountries } from "hooks/useCountries";
 import { useUser } from "hooks/useUser";
 
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 import { Select } from "components/atoms/select/Select";
+import { useFileUpload } from "hooks/useFileUpload";
 
 interface Props {
   profile: User["profile"];
@@ -24,8 +22,7 @@ interface Props {
 export function ProfileForm({ profile: initialProfile }: Props) {
   const { update } = useUser();
   const { data } = useCountries();
-
-  const [getCloudinarySignature] = useLazyQuery(GET_CLOUDINARY_SIGNATURE);
+  const handleFileUpload = useFileUpload();
 
   const [profile, setProfile] = useState<InputUpdateUserProfileArgs>({
     photoUrl: initialProfile?.photoUrl || "",
@@ -43,39 +40,13 @@ export function ProfileForm({ profile: initialProfile }: Props) {
     )?.files;
 
     if (files) {
-      const { data } = await getCloudinarySignature();
-
-      if (!data) {
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", files[0]);
-      formData.append("api_key", data.getCloudinarySignature.apiKey);
-      formData.append(
-        "timestamp",
-        data.getCloudinarySignature.timestamp.toString(),
-      );
-      formData.append("signature", data.getCloudinarySignature.signature);
-      formData.append("folder", "crm");
-
-      const url =
-        "https://api.cloudinary.com/v1_1/" +
-        data.getCloudinarySignature.cloudname +
-        "/auto/upload";
-
-      const uploadRes = await fetch(url, {
-        method: "POST",
-        body: formData,
-      });
-
-      const { secure_url } = (await uploadRes.json()) as { secure_url: string };
+      const photoUrl = await handleFileUpload(files[0]);
 
       await update({
         variables: {
           updateUserProfileArgs: {
             ...profile,
-            photoUrl: secure_url,
+            photoUrl,
           },
         },
       });

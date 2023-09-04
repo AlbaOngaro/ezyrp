@@ -5,6 +5,7 @@ export const customer = z.object({
   email: z.string().email(),
   name: z.string(),
   phone: z.string(),
+  photoUrl: z.string().default(""),
   lastInvoice: z
     .object({
       emitted: z.string().datetime(),

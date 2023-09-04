@@ -88,6 +88,7 @@ export const typeDefs = gql`
     email: String!
     name: String!
     phone: String!
+    photoUrl: String
   }
 
   input InputUpdateCustomerArgs {
@@ -95,6 +96,7 @@ export const typeDefs = gql`
     email: String
     name: String
     phone: String
+    photoUrl: String
   }
 
   type LastInvoice {
@@ -108,6 +110,7 @@ export const typeDefs = gql`
     email: String!
     name: String!
     phone: String!
+    photoUrl: String
     lastInvoice: LastInvoice
   }
 

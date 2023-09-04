@@ -185,7 +185,11 @@ export const updateCustomers: MutationResolvers["updateCustomers"] = async (
   { accessToken },
 ) => {
   const customers = await z
-    .array(customer.partial({ email: true, phone: true, name: true }))
+    .array(
+      customer
+        .omit({ lastInvoice: true })
+        .partial({ email: true, phone: true, name: true }),
+    )
     .parseAsync(args.updateCustomerArgs)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {

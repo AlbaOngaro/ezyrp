@@ -3,7 +3,6 @@ import { useQuery } from "@apollo/client";
 
 import { format } from "date-fns";
 import Link from "next/link";
-import { Customer } from "__generated__/graphql";
 
 import { twMerge } from "lib/utils/twMerge";
 import { STATS } from "lib/queries/STATS";
@@ -11,6 +10,7 @@ import { CUSTOMERS_WITH_LAST_INVOICE } from "lib/queries/CUSTOMERS_WITH_LAST_INV
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Badge } from "components/atoms/badge/Badge";
+import { Avatar } from "components/atoms/avatar/Avatar";
 
 const secondaryNavigation = [
   { name: "Last 7 days", value: 7 },
@@ -135,17 +135,16 @@ export function HomePage() {
               role="list"
               className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8"
             >
-              {((customers.customers || []) as Customer[]).map((customer) => (
+              {customers.customers.map((customer) => (
                 <li
                   key={customer.id}
                   className="overflow-hidden rounded-xl border border-gray-200"
                 >
                   <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-                    {/* <img
-                    src={client.imageUrl}
-                    alt={customer.name}
-                    className="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10"
-                  /> */}
+                    <Avatar
+                      photoUrl={customer.photoUrl}
+                      seed={customer.email}
+                    />
                     <div className="text-sm font-medium leading-6 text-gray-900">
                       {customer.name}
                     </div>
