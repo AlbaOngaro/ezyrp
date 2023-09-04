@@ -1,11 +1,16 @@
 import { ReactElement, useState } from "react";
-
 import { useQuery } from "@apollo/client";
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { twMerge } from "lib/utils/twMerge";
-import { useCustomers } from "hooks/useCustomers";
+
+import { format } from "date-fns";
+import Link from "next/link";
 import { Customer } from "__generated__/graphql";
+
+import { twMerge } from "lib/utils/twMerge";
 import { STATS } from "lib/queries/STATS";
+import { CUSTOMERS_WITH_LAST_INVOICE } from "lib/queries/CUSTOMERS_WITH_LAST_INVOICE";
+
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { Badge } from "components/atoms/badge/Badge";
 
 const secondaryNavigation = [
   { name: "Last 7 days", value: 7 },
@@ -19,9 +24,14 @@ const CHF = new Intl.NumberFormat("en-US", {
 });
 
 export function HomePage() {
-  const customers = useCustomers();
-
-  const { data, loading, refetch } = useQuery(STATS, {
+  const { data: customers, loading: isCustomersLoading } = useQuery(
+    CUSTOMERS_WITH_LAST_INVOICE,
+  );
+  const {
+    data: stats,
+    loading: isStatsLoading,
+    refetch,
+  } = useQuery(STATS, {
     variables: {
       filters: {
         period: 7,
@@ -30,6 +40,10 @@ export function HomePage() {
   });
 
   const [timeSpan, setTimeSpan] = useState<number>(7);
+
+  if (isCustomersLoading || isStatsLoading) {
+    return null;
+  }
 
   return (
     <main>
@@ -63,10 +77,10 @@ export function HomePage() {
       </header>
 
       {/* Stats */}
-      {!loading && data?.stats && (
+      {stats?.stats && (
         <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
           <dl className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:px-2 xl:px-0">
-            {Object.values(data.stats).map((stat, statIdx) => {
+            {Object.values(stats.stats).map((stat, statIdx) => {
               if (typeof stat === "string") {
                 return null;
               }
@@ -103,25 +117,25 @@ export function HomePage() {
       )}
 
       {/* Recent client list*/}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Recent clients
             </h2>
-            <a
-              href="#"
+            <Link
+              href="/customers"
               className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              View all<span className="sr-only">, clients</span>
-            </a>
+              View all<span className="sr-only">, customers</span>
+            </Link>
           </div>
-          <ul
-            role="list"
-            className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8"
-          >
-            {((customers?.data?.customers || []) as Customer[]).map(
-              (customer) => (
+          {customers?.customers && (
+            <ul
+              role="list"
+              className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8"
+            >
+              {((customers.customers || []) as Customer[]).map((customer) => (
                 <li
                   key={customer.id}
                   className="overflow-hidden rounded-xl border border-gray-200"
@@ -137,35 +151,49 @@ export function HomePage() {
                     </div>
                   </div>
 
-                  {/* <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-                  <div className="flex justify-between gap-x-4 py-3">
-                    <dt className="text-gray-500">Last invoice</dt>
-                    <dd className="text-gray-700">
-                      <time dateTime={client.lastInvoice.dateTime}>
-                        {client.lastInvoice.date}
-                      </time>
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-x-4 py-3">
-                    <dt className="text-gray-500">Amount</dt>
-                    <dd className="flex items-start gap-x-2">
-                      <div className="font-medium text-gray-900">
-                        {client.lastInvoice.amount}
+                  {customer.lastInvoice && (
+                    <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+                      <div className="flex justify-between gap-x-4 py-3">
+                        <dt className="text-gray-500">Last invoice</dt>
+                        <dd className="text-gray-700">
+                          <time dateTime={customer.lastInvoice.emitted}>
+                            {format(
+                              new Date(customer.lastInvoice.emitted),
+                              "MMMM do, yyyy",
+                            )}
+                          </time>
+                        </dd>
                       </div>
-                      <div
-                        className={twMerge(
-                          "rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset",
-                        )}
-                      >
-                        {client.lastInvoice.status}
+                      <div className="flex justify-between gap-x-4 py-3">
+                        <dt className="text-gray-500">Amount</dt>
+                        <dd className="flex items-center gap-x-2">
+                          <div className="font-medium text-gray-900">
+                            {CHF.format(customer.lastInvoice.amount / 100)}
+                          </div>
+                          <Badge
+                            size="sm"
+                            variant={(() => {
+                              switch (customer.lastInvoice.status) {
+                                case "overdue":
+                                  return "danger";
+                                case "paid":
+                                  return "success";
+                                case "pending":
+                                default:
+                                  return "info";
+                              }
+                            })()}
+                          >
+                            {customer.lastInvoice.status}
+                          </Badge>
+                        </dd>
                       </div>
-                    </dd>
-                  </div>
-                </dl> */}
+                    </dl>
+                  )}
                 </li>
-              ),
-            )}
-          </ul>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </main>

@@ -28,6 +28,7 @@ const documents = {
     "\n  mutation updateUserProfile(\n    $updateUserProfileArgs: InputUpdateUserProfileArgs!\n  ) {\n    updateUserProfile(updateUserProfileArgs: $updateUserProfileArgs) {\n      id\n      email\n      password\n      username\n      profile {\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.UpdateUserProfileDocument,
     "\n  query countries {\n    countries {\n      name {\n        common\n        official\n      }\n    }\n  }\n": types.CountriesDocument,
     "\n  query getCustomers($filters: InputCustomersFilters = {}) {\n    customers(filters: $filters) {\n      id\n      email\n      name\n      phone\n    }\n  }\n": types.GetCustomersDocument,
+    "\n  query customersWithLastInvoice {\n    customers {\n      id\n      name\n      lastInvoice {\n        status\n        amount\n        emitted\n      }\n    }\n  }\n": types.CustomersWithLastInvoiceDocument,
     "\n  query events {\n    events {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n        phone\n      }\n    }\n  }\n": types.EventsDocument,
     "\n  query invoices {\n    invoices {\n      id\n      customer {\n        id\n        email\n        name\n        phone\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n": types.InvoicesDocument,
     "\n  query stats($filters: InputStatsFilters) {\n    stats(filters: $filters) {\n      pending {\n        name\n        value\n        change\n      }\n      overdue {\n        name\n        value\n        change\n      }\n      paid {\n        name\n        value\n        change\n      }\n    }\n  }\n": types.StatsDocument,
@@ -108,6 +109,10 @@ export function graphql(source: "\n  query countries {\n    countries {\n      n
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query getCustomers($filters: InputCustomersFilters = {}) {\n    customers(filters: $filters) {\n      id\n      email\n      name\n      phone\n    }\n  }\n"): (typeof documents)["\n  query getCustomers($filters: InputCustomersFilters = {}) {\n    customers(filters: $filters) {\n      id\n      email\n      name\n      phone\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query customersWithLastInvoice {\n    customers {\n      id\n      name\n      lastInvoice {\n        status\n        amount\n        emitted\n      }\n    }\n  }\n"): (typeof documents)["\n  query customersWithLastInvoice {\n    customers {\n      id\n      name\n      lastInvoice {\n        status\n        amount\n        emitted\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

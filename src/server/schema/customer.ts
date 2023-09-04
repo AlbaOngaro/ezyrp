@@ -5,4 +5,11 @@ export const customer = z.object({
   email: z.string().email(),
   name: z.string(),
   phone: z.string(),
+  lastInvoice: z
+    .object({
+      emitted: z.string().datetime(),
+      amount: z.number(),
+      status: z.enum(["paid", "pending", "overdue"]),
+    })
+    .nullable(),
 });

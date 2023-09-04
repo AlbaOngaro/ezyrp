@@ -93,11 +93,18 @@ export const typeDefs = gql`
     phone: String
   }
 
+  type LastInvoice {
+    emitted: String!
+    amount: Int!
+    status: String!
+  }
+
   type Customer {
     id: ID!
     email: String!
     name: String!
     phone: String!
+    lastInvoice: LastInvoice
   }
 
   input InputCreateInvoiceItems {
@@ -165,13 +172,20 @@ export const typeDefs = gql`
     guests: [String]
   }
 
+  type Guest {
+    id: ID!
+    email: String!
+    name: String!
+    phone: String!
+  }
+
   type Event {
     id: ID!
     start: String!
     end: String!
     title: String!
     variant: String!
-    guests: [Customer!]!
+    guests: [Guest!]!
   }
 
   type CountryName {
