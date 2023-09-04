@@ -149,7 +149,7 @@ export function CreateCustomerModal({ setIsOpen }: Props) {
           placeholder="0012345678"
           name="phone"
           type="tel"
-          value={customer.phone}
+          value={customer.phone || ""}
           onChange={(e) =>
             setCustomer((curr) => ({
               ...curr,
