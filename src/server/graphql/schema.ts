@@ -16,6 +16,8 @@ export const typeDefs = gql`
     countries: [Country!]!
 
     stats(filters: InputStatsFilters): Stats!
+
+    getCloudinarySignature: CloudinarySignature!
   }
 
   type Mutation {
@@ -51,6 +53,7 @@ export const typeDefs = gql`
   }
 
   input InputUpdateUserProfileArgs {
+    photoUrl: String
     address: String
     city: String
     code: String
@@ -59,6 +62,7 @@ export const typeDefs = gql`
   }
 
   type Profile {
+    photoUrl: String
     address: String!
     city: String!
     code: String!
@@ -83,7 +87,8 @@ export const typeDefs = gql`
   input InputCreateCustomerArgs {
     email: String!
     name: String!
-    phone: String!
+    phone: String
+    photoUrl: String
   }
 
   input InputUpdateCustomerArgs {
@@ -91,6 +96,7 @@ export const typeDefs = gql`
     email: String
     name: String
     phone: String
+    photoUrl: String
   }
 
   type LastInvoice {
@@ -103,7 +109,8 @@ export const typeDefs = gql`
     id: ID!
     email: String!
     name: String!
-    phone: String!
+    phone: String
+    photoUrl: String
     lastInvoice: LastInvoice
   }
 
@@ -211,5 +218,12 @@ export const typeDefs = gql`
     pending: Stat!
     overdue: Stat!
     paid: Stat!
+  }
+
+  type CloudinarySignature {
+    timestamp: Int!
+    signature: String!
+    cloudname: String!
+    apiKey: String!
   }
 `;

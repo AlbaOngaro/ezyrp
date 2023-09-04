@@ -1,14 +1,21 @@
 import { PropsWithChildren } from "react";
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
-
 import Link from "next/link";
-import { Sidebar } from "components/organisms/sidebar/Sidebar";
-import { useUser } from "hooks/useUser";
+
 import { twMerge } from "lib/utils/twMerge";
 
+import { useUser } from "hooks/useUser";
+
+import { Sidebar } from "components/organisms/sidebar/Sidebar";
+import { Avatar } from "components/atoms/avatar/Avatar";
+
 export function SidebarLayout({ children }: PropsWithChildren) {
-  const { data, logout } = useUser();
+  const { data, isLoading, logout } = useUser();
+
+  if (isLoading || !data || !data.user) {
+    return null;
+  }
 
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
@@ -30,10 +37,9 @@ export function SidebarLayout({ children }: PropsWithChildren) {
                 <Menu.Item>
                   <Menu.Trigger className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
+                    <Avatar
+                      photoUrl={data.user?.profile?.photoUrl}
+                      seed={data.user.email}
                     />
                     <span className="hidden lg:flex lg:items-center">
                       <span

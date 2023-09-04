@@ -2,6 +2,7 @@ import { GraphQLError } from "graphql";
 import { destroyCookie, setCookie } from "nookies";
 import { Surreal } from "surrealdb.js";
 import { ZodError, z } from "zod";
+
 import { ACCESS_TOKEN_ID } from "lib/constants";
 import { surreal } from "server/surreal";
 import { credentials } from "server/schema/auth";
@@ -163,7 +164,7 @@ export const createCustomers: MutationResolvers["createCustomers"] = async (
   { accessToken },
 ) => {
   const customers = await z
-    .array(customer.omit({ id: true, workspace: true }))
+    .array(customer.omit({ id: true, lastInvoice: true }))
     .parseAsync(args.createCustomerArgs)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {
@@ -184,7 +185,11 @@ export const updateCustomers: MutationResolvers["updateCustomers"] = async (
   { accessToken },
 ) => {
   const customers = await z
-    .array(customer.partial({ email: true, phone: true, name: true }))
+    .array(
+      customer
+        .omit({ lastInvoice: true })
+        .partial({ email: true, phone: true, name: true }),
+    )
     .parseAsync(args.updateCustomerArgs)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {

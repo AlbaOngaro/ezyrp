@@ -6,6 +6,7 @@ import { Modal } from "components/atoms/modal/Modal";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 import { Customer, InputUpdateCustomerArgs } from "__generated__/graphql";
+import { useFileUpload } from "hooks/useFileUpload";
 
 interface Props extends Customer {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -16,19 +17,46 @@ export function EditCustomerModal({
   name,
   email,
   phone,
+  photoUrl,
   setIsOpen,
 }: Props) {
   const { update } = useCustomers();
+  const handleFileUpload = useFileUpload();
 
   const [customer, setCustomer] = useState<InputUpdateCustomerArgs>({
     id,
     name,
     email,
     phone,
+    photoUrl,
   });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    const files = (e.target as HTMLFormElement).querySelector<HTMLInputElement>(
+      "input[type=file]",
+    )?.files;
+
+    if (files) {
+      const photoUrl = await handleFileUpload(files[0]);
+      try {
+        await update({
+          variables: {
+            updateCustomerArgs: [
+              {
+                ...customer,
+                photoUrl,
+              },
+            ],
+          },
+        });
+        setIsOpen(false);
+      } catch (error: unknown) {
+        console.error(error);
+      }
+
+      return;
+    }
 
     try {
       await update({
@@ -45,9 +73,44 @@ export function EditCustomerModal({
   return (
     <Modal
       title="Edit customer"
-      description="Update a new customer in your database"
+      description="Update a customer in your database"
     >
       <Form className="mt-2 flex flex-col gap-2" onSubmit={handleSubmit}>
+        <Input
+          label="Profile picture"
+          className="w-fit"
+          name="photoUrl"
+          type="file"
+          value={customer.photoUrl || ""}
+          onChange={async (e) => {
+            if (e.target.files && e.target.files[0]) {
+              const file = e.target.files[0];
+
+              const fr = new FileReader();
+              const promise = new Promise<string | undefined>(
+                (resolve, reject) => {
+                  fr.onload = () => {
+                    if (fr.result && typeof fr.result === "string") {
+                      return resolve(fr.result);
+                    }
+
+                    reject();
+                  };
+                },
+              );
+
+              fr.readAsDataURL(file);
+
+              const photoUrl = await promise;
+
+              setCustomer((curr) => ({
+                ...curr,
+                photoUrl,
+              }));
+            }
+          }}
+        />
+
         <Input
           label="Name"
           placeholder="Jane Doe"

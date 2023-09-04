@@ -12,4 +12,6 @@ export const profile = z.object({
 
   // user details
   name: z.string(),
+
+  photoUrl: z.string().default(""),
 });

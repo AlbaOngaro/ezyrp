@@ -18,7 +18,9 @@ export function useUser() {
   });
   const [register] = useMutation(REGISTER);
 
-  const [update] = useMutation(UPDATE_USER_PROFILE);
+  const [update] = useMutation(UPDATE_USER_PROFILE, {
+    refetchQueries: [USER],
+  });
 
   return {
     data,

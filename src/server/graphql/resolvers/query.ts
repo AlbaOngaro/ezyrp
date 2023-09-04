@@ -1,13 +1,17 @@
 import { Surreal } from "surrealdb.js";
 import { GraphQLError } from "graphql";
 import { z } from "zod";
-import { surreal } from "server/surreal";
+import { v2 as cloudinary } from "cloudinary";
+
 import { Country, QueryResolvers, Stats, User } from "__generated__/server";
+
+import { getDiffPercentage } from "lib/utils/getDiffPercentage";
+
+import { surreal } from "server/surreal";
 import { CustomersService } from "server/services/customers";
 import { InvoicesService } from "server/services/invoices";
 import { EventsService } from "server/services/events";
 import { ProfileService } from "server/services/profile";
-import { getDiffPercentage } from "lib/utils/getDiffPercentage";
 
 export const user: QueryResolvers["user"] = async (_, __, { accessToken }) => {
   await surreal.authenticate(accessToken as string);
@@ -298,3 +302,29 @@ export const stats: QueryResolvers["stats"] = async (
     },
   );
 };
+
+export const getCloudinarySignature: QueryResolvers["getCloudinarySignature"] =
+  async () => {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
+    const timestamp = Math.round(new Date().getTime() / 1000);
+
+    const signature = cloudinary.utils.api_sign_request(
+      {
+        timestamp,
+        folder: "crm",
+      },
+      process.env.CLOUDINARY_API_SECRET as string,
+    );
+
+    return {
+      timestamp,
+      signature,
+      cloudname: process.env.CLOUDINARY_CLOUD_NAME as string,
+      apiKey: process.env.CLOUDINARY_API_KEY as string,
+    };
+  };

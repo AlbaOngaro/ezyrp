@@ -5,6 +5,8 @@ export const CUSTOMERS_WITH_LAST_INVOICE = graphql(`
     customers {
       id
       name
+      email
+      photoUrl
       lastInvoice {
         status
         amount

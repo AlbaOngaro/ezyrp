@@ -1,16 +1,19 @@
 import { FormEventHandler, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { Input } from "components/atoms/input/Input";
-import { Button } from "components/atoms/button/Button";
-import { useCountries } from "hooks/useCountries";
-import { Select } from "components/atoms/select/Select";
-import { useUser } from "hooks/useUser";
 import {
   Country,
   InputUpdateUserProfileArgs,
   User,
 } from "__generated__/graphql";
+
+import { useCountries } from "hooks/useCountries";
+import { useUser } from "hooks/useUser";
+
+import { Input } from "components/atoms/input/Input";
+import { Button } from "components/atoms/button/Button";
+import { Select } from "components/atoms/select/Select";
+import { useFileUpload } from "hooks/useFileUpload";
 
 interface Props {
   profile: User["profile"];
@@ -19,8 +22,10 @@ interface Props {
 export function ProfileForm({ profile: initialProfile }: Props) {
   const { update } = useUser();
   const { data } = useCountries();
+  const handleFileUpload = useFileUpload();
 
   const [profile, setProfile] = useState<InputUpdateUserProfileArgs>({
+    photoUrl: initialProfile?.photoUrl || "",
     address: initialProfile?.address || "",
     city: initialProfile?.city || "",
     code: initialProfile?.code || "",
@@ -30,6 +35,24 @@ export function ProfileForm({ profile: initialProfile }: Props) {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    const files = (e.target as HTMLFormElement).querySelector<HTMLInputElement>(
+      "input[type=file]",
+    )?.files;
+
+    if (files) {
+      const photoUrl = await handleFileUpload(files[0]);
+
+      await update({
+        variables: {
+          updateUserProfileArgs: {
+            ...profile,
+            photoUrl,
+          },
+        },
+      });
+
+      return;
+    }
 
     await update({
       variables: {
@@ -43,6 +66,40 @@ export function ProfileForm({ profile: initialProfile }: Props) {
       className="px-12 py-8 flex flex-col gap-4 lg:w-2/3"
       onSubmit={handleSubmit}
     >
+      <Input
+        label="Profile picture"
+        name="photoUrl"
+        type="file"
+        value={profile.photoUrl || ""}
+        onChange={async (e) => {
+          if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+
+            const fr = new FileReader();
+            const promise = new Promise<string | undefined>(
+              (resolve, reject) => {
+                fr.onload = () => {
+                  if (fr.result && typeof fr.result === "string") {
+                    return resolve(fr.result);
+                  }
+
+                  reject();
+                };
+              },
+            );
+
+            fr.readAsDataURL(file);
+
+            const photoUrl = await promise;
+
+            setProfile((curr) => ({
+              ...curr,
+              photoUrl,
+            }));
+          }
+        }}
+      />
+
       <Input
         label="Name"
         name="name"
