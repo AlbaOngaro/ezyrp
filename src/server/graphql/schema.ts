@@ -4,16 +4,18 @@ export const typeDefs = gql`
   type Query {
     user: User
 
-    customer(id: ID!): Customer
-    customers(filters: InputCustomersFilters): [Customer]
+    customer(id: ID!): Customer!
+    customers(filters: InputCustomersFilters): [Customer!]!
 
-    invoice(id: ID!): Invoice
-    invoices: [Invoice]
+    invoice(id: ID!): Invoice!
+    invoices: [Invoice!]!
 
-    event(id: ID!): Event
-    events: [Event]
+    event(id: ID!): Event!
+    events: [Event!]!
 
-    countries: [Country]
+    countries: [Country!]!
+
+    stats(filters: InputStatsFilters): Stats!
   }
 
   type Mutation {
@@ -91,11 +93,18 @@ export const typeDefs = gql`
     phone: String
   }
 
+  type LastInvoice {
+    emitted: String!
+    amount: Int!
+    status: String!
+  }
+
   type Customer {
     id: ID!
     email: String!
     name: String!
     phone: String!
+    lastInvoice: LastInvoice
   }
 
   input InputCreateInvoiceItems {
@@ -163,13 +172,20 @@ export const typeDefs = gql`
     guests: [String]
   }
 
+  type Guest {
+    id: ID!
+    email: String!
+    name: String!
+    phone: String!
+  }
+
   type Event {
     id: ID!
     start: String!
     end: String!
     title: String!
     variant: String!
-    guests: [Customer!]!
+    guests: [Guest!]!
   }
 
   type CountryName {
@@ -179,5 +195,21 @@ export const typeDefs = gql`
 
   type Country {
     name: CountryName!
+  }
+
+  input InputStatsFilters {
+    period: Int!
+  }
+
+  type Stat {
+    name: String!
+    value: Int!
+    change: Float!
+  }
+
+  type Stats {
+    pending: Stat!
+    overdue: Stat!
+    paid: Stat!
   }
 `;

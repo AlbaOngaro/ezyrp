@@ -2,6 +2,7 @@ import {
   CalendarIcon,
   EnvelopeClosedIcon,
   GearIcon,
+  HomeIcon,
   PersonIcon,
 } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
@@ -9,7 +10,8 @@ import Link from "next/link";
 import { twMerge } from "lib/utils/twMerge";
 
 const navigation = [
-  { name: "Customers", href: "/", icon: PersonIcon },
+  { name: "Home", href: "/", icon: HomeIcon },
+  { name: "Customers", href: "/customers", icon: PersonIcon },
   { name: "Invoices", href: "/invoices", icon: EnvelopeClosedIcon },
   { name: "Schedule", href: "/schedule", icon: CalendarIcon },
 ];

@@ -31,6 +31,7 @@ export type Customer = {
   __typename?: 'Customer';
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  lastInvoice?: Maybe<LastInvoice>;
   name: Scalars['String']['output'];
   phone: Scalars['String']['output'];
 };
@@ -38,11 +39,19 @@ export type Customer = {
 export type Event = {
   __typename?: 'Event';
   end: Scalars['String']['output'];
-  guests: Array<Customer>;
+  guests: Array<Guest>;
   id: Scalars['ID']['output'];
   start: Scalars['String']['output'];
   title: Scalars['String']['output'];
   variant: Scalars['String']['output'];
+};
+
+export type Guest = {
+  __typename?: 'Guest';
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  phone: Scalars['String']['output'];
 };
 
 export type InputCreateCustomerArgs = {
@@ -90,6 +99,10 @@ export type InputRegisterCredentials = {
   password: Scalars['String']['input'];
   username?: InputMaybe<Scalars['String']['input']>;
   workspace?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InputStatsFilters = {
+  period: Scalars['Int']['input'];
 };
 
 export type InputUpdateCustomerArgs = {
@@ -149,6 +162,13 @@ export type Item = {
   name: Scalars['String']['output'];
   price: Scalars['Int']['output'];
   quantity: Scalars['Int']['output'];
+};
+
+export type LastInvoice = {
+  __typename?: 'LastInvoice';
+  amount: Scalars['Int']['output'];
+  emitted: Scalars['String']['output'];
+  status: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -239,13 +259,14 @@ export type Profile = {
 
 export type Query = {
   __typename?: 'Query';
-  countries?: Maybe<Array<Maybe<Country>>>;
-  customer?: Maybe<Customer>;
-  customers?: Maybe<Array<Maybe<Customer>>>;
-  event?: Maybe<Event>;
-  events?: Maybe<Array<Maybe<Event>>>;
-  invoice?: Maybe<Invoice>;
-  invoices?: Maybe<Array<Maybe<Invoice>>>;
+  countries: Array<Country>;
+  customer: Customer;
+  customers: Array<Customer>;
+  event: Event;
+  events: Array<Event>;
+  invoice: Invoice;
+  invoices: Array<Invoice>;
+  stats: Stats;
   user?: Maybe<User>;
 };
 
@@ -269,6 +290,25 @@ export type QueryInvoiceArgs = {
   id: Scalars['ID']['input'];
 };
 
+
+export type QueryStatsArgs = {
+  filters?: InputMaybe<InputStatsFilters>;
+};
+
+export type Stat = {
+  __typename?: 'Stat';
+  change: Scalars['Float']['output'];
+  name: Scalars['String']['output'];
+  value: Scalars['Int']['output'];
+};
+
+export type Stats = {
+  __typename?: 'Stats';
+  overdue: Stat;
+  paid: Stat;
+  pending: Stat;
+};
+
 export type User = {
   __typename?: 'User';
   email: Scalars['String']['output'];
@@ -290,7 +330,7 @@ export type CreateEventsMutationVariables = Exact<{
 }>;
 
 
-export type CreateEventsMutation = { __typename?: 'Mutation', createEvents?: Array<{ __typename?: 'Event', id: string, start: string, end: string, title: string, variant: string, guests: Array<{ __typename?: 'Customer', id: string, email: string, name: string, phone: string }> } | null> | null };
+export type CreateEventsMutation = { __typename?: 'Mutation', createEvents?: Array<{ __typename?: 'Event', id: string, start: string, end: string, title: string, variant: string, guests: Array<{ __typename?: 'Guest', id: string, email: string, name: string, phone: string }> } | null> | null };
 
 export type CreateInvoicesMutationVariables = Exact<{
   createInvoicesArgs: Array<InputCreateInvoicesArgs> | InputCreateInvoicesArgs;
@@ -351,7 +391,7 @@ export type UpdateEventsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventsMutation = { __typename?: 'Mutation', updateEvents?: Array<{ __typename?: 'Event', id: string, start: string, end: string, title: string, variant: string, guests: Array<{ __typename?: 'Customer', id: string, email: string, name: string, phone: string }> } | null> | null };
+export type UpdateEventsMutation = { __typename?: 'Mutation', updateEvents?: Array<{ __typename?: 'Event', id: string, start: string, end: string, title: string, variant: string, guests: Array<{ __typename?: 'Guest', id: string, email: string, name: string, phone: string }> } | null> | null };
 
 export type UpdateInvoicesMutationVariables = Exact<{
   updateInvoicesArgs: Array<InputUpdateInvoicesArgs> | InputUpdateInvoicesArgs;
@@ -370,24 +410,36 @@ export type UpdateUserProfileMutation = { __typename?: 'Mutation', updateUserPro
 export type CountriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CountriesQuery = { __typename?: 'Query', countries?: Array<{ __typename?: 'Country', name: { __typename?: 'CountryName', common: string, official: string } } | null> | null };
+export type CountriesQuery = { __typename?: 'Query', countries: Array<{ __typename?: 'Country', name: { __typename?: 'CountryName', common: string, official: string } }> };
 
 export type GetCustomersQueryVariables = Exact<{
   filters?: InputMaybe<InputCustomersFilters>;
 }>;
 
 
-export type GetCustomersQuery = { __typename?: 'Query', customers?: Array<{ __typename?: 'Customer', id: string, email: string, name: string, phone: string } | null> | null };
+export type GetCustomersQuery = { __typename?: 'Query', customers: Array<{ __typename?: 'Customer', id: string, email: string, name: string, phone: string }> };
+
+export type CustomersWithLastInvoiceQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CustomersWithLastInvoiceQuery = { __typename?: 'Query', customers: Array<{ __typename?: 'Customer', id: string, name: string, lastInvoice?: { __typename?: 'LastInvoice', status: string, amount: number, emitted: string } | null }> };
 
 export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: Array<{ __typename?: 'Event', id: string, start: string, end: string, title: string, variant: string, guests: Array<{ __typename?: 'Customer', id: string, email: string, name: string, phone: string }> } | null> | null };
+export type EventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, start: string, end: string, title: string, variant: string, guests: Array<{ __typename?: 'Guest', id: string, email: string, name: string, phone: string }> }> };
 
 export type InvoicesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InvoicesQuery = { __typename?: 'Query', invoices?: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone: string }, items?: Array<{ __typename?: 'Item', name: string, quantity: number, price: number }> | null } | null> | null };
+export type InvoicesQuery = { __typename?: 'Query', invoices: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone: string }, items?: Array<{ __typename?: 'Item', name: string, quantity: number, price: number }> | null }> };
+
+export type StatsQueryVariables = Exact<{
+  filters?: InputMaybe<InputStatsFilters>;
+}>;
+
+
+export type StatsQuery = { __typename?: 'Query', stats: { __typename?: 'Stats', pending: { __typename?: 'Stat', name: string, value: number, change: number }, overdue: { __typename?: 'Stat', name: string, value: number, change: number }, paid: { __typename?: 'Stat', name: string, value: number, change: number } } };
 
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -410,6 +462,8 @@ export const UpdateInvoicesDocument = {"kind":"Document","definitions":[{"kind":
 export const UpdateUserProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateUserProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateUserProfileArgs"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputUpdateUserProfileArgs"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUserProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"updateUserProfileArgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateUserProfileArgs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"password"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateUserProfileMutation, UpdateUserProfileMutationVariables>;
 export const CountriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"countries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"countries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"common"}},{"kind":"Field","name":{"kind":"Name","value":"official"}}]}}]}}]}}]} as unknown as DocumentNode<CountriesQuery, CountriesQueryVariables>;
 export const GetCustomersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getCustomers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filters"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCustomersFilters"}},"defaultValue":{"kind":"ObjectValue","fields":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"customers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}}]}}]}}]} as unknown as DocumentNode<GetCustomersQuery, GetCustomersQueryVariables>;
+export const CustomersWithLastInvoiceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"customersWithLastInvoice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"customers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"lastInvoice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"emitted"}}]}}]}}]}}]} as unknown as DocumentNode<CustomersWithLastInvoiceQuery, CustomersWithLastInvoiceQueryVariables>;
 export const EventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"events"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"events"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"end"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"guests"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}}]}}]}}]}}]} as unknown as DocumentNode<EventsQuery, EventsQueryVariables>;
 export const InvoicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"invoices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"invoices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"customer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"due"}},{"kind":"Field","name":{"kind":"Name","value":"emitted"}}]}}]}}]} as unknown as DocumentNode<InvoicesQuery, InvoicesQueryVariables>;
+export const StatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"stats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filters"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"InputStatsFilters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pending"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"change"}}]}},{"kind":"Field","name":{"kind":"Name","value":"overdue"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"change"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paid"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"change"}}]}}]}}]}}]} as unknown as DocumentNode<StatsQuery, StatsQueryVariables>;
 export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserQuery, GetUserQueryVariables>;

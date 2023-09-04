@@ -21,9 +21,10 @@ export function Indicator() {
 
   useEffect(() => {
     if (indicator.current) {
-      const now = new Date();
+      const day = new Date().getDay();
+
       indicator.current.style.gridColumnStart = (
-        now.getDay() === 0 ? 7 : now.getDay()
+        day === 0 ? 7 : day
       ).toString();
       indicator.current.style.gridColumnEnd = `span 1`;
       indicator.current.style.top = getIndicatorTopValue();

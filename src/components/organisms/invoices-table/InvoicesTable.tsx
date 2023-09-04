@@ -26,6 +26,7 @@ export function InvoicesTable() {
 
   return (
     <>
+      {/* @ts-ignore */}
       <Table<Omit<Invoice, "items">>
         withMultiSelect
         withContextMenu

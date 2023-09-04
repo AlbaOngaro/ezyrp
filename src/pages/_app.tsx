@@ -15,7 +15,9 @@ type AppPropsWithLayout = AppProps & {
 
 const client = new ApolloClient({
   uri: "/api/graphql",
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    addTypename: false,
+  }),
 });
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {

@@ -48,9 +48,29 @@ export class CustomersService extends Service {
       const tmp = Object.entries(filters);
       const result = await surreal.query<Customer[]>(
         tmp.length === 0
-          ? `SELECT * FROM customer`
+          ? `SELECT 
+              *, 
+              (SELECT 
+                *, 
+                math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+                IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
+              FROM invoice 
+              WHERE customer = $parent.id 
+              ORDER BY emitted 
+              LIMIT 1)[0] as lastInvoice 
+            FROM customer;`
           : `
-            SELECT * FROM customer
+            SELECT 
+              *, 
+              (SELECT 
+                *, 
+                math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+                IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status 
+              FROM invoice
+              WHERE customer = $parent.id 
+              ORDER BY emitted 
+              LIMIT 1)[0] as lastInvoice 
+            FROM customer
             WHERE 
               ${tmp.map(([key, value]) => `${key} ~ "${value}"`).join("AND \n")}
         `,
@@ -59,11 +79,22 @@ export class CustomersService extends Service {
       try {
         return z.array(customer).parse(result[0].result);
       } catch (error: unknown) {
+        console.error(error);
         return [];
       }
     }
 
-    const result = await surreal.query<Customer[]>(`SELECT * FROM customer`);
+    const result = await surreal.query<Customer[]>(`
+      SELECT *, 
+      (SELECT 
+          *, 
+          math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+          IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
+        FROM invoice 
+        WHERE customer = $parent.id 
+        ORDER BY emitted 
+        LIMIT 1)[0] as lastInvoice  
+      FROM customer`);
 
     try {
       return z.array(customer).parse(result[0].result);

@@ -32,9 +32,12 @@ DEFINE EVENT profile ON TABLE user WHEN $before == NONE THEN (
 	CREATE profile SET user = $value.id
 );
 
-DEFINE EVENT customer_workspace ON TABLE customer WHEN $event = "CREATE" THEN {
+REMOVE EVENT customer_workspace ON TABLE customer;
+
+DEFINE EVENT customer_created ON TABLE customer WHEN $event = "CREATE" THEN {
 	UPDATE customer MERGE {
-		workspace: $auth.workspace
+		workspace: $auth.workspace,
+		created_at: time::now()
 	} WHERE id = $after.id;
 };
 
@@ -44,13 +47,17 @@ DEFINE EVENT delete_customer_invoices ON TABLE customer WHEN $event = "DELETE" T
 
 DEFINE EVENT invoice_workspace ON TABLE invoice WHEN $event = "CREATE" THEN {
 	UPDATE invoice MERGE {
-		workspace: $auth.workspace
+		workspace: $auth.workspace,
+		created_at: time::now()
 	} WHERE id = $after.id;
 };
 
-DEFINE EVENT event_workspace ON TABLE event WHEN $event = "CREATE" THEN {
+REMOVE EVENT event_workspace ON TABLE customer;
+
+DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
 	UPDATE event MERGE {
-		workspace: $auth.workspace
+		workspace: $auth.workspace,
+		created_at: time::now()
 	} WHERE id = $after.id;
 };
 
