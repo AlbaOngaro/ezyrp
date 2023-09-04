@@ -1,14 +1,22 @@
 import { PropsWithChildren } from "react";
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
-
+import { createAvatar } from "@dicebear/core";
+import { initials } from "@dicebear/collection";
 import Link from "next/link";
-import { Sidebar } from "components/organisms/sidebar/Sidebar";
-import { useUser } from "hooks/useUser";
+
 import { twMerge } from "lib/utils/twMerge";
 
+import { useUser } from "hooks/useUser";
+
+import { Sidebar } from "components/organisms/sidebar/Sidebar";
+
 export function SidebarLayout({ children }: PropsWithChildren) {
-  const { data, logout } = useUser();
+  const { data, isLoading, logout } = useUser();
+
+  if (isLoading || !data) {
+    return null;
+  }
 
   return (
     <main className="h-full grid grid-cols-[300px_1fr]">
@@ -30,11 +38,19 @@ export function SidebarLayout({ children }: PropsWithChildren) {
                 <Menu.Item>
                   <Menu.Trigger className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
+                    <picture className="relative h-8 w-8 rounded-full overflow-hidden">
+                      <img
+                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        src={
+                          data?.user?.profile?.photoUrl ||
+                          createAvatar(initials, {
+                            seed: data?.user?.email,
+                            scale: 75,
+                          }).toDataUriSync()
+                        }
+                        alt=""
+                      />
+                    </picture>
                     <span className="hidden lg:flex lg:items-center">
                       <span
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"

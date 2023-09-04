@@ -16,6 +16,8 @@ export const typeDefs = gql`
     countries: [Country!]!
 
     stats(filters: InputStatsFilters): Stats!
+
+    getCloudinarySignature: CloudinarySignature!
   }
 
   type Mutation {
@@ -51,6 +53,7 @@ export const typeDefs = gql`
   }
 
   input InputUpdateUserProfileArgs {
+    photoUrl: String
     address: String
     city: String
     code: String
@@ -59,6 +62,7 @@ export const typeDefs = gql`
   }
 
   type Profile {
+    photoUrl: String
     address: String!
     city: String!
     code: String!
@@ -211,5 +215,12 @@ export const typeDefs = gql`
     pending: Stat!
     overdue: Stat!
     paid: Stat!
+  }
+
+  type CloudinarySignature {
+    timestamp: Int!
+    signature: String!
+    cloudname: String!
+    apiKey: String!
   }
 `;

@@ -10,6 +10,7 @@ export const UPDATE_USER_PROFILE = graphql(`
       password
       username
       profile {
+        photoUrl
         address
         city
         code

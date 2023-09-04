@@ -27,6 +27,7 @@ export class ProfileService extends Service {
           code: "",
           country: "",
           name: "",
+          photoUrl: "",
         })
         // @ts-ignore
         .parse(result[0].result[0])
