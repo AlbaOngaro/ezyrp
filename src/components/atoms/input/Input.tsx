@@ -3,9 +3,10 @@ import { forwardRef } from "react";
 
 import { Props, isDateTimeInputProps } from "./types";
 
-import { twMerge } from "lib/utils/twMerge";
+import { FilePickerInput } from "./FilePickerInput";
+import { DateTimeInput } from "./DateTimeInput";
 
-import { DateTimeInput } from "components/atoms/input/DateTimeInput";
+import { twMerge } from "lib/utils/twMerge";
 
 export const Input = forwardRef<HTMLInputElement, Props>(
   function Input(props, ref) {
@@ -84,6 +85,10 @@ export const Input = forwardRef<HTMLInputElement, Props>(
       onChange,
       ...rest
     } = props;
+
+    if (type === "file") {
+      return <FilePickerInput {...props} />;
+    }
 
     return (
       <Form.Field

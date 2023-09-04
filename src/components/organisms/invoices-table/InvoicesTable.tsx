@@ -84,6 +84,7 @@ export function InvoicesTable() {
             sortable: true,
             render: (invoice) => (
               <Badge
+                size="md"
                 variant={(() => {
                   switch (invoice.status) {
                     case "overdue":

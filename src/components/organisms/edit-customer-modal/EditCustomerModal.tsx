@@ -45,7 +45,7 @@ export function EditCustomerModal({
   return (
     <Modal
       title="Edit customer"
-      description="Update a new customer in your database"
+      description="Update a customer in your database"
     >
       <Form className="mt-2 flex flex-col gap-2" onSubmit={handleSubmit}>
         <Input

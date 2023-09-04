@@ -313,8 +313,6 @@ export const getCloudinarySignature: QueryResolvers["getCloudinarySignature"] =
 
     const timestamp = Math.round(new Date().getTime() / 1000);
 
-    console.debug(timestamp);
-
     const signature = cloudinary.utils.api_sign_request(
       {
         timestamp,

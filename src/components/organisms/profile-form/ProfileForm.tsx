@@ -95,7 +95,39 @@ export function ProfileForm({ profile: initialProfile }: Props) {
       className="px-12 py-8 flex flex-col gap-4 lg:w-2/3"
       onSubmit={handleSubmit}
     >
-      <Input label="Profile picture" name="photoUrl" type="file" />
+      <Input
+        label="Profile picture"
+        name="photoUrl"
+        type="file"
+        value={profile.photoUrl || ""}
+        onChange={async (e) => {
+          if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+
+            const fr = new FileReader();
+            const promise = new Promise<string | undefined>(
+              (resolve, reject) => {
+                fr.onload = () => {
+                  if (fr.result && typeof fr.result === "string") {
+                    return resolve(fr.result);
+                  }
+
+                  reject();
+                };
+              },
+            );
+
+            fr.readAsDataURL(file);
+
+            const photoUrl = await promise;
+
+            setProfile((curr) => ({
+              ...curr,
+              photoUrl,
+            }));
+          }
+        }}
+      />
 
       <Input
         label="Name"
