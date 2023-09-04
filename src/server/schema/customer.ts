@@ -4,7 +4,7 @@ export const customer = z.object({
   id: z.string(),
   email: z.string().email(),
   name: z.string(),
-  phone: z.string(),
+  phone: z.string().default(""),
   photoUrl: z.string().default(""),
   lastInvoice: z
     .object({
