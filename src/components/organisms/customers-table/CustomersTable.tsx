@@ -60,15 +60,15 @@ export function CustomersTable() {
             headerName: "ID",
           },
           {
-            id: "email",
-            field: "email",
-            headerName: "E-mail",
-          },
-          {
             id: "name",
             field: "name",
             headerName: "Name",
             sortable: true,
+          },
+          {
+            id: "email",
+            field: "email",
+            headerName: "E-mail",
           },
           {
             id: "phone",

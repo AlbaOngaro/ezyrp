@@ -63,14 +63,14 @@ export function InvoicesTable() {
             field: "emitted",
             headerName: "Emitted",
             sortable: true,
-            render: ({ emitted }) => format(new Date(emitted), "dd/mm/yyyy"),
+            render: ({ emitted }) => format(new Date(emitted), "dd/MM/yyyy"),
           },
           {
             id: "due",
             field: "due",
             headerName: "Due Date",
             sortable: true,
-            render: ({ due }) => format(new Date(due), "dd/mm/yyyy"),
+            render: ({ due }) => format(new Date(due), "dd/MM/yyyy"),
           },
           {
             id: "customer",

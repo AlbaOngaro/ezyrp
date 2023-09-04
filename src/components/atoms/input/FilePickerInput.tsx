@@ -41,7 +41,7 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
           )}
 
           {typeof value === "string" && !!value ? (
-            <picture className="w-[min(100%,193px)] block relative aspect-[1/1] rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']">
+            <picture className="w-[min(100%,193px)] block relative aspect-[1/1] rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-sm after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']">
               <img
                 src={value}
                 alt="photoUrl"
@@ -49,7 +49,7 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
               />
             </picture>
           ) : (
-            <article className="w-[min(100%,193px)] cursor-pointer bg-indigo-300 text-white aspect-[1/1] flex flex-col justify-center items-center gap-2 text-base not-italic font-semibold leading-[150%] text-center transition-colors duration-300 rounded-xl hover:bg-indigo-400">
+            <article className="w-[min(100%,193px)] cursor-pointer bg-indigo-300 text-white aspect-[1/1] flex flex-col justify-center items-center gap-2 text-sm font-semibold leading-[150%] text-center transition-colors duration-300 rounded-xl hover:bg-indigo-400">
               <ImageIcon /> + Upload Image
             </article>
           )}

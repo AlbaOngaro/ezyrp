@@ -164,7 +164,7 @@ export const createCustomers: MutationResolvers["createCustomers"] = async (
   { accessToken },
 ) => {
   const customers = await z
-    .array(customer.omit({ id: true, workspace: true }))
+    .array(customer.omit({ id: true, lastInvoice: true }))
     .parseAsync(args.createCustomerArgs)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {

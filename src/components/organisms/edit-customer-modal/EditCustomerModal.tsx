@@ -77,6 +77,8 @@ export function EditCustomerModal({
     >
       <Form className="mt-2 flex flex-col gap-2" onSubmit={handleSubmit}>
         <Input
+          label="Profile picture"
+          className="w-fit"
           name="photoUrl"
           type="file"
           value={customer.photoUrl || ""}

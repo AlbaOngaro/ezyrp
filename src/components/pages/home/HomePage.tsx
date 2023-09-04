@@ -135,62 +135,72 @@ export function HomePage() {
               role="list"
               className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8"
             >
-              {customers.customers.map((customer) => (
-                <li
-                  key={customer.id}
-                  className="overflow-hidden rounded-xl border border-gray-200"
-                >
-                  <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-                    <Avatar
-                      photoUrl={customer.photoUrl}
-                      seed={customer.email}
-                    />
-                    <div className="text-sm font-medium leading-6 text-gray-900">
-                      {customer.name}
+              {customers.customers
+                .filter((customer) => !!customer.lastInvoice)
+                .slice(0, 3)
+                .sort(
+                  (a, b) =>
+                    // @ts-ignore
+                    new Date(b?.lastInvoice?.emitted).getTime() -
+                    // @ts-ignore
+                    new Date(a?.lastInvoice?.emitted).getTime(),
+                )
+                .map((customer) => (
+                  <li
+                    key={customer.id}
+                    className="overflow-hidden rounded-xl border border-gray-200"
+                  >
+                    <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                      <Avatar
+                        photoUrl={customer.photoUrl}
+                        seed={customer.email}
+                      />
+                      <div className="text-sm font-medium leading-6 text-gray-900">
+                        {customer.name}
+                      </div>
                     </div>
-                  </div>
 
-                  {customer.lastInvoice && (
-                    <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-                      <div className="flex justify-between gap-x-4 py-3">
-                        <dt className="text-gray-500">Last invoice</dt>
-                        <dd className="text-gray-700">
-                          <time dateTime={customer.lastInvoice.emitted}>
-                            {format(
-                              new Date(customer.lastInvoice.emitted),
-                              "MMMM do, yyyy",
-                            )}
-                          </time>
-                        </dd>
-                      </div>
-                      <div className="flex justify-between gap-x-4 py-3">
-                        <dt className="text-gray-500">Amount</dt>
-                        <dd className="flex items-center gap-x-2">
-                          <div className="font-medium text-gray-900">
-                            {CHF.format(customer.lastInvoice.amount / 100)}
-                          </div>
-                          <Badge
-                            size="sm"
-                            variant={(() => {
-                              switch (customer.lastInvoice.status) {
-                                case "overdue":
-                                  return "danger";
-                                case "paid":
-                                  return "success";
-                                case "pending":
-                                default:
-                                  return "info";
-                              }
-                            })()}
-                          >
-                            {customer.lastInvoice.status}
-                          </Badge>
-                        </dd>
-                      </div>
-                    </dl>
-                  )}
-                </li>
-              ))}
+                    {customer.lastInvoice && (
+                      <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+                        <div className="flex justify-between gap-x-4 py-3">
+                          <dt className="text-gray-500">Last invoice</dt>
+                          <dd className="text-gray-700">
+                            <time dateTime={customer.lastInvoice.emitted}>
+                              {format(
+                                new Date(customer.lastInvoice.emitted),
+                                "MMMM do, yyyy",
+                              )}
+                            </time>
+                          </dd>
+                        </div>
+                        <div className="flex justify-between gap-x-4 py-3">
+                          <dt className="text-gray-500">Amount</dt>
+                          <dd className="flex items-center gap-x-2">
+                            <div className="font-medium text-gray-900">
+                              {CHF.format(customer.lastInvoice.amount / 100)}
+                            </div>
+                            <Badge
+                              size="sm"
+                              variant={(() => {
+                                switch (customer.lastInvoice.status) {
+                                  case "overdue":
+                                    return "danger";
+                                  case "paid":
+                                    return "success";
+                                  case "pending":
+                                  default:
+                                    return "info";
+                                }
+                              })()}
+                            >
+                              {customer.lastInvoice.status}
+                            </Badge>
+                          </dd>
+                        </div>
+                      </dl>
+                    )}
+                  </li>
+                ))}
             </ul>
           )}
         </div>

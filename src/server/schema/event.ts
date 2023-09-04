@@ -26,7 +26,7 @@ export const event = z.object({
   end: z.string().datetime(),
   title: z.string(),
   variant: z.enum(variants).default("blue"),
-  guests: z.array(customer).default([]),
+  guests: z.array(customer.omit({ lastInvoice: true })).default([]),
 });
 
 export const createEventInput = z.object({
