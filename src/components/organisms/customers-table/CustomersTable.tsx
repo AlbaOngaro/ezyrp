@@ -28,7 +28,7 @@ export function CustomersTable() {
 
   return (
     <>
-      <Table<Customer>
+      <Table<Omit<Customer, "lastInvoice">>
         className="px-12"
         withMultiSelect
         withContextMenu
