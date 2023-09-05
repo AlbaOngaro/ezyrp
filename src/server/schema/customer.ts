@@ -28,3 +28,9 @@ export const inputCustomerFilters = z
     name: true,
     phone: true,
   });
+
+export const inputCustomersOrderBy = z
+  .object({
+    lastInvoice: z.string(),
+  })
+  .partial();

@@ -5,7 +5,10 @@ export const typeDefs = gql`
     user: User
 
     customer(id: ID!): Customer!
-    customers(filters: InputCustomersFilters): PagedCustomersResponse
+    customers(
+      filters: InputCustomersFilters
+      orderBy: InputCustomersOrderBy
+    ): PagedCustomersResponse
 
     invoice(id: ID!): Invoice!
     invoices(filters: InputInvoicesFilters): PagedInvoicesResponse
@@ -83,6 +86,15 @@ export const typeDefs = gql`
     email: String
     name: String
     phone: String
+  }
+
+  enum Sort {
+    asc
+    desc
+  }
+
+  input InputCustomersOrderBy {
+    lastInvoice: Sort
   }
 
   input InputCreateCustomerArgs {

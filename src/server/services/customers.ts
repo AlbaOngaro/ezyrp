@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 import { surreal } from "server/surreal";
-import { customer, inputCustomerFilters } from "server/schema/customer";
+import {
+  customer,
+  inputCustomerFilters,
+  inputCustomersOrderBy,
+} from "server/schema/customer";
 import { Service } from "server/services/service";
 import {
   Customer,
@@ -44,14 +48,14 @@ export class CustomersService extends Service {
     return customer.parse(result[0]);
   }
 
-  async list({
-    limit,
-    start,
-    ...rest
-  }: z.infer<typeof inputCustomerFilters>): Promise<PagedCustomersResponse> {
+  async list(
+    { limit, start, ...rest }: z.infer<typeof inputCustomerFilters>,
+    orderBy: z.infer<typeof inputCustomersOrderBy>,
+  ): Promise<PagedCustomersResponse> {
     await surreal.authenticate(this.token);
 
     const filters = Object.entries(rest);
+    const orderByArray = Object.entries(orderBy);
 
     if (filters.length > 0) {
       const result = await surreal.query<[Customer[], { total: number }[]]>(
@@ -71,8 +75,15 @@ export class CustomersService extends Service {
             ${filters
               .map(([key, value]) => `${key} ~ "${value}"`)
               .join("AND \n")}
-          LIMIT ${limit}
-          START ${start};
+          ${
+            orderByArray.length > 0
+              ? `ORDER BY ${orderByArray.map(
+                  ([key, value]) => `${key} ${value}`,
+                )}`
+              : ""
+          }
+          LIMIT $limit
+          START $start;
 
           SELECT 
             count() AS total
@@ -83,6 +94,10 @@ export class CustomersService extends Service {
               .join("AND \n")}
           GROUP ALL;
         `,
+        {
+          start,
+          limit,
+        },
       );
 
       try {
@@ -107,7 +122,8 @@ export class CustomersService extends Service {
       }
     }
 
-    const result = await surreal.query<[Customer[], { total: number }[]]>(`
+    const result = await surreal.query<[Customer[], { total: number }[]]>(
+      `
       SELECT *, 
       (SELECT 
           *, 
@@ -118,14 +134,24 @@ export class CustomersService extends Service {
         ORDER BY emitted 
         LIMIT 1)[0] as lastInvoice  
       FROM customer
-      LIMIT ${limit}
-      START ${start};
+      ${
+        orderByArray.length > 0
+          ? `ORDER BY ${orderByArray.map(([key, value]) => `${key} ${value}`)}`
+          : ""
+      }
+      LIMIT $limit
+      START $start;
 
       SELECT 
         count() AS total
       FROM customer
       GROUP ALL;
-    `);
+    `,
+      {
+        start,
+        limit,
+      },
+    );
 
     try {
       const results = await z.array(customer).parseAsync(result[0].result);

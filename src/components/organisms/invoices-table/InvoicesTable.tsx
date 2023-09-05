@@ -4,19 +4,20 @@ import {
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
-
 import { format } from "date-fns";
 import Link from "next/link";
 import { Link2Icon } from "@radix-ui/react-icons";
+
 import { Invoice } from "__generated__/graphql";
 
-import { Table } from "components/atoms/table/Table";
 import { useInvoices } from "hooks/useInvoices";
 
+import { Table } from "components/atoms/table/Table";
 import { Button } from "components/atoms/button/Button";
 import { Badge } from "components/atoms/badge/Badge";
-import { EditInvoiceModal } from "components/organisms/edit-invoice-modal/EditInvoiceModal";
 import { Dialog } from "components/atoms/dialog/Dialog";
+
+import { EditInvoiceModal } from "components/organisms/edit-invoice-modal/EditInvoiceModal";
 
 export function InvoicesTable() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
@@ -26,10 +27,13 @@ export function InvoicesTable() {
 
   const invoices = useInvoices();
 
+  if (invoices.isLoading || !invoices.data || !invoices.data.invoices) {
+    return null;
+  }
+
   return (
     <>
-      {/* @ts-ignore */}
-      <Table<Omit<Invoice, "items">>
+      <Table<Invoice>
         withMultiSelect
         withContextMenu
         contextMenuItems={[
@@ -119,7 +123,7 @@ export function InvoicesTable() {
             render: (row) => (row.amount / 100).toFixed(2),
           },
         ]}
-        rows={(invoices?.data?.invoices || []) as Invoice[]}
+        rows={invoices.data.invoices.results}
         renderSelectedActions={(rows) => (
           <DialogRoot>
             <DialogTrigger asChild>

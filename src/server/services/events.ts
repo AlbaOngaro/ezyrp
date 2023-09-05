@@ -20,21 +20,26 @@ export class EventsService extends Service {
   ): Promise<Event[]> {
     await surreal.authenticate(this.token);
 
-    await surreal.query<Event[]>(
-      `INSERT INTO event (start, end, title, variant, guests) VALUES ${events
-        .map(
-          ({ start, end, title, variant, guests }) =>
-            `("${start}", "${end}", "${title}", "${variant}", ${JSON.stringify(
-              guests,
-            )})`,
-        )
-        .join(",")}`,
-    );
+    console.debug("create event!");
+
+    await surreal
+      .query<Event[]>(
+        `INSERT INTO event (start, end, title, variant, guests) VALUES ${events
+          .map(
+            ({ start, end, title, variant, guests }) =>
+              `("${start}", "${end}", "${title}", "${variant}", ${JSON.stringify(
+                guests,
+              )})`,
+          )
+          .join(",")}`,
+      )
+      .catch(console.error);
 
     try {
       // @ts-ignore
       return this.list();
     } catch (error: unknown) {
+      console.error(error);
       return [];
     }
   }
@@ -59,6 +64,7 @@ export class EventsService extends Service {
     try {
       return z.array(event).parse(result[0].result);
     } catch (error: unknown) {
+      console.error(error);
       return [];
     }
   }

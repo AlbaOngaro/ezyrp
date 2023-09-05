@@ -102,6 +102,10 @@ export type InputCustomersFilters = {
   start?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type InputCustomersOrderBy = {
+  lastInvoice?: InputMaybe<Sort>;
+};
+
 export type InputInvoicesFilters = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   start?: InputMaybe<Scalars['Int']['input']>;
@@ -319,6 +323,7 @@ export type QueryCustomerArgs = {
 
 export type QueryCustomersArgs = {
   filters?: InputMaybe<InputCustomersFilters>;
+  orderBy?: InputMaybe<InputCustomersOrderBy>;
 };
 
 
@@ -340,6 +345,11 @@ export type QueryInvoicesArgs = {
 export type QueryStatsArgs = {
   filters?: InputMaybe<InputStatsFilters>;
 };
+
+export enum Sort {
+  Asc = 'asc',
+  Desc = 'desc'
+}
 
 export type Stat = {
   __typename?: 'Stat';
@@ -458,6 +468,7 @@ export type ResolversTypes = ResolversObject<{
   InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCustomersFilters: InputCustomersFilters;
+  InputCustomersOrderBy: InputCustomersOrderBy;
   InputInvoicesFilters: InputInvoicesFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;
@@ -478,6 +489,7 @@ export type ResolversTypes = ResolversObject<{
   PagedSearchResponse: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['PagedSearchResponse']>;
   Profile: ResolverTypeWrapper<Profile>;
   Query: ResolverTypeWrapper<{}>;
+  Sort: Sort;
   Stat: ResolverTypeWrapper<Stat>;
   Stats: ResolverTypeWrapper<Stats>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -500,6 +512,7 @@ export type ResolversParentTypes = ResolversObject<{
   InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCustomersFilters: InputCustomersFilters;
+  InputCustomersOrderBy: InputCustomersOrderBy;
   InputInvoicesFilters: InputInvoicesFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;

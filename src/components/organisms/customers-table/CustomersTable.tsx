@@ -22,13 +22,13 @@ export function CustomersTable() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (customers.isLoading || !customers.data) {
+  if (customers.isLoading || !customers.data || !customers.data.customers) {
     return null;
   }
 
   return (
     <>
-      <Table<Omit<Customer, "lastInvoice">>
+      <Table<Customer>
         className="px-12"
         withMultiSelect
         withContextMenu
@@ -76,7 +76,7 @@ export function CustomersTable() {
             headerName: "Phone",
           },
         ]}
-        rows={customers.data.customers as Customer[]}
+        rows={customers.data.customers.results}
         renderSelectedActions={(rows) => (
           <DialogRoot>
             <DialogTrigger asChild>
