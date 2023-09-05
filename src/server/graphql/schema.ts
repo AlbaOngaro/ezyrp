@@ -5,10 +5,10 @@ export const typeDefs = gql`
     user: User
 
     customer(id: ID!): Customer!
-    customers(filters: InputCustomersFilters): [Customer!]!
+    customers(filters: InputCustomersFilters): PagedCustomersResponse
 
     invoice(id: ID!): Invoice!
-    invoices: [Invoice!]!
+    invoices: PagedInvoicesResponse
 
     event(id: ID!): Event!
     events: [Event!]!
@@ -78,6 +78,8 @@ export const typeDefs = gql`
   }
 
   input InputCustomersFilters {
+    start: Int
+    limit: Int
     email: String
     name: String
     phone: String
@@ -224,5 +226,22 @@ export const typeDefs = gql`
     signature: String!
     cloudname: String!
     apiKey: String!
+  }
+
+  union Pageable = Customer | Invoice
+
+  interface PagedSearchResponse {
+    hasNextPage: Boolean!
+    results: [Pageable!]!
+  }
+
+  type PagedCustomersResponse implements PagedSearchResponse {
+    hasNextPage: Boolean!
+    results: [Customer!]!
+  }
+
+  type PagedInvoicesResponse implements PagedSearchResponse {
+    hasNextPage: Boolean!
+    results: [Invoice!]!
   }
 `;

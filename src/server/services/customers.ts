@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 import { surreal } from "server/surreal";
-import { customer } from "server/schema/customer";
+import { customer, inputCustomerFilters } from "server/schema/customer";
 import { Service } from "server/services/service";
 import {
   Customer,
   MutationCreateCustomersArgs,
+  PagedCustomersResponse,
   QueryCustomerArgs,
-  QueryCustomersArgs,
 } from "__generated__/server";
 
 export class CustomersService extends Service {
@@ -44,50 +44,70 @@ export class CustomersService extends Service {
     return customer.parse(result[0]);
   }
 
-  async list(filters?: QueryCustomersArgs["filters"]): Promise<Customer[]> {
+  async list({
+    limit,
+    start,
+    ...rest
+  }: z.infer<typeof inputCustomerFilters>): Promise<PagedCustomersResponse> {
     await surreal.authenticate(this.token);
 
-    if (filters) {
-      const tmp = Object.entries(filters);
-      const result = await surreal.query<Customer[]>(
-        tmp.length === 0
-          ? `SELECT 
+    const filters = Object.entries(rest);
+
+    if (filters.length > 0) {
+      const result = await surreal.query<[Customer[], { total: number }[]]>(
+        `
+          SELECT 
+            *, 
+            (SELECT 
               *, 
-              (SELECT 
-                *, 
-                math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
-                IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
-              FROM invoice 
-              WHERE customer = $parent.id 
-              ORDER BY emitted 
-              LIMIT 1)[0] as lastInvoice 
-            FROM customer;`
-          : `
-            SELECT 
-              *, 
-              (SELECT 
-                *, 
-                math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
-                IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status 
-              FROM invoice
-              WHERE customer = $parent.id 
-              ORDER BY emitted 
-              LIMIT 1)[0] as lastInvoice 
-            FROM customer
-            WHERE 
-              ${tmp.map(([key, value]) => `${key} ~ "${value}"`).join("AND \n")}
+              math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+              IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status 
+            FROM invoice
+            WHERE customer = $parent.id 
+            ORDER BY emitted 
+            LIMIT 1)[0] as lastInvoice 
+          FROM customer
+          WHERE 
+            ${filters
+              .map(([key, value]) => `${key} ~ "${value}"`)
+              .join("AND \n")}
+          LIMIT ${limit}
+          START ${start};
+
+          SELECT 
+            count() AS total
+          FROM customer
+          WHERE 
+            ${filters
+              .map(([key, value]) => `${key} ~ "${value}"`)
+              .join("AND \n")}
+          GROUP ALL;
         `,
       );
 
       try {
-        return z.array(customer).parse(result[0].result);
+        const results = await z.array(customer).parseAsync(result[0].result);
+        const [{ total }] = z
+          .array(
+            z.object({
+              total: z.number(),
+            }),
+          )
+          .parse(result[1].result);
+
+        return {
+          hasNextPage: total > results.length,
+          results,
+        };
       } catch (error: unknown) {
-        console.error(error);
-        return [];
+        return {
+          hasNextPage: false,
+          results: [],
+        };
       }
     }
 
-    const result = await surreal.query<Customer[]>(`
+    const result = await surreal.query<[Customer[], { total: number }[]]>(`
       SELECT *, 
       (SELECT 
           *, 
@@ -97,12 +117,35 @@ export class CustomersService extends Service {
         WHERE customer = $parent.id 
         ORDER BY emitted 
         LIMIT 1)[0] as lastInvoice  
-      FROM customer`);
+      FROM customer
+      LIMIT ${limit}
+      START ${start};
+
+      SELECT 
+        count() AS total
+      FROM customer
+      GROUP ALL;
+    `);
 
     try {
-      return z.array(customer).parse(result[0].result);
+      const results = await z.array(customer).parseAsync(result[0].result);
+      const [{ total }] = z
+        .array(
+          z.object({
+            total: z.number(),
+          }),
+        )
+        .parse(result[1].result);
+
+      return {
+        hasNextPage: total > results.length,
+        results,
+      };
     } catch (error: unknown) {
-      return [];
+      return {
+        hasNextPage: false,
+        results: [],
+      };
     }
   }
 

@@ -14,3 +14,17 @@ export const customer = z.object({
     })
     .nullable(),
 });
+
+export const inputCustomerFilters = z
+  .object({
+    start: z.number().default(0),
+    limit: z.number().default(10),
+    email: z.string(),
+    name: z.string(),
+    phone: z.string(),
+  })
+  .partial({
+    email: true,
+    name: true,
+    phone: true,
+  });

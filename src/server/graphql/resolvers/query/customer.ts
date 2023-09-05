@@ -1,4 +1,5 @@
 import { QueryResolvers } from "__generated__/server";
+import { inputCustomerFilters } from "server/schema/customer";
 
 import { CustomersService } from "server/services/customers";
 
@@ -17,5 +18,5 @@ export const customers: QueryResolvers["customers"] = async (
   { accessToken },
 ) => {
   const customersService = new CustomersService(accessToken as string);
-  return customersService.list(args.filters);
+  return customersService.list(inputCustomerFilters.parse(args.filters || {}));
 };

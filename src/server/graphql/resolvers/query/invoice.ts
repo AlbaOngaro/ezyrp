@@ -17,5 +17,10 @@ export const invoices: QueryResolvers["invoices"] = async (
   { accessToken },
 ) => {
   const invoicesService = new InvoicesService(accessToken as string);
-  return invoicesService.list();
+  const results = await invoicesService.list();
+
+  return {
+    hasNextPage: false,
+    results,
+  };
 };
