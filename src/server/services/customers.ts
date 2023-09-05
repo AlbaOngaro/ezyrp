@@ -177,10 +177,10 @@ export class CustomersService extends Service {
 
   async update(
     customers: (Partial<Customer> & { id: Customer["id"] })[],
-  ): Promise<void> {
+  ): Promise<Customer[]> {
     await surreal.authenticate(this.token);
 
-    await surreal.query(`
+    const result = await surreal.query<Customer[]>(`
       BEGIN TRANSACTION;
 
       ${customers
@@ -192,6 +192,19 @@ export class CustomersService extends Service {
 
       COMMIT TRANSACTION;
     `);
+
+    try {
+      return z
+        .array(
+          customer.partial({
+            lastInvoice: true,
+          }),
+        )
+        .parse(result[0].result);
+    } catch (error: unknown) {
+      console.debug(error);
+      return [];
+    }
   }
 
   async delete(ids: Customer["id"][]): Promise<void> {

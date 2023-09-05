@@ -104,8 +104,8 @@ export function CustomersTable() {
       <ModalRoot
         open={isModalOpen}
         onOpenChange={(state) => {
-          setIsModalOpen(state);
           setCustomer(null);
+          setIsModalOpen(state);
         }}
       >
         {customer ? (

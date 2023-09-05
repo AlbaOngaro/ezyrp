@@ -49,8 +49,7 @@ export const updateCustomers: MutationResolvers["updateCustomers"] = async (
     });
 
   const customersService = new CustomersService(accessToken as string);
-  customersService.update(customers);
-  return customersService.list();
+  return customersService.update(customers);
 };
 
 export const deleteCustomers: MutationResolvers["deleteCustomers"] = async (

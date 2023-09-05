@@ -151,8 +151,8 @@ export function InvoicesTable() {
       <ModalRoot
         open={isModalOpen}
         onOpenChange={(state) => {
-          setIsModalOpen(state);
           setInvoice(null);
+          setIsModalOpen(state);
         }}
       >
         {invoice ? (
