@@ -1,13 +1,16 @@
 import { graphql } from "__generated__";
 
-export const CUSTOMERS = graphql(/* GraphQL */ `
+export const CUSTOMERS = graphql(`
   query getCustomers($filters: InputCustomersFilters = {}) {
     customers(filters: $filters) {
-      id
-      email
-      name
-      phone
-      photoUrl
+      hasNextPage
+      results {
+        id
+        email
+        name
+        phone
+        photoUrl
+      }
     }
   }
 `);

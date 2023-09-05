@@ -96,8 +96,19 @@ export type InputCreateInvoicesArgs = {
 
 export type InputCustomersFilters = {
   email?: InputMaybe<Scalars['String']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
+  start?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type InputCustomersOrderBy = {
+  lastInvoice?: InputMaybe<Sort>;
+};
+
+export type InputInvoicesFilters = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  start?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputLoginCredentials = {
@@ -261,6 +272,25 @@ export type MutationUpdateUserProfileArgs = {
   updateUserProfileArgs: InputUpdateUserProfileArgs;
 };
 
+export type Pageable = Customer | Invoice;
+
+export type PagedCustomersResponse = PagedSearchResponse & {
+  __typename?: 'PagedCustomersResponse';
+  hasNextPage: Scalars['Boolean']['output'];
+  results: Array<Customer>;
+};
+
+export type PagedInvoicesResponse = PagedSearchResponse & {
+  __typename?: 'PagedInvoicesResponse';
+  hasNextPage: Scalars['Boolean']['output'];
+  results: Array<Invoice>;
+};
+
+export type PagedSearchResponse = {
+  hasNextPage: Scalars['Boolean']['output'];
+  results: Array<Pageable>;
+};
+
 export type Profile = {
   __typename?: 'Profile';
   address: Scalars['String']['output'];
@@ -275,12 +305,12 @@ export type Query = {
   __typename?: 'Query';
   countries: Array<Country>;
   customer: Customer;
-  customers: Array<Customer>;
+  customers?: Maybe<PagedCustomersResponse>;
   event: Event;
   events: Array<Event>;
   getCloudinarySignature: CloudinarySignature;
   invoice: Invoice;
-  invoices: Array<Invoice>;
+  invoices?: Maybe<PagedInvoicesResponse>;
   stats: Stats;
   user?: Maybe<User>;
 };
@@ -293,6 +323,7 @@ export type QueryCustomerArgs = {
 
 export type QueryCustomersArgs = {
   filters?: InputMaybe<InputCustomersFilters>;
+  orderBy?: InputMaybe<InputCustomersOrderBy>;
 };
 
 
@@ -306,9 +337,19 @@ export type QueryInvoiceArgs = {
 };
 
 
+export type QueryInvoicesArgs = {
+  filters?: InputMaybe<InputInvoicesFilters>;
+};
+
+
 export type QueryStatsArgs = {
   filters?: InputMaybe<InputStatsFilters>;
 };
+
+export enum Sort {
+  Asc = 'asc',
+  Desc = 'desc'
+}
 
 export type Stat = {
   __typename?: 'Stat';
@@ -401,7 +442,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes<RefType extends Record<string, unknown>> = ResolversObject<{
+  Pageable: ( Customer ) | ( Invoice );
+}>;
 
+/** Mapping of interface types */
+export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = ResolversObject<{
+  PagedSearchResponse: ( PagedCustomersResponse ) | ( PagedInvoicesResponse );
+}>;
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
@@ -419,6 +468,8 @@ export type ResolversTypes = ResolversObject<{
   InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCustomersFilters: InputCustomersFilters;
+  InputCustomersOrderBy: InputCustomersOrderBy;
+  InputInvoicesFilters: InputInvoicesFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;
   InputStatsFilters: InputStatsFilters;
@@ -432,8 +483,13 @@ export type ResolversTypes = ResolversObject<{
   Item: ResolverTypeWrapper<Item>;
   LastInvoice: ResolverTypeWrapper<LastInvoice>;
   Mutation: ResolverTypeWrapper<{}>;
+  Pageable: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['Pageable']>;
+  PagedCustomersResponse: ResolverTypeWrapper<PagedCustomersResponse>;
+  PagedInvoicesResponse: ResolverTypeWrapper<PagedInvoicesResponse>;
+  PagedSearchResponse: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['PagedSearchResponse']>;
   Profile: ResolverTypeWrapper<Profile>;
   Query: ResolverTypeWrapper<{}>;
+  Sort: Sort;
   Stat: ResolverTypeWrapper<Stat>;
   Stats: ResolverTypeWrapper<Stats>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -456,6 +512,8 @@ export type ResolversParentTypes = ResolversObject<{
   InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCustomersFilters: InputCustomersFilters;
+  InputCustomersOrderBy: InputCustomersOrderBy;
+  InputInvoicesFilters: InputInvoicesFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;
   InputStatsFilters: InputStatsFilters;
@@ -469,6 +527,10 @@ export type ResolversParentTypes = ResolversObject<{
   Item: Item;
   LastInvoice: LastInvoice;
   Mutation: {};
+  Pageable: ResolversUnionTypes<ResolversParentTypes>['Pageable'];
+  PagedCustomersResponse: PagedCustomersResponse;
+  PagedInvoicesResponse: PagedInvoicesResponse;
+  PagedSearchResponse: ResolversInterfaceTypes<ResolversParentTypes>['PagedSearchResponse'];
   Profile: Profile;
   Query: {};
   Stat: Stat;
@@ -566,6 +628,28 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   updateUserProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserProfileArgs, 'updateUserProfileArgs'>>;
 }>;
 
+export type PageableResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Pageable'] = ResolversParentTypes['Pageable']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Customer' | 'Invoice', ParentType, ContextType>;
+}>;
+
+export type PagedCustomersResponseResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['PagedCustomersResponse'] = ResolversParentTypes['PagedCustomersResponse']> = ResolversObject<{
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PagedInvoicesResponseResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['PagedInvoicesResponse'] = ResolversParentTypes['PagedInvoicesResponse']> = ResolversObject<{
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['Invoice']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PagedSearchResponseResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['PagedSearchResponse'] = ResolversParentTypes['PagedSearchResponse']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'PagedCustomersResponse' | 'PagedInvoicesResponse', ParentType, ContextType>;
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  results?: Resolver<Array<ResolversTypes['Pageable']>, ParentType, ContextType>;
+}>;
+
 export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Profile'] = ResolversParentTypes['Profile']> = ResolversObject<{
   address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -579,12 +663,12 @@ export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends Re
 export type QueryResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   countries?: Resolver<Array<ResolversTypes['Country']>, ParentType, ContextType>;
   customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'id'>>;
-  customers?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType, Partial<QueryCustomersArgs>>;
+  customers?: Resolver<Maybe<ResolversTypes['PagedCustomersResponse']>, ParentType, ContextType, Partial<QueryCustomersArgs>>;
   event?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   getCloudinarySignature?: Resolver<ResolversTypes['CloudinarySignature'], ParentType, ContextType>;
   invoice?: Resolver<ResolversTypes['Invoice'], ParentType, ContextType, RequireFields<QueryInvoiceArgs, 'id'>>;
-  invoices?: Resolver<Array<ResolversTypes['Invoice']>, ParentType, ContextType>;
+  invoices?: Resolver<Maybe<ResolversTypes['PagedInvoicesResponse']>, ParentType, ContextType, Partial<QueryInvoicesArgs>>;
   stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType, Partial<QueryStatsArgs>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
@@ -623,6 +707,10 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   Item?: ItemResolvers<ContextType>;
   LastInvoice?: LastInvoiceResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Pageable?: PageableResolvers<ContextType>;
+  PagedCustomersResponse?: PagedCustomersResponseResolvers<ContextType>;
+  PagedInvoicesResponse?: PagedInvoicesResponseResolvers<ContextType>;
+  PagedSearchResponse?: PagedSearchResponseResolvers<ContextType>;
   Profile?: ProfileResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;

@@ -5,10 +5,13 @@ export const typeDefs = gql`
     user: User
 
     customer(id: ID!): Customer!
-    customers(filters: InputCustomersFilters): [Customer!]!
+    customers(
+      filters: InputCustomersFilters
+      orderBy: InputCustomersOrderBy
+    ): PagedCustomersResponse
 
     invoice(id: ID!): Invoice!
-    invoices: [Invoice!]!
+    invoices(filters: InputInvoicesFilters): PagedInvoicesResponse
 
     event(id: ID!): Event!
     events: [Event!]!
@@ -24,7 +27,6 @@ export const typeDefs = gql`
     logout: Boolean
     login(credentials: InputLoginCredentials): User
     register(credentials: InputRegisterCredentials): User
-
     updateUserProfile(updateUserProfileArgs: InputUpdateUserProfileArgs!): User
 
     createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
@@ -79,9 +81,20 @@ export const typeDefs = gql`
   }
 
   input InputCustomersFilters {
+    start: Int
+    limit: Int
     email: String
     name: String
     phone: String
+  }
+
+  enum Sort {
+    asc
+    desc
+  }
+
+  input InputCustomersOrderBy {
+    lastInvoice: Sort
   }
 
   input InputCreateCustomerArgs {
@@ -143,6 +156,11 @@ export const typeDefs = gql`
     items: [InputUpdateInvoiceItems]
     due: String
     emitted: String
+  }
+
+  input InputInvoicesFilters {
+    start: Int
+    limit: Int
   }
 
   type Item {
@@ -225,5 +243,22 @@ export const typeDefs = gql`
     signature: String!
     cloudname: String!
     apiKey: String!
+  }
+
+  union Pageable = Customer | Invoice
+
+  interface PagedSearchResponse {
+    hasNextPage: Boolean!
+    results: [Pageable!]!
+  }
+
+  type PagedCustomersResponse implements PagedSearchResponse {
+    hasNextPage: Boolean!
+    results: [Customer!]!
+  }
+
+  type PagedInvoicesResponse implements PagedSearchResponse {
+    hasNextPage: Boolean!
+    results: [Invoice!]!
   }
 `;

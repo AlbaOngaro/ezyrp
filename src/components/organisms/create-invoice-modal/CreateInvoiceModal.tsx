@@ -17,7 +17,8 @@ import { Select } from "components/atoms/select/Select";
 import { useCustomers } from "hooks/useCustomers";
 import { TextArea } from "components/atoms/textarea/TextArea";
 import { Input } from "components/atoms/input/Input";
-import { Customer, InputCreateInvoicesArgs } from "__generated__/graphql";
+
+import { InputCreateInvoicesArgs } from "__generated__/graphql";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -30,7 +31,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
   const [invoice, setInvoice] = useState<InputCreateInvoicesArgs>({
     description: "",
     status: "pending",
-    customer: customers?.data?.customers?.at(0)?.id || "",
+    customer: customers?.data?.customers?.results?.at(0)?.id || "",
     items: [],
     due: new Date().toISOString(),
     emitted: new Date().toISOString(),
@@ -40,7 +41,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
     if (!customers.isLoading && customers.data) {
       setInvoice((curr) => ({
         ...curr,
-        customer: customers?.data?.customers?.at(0)?.id || "",
+        customer: customers?.data?.customers?.results?.at(0)?.id || "",
       }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,7 +53,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
       setInvoice({
         description: "",
         status: "pending",
-        customer: customers?.data?.customers?.at(0)?.id || "",
+        customer: customers?.data?.customers?.results?.at(0)?.id || "",
         items: [],
         due: new Date().toISOString(),
         emitted: new Date().toISOString(),
@@ -91,22 +92,22 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
     >
       <Form className="mt-2 flex flex-col gap-2" onSubmit={handleSubmit}>
         <h6 className="uppercase text-indigo-700 font-bold my-2">bill to</h6>
-        <Select
-          label="Customer"
-          name="customer"
-          options={((customers?.data?.customers || []) as Customer[]).map(
-            (customer) => ({
+        {!customers.isLoading && customers.data && customers.data.customers && (
+          <Select
+            label="Customer"
+            name="customer"
+            options={customers.data.customers.results?.map((customer) => ({
               label: customer.name,
               value: customer.id,
-            }),
-          )}
-          onChange={(customer) =>
-            setInvoice((curr) => ({
-              ...curr,
-              customer,
-            }))
-          }
-        />
+            }))}
+            onChange={(customer) =>
+              setInvoice((curr) => ({
+                ...curr,
+                customer,
+              }))
+            }
+          />
+        )}
 
         <h6 className="uppercase text-indigo-700 font-bold my-2">details</h6>
         <TextArea

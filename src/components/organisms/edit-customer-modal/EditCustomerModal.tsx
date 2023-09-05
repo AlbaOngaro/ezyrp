@@ -37,7 +37,7 @@ export function EditCustomerModal({
       "input[type=file]",
     )?.files;
 
-    if (files) {
+    if (files && files[0]) {
       const photoUrl = await handleFileUpload(files[0]);
       try {
         await update({
@@ -157,10 +157,6 @@ export function EditCustomerModal({
               phone: e.target.value,
             }))
           }
-          required
-          validations={{
-            valueMissing: "This field is required",
-          }}
         />
 
         <Button size="lg" className="w-fit min-w-[100px] mt-4 ml-auto">

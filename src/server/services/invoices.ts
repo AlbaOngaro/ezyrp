@@ -1,13 +1,14 @@
 import { z } from "zod";
 
 import { surreal } from "server/surreal";
-import { invoice } from "server/schema/invoice";
+import { inputInvoiceFilters, invoice } from "server/schema/invoice";
 import { Service } from "server/services/service";
 import {
   QueryInvoiceArgs,
   Invoice,
   MutationCreateInvoicesArgs,
   MutationUpdateInvoicesArgs,
+  PagedInvoicesResponse,
 } from "__generated__/server";
 
 export class InvoicesService extends Service {
@@ -20,7 +21,7 @@ export class InvoicesService extends Service {
   ): Promise<Invoice[]> {
     await surreal.authenticate(this.token);
 
-    await surreal.query<Invoice[]>(`
+    const result = await surreal.query<Invoice[]>(`
       INSERT INTO invoice (customer, description, status, items, due, emitted) VALUES ${invoices
         .map(
           ({ customer, description, status, items, due, emitted }) =>
@@ -32,7 +33,7 @@ export class InvoicesService extends Service {
     `);
 
     try {
-      return this.list();
+      return z.array(invoice).parse(result[0].result);
     } catch (error: unknown) {
       console.error(error);
       return [];
@@ -54,23 +55,53 @@ export class InvoicesService extends Service {
     return invoice.parse(result[0]);
   }
 
-  async list(): Promise<Invoice[]> {
+  async list({
+    limit,
+    start,
+  }: z.infer<typeof inputInvoiceFilters>): Promise<PagedInvoicesResponse> {
     await surreal.authenticate(this.token);
 
-    const result = await surreal.query<Invoice[]>(
+    const result = await surreal.query<[Invoice[], { total: number }[]]>(
       `SELECT 
         *, 
         math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
         IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
       FROM invoice
-      FETCH customer`,
+      LIMIT $limit
+      START $start
+      FETCH customer;
+      
+      SELECT 
+        count() AS total
+      FROM invoice
+      GROUP ALL;
+      `,
+      {
+        limit,
+        start,
+      },
     );
 
     try {
-      return z.array(invoice).parse(result[0].result);
+      const results = z.array(invoice).parse(result[0].result);
+      const [{ total }] = z
+        .array(
+          z.object({
+            total: z.number(),
+          }),
+        )
+        .parse(result[1].result);
+
+      return {
+        hasNextPage: total > results.length,
+        results,
+      };
     } catch (error: unknown) {
       console.error(error);
-      return [];
+      return {
+        hasNextPage: false,
+        results: [],
+      };
     }
   }
 
@@ -95,7 +126,7 @@ export class InvoicesService extends Service {
       COMMIT TRANSACTION;
     `);
 
-    return this.list();
+    return [];
   }
 
   async delete(ids: Invoice["id"][]): Promise<Invoice["id"][]> {

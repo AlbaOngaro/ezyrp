@@ -9,7 +9,7 @@ import { Select } from "components/atoms/select/Select";
 import { useInvoices } from "hooks/useInvoices";
 import { useCustomers } from "hooks/useCustomers";
 
-import { Customer, Invoice } from "__generated__/graphql";
+import { Invoice } from "__generated__/graphql";
 import { InputUpdateInvoicesArgs } from "__generated__/server";
 
 interface Props extends Omit<Invoice, "workspace" | "amount"> {
@@ -104,20 +104,22 @@ export function EditInvoiceModal({
           ]}
         />
 
-        <Select
-          label="Customer"
-          name="customer"
-          options={(customers.data.customers as Customer[]).map((customer) => ({
-            label: customer.name,
-            value: customer.id,
-          }))}
-          onChange={(customer) =>
-            setInvoice((curr) => ({
-              ...curr,
-              customer,
-            }))
-          }
-        />
+        {!customers.isLoading && customers.data && customers.data.customers && (
+          <Select
+            label="Customer"
+            name="customer"
+            options={customers.data.customers.results.map((customer) => ({
+              label: customer.name,
+              value: customer.id,
+            }))}
+            onChange={(customer) =>
+              setInvoice((curr) => ({
+                ...curr,
+                customer,
+              }))
+            }
+          />
+        )}
 
         <Button size="lg" className="w-fit min-w-[100px] mt-4 ml-auto">
           Save

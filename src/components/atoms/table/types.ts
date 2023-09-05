@@ -12,7 +12,8 @@ export type FlattenObjectKeys<
 
 type Extract<T, U> = T extends U ? T : never;
 
-export interface Row extends Record<string, ReactNode | Row> {
+export interface Row
+  extends Record<string, ReactNode | Partial<Row> | Partial<Row>[]> {
   id: string;
 }
 

@@ -41,7 +41,12 @@ export function HomePage() {
 
   const [timeSpan, setTimeSpan] = useState<number>(7);
 
-  if (isCustomersLoading || isStatsLoading) {
+  if (
+    isCustomersLoading ||
+    isStatsLoading ||
+    !customers ||
+    !customers.customers
+  ) {
     return null;
   }
 
@@ -121,7 +126,7 @@ export function HomePage() {
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Recent clients
+              Recent customers
             </h2>
             <Link
               href="/customers"
@@ -135,17 +140,12 @@ export function HomePage() {
               role="list"
               className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8"
             >
-              {customers.customers
-                .filter((customer) => !!customer.lastInvoice)
-                .slice(0, 3)
-                .sort(
-                  (a, b) =>
-                    // @ts-ignore
-                    new Date(b?.lastInvoice?.emitted).getTime() -
-                    // @ts-ignore
-                    new Date(a?.lastInvoice?.emitted).getTime(),
-                )
-                .map((customer) => (
+              {customers.customers.results.map((customer) => {
+                if (!customer.lastInvoice) {
+                  return null;
+                }
+
+                return (
                   <li
                     key={customer.id}
                     className="overflow-hidden rounded-xl border border-gray-200"
@@ -160,47 +160,46 @@ export function HomePage() {
                       </div>
                     </div>
 
-                    {customer.lastInvoice && (
-                      <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-                        <div className="flex justify-between gap-x-4 py-3">
-                          <dt className="text-gray-500">Last invoice</dt>
-                          <dd className="text-gray-700">
-                            <time dateTime={customer.lastInvoice.emitted}>
-                              {format(
-                                new Date(customer.lastInvoice.emitted),
-                                "MMMM do, yyyy",
-                              )}
-                            </time>
-                          </dd>
-                        </div>
-                        <div className="flex justify-between gap-x-4 py-3">
-                          <dt className="text-gray-500">Amount</dt>
-                          <dd className="flex items-center gap-x-2">
-                            <div className="font-medium text-gray-900">
-                              {CHF.format(customer.lastInvoice.amount / 100)}
-                            </div>
-                            <Badge
-                              size="sm"
-                              variant={(() => {
-                                switch (customer.lastInvoice.status) {
-                                  case "overdue":
-                                    return "danger";
-                                  case "paid":
-                                    return "success";
-                                  case "pending":
-                                  default:
-                                    return "info";
-                                }
-                              })()}
-                            >
-                              {customer.lastInvoice.status}
-                            </Badge>
-                          </dd>
-                        </div>
-                      </dl>
-                    )}
+                    <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+                      <div className="flex justify-between gap-x-4 py-3">
+                        <dt className="text-gray-500">Last invoice</dt>
+                        <dd className="text-gray-700">
+                          <time dateTime={customer.lastInvoice.emitted}>
+                            {format(
+                              new Date(customer.lastInvoice.emitted),
+                              "MMMM do, yyyy",
+                            )}
+                          </time>
+                        </dd>
+                      </div>
+                      <div className="flex justify-between gap-x-4 py-3">
+                        <dt className="text-gray-500">Amount</dt>
+                        <dd className="flex items-center gap-x-2">
+                          <div className="font-medium text-gray-900">
+                            {CHF.format(customer.lastInvoice.amount / 100)}
+                          </div>
+                          <Badge
+                            size="sm"
+                            variant={(() => {
+                              switch (customer.lastInvoice.status) {
+                                case "overdue":
+                                  return "danger";
+                                case "paid":
+                                  return "success";
+                                case "pending":
+                                default:
+                                  return "info";
+                              }
+                            })()}
+                          >
+                            {customer.lastInvoice.status}
+                          </Badge>
+                        </dd>
+                      </div>
+                    </dl>
                   </li>
-                ))}
+                );
+              })}
             </ul>
           )}
         </div>

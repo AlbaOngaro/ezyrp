@@ -6,6 +6,7 @@ import { add, format, isAfter, roundToNearestMinutes, set } from "date-fns";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 
 import { Props } from "./types";
+import { InputCreateEventsArgs } from "__generated__/graphql";
 
 import { Modal } from "components/atoms/modal/Modal";
 import { useEvents } from "hooks/useEvents";
@@ -15,7 +16,6 @@ import { variants } from "server/schema/event";
 import { twMerge } from "lib/utils/twMerge";
 import { Combobox } from "components/atoms/comobobox/Combobox";
 import { useCustomers } from "hooks/useCustomers";
-import { Customer, InputCreateEventsArgs } from "__generated__/graphql";
 
 function Value({
   children,
@@ -198,28 +198,28 @@ export function CreateEventModal({
           />
         </div>
 
-        <Combobox
-          label="Guests"
-          placeholder="Search for customer"
-          options={((customers?.data?.customers || []) as Customer[]).map(
-            (customer) => ({
+        {!customers.isLoading && customers.data && customers.data.customers && (
+          <Combobox
+            label="Guests"
+            placeholder="Search for customer"
+            options={customers.data.customers.results.map((customer) => ({
               label: customer.name,
               value: customer.id,
-            }),
-          )}
-          onChange={(options) =>
-            setEvent((curr) => ({
-              ...curr,
-              guests: options.map((option) => option.value),
-            }))
-          }
-          filterOption={(optiom, inputValue) =>
-            optiom.label.toLowerCase().includes(inputValue.toLowerCase())
-          }
-          components={{
-            Value,
-          }}
-        />
+            }))}
+            onChange={(options) =>
+              setEvent((curr) => ({
+                ...curr,
+                guests: options.map((option) => option.value),
+              }))
+            }
+            filterOption={(optiom, inputValue) =>
+              optiom.label.toLowerCase().includes(inputValue.toLowerCase())
+            }
+            components={{
+              Value,
+            }}
+          />
+        )}
 
         <label className="flex flex-col gap-3 w-2/3 text-sm font-bold text-gray-800">
           Color

@@ -24,3 +24,8 @@ export const invoice = z.object({
   created_at: z.string().datetime().default(new Date().toISOString()),
   updated_at: z.string().datetime().default(new Date().toISOString()),
 });
+
+export const inputInvoiceFilters = z.object({
+  start: z.number().default(0),
+  limit: z.number().default(10),
+});
