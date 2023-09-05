@@ -102,6 +102,11 @@ export type InputCustomersFilters = {
   start?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type InputInvoicesFilters = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  start?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type InputLoginCredentials = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -327,6 +332,11 @@ export type QueryInvoiceArgs = {
 };
 
 
+export type QueryInvoicesArgs = {
+  filters?: InputMaybe<InputInvoicesFilters>;
+};
+
+
 export type QueryStatsArgs = {
   filters?: InputMaybe<InputStatsFilters>;
 };
@@ -448,6 +458,7 @@ export type ResolversTypes = ResolversObject<{
   InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCustomersFilters: InputCustomersFilters;
+  InputInvoicesFilters: InputInvoicesFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;
   InputStatsFilters: InputStatsFilters;
@@ -489,6 +500,7 @@ export type ResolversParentTypes = ResolversObject<{
   InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCustomersFilters: InputCustomersFilters;
+  InputInvoicesFilters: InputInvoicesFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;
   InputStatsFilters: InputStatsFilters;
@@ -643,7 +655,7 @@ export type QueryResolvers<ContextType = GraphqlContext, ParentType extends Reso
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   getCloudinarySignature?: Resolver<ResolversTypes['CloudinarySignature'], ParentType, ContextType>;
   invoice?: Resolver<ResolversTypes['Invoice'], ParentType, ContextType, RequireFields<QueryInvoiceArgs, 'id'>>;
-  invoices?: Resolver<Maybe<ResolversTypes['PagedInvoicesResponse']>, ParentType, ContextType>;
+  invoices?: Resolver<Maybe<ResolversTypes['PagedInvoicesResponse']>, ParentType, ContextType, Partial<QueryInvoicesArgs>>;
   stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType, Partial<QueryStatsArgs>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;

@@ -8,7 +8,7 @@ export const typeDefs = gql`
     customers(filters: InputCustomersFilters): PagedCustomersResponse
 
     invoice(id: ID!): Invoice!
-    invoices: PagedInvoicesResponse
+    invoices(filters: InputInvoicesFilters): PagedInvoicesResponse
 
     event(id: ID!): Event!
     events: [Event!]!
@@ -144,6 +144,11 @@ export const typeDefs = gql`
     items: [InputUpdateInvoiceItems]
     due: String
     emitted: String
+  }
+
+  input InputInvoicesFilters {
+    start: Int
+    limit: Int
   }
 
   type Item {

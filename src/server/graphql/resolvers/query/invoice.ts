@@ -1,4 +1,5 @@
 import { QueryResolvers } from "__generated__/server";
+import { inputInvoiceFilters } from "server/schema/invoice";
 
 import { InvoicesService } from "server/services/invoices";
 
@@ -13,14 +14,11 @@ export const invoice: QueryResolvers["invoice"] = async (
 
 export const invoices: QueryResolvers["invoices"] = async (
   _,
-  __,
+  args,
   { accessToken },
 ) => {
   const invoicesService = new InvoicesService(accessToken as string);
-  const results = await invoicesService.list();
-
-  return {
-    hasNextPage: false,
-    results,
-  };
+  return await invoicesService.list(
+    inputInvoiceFilters.parse(args.filters || {}),
+  );
 };
