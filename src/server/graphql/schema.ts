@@ -24,7 +24,6 @@ export const typeDefs = gql`
     logout: Boolean
     login(credentials: InputLoginCredentials): User
     register(credentials: InputRegisterCredentials): User
-
     updateUserProfile(updateUserProfileArgs: InputUpdateUserProfileArgs!): User
 
     createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
