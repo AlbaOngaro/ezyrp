@@ -7,8 +7,6 @@ interface Props {
 }
 
 export function Avatar({ photoUrl, seed }: Props) {
-  console.debug(seed);
-
   return (
     <picture className="relative h-8 w-8 rounded-full overflow-hidden">
       <img

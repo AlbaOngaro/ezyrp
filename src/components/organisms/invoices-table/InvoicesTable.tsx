@@ -6,6 +6,8 @@ import {
 import { useState } from "react";
 
 import { format } from "date-fns";
+import Link from "next/link";
+import { Link2Icon } from "@radix-ui/react-icons";
 import { Invoice } from "__generated__/graphql";
 
 import { Table } from "components/atoms/table/Table";
@@ -76,6 +78,14 @@ export function InvoicesTable() {
             id: "customer",
             field: "customer.name",
             headerName: "Customer",
+            render: ({ customer }) => (
+              <Link
+                href={`/customers/${customer.id}`}
+                className="flex items-center gap-2"
+              >
+                {customer.name} <Link2Icon />
+              </Link>
+            ),
           },
           {
             id: "status",
@@ -133,17 +143,19 @@ export function InvoicesTable() {
           </DialogRoot>
         )}
       />
-      {invoice && (
-        <ModalRoot
-          open={isModalOpen}
-          onOpenChange={(state) => {
-            setIsModalOpen(state);
-            setInvoice(null);
-          }}
-        >
+
+      <ModalRoot
+        open={isModalOpen}
+        onOpenChange={(state) => {
+          setIsModalOpen(state);
+          setInvoice(null);
+        }}
+      >
+        {invoice ? (
           <EditInvoiceModal {...invoice} setIsOpen={setIsModalOpen} />
-        </ModalRoot>
-      )}
+        ) : null}
+      </ModalRoot>
+
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Dialog
           title="Do you really want to delete this invoice?"

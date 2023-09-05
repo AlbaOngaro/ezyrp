@@ -24,7 +24,7 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
     return (
       <Form.Field
         ref={ref}
-        className={twMerge("flex flex-col gap-2", className)}
+        className={twMerge("flex flex-col gap-2 w-fit", className)}
         name={name}
         asChild
       >
@@ -41,7 +41,7 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
           )}
 
           {typeof value === "string" && !!value ? (
-            <picture className="w-[min(100%,193px)] block relative aspect-[1/1] rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-sm after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']">
+            <picture className="w-full min-w-[194px] block relative aspect-[1/1] rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-sm after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']">
               <img
                 src={value}
                 alt="photoUrl"
