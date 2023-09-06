@@ -276,19 +276,19 @@ export type Pageable = Customer | Invoice;
 
 export type PagedCustomersResponse = PagedSearchResponse & {
   __typename?: 'PagedCustomersResponse';
-  hasNextPage: Scalars['Boolean']['output'];
   results: Array<Customer>;
+  total: Scalars['Int']['output'];
 };
 
 export type PagedInvoicesResponse = PagedSearchResponse & {
   __typename?: 'PagedInvoicesResponse';
-  hasNextPage: Scalars['Boolean']['output'];
   results: Array<Invoice>;
+  total: Scalars['Int']['output'];
 };
 
 export type PagedSearchResponse = {
-  hasNextPage: Scalars['Boolean']['output'];
   results: Array<Pageable>;
+  total: Scalars['Int']['output'];
 };
 
 export type Profile = {
@@ -633,21 +633,21 @@ export type PageableResolvers<ContextType = GraphqlContext, ParentType extends R
 }>;
 
 export type PagedCustomersResponseResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['PagedCustomersResponse'] = ResolversParentTypes['PagedCustomersResponse']> = ResolversObject<{
-  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   results?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type PagedInvoicesResponseResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['PagedInvoicesResponse'] = ResolversParentTypes['PagedInvoicesResponse']> = ResolversObject<{
-  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   results?: Resolver<Array<ResolversTypes['Invoice']>, ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type PagedSearchResponseResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['PagedSearchResponse'] = ResolversParentTypes['PagedSearchResponse']> = ResolversObject<{
   __resolveType: TypeResolveFn<'PagedCustomersResponse' | 'PagedInvoicesResponse', ParentType, ContextType>;
-  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   results?: Resolver<Array<ResolversTypes['Pageable']>, ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 }>;
 
 export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Profile'] = ResolversParentTypes['Profile']> = ResolversObject<{

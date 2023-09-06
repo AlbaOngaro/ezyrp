@@ -13,6 +13,7 @@ export function useCustomers() {
     data,
     error,
     loading: isLoading,
+    refetch,
   } = useQuery(CUSTOMERS, {
     fetchPolicy: "cache-and-network",
   });
@@ -28,6 +29,7 @@ export function useCustomers() {
 
   return {
     data,
+    refetch,
     error,
     isLoading,
     create,

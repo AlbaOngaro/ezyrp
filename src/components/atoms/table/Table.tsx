@@ -1,136 +1,17 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { get } from "lodash";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpIcon,
-  DotsVerticalIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
   MinusIcon,
 } from "@radix-ui/react-icons";
-import { Trigger, Portal, Root } from "@radix-ui/react-context-menu";
 
-import { Props, Row, Sort, TableContextMenuItem } from "./types";
+import { Props, Row, Sort } from "./types";
+import { TableRowRenderer } from "./RowRenderer";
+import { Pagination } from "./Pagination";
+
 import { twMerge } from "lib/utils/twMerge";
 
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
-import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
-import { ContextMenuItem } from "components/organisms/context-menu/types";
-
-const DEFAULT_PAGE_SIZE = 10;
-
-function wrapWithRow<R extends Row = Row>(
-  item: TableContextMenuItem<R>,
-  row: R,
-): ContextMenuItem {
-  return Object.entries(item).reduce<ContextMenuItem>((acc, [key, value]) => {
-    if (typeof value === "function") {
-      return {
-        ...acc,
-        [key]: (...args: unknown[]) => value(row, ...args),
-      };
-    }
-
-    if (Array.isArray(value)) {
-      return {
-        ...acc,
-        [key]: value.map((entry) => wrapWithRow(entry, row)),
-      };
-    }
-
-    return {
-      ...acc,
-      [key]: value,
-    };
-  }, {} as ContextMenuItem);
-}
-
-function TableRowRenderer<R extends Row = Row>({
-  withContextMenu,
-  withMultiSelect,
-  selectedRows,
-  setSelectedRows,
-  columns,
-  row,
-  contextMenuItems = [],
-}: Pick<
-  Props<R>,
-  "withContextMenu" | "withMultiSelect" | "columns" | "contextMenuItems"
-> & {
-  row: R;
-  selectedRows: R[];
-  setSelectedRows: (rows: R[]) => void;
-}) {
-  const button = useRef<HTMLButtonElement | null>(null);
-  const tr = useRef<HTMLTableRowElement | null>(null);
-
-  return (
-    <Root>
-      <Trigger disabled={!withContextMenu} asChild>
-        <tr
-          ref={tr}
-          className={twMerge("hover:bg-gray-50 group", {
-            "bg-gray-50": selectedRows.includes(row),
-          })}
-        >
-          {withMultiSelect && (
-            <td className="relative px-7 sm:w-12 sm:px-6">
-              <Checkbox
-                checked={selectedRows.includes(row)}
-                onChange={(e) =>
-                  setSelectedRows(
-                    e.target.checked
-                      ? [...selectedRows, row]
-                      : selectedRows.filter((r) => r !== row),
-                  )
-                }
-              />
-            </td>
-          )}
-
-          {columns.map(({ field, render }) => (
-            <td
-              key={field}
-              className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
-            >
-              {typeof render === "function"
-                ? render(row)
-                : (get(row, field, null) as ReactNode)}
-            </td>
-          ))}
-
-          {withContextMenu && (
-            <td>
-              <button
-                className="flex justify-center items-center p-2 text-gray-700 rounded-md transition-colors duration-300 hover:bg-gray-200"
-                ref={button}
-                onClick={() => {
-                  tr.current?.dispatchEvent(
-                    new MouseEvent("contextmenu", {
-                      bubbles: true,
-                      clientX: button.current?.getBoundingClientRect().x,
-                      clientY: button.current?.getBoundingClientRect().y,
-                    }),
-                  );
-                }}
-              >
-                <DotsVerticalIcon />
-              </button>
-            </td>
-          )}
-        </tr>
-      </Trigger>
-
-      <Portal>
-        <ContextMenu
-          items={contextMenuItems.map((item) => wrapWithRow(item, row))}
-        />
-      </Portal>
-    </Root>
-  );
-}
 
 export function Table<R extends Row = Row>({
   className,
@@ -138,19 +19,18 @@ export function Table<R extends Row = Row>({
   rows,
   withMultiSelect,
   onSelect,
-  pagination,
   renderSelectedActions,
   withContextMenu,
   contextMenuItems,
+  withPagination,
+  pagination,
+  loading,
 }: Props<R>) {
   const checkbox = useRef<HTMLInputElement | null>(null);
 
   const [checked, setChecked] = useState(false);
   const [selectedRows, _setSelectedRows] = useState<R[]>([]);
-  const [page, setPage] = useState(pagination?.initialPage || 0);
   const [sort, setSort] = useState<Sort<R> | null>(null);
-
-  const pageSize = pagination?.pageSize || DEFAULT_PAGE_SIZE;
 
   useEffect(() => {
     if (selectedRows.length > 0 && selectedRows.length < rows.length) {
@@ -179,6 +59,18 @@ export function Table<R extends Row = Row>({
     setChecked((curr) => !curr);
   };
 
+  const getColSpan = () => {
+    if (!withMultiSelect && !withContextMenu) {
+      return columns.length;
+    }
+
+    if (withMultiSelect && withContextMenu) {
+      return columns.length + 2;
+    }
+
+    columns.length + 1;
+  };
+
   return (
     <div className={twMerge("flow-root relative", className)}>
       {selectedRows.length > 0 && renderSelectedActions && (
@@ -186,7 +78,9 @@ export function Table<R extends Row = Row>({
           {renderSelectedActions(selectedRows)}
         </div>
       )}
-      <table className="min-w-full table-fixed divide-y divide-gray-300">
+      <table
+        className={twMerge("min-w-full table-fixed divide-y divide-gray-300")}
+      >
         <thead>
           <tr>
             {withMultiSelect && (
@@ -209,6 +103,7 @@ export function Table<R extends Row = Row>({
                   {column.headerName || column.field}
                   {column.sortable && (
                     <button
+                      disabled={loading}
                       onClick={() =>
                         setSort((curr) => {
                           if (!curr) {
@@ -224,9 +119,9 @@ export function Table<R extends Row = Row>({
                           };
                         })
                       }
-                      className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200 p-1"
+                      className="ml-2 flex-none rounded bg-gray-100 text-gray-900 transition-colors duration-300 group-hover:bg-gray-200 group-hover:disabled:bg-gray-100 p-1 disabled:text-gray-400 disabled:cursor-not-allowed"
                     >
-                      {!sort ? (
+                      {!sort || sort.field !== column.field ? (
                         <MinusIcon />
                       ) : sort.order === "ASC" ? (
                         <ChevronDownIcon />
@@ -241,7 +136,12 @@ export function Table<R extends Row = Row>({
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-gray-200 bg-white">
+        <tbody
+          className={twMerge("divide-y divide-gray-200 bg-white", {
+            "relative after:content-[''] after:bg-[url('/images/loader.svg')] after:bg-no-repeat after:bg-center after:bg-[size:30px_30px] after:absolute after:flex after:justify-center after:items-center after:w-full after:h-full after:inset-0 after:bg-white/70":
+              loading,
+          })}
+        >
           {rows
             .sort((a, b) => {
               if (!sort) {
@@ -276,7 +176,6 @@ export function Table<R extends Row = Row>({
 
               return 0;
             })
-            .slice(page * pageSize, (page + 1) * pageSize)
             .map((row) => (
               <TableRowRenderer
                 key={row.id}
@@ -293,7 +192,7 @@ export function Table<R extends Row = Row>({
 
         <tfoot>
           <tr>
-            <td colSpan={withMultiSelect ? columns.length + 1 : columns.length}>
+            <td colSpan={getColSpan()}>
               <nav
                 className="flex items-center justify-between bg-white px-4 py-3 sm:px-6"
                 aria-label="Pagination"
@@ -306,69 +205,20 @@ export function Table<R extends Row = Row>({
                     </p>
                   ) : (
                     <p className="text-sm text-gray-700">
-                      Showing{" "}
-                      <span className="font-medium">{page * pageSize + 1}</span>{" "}
-                      to{" "}
-                      <span className="font-medium">
-                        {(page + 1) * pageSize <= rows.length
-                          ? (page + 1) * pageSize
-                          : rows.length}
-                      </span>{" "}
-                      of <span className="font-medium">{rows.length}</span>{" "}
-                      results
+                      Showing <strong>{rows.length}</strong> of{" "}
+                      {pagination?.total || rows.length} results
                     </p>
                   )}
                 </div>
 
-                <div className="flex flex-1 justify-between sm:justify-end">
-                  <button
-                    disabled={page === 0}
-                    onClick={() => setPage(0)}
-                    className="relative cursor-pointer inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
-                  >
-                    <DoubleArrowLeftIcon className="h-5 w-5" />
-                  </button>
-
-                  <button
-                    disabled={page === 0}
-                    onClick={() =>
-                      setPage((curr) => {
-                        if (curr - 1 >= 0) {
-                          return curr - 1;
-                        }
-
-                        return curr;
-                      })
-                    }
-                    className="relative cursor-pointer inline-flex items-center px-2 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeftIcon className="h-5 w-5" />
-                  </button>
-
-                  <button
-                    disabled={page * pageSize >= rows.length}
-                    onClick={() =>
-                      setPage((curr) => {
-                        if ((curr + 1) * pageSize < rows.length) {
-                          return curr + 1;
-                        }
-
-                        return curr;
-                      })
-                    }
-                    className="relative cursor-pointer inline-flex items-center px-2 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
-                  >
-                    <ChevronRightIcon className="h-5 w-5" />
-                  </button>
-
-                  <button
-                    disabled={page === (rows.length - pageSize) / pageSize}
-                    onClick={() => setPage((rows.length - pageSize) / pageSize)}
-                    className="relative cursor-pointer inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
-                  >
-                    <DoubleArrowRightIcon className="h-5 w-5" />
-                  </button>
-                </div>
+                {withPagination && (
+                  <Pagination
+                    initialPage={pagination?.initialPage}
+                    pageSize={pagination?.pageSize}
+                    total={pagination?.total || 0}
+                    onPageChange={pagination?.onPageChange || console.debug}
+                  />
+                )}
               </nav>
             </td>
           </tr>
