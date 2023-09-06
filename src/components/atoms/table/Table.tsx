@@ -198,10 +198,15 @@ export function Table<R extends Row = Row>({
                 aria-label="Pagination"
               >
                 <div className="hidden sm:block">
-                  {withMultiSelect && selectedRows.length > 0 && (
+                  {withMultiSelect && selectedRows.length > 0 ? (
                     <p className="text-sm text-gray-700">
                       <span className="font-medium">{selectedRows.length}</span>{" "}
                       rows elected
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-700">
+                      Showing <strong>{rows.length}</strong> of{" "}
+                      {pagination?.total || rows.length} results
                     </p>
                   )}
                 </div>

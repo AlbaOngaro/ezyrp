@@ -25,9 +25,9 @@ export class InvoicesService extends Service {
       INSERT INTO invoice (customer, description, status, items, due, emitted) VALUES ${invoices
         .map(
           ({ customer, description, status, items, due, emitted }) =>
-            `('${customer}', '${description}', '${status}', ${JSON.stringify(
-              items,
-            )}, '${due}' ,'${emitted}')`,
+            `('${customer}', ${JSON.stringify(
+              description,
+            )}, '${status}', ${JSON.stringify(items)}, '${due}' ,'${emitted}')`,
         )
         .join(",")};
     `);
