@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "type-check": "tsc --noEmit --incremental",
     "codegen": "graphql-codegen --config codegen.ts",
-    "codegen:watch:server": "graphql-codegen --watch 'src/server/**' --config codegen.ts"
+    "codegen:watch": "graphql-codegen --watch 'src/**' --config codegen.ts",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@apollo/client": "3.8.2",
@@ -41,6 +43,8 @@
     "zod": "3.22.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "17.7.1",
+    "@commitlint/config-conventional": "17.7.0",
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/client-preset": "4.1.0",
     "@graphql-codegen/typescript": "4.0.1",
@@ -58,6 +62,7 @@
     "eslint-config-next": "13.4.16",
     "eslint-plugin-import": "2.28.1",
     "eslint-plugin-prettier": "5.0.0",
+    "husky": "8.0.3",
     "postcss": "8.4.28",
     "prettier": "3.0.2",
     "tailwindcss": "3.3.3",
