@@ -23,7 +23,7 @@ export function useInvoices() {
     error,
     isLoading,
     create,
-    read: refetch,
+    refetch,
     update,
     delete: deleteInvoices,
   };

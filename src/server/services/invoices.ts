@@ -93,13 +93,13 @@ export class InvoicesService extends Service {
         .parse(result[1].result);
 
       return {
-        hasNextPage: total > results.length,
+        total,
         results,
       };
     } catch (error: unknown) {
       console.error(error);
       return {
-        hasNextPage: false,
+        total: 0,
         results: [],
       };
     }

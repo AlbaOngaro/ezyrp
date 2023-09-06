@@ -3,7 +3,7 @@ import { graphql } from "__generated__";
 export const INVOICES = graphql(`
   query invoices($filters: InputInvoicesFilters) {
     invoices(filters: $filters) {
-      hasNextPage
+      total
       results {
         id
         customer {

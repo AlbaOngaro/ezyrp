@@ -248,17 +248,17 @@ export const typeDefs = gql`
   union Pageable = Customer | Invoice
 
   interface PagedSearchResponse {
-    hasNextPage: Boolean!
+    total: Int!
     results: [Pageable!]!
   }
 
   type PagedCustomersResponse implements PagedSearchResponse {
-    hasNextPage: Boolean!
+    total: Int!
     results: [Customer!]!
   }
 
   type PagedInvoicesResponse implements PagedSearchResponse {
-    hasNextPage: Boolean!
+    total: Int!
     results: [Invoice!]!
   }
 `;

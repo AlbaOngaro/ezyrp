@@ -111,12 +111,12 @@ export class CustomersService extends Service {
           .parse(result[1].result);
 
         return {
-          hasNextPage: total > results.length,
+          total,
           results,
         };
       } catch (error: unknown) {
         return {
-          hasNextPage: false,
+          total: 0,
           results: [],
         };
       }
@@ -164,12 +164,12 @@ export class CustomersService extends Service {
         .parse(result[1].result);
 
       return {
-        hasNextPage: total > results.length,
+        total,
         results,
       };
     } catch (error: unknown) {
       return {
-        hasNextPage: false,
+        total: 0,
         results: [],
       };
     }

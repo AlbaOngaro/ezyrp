@@ -25,9 +25,11 @@ export interface Column<R extends Row = Row> {
   render?: (row: R) => ReactNode;
 }
 
-interface Pagination {
+export interface Pagination {
   initialPage?: number;
   pageSize?: number;
+  total: number;
+  onPageChange: ({ start, limit }: { start: number; limit: number }) => void;
 }
 
 type TableContextMenuBaseItem<R extends Row = Row> = Omit<
@@ -61,15 +63,17 @@ export type TableContextMenuItem<R extends Row = Row> =
   | TableContextMenuRadioItem<R>;
 
 export interface Props<R extends Row = Row> {
+  loading?: boolean;
   className?: string;
   columns: Column<R>[];
   rows: R[];
   withMultiSelect?: boolean;
   onSelect?: (rows: R[]) => void;
   renderSelectedActions?: (rows: Row[]) => ReactNode;
-  pagination?: Pagination;
   withContextMenu?: boolean;
   contextMenuItems?: TableContextMenuItem<R>[];
+  withPagination?: boolean;
+  pagination?: Pagination;
 }
 
 export interface Sort<R extends Row = Row> {

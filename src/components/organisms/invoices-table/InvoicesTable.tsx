@@ -27,36 +27,10 @@ export function InvoicesTable() {
 
   const invoices = useInvoices();
 
-  if (invoices.isLoading || !invoices.data || !invoices.data.invoices) {
-    return null;
-  }
-
   return (
     <>
       <Table<Invoice>
-        withMultiSelect
-        withContextMenu
-        contextMenuItems={[
-          {
-            type: "item",
-            label: "Edit",
-            onClick: (row) => {
-              setInvoice(row as Invoice);
-              setIsModalOpen(true);
-            },
-          },
-          {
-            type: "separator",
-          },
-          {
-            type: "item",
-            label: "Delete",
-            onClick: (row) => {
-              setInvoice(row as Invoice);
-              setIsDialogOpen(true);
-            },
-          },
-        ]}
+        loading={invoices.isLoading}
         className="px-12"
         columns={[
           {
@@ -98,7 +72,7 @@ export function InvoicesTable() {
             sortable: true,
             render: (invoice) => (
               <Badge
-                size="md"
+                size="sm"
                 variant={(() => {
                   switch (invoice.status) {
                     case "overdue":
@@ -123,7 +97,8 @@ export function InvoicesTable() {
             render: (row) => (row.amount / 100).toFixed(2),
           },
         ]}
-        rows={invoices.data.invoices.results}
+        rows={invoices?.data?.invoices?.results || []}
+        withMultiSelect
         renderSelectedActions={(rows) => (
           <DialogRoot>
             <DialogTrigger asChild>
@@ -146,6 +121,39 @@ export function InvoicesTable() {
             />
           </DialogRoot>
         )}
+        withContextMenu
+        contextMenuItems={[
+          {
+            type: "item",
+            label: "Edit",
+            onClick: (row) => {
+              setInvoice(row as Invoice);
+              setIsModalOpen(true);
+            },
+          },
+          {
+            type: "separator",
+          },
+          {
+            type: "item",
+            label: "Delete",
+            onClick: (row) => {
+              setInvoice(row as Invoice);
+              setIsDialogOpen(true);
+            },
+          },
+        ]}
+        withPagination
+        pagination={{
+          total: invoices?.data?.invoices?.total || 0,
+          onPageChange: ({ start, limit }) =>
+            invoices.refetch({
+              filters: {
+                start,
+                limit,
+              },
+            }),
+        }}
       />
 
       <ModalRoot

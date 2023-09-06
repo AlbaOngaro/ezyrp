@@ -22,37 +22,11 @@ export function CustomersTable() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (customers.isLoading || !customers.data || !customers.data.customers) {
-    return null;
-  }
-
   return (
     <>
       <Table<Customer>
+        loading={customers.isLoading}
         className="px-12"
-        withMultiSelect
-        withContextMenu
-        contextMenuItems={[
-          {
-            type: "item",
-            label: "Edit",
-            onClick: (row) => {
-              setCustomer(row);
-              setIsModalOpen(true);
-            },
-          },
-          {
-            type: "separator",
-          },
-          {
-            type: "item",
-            label: "Delete",
-            onClick: (row) => {
-              setCustomer(row);
-              setIsDialogOpen(true);
-            },
-          },
-        ]}
         columns={[
           {
             id: "id",
@@ -76,7 +50,8 @@ export function CustomersTable() {
             headerName: "Phone",
           },
         ]}
-        rows={customers.data.customers.results}
+        rows={customers?.data?.customers?.results || []}
+        withMultiSelect
         renderSelectedActions={(rows) => (
           <DialogRoot>
             <DialogTrigger asChild>
@@ -99,6 +74,39 @@ export function CustomersTable() {
             />
           </DialogRoot>
         )}
+        withContextMenu
+        contextMenuItems={[
+          {
+            type: "item",
+            label: "Edit",
+            onClick: (row) => {
+              setCustomer(row);
+              setIsModalOpen(true);
+            },
+          },
+          {
+            type: "separator",
+          },
+          {
+            type: "item",
+            label: "Delete",
+            onClick: (row) => {
+              setCustomer(row);
+              setIsDialogOpen(true);
+            },
+          },
+        ]}
+        withPagination
+        pagination={{
+          total: customers?.data?.customers?.total || 0,
+          onPageChange: ({ start, limit }) =>
+            customers.refetch({
+              filters: {
+                start,
+                limit,
+              },
+            }),
+        }}
       />
 
       <ModalRoot
