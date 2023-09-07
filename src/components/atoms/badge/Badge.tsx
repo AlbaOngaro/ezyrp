@@ -1,9 +1,11 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 import { twMerge } from "lib/utils/twMerge";
 
+export type Variant = "info" | "success" | "danger";
+
 interface Props
   extends DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
-  variant: "info" | "success" | "danger";
+  variant: Variant;
   size?: "sm" | "md" | "lg";
 }
 

@@ -19,6 +19,7 @@ import { Badge } from "components/atoms/badge/Badge";
 import { Dialog } from "components/atoms/dialog/Dialog";
 
 import { EditInvoiceModal } from "components/organisms/edit-invoice-modal/EditInvoiceModal";
+import { getBadgeVariantFromStatus } from "lib/utils/getBadgeVariantFromStatus";
 
 export function InvoicesTable() {
   const router = useRouter();
@@ -74,17 +75,7 @@ export function InvoicesTable() {
             render: (invoice) => (
               <Badge
                 size="sm"
-                variant={(() => {
-                  switch (invoice.status) {
-                    case "overdue":
-                      return "danger";
-                    case "paid":
-                      return "success";
-                    case "pending":
-                    default:
-                      return "info";
-                  }
-                })()}
+                variant={getBadgeVariantFromStatus(invoice.status)}
               >
                 {invoice.status}
               </Badge>
@@ -136,6 +127,27 @@ export function InvoicesTable() {
               setInvoice(row as Invoice);
               setIsModalOpen(true);
             },
+          },
+          {
+            type: "sub",
+            label: "Quick actions",
+            children: [
+              {
+                type: "item",
+                label: "Mark as paid",
+                onClick: (row) =>
+                  invoices.update({
+                    variables: {
+                      updateInvoicesArgs: [
+                        {
+                          id: row.id,
+                          status: "paid",
+                        },
+                      ],
+                    },
+                  }),
+              },
+            ],
           },
           {
             type: "separator",

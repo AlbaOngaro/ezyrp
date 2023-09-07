@@ -53,14 +53,24 @@ type TableContextMenuRadioItem<R extends Row = Row> = Extract<
   onValueChange?: (row: R, value: string) => void;
 };
 
+type TableContextMenuSubItem<R extends Row = Row> = {
+  type: "sub";
+  label: ReactNode;
+  children: TableContextMenuItem<R>[];
+};
+
 export type TableContextMenuItem<R extends Row = Row> =
   | Exclude<
       ContextMenuItem,
-      { type: "item" } | { type: "checkbox" } | { type: "radio" }
+      | { type: "item" }
+      | { type: "checkbox" }
+      | { type: "radio" }
+      | { type: "sub" }
     >
   | TableContextMenuBaseItem<R>
   | TableContextMenuCheckboxItem<R>
-  | TableContextMenuRadioItem<R>;
+  | TableContextMenuRadioItem<R>
+  | TableContextMenuSubItem<R>;
 
 export interface Props<R extends Row = Row> {
   loading?: boolean;

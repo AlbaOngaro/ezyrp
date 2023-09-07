@@ -8,6 +8,7 @@ import { CustomersTable } from "components/organisms/customers-table/CustomersTa
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
+import { Card } from "components/atoms/card/Card";
 
 export function CustomersPage() {
   const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
@@ -32,7 +33,9 @@ export function CustomersPage() {
       </Container>
 
       <Container as="section">
-        <CustomersTable />
+        <Card>
+          <CustomersTable />
+        </Card>
       </Container>
     </>
   );

@@ -9,6 +9,7 @@ import { InvoicesTable } from "components/organisms/invoices-table/InvoicesTable
 import { Container } from "components/atoms/container/Container";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { Card } from "components/atoms/card/Card";
 
 export function InvoicesPage() {
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
@@ -30,7 +31,9 @@ export function InvoicesPage() {
       </Container>
 
       <Container as="section">
-        <InvoicesTable />
+        <Card>
+          <InvoicesTable />
+        </Card>
       </Container>
     </>
   );

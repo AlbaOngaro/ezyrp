@@ -12,17 +12,14 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Badge } from "components/atoms/badge/Badge";
 import { Avatar } from "components/atoms/avatar/Avatar";
 import { Container } from "components/atoms/container/Container";
+import { CHF } from "lib/formatters/chf";
+import { Card } from "components/atoms/card/Card";
 
 const secondaryNavigation = [
   { name: "Last 7 days", value: 7 },
   { name: "Last 30 days", value: 30 },
   { name: "All-time", value: -1 },
 ];
-
-const CHF = new Intl.NumberFormat("en-US", {
-  currency: "CHF",
-  style: "currency",
-});
 
 export function HomePage() {
   const { data: customers, loading: isCustomersLoading } = useQuery(
@@ -54,7 +51,7 @@ export function HomePage() {
   return (
     <>
       {/* Secondary navigation */}
-      <header className="pb-4 pt-6 sm:pb-6">
+      <header className="pb-4 pt-6 bg-white sm:pb-6">
         <Container className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
           <h1 className="text-base font-semibold leading-7 text-gray-900">
             Cashflow
@@ -149,9 +146,10 @@ export function HomePage() {
               }
 
               return (
-                <li
+                <Card
+                  as="li"
                   key={customer.id}
-                  className="overflow-hidden rounded-xl border border-gray-200"
+                  className="overflow-hidden rounded-xl border border-gray-200 p-0"
                 >
                   <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
                     <Avatar
@@ -200,7 +198,7 @@ export function HomePage() {
                       </dd>
                     </div>
                   </dl>
-                </li>
+                </Card>
               );
             })}
           </ul>

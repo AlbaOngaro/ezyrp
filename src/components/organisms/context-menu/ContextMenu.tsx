@@ -21,7 +21,7 @@ export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
       asChild
       {...rest}
     >
-      <nav ref={ref} className="flex flex-col gap-2">
+      <nav className="flex flex-col gap-2">
         {items.map((item, i) => {
           switch (item.type) {
             case "item":
