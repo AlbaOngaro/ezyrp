@@ -31,6 +31,7 @@ const documents = {
     "\n  query customersWithLastInvoice {\n    customers(filters: { limit: 3 }, orderBy: { lastInvoice: desc }) {\n      results {\n        id\n        name\n        email\n        photoUrl\n        lastInvoice {\n          status\n          amount\n          emitted\n        }\n      }\n    }\n  }\n": types.CustomersWithLastInvoiceDocument,
     "\n  query events {\n    events {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n        phone\n      }\n    }\n  }\n": types.EventsDocument,
     "\n  query getCloudinarySignature {\n    getCloudinarySignature {\n      timestamp\n      signature\n      cloudname\n      apiKey\n    }\n  }\n": types.GetCloudinarySignatureDocument,
+    "\n  query invoice($id: ID!) {\n    invoice(id: $id) {\n      id\n    }\n  }\n": types.InvoiceDocument,
     "\n  query invoices($filters: InputInvoicesFilters) {\n    invoices(filters: $filters) {\n      total\n      results {\n        id\n        customer {\n          id\n          email\n          name\n          phone\n        }\n        description\n        status\n        items {\n          name\n          quantity\n          price\n        }\n        amount\n        due\n        emitted\n      }\n    }\n  }\n": types.InvoicesDocument,
     "\n  query stats($filters: InputStatsFilters) {\n    stats(filters: $filters) {\n      pending {\n        name\n        value\n        change\n      }\n      overdue {\n        name\n        value\n        change\n      }\n      paid {\n        name\n        value\n        change\n      }\n    }\n  }\n": types.StatsDocument,
     "\n  query getUser {\n    user {\n      id\n      email\n      username\n      profile {\n        photoUrl\n        address\n        city\n        country\n        code\n        name\n      }\n    }\n  }\n": types.GetUserDocument,
@@ -122,6 +123,10 @@ export function graphql(source: "\n  query events {\n    events {\n      id\n   
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query getCloudinarySignature {\n    getCloudinarySignature {\n      timestamp\n      signature\n      cloudname\n      apiKey\n    }\n  }\n"): (typeof documents)["\n  query getCloudinarySignature {\n    getCloudinarySignature {\n      timestamp\n      signature\n      cloudname\n      apiKey\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query invoice($id: ID!) {\n    invoice(id: $id) {\n      id\n    }\n  }\n"): (typeof documents)["\n  query invoice($id: ID!) {\n    invoice(id: $id) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
