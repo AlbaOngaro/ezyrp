@@ -31,6 +31,7 @@
     "cloudinary": "1.40.0",
     "clsx": "2.0.0",
     "date-fns": "2.30.0",
+    "framer-motion": "10.16.4",
     "graphql": "16.8.0",
     "graphql-tag": "2.12.6",
     "lodash": "4.17.21",

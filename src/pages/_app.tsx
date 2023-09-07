@@ -10,6 +10,7 @@ import { GraphQLError } from "graphql";
 import "styles/globals.css";
 
 import { getClient } from "lib/apollo/client";
+
 import { Toast } from "components/atoms/toast/Toast";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -29,8 +30,6 @@ function isGraphlError(
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const [errors, setErrors] = useState<(GraphQLError | NetworkError)[]>([]);
 
-  const getLayout = Component.getLayout ?? ((page) => page);
-
   const client = useMemo(
     () =>
       getClient((error) =>
@@ -44,6 +43,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       ),
     [],
   );
+
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <Provider swipeDirection="right" duration={Infinity}>

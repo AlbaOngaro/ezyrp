@@ -53,11 +53,9 @@ export class InvoicesService extends Service {
       FETCH customer`,
     );
 
-    // // @ts-ignore
-    // return invoice.parse(result[0].result[0]);
-
     try {
-      return invoice.parse(result[0]);
+      // @ts-ignore
+      return invoice.parse(result[0].result[0]);
     } catch (error: unknown) {
       throw new GraphQLError("Something is wrong with the data", {
         extensions: {
