@@ -21,7 +21,7 @@ export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
       asChild
       {...rest}
     >
-      <nav ref={ref}>
+      <nav ref={ref} className="flex flex-col gap-2">
         {items.map((item, i) => {
           switch (item.type) {
             case "item":
@@ -47,7 +47,7 @@ export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
               return (
                 <RUIContextMenu.Separator
                   key={i}
-                  className="h-[1px] bg-gray-100 m-2 focus-visible:outline-none"
+                  className="h-[1px] bg-gray-100 focus-visible:outline-none"
                 />
               );
             case "checkbox":

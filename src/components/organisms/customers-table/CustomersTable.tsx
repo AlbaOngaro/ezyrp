@@ -26,7 +26,6 @@ export function CustomersTable() {
     <>
       <Table<Customer>
         loading={customers.isLoading}
-        className="px-12"
         columns={[
           {
             id: "id",

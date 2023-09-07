@@ -1,38 +1,37 @@
 import { ReactElement, useState } from "react";
 import { Trigger, Root } from "@radix-ui/react-dialog";
 
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-
 import { Button } from "components/atoms/button/Button";
+import { Heading } from "components/atoms/heading/Heading";
+
 import { CreateInvoiceModal } from "components/organisms/create-invoice-modal/CreateInvoiceModal";
 import { InvoicesTable } from "components/organisms/invoices-table/InvoicesTable";
+import { Container } from "components/atoms/container/Container";
+
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 export function InvoicesPage() {
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
 
   return (
     <>
-      <div className="px-12 py-8 sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
-            Invoices
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            A list of all the invoices
-          </p>
-        </div>
+      <Container as="section" className="py-10 sm:flex sm:items-center">
+        <Heading title="Invoices" description="A list of all the invoices" />
+
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <Root open={isCreatingInvoice} onOpenChange={setIsCreatingInvoice}>
             <Trigger asChild>
-              <Button size="md">Add invoice</Button>
+              <Button size="lg">Add invoice</Button>
             </Trigger>
 
             <CreateInvoiceModal setIsOpen={setIsCreatingInvoice} />
           </Root>
         </div>
-      </div>
+      </Container>
 
-      <InvoicesTable />
+      <Container as="section">
+        <InvoicesTable />
+      </Container>
     </>
   );
 }
