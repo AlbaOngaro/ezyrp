@@ -47,7 +47,7 @@ export function InventoryPage() {
                 id: "price",
                 field: "price",
                 headerName: "Unitary price",
-                render: ({ price }) => CHF.format(price / 1000),
+                render: ({ price }) => CHF.format(price / 100),
                 sortable: true,
               },
             ]}

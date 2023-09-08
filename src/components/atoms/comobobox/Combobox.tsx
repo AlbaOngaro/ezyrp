@@ -14,42 +14,50 @@ import { twMerge } from "lib/utils/twMerge";
 interface Option {
   label: string;
   value: string;
+  disabled?: boolean;
 }
 
-interface Props {
+interface Props<O extends Option = Option> {
   label?: string;
   description?: string;
   className?: string;
   placeholder?: string;
-  options: Option[];
-  onChange: (options: Option[]) => void;
-  filterOption?: (option: Option, inputValue: string) => boolean;
+  options: O[];
+  onChange: (options: O[]) => void;
+  filterOption?: (option: O, inputValue: string) => boolean;
   components?: Partial<{
     Value: JSXElementConstructor<{
       children: ReactNode;
       onRemove: () => void;
+      option: O;
     }>;
   }>;
 }
 
-function DefaultValue({
+function DefaultValue<O extends Option = Option>({
   children,
   onRemove,
 }: {
   children: ReactNode;
   onRemove: () => void;
+  option: O;
 }) {
   return (
     <span className="flex flex-row items-center gap-2 py-1 px-2 bg-red-300 text-white rounded-sm transition-colors duration-300 hover:bg-red-400">
       {children}
-      <button onClick={() => onRemove()}>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          onRemove();
+        }}
+      >
         <Cross1Icon />
       </button>
     </span>
   );
 }
 
-export function Combobox({
+export function Combobox<O extends Option = Option>({
   label,
   description,
   className,
@@ -59,13 +67,13 @@ export function Combobox({
   filterOption = (option, inputValue) =>
     option.value.toLowerCase().includes(inputValue),
   components,
-}: Props) {
+}: Props<O>) {
   const ul = useRef<HTMLUListElement | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
-  const [selected, setSelected] = useState<Option[]>([]);
+  const [selected, setSelected] = useState<O[]>([]);
 
   const filteredOptions = options
     .filter((option) => !selected.includes(option))
@@ -112,10 +120,14 @@ export function Combobox({
       }
       case e.key === "Enter": {
         e.preventDefault();
-        setSelected((curr) => [...curr, filteredOptions[0]]);
-        setQuery("");
-        setActive(0);
-        setIsOpen(false);
+
+        if (!filteredOptions[active].disabled) {
+          setSelected((curr) => [...curr, filteredOptions[active]]);
+          setQuery("");
+          setActive(0);
+          setIsOpen(false);
+        }
+
         break;
       }
       case e.key === "Backspace": {
@@ -147,14 +159,16 @@ export function Combobox({
             </label>
           )}
           <fieldset className="relative flex flex-row flex-wrap items-center gap-2 m-0 resize-none py-2 px-4 pr-10 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500">
-            {selected.map((option) => (
+            {selected.map((option, i) => (
               <Value
-                key={option.value.toLowerCase()}
+                option={option}
+                key={`${i}-${option.value.toLowerCase()}`}
                 onRemove={() =>
                   setSelected((curr) =>
                     curr.filter(
-                      (o) =>
-                        o.value.toLowerCase() !== option.value.toLowerCase(),
+                      (o, y) =>
+                        `${i}-${option.value.toLowerCase()}` !==
+                        `${y}-${o.value.toLowerCase()}`,
                     ),
                   )
                 }
@@ -207,13 +221,16 @@ export function Combobox({
                 <li
                   className={twMerge("w-full py-1 px-2 hover:bg-gray-100", {
                     "bg-gray-100": i === active,
+                    "text-gray-400 cursor-not-allowed": option.disabled,
                   })}
                   key={option.value.toLowerCase()}
                   onClick={() => {
-                    setSelected((curr) => [...curr, option]);
-                    setQuery("");
-                    setActive(0);
-                    setIsOpen(false);
+                    if (!option.disabled) {
+                      setSelected((curr) => [...curr, option]);
+                      setQuery("");
+                      setActive(0);
+                      setIsOpen(false);
+                    }
                   }}
                 >
                   {option.label}
