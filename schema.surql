@@ -61,6 +61,13 @@ DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
 	} WHERE id = $after.id;
 };
 
+DEFINE EVENT item_created ON TABLE item WHEN $event = "CREATE" THEN {
+	UPDATE item MERGE {
+		workspace: $auth.workspace,
+		created_at: time::now()
+	} WHERE id = $after.id;
+};
+
 -- ------------------------------
 -- TABLE: user
 -- ------------------------------
@@ -97,3 +104,9 @@ DEFINE TABLE invoice SCHEMALESS PERMISSIONS FOR select, update, delete WHERE wor
 -- ------------------------------
 
 DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+
+-- ------------------------------
+-- TABLE: item
+-- ------------------------------
+
+DEFINE TABLE item SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;

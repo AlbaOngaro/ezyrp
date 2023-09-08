@@ -1,4 +1,5 @@
 import {
+  ArchiveIcon,
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -16,6 +17,7 @@ const navigation = [
   { name: "Home", href: "/", icon: HomeIcon },
   { name: "Customers", href: "/customers", icon: PersonIcon },
   { name: "Invoices", href: "/invoices", icon: EnvelopeClosedIcon },
+  { name: "Inventory", href: "/inventory", icon: ArchiveIcon },
   { name: "Schedule", href: "/schedule", icon: CalendarIcon },
 ];
 

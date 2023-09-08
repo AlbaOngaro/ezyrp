@@ -16,6 +16,8 @@ export const typeDefs = gql`
     event(id: ID!): Event!
     events: [Event!]!
 
+    items(filters: InputItemsFilters): PagedItemsResponse
+
     countries: [Country!]!
 
     stats(filters: InputStatsFilters): Stats!
@@ -40,6 +42,8 @@ export const typeDefs = gql`
     createEvents(createEventsInput: [InputCreateEventsArgs!]!): [Event]
     updateEvents(updateEventsInput: [InputUpdateEventsArgs!]!): [Event]
     deleteEvents(deleteEventsInput: [ID!]!): [ID]
+
+    createItems(createItemsInput: [InputCreateItems!]!): [Item]
   }
 
   input InputLoginCredentials {
@@ -245,7 +249,27 @@ export const typeDefs = gql`
     apiKey: String!
   }
 
-  union Pageable = Customer | Invoice
+  input InputCreateItems {
+    name: String!
+    description: String
+    price: Int!
+    quantity: Int!
+  }
+
+  input InputItemsFilters {
+    limit: Int
+    start: Int
+  }
+
+  type Item {
+    id: ID!
+    name: String!
+    description: String
+    price: Int!
+    quantity: Int!
+  }
+
+  union Pageable = Customer | Invoice | Item
 
   interface PagedSearchResponse {
     total: Int!
@@ -260,5 +284,10 @@ export const typeDefs = gql`
   type PagedInvoicesResponse implements PagedSearchResponse {
     total: Int!
     results: [Invoice!]!
+  }
+
+  type PagedItemsResponse implements PagedSearchResponse {
+    total: Int!
+    results: [Item!]!
   }
 `;
