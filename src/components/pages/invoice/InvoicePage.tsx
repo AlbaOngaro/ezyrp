@@ -2,7 +2,12 @@ import { ReactElement } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
+import {
+  Root as DialogRoot,
+  Trigger as DialogTrigger,
+} from "@radix-ui/react-alert-dialog";
 
+import { useRouter } from "next/router";
 import { useInvoice } from "hooks/useInvoice";
 import { useUser } from "hooks/useUser";
 
@@ -16,9 +21,13 @@ import { Card } from "components/atoms/card/Card";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { CHF } from "lib/formatters/chf";
+import { useInvoices } from "hooks/useInvoices";
+import { Dialog } from "components/atoms/dialog/Dialog";
 
 export function InvoicePage() {
   const user = useUser();
+  const router = useRouter();
+  const invoices = useInvoices();
   const { data, loading } = useInvoice();
 
   if (loading || !data) {
@@ -46,12 +55,48 @@ export function InvoicePage() {
         <Button size="lg" className="ml-auto">
           Edit
         </Button>
-        <Button size="lg" variant="danger">
-          Delete
-        </Button>
-        <Button size="lg" variant="secondary">
-          Mark as paid
-        </Button>
+
+        <DialogRoot>
+          <DialogTrigger>
+            <Button size="lg" variant="danger">
+              Delete
+            </Button>
+          </DialogTrigger>
+
+          <Dialog
+            title="Do you really want to delete this invoice?"
+            description="This action cannot be undone!"
+            onConfirm={() =>
+              invoices.delete({
+                variables: {
+                  deleteInvoicesArgs: [data.invoice.id],
+                },
+                onCompleted: () => router.push("/invoices"),
+              })
+            }
+          />
+        </DialogRoot>
+
+        {data.invoice.status !== "paid" && (
+          <Button
+            size="lg"
+            variant="secondary"
+            onClick={() =>
+              invoices.update({
+                variables: {
+                  updateInvoicesArgs: [
+                    {
+                      id: data.invoice.id,
+                      status: "paid",
+                    },
+                  ],
+                },
+              })
+            }
+          >
+            Mark as paid
+          </Button>
+        )}
       </Card>
 
       <Card className="p-6 flex flex-col gap-6">
