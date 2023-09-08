@@ -131,17 +131,11 @@ export const typeDefs = gql`
     lastInvoice: LastInvoice
   }
 
-  input InputCreateInvoiceItems {
-    name: String!
-    quantity: Int!
-    price: Int!
-  }
-
   input InputCreateInvoicesArgs {
     customer: ID!
     description: String!
     status: String!
-    items: [InputCreateInvoiceItems!]!
+    items: [ID!]!
     due: String!
     emitted: String!
   }
@@ -167,7 +161,8 @@ export const typeDefs = gql`
     limit: Int
   }
 
-  type Item {
+  type InvoiceItem {
+    id: ID!
     name: String!
     quantity: Int!
     price: Int!
@@ -178,7 +173,7 @@ export const typeDefs = gql`
     customer: Customer!
     description: String!
     status: String!
-    items: [Item!]
+    items: [InvoiceItem!]!
     amount: Int!
     due: String!
     emitted: String!
@@ -266,6 +261,7 @@ export const typeDefs = gql`
     name: String!
     description: String
     price: Int!
+    "This is the quantity of items left in the inventory"
     quantity: Int!
   }
 

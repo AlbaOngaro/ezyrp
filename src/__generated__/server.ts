@@ -79,18 +79,12 @@ export type InputCreateEventsArgs = {
   variant: Scalars['String']['input'];
 };
 
-export type InputCreateInvoiceItems = {
-  name: Scalars['String']['input'];
-  price: Scalars['Int']['input'];
-  quantity: Scalars['Int']['input'];
-};
-
 export type InputCreateInvoicesArgs = {
   customer: Scalars['ID']['input'];
   description: Scalars['String']['input'];
   due: Scalars['String']['input'];
   emitted: Scalars['String']['input'];
-  items: Array<InputCreateInvoiceItems>;
+  items: Array<Scalars['ID']['input']>;
   status: Scalars['String']['input'];
 };
 
@@ -189,8 +183,16 @@ export type Invoice = {
   due: Scalars['String']['output'];
   emitted: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  items?: Maybe<Array<Item>>;
+  items: Array<InvoiceItem>;
   status: Scalars['String']['output'];
+};
+
+export type InvoiceItem = {
+  __typename?: 'InvoiceItem';
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  price: Scalars['Int']['output'];
+  quantity: Scalars['Int']['output'];
 };
 
 export type Item = {
@@ -199,6 +201,7 @@ export type Item = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   price: Scalars['Int']['output'];
+  /** This is the quantity of items left in the inventory */
   quantity: Scalars['Int']['output'];
 };
 
@@ -497,7 +500,6 @@ export type ResolversTypes = ResolversObject<{
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   InputCreateCustomerArgs: InputCreateCustomerArgs;
   InputCreateEventsArgs: InputCreateEventsArgs;
-  InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCreateItems: InputCreateItems;
   InputCustomersFilters: InputCustomersFilters;
@@ -514,6 +516,7 @@ export type ResolversTypes = ResolversObject<{
   InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Invoice: ResolverTypeWrapper<Invoice>;
+  InvoiceItem: ResolverTypeWrapper<InvoiceItem>;
   Item: ResolverTypeWrapper<Item>;
   LastInvoice: ResolverTypeWrapper<LastInvoice>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -544,7 +547,6 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID']['output'];
   InputCreateCustomerArgs: InputCreateCustomerArgs;
   InputCreateEventsArgs: InputCreateEventsArgs;
-  InputCreateInvoiceItems: InputCreateInvoiceItems;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCreateItems: InputCreateItems;
   InputCustomersFilters: InputCustomersFilters;
@@ -561,6 +563,7 @@ export type ResolversParentTypes = ResolversObject<{
   InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: Scalars['Int']['output'];
   Invoice: Invoice;
+  InvoiceItem: InvoiceItem;
   Item: Item;
   LastInvoice: LastInvoice;
   Mutation: {};
@@ -631,8 +634,16 @@ export type InvoiceResolvers<ContextType = GraphqlContext, ParentType extends Re
   due?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   emitted?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  items?: Resolver<Maybe<Array<ResolversTypes['Item']>>, ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes['InvoiceItem']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type InvoiceItemResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['InvoiceItem'] = ResolversParentTypes['InvoiceItem']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -752,6 +763,7 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   Event?: EventResolvers<ContextType>;
   Guest?: GuestResolvers<ContextType>;
   Invoice?: InvoiceResolvers<ContextType>;
+  InvoiceItem?: InvoiceItemResolvers<ContextType>;
   Item?: ItemResolvers<ContextType>;
   LastInvoice?: LastInvoiceResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

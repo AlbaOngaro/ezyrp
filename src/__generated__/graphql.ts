@@ -78,18 +78,12 @@ export type InputCreateEventsArgs = {
   variant: Scalars['String']['input'];
 };
 
-export type InputCreateInvoiceItems = {
-  name: Scalars['String']['input'];
-  price: Scalars['Int']['input'];
-  quantity: Scalars['Int']['input'];
-};
-
 export type InputCreateInvoicesArgs = {
   customer: Scalars['ID']['input'];
   description: Scalars['String']['input'];
   due: Scalars['String']['input'];
   emitted: Scalars['String']['input'];
-  items: Array<InputCreateInvoiceItems>;
+  items: Array<Scalars['ID']['input']>;
   status: Scalars['String']['input'];
 };
 
@@ -188,8 +182,16 @@ export type Invoice = {
   due: Scalars['String']['output'];
   emitted: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  items?: Maybe<Array<Item>>;
+  items: Array<InvoiceItem>;
   status: Scalars['String']['output'];
+};
+
+export type InvoiceItem = {
+  __typename?: 'InvoiceItem';
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  price: Scalars['Int']['output'];
+  quantity: Scalars['Int']['output'];
 };
 
 export type Item = {
@@ -198,6 +200,7 @@ export type Item = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   price: Scalars['Int']['output'];
+  /** This is the quantity of items left in the inventory */
   quantity: Scalars['Int']['output'];
 };
 
@@ -424,7 +427,7 @@ export type CreateInvoicesMutationVariables = Exact<{
 }>;
 
 
-export type CreateInvoicesMutation = { __typename?: 'Mutation', createInvoices?: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone?: string | null }, items?: Array<{ __typename?: 'Item', name: string, quantity: number, price: number }> | null } | null> | null };
+export type CreateInvoicesMutation = { __typename?: 'Mutation', createInvoices?: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone?: string | null }, items: Array<{ __typename?: 'InvoiceItem', name: string, quantity: number, price: number }> } | null> | null };
 
 export type DeleteCustomersMutationVariables = Exact<{
   deleteCustomerArgs: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
@@ -485,7 +488,7 @@ export type UpdateInvoicesMutationVariables = Exact<{
 }>;
 
 
-export type UpdateInvoicesMutation = { __typename?: 'Mutation', updateInvoices?: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone?: string | null }, items?: Array<{ __typename?: 'Item', name: string, quantity: number, price: number }> | null } | null> | null };
+export type UpdateInvoicesMutation = { __typename?: 'Mutation', updateInvoices?: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone?: string | null }, items: Array<{ __typename?: 'InvoiceItem', name: string, quantity: number, price: number }> } | null> | null };
 
 export type UpdateUserProfileMutationVariables = Exact<{
   updateUserProfileArgs: InputUpdateUserProfileArgs;
@@ -526,14 +529,14 @@ export type InvoiceQueryVariables = Exact<{
 }>;
 
 
-export type InvoiceQuery = { __typename?: 'Query', invoice: { __typename?: 'Invoice', id: string, status: string, description: string, due: string, emitted: string, amount: number, items?: Array<{ __typename?: 'Item', name: string, price: number, quantity: number }> | null, customer: { __typename?: 'Customer', id: string, name: string, email: string } } };
+export type InvoiceQuery = { __typename?: 'Query', invoice: { __typename?: 'Invoice', id: string, status: string, description: string, due: string, emitted: string, amount: number, items: Array<{ __typename?: 'InvoiceItem', name: string, price: number, quantity: number }>, customer: { __typename?: 'Customer', id: string, name: string, email: string } } };
 
 export type InvoicesQueryVariables = Exact<{
   filters?: InputMaybe<InputInvoicesFilters>;
 }>;
 
 
-export type InvoicesQuery = { __typename?: 'Query', invoices?: { __typename?: 'PagedInvoicesResponse', total: number, results: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone?: string | null }, items?: Array<{ __typename?: 'Item', name: string, quantity: number, price: number }> | null }> } | null };
+export type InvoicesQuery = { __typename?: 'Query', invoices?: { __typename?: 'PagedInvoicesResponse', total: number, results: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string, phone?: string | null }, items: Array<{ __typename?: 'InvoiceItem', name: string, quantity: number, price: number }> }> } | null };
 
 export type ItemsQueryVariables = Exact<{
   filters?: InputMaybe<InputItemsFilters>;

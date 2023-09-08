@@ -1,7 +1,8 @@
 import { GraphQLError } from "graphql";
 import { ZodError, z } from "zod";
 import { MutationResolvers } from "__generated__/server";
-import { invoice } from "server/schema/invoice";
+
+import { inputCreateInvoiceArgs, invoice } from "server/schema/invoice";
 import { InvoicesService } from "server/services/invoices";
 
 export const createInvoices: MutationResolvers["createInvoices"] = async (
@@ -10,15 +11,7 @@ export const createInvoices: MutationResolvers["createInvoices"] = async (
   { accessToken },
 ) => {
   const invoices = await z
-    .array(
-      invoice
-        .merge(
-          z.object({
-            customer: z.string(),
-          }),
-        )
-        .omit({ id: true }),
-    )
+    .array(inputCreateInvoiceArgs)
     .parseAsync(args.createInvoicesArgs)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {
