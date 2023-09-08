@@ -6,16 +6,21 @@ interface Props<T extends React.ElementType> {
   className?: string;
 }
 
-export function Card<T extends React.ElementType = "article">({
+export function Container<T extends React.ElementType = "div">({
   as,
   children,
   className,
+  ...rest
 }: Props<T>) {
-  const Component = as || "article";
+  const Component = as || "div";
 
   return (
     <Component
-      className={twMerge("bg-white p-4 rounded-md shadow-sm", className)}
+      className={twMerge(
+        "mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8",
+        className,
+      )}
+      {...rest}
     >
       {children}
     </Component>

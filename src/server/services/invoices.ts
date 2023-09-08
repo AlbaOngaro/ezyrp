@@ -1,5 +1,6 @@
-import { z } from "zod";
+import { ZodError, z } from "zod";
 
+import { GraphQLError } from "graphql";
 import { surreal } from "server/surreal";
 import { inputInvoiceFilters, invoice } from "server/schema/invoice";
 import { Service } from "server/services/service";
@@ -52,7 +53,17 @@ export class InvoicesService extends Service {
       FETCH customer`,
     );
 
-    return invoice.parse(result[0]);
+    try {
+      // @ts-ignore
+      return invoice.parse(result[0].result[0]);
+    } catch (error: unknown) {
+      throw new GraphQLError("Something is wrong with the data", {
+        extensions: {
+          code: "INTERNAL_SERVER_ERROR",
+          errors: (error as ZodError).issues,
+        },
+      });
+    }
   }
 
   async list({
