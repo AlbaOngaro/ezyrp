@@ -9,7 +9,7 @@ interface Props extends PropsWithChildren {
 
 export function SidebarLayout({ children, isSidebarOpen }: Props) {
   return (
-    <main className="h-full grid grid-cols-[min-content_1fr] bg-gray-50">
+    <main className="h-full grid grid-cols-[min-content_1fr] bg-gray-50 print:grid-cols-1">
       <Sidebar isOpen={isSidebarOpen} />
 
       <section>

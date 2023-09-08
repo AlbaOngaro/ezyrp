@@ -47,7 +47,7 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
   return (
     <aside
       className={twMerge(
-        "left-0 flex grow flex-col gap-y-5 bg-indigo-600 px-6 py-4 h-screen relative transition-all duration-300 w-[300px]",
+        "left-0 flex grow flex-col gap-y-5 bg-indigo-600 px-6 py-4 h-screen relative transition-all duration-300 w-[300px] print:hidden",
         {
           "pr-10": isOpen,
           "w-[66px]": !isOpen,

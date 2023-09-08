@@ -1,7 +1,12 @@
 import { ReactElement } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { CaretLeftIcon } from "@radix-ui/react-icons";
+import {
+  CaretLeftIcon,
+  FileTextIcon,
+  Pencil1Icon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
@@ -35,15 +40,18 @@ export function InvoicePage() {
   }
 
   return (
-    <Container as="section" className="max-w-4xl py-10 flex flex-col gap-6">
+    <Container
+      as="section"
+      className="max-w-4xl py-10 flex flex-col gap-6 print:h-full"
+    >
       <Link
         href="/invoices"
-        className="inline-flex items-center font-bold gap-2 opacity-100 transition-opacity duration-300 hover:opacity-75"
+        className="inline-flex items-center font-bold gap-2 opacity-100 transition-opacity duration-300 hover:opacity-75 print:hidden"
       >
         <CaretLeftIcon /> Go back
       </Link>
 
-      <Card className="p-6 flex items-center gap-6">
+      <Card className="p-6 flex items-center gap-2 print:hidden">
         <strong className="text-sm text-gray-800">Status</strong>
         <Badge
           size="lg"
@@ -52,14 +60,14 @@ export function InvoicePage() {
           {data.invoice.status}
         </Badge>
 
-        <Button size="lg" className="ml-auto">
-          Edit
+        <Button title="Edit" size="lg" shape="circle" className="ml-auto">
+          <Pencil1Icon />
         </Button>
 
         <DialogRoot>
           <DialogTrigger>
-            <Button size="lg" variant="danger">
-              Delete
+            <Button title="Delete" size="lg" shape="circle" variant="danger">
+              <TrashIcon />
             </Button>
           </DialogTrigger>
 
@@ -77,29 +85,18 @@ export function InvoicePage() {
           />
         </DialogRoot>
 
-        {data.invoice.status !== "paid" && (
-          <Button
-            size="lg"
-            variant="secondary"
-            onClick={() =>
-              invoices.update({
-                variables: {
-                  updateInvoicesArgs: [
-                    {
-                      id: data.invoice.id,
-                      status: "paid",
-                    },
-                  ],
-                },
-              })
-            }
-          >
-            Mark as paid
-          </Button>
-        )}
+        <Button
+          title="Print"
+          size="lg"
+          variant="tertiary"
+          shape="circle"
+          onClick={() => window.print()}
+        >
+          <FileTextIcon />
+        </Button>
       </Card>
 
-      <Card className="p-6 flex flex-col gap-6">
+      <Card className="p-6 flex flex-col gap-6 print:h-full">
         <header className="w-full flex flex-row justify-between items-center">
           <div>
             <h3 className="text-gray-800 text-lg font-bold mb-2">
@@ -118,7 +115,7 @@ export function InvoicePage() {
           </p>
         </header>
 
-        <section className="grid grid-cols-3 items-start">
+        <section className="grid grid-cols-3 items-start print:grid-cols-2">
           <p className="mb-2 inline-flex flex-col text-gray-600">
             <strong className="text-gray-800 mt-2">Emitted on</strong>
             {format(new Date(data.invoice.emitted), "dd MMM yyyy")}
@@ -127,12 +124,12 @@ export function InvoicePage() {
             {format(new Date(data.invoice.due), "dd MMM yyyy")}
           </p>
 
-          <p className="mb-2 inline-flex flex-col text-gray-600">
+          <p className="mb-2 inline-flex flex-col text-gray-600 print:text-right">
             <strong className="text-gray-800">Bill to</strong>
             {data.invoice.customer.name}
           </p>
 
-          <p className="mb-2 inline-flex flex-col text-gray-600">
+          <p className="mb-2 inline-flex flex-col text-gray-600 print:hidden">
             <strong className="text-gray-800">Sent to</strong>
             {data.invoice.customer.email}
           </p>
