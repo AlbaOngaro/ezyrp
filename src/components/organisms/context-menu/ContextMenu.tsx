@@ -10,7 +10,7 @@ import { Props } from "./types";
 
 export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
   { items, type, ...rest },
-  ref,
+  _ref,
 ) {
   const Content =
     type === "sub" ? RUIContextMenu.SubContent : RUIContextMenu.Content;
