@@ -16,6 +16,7 @@ const documents = {
     "\n  mutation createCustomers($createCustomerArgs: [InputCreateCustomerArgs!]!) {\n    createCustomers(createCustomerArgs: $createCustomerArgs) {\n      id\n      email\n      name\n      phone\n    }\n  }\n": types.CreateCustomersDocument,
     "\n  mutation createEvents($createEventsInput: [InputCreateEventsArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n        phone\n      }\n    }\n  }\n": types.CreateEventsDocument,
     "\n  mutation createInvoices($createInvoicesArgs: [InputCreateInvoicesArgs!]!) {\n    createInvoices(createInvoicesArgs: $createInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n        phone\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n": types.CreateInvoicesDocument,
+    "\n  mutation createItems($createItemsInput: [InputCreateItems!]!) {\n    createItems(createItemsInput: $createItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n": types.CreateItemsDocument,
     "\n  mutation deleteCustomers($deleteCustomerArgs: [ID!]!) {\n    deleteCustomers(deleteCustomerArgs: $deleteCustomerArgs)\n  }\n": types.DeleteCustomersDocument,
     "\n  mutation deleteEvents($deleteEventsInput: [ID!]!) {\n    deleteEvents(deleteEventsInput: $deleteEventsInput)\n  }\n": types.DeleteEventsDocument,
     "\n  mutation deleteInvoices($deleteInvoicesArgs: [ID!]!) {\n    deleteInvoices(deleteInvoicesArgs: $deleteInvoicesArgs)\n  }\n": types.DeleteInvoicesDocument,
@@ -64,6 +65,10 @@ export function graphql(source: "\n  mutation createEvents($createEventsInput: [
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation createInvoices($createInvoicesArgs: [InputCreateInvoicesArgs!]!) {\n    createInvoices(createInvoicesArgs: $createInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n        phone\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n"): (typeof documents)["\n  mutation createInvoices($createInvoicesArgs: [InputCreateInvoicesArgs!]!) {\n    createInvoices(createInvoicesArgs: $createInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n        phone\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation createItems($createItemsInput: [InputCreateItems!]!) {\n    createItems(createItemsInput: $createItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n"): (typeof documents)["\n  mutation createItems($createItemsInput: [InputCreateItems!]!) {\n    createItems(createItemsInput: $createItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,16 +1,23 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
+import { Trigger, Root } from "@radix-ui/react-dialog";
 
 import { useItems } from "hooks/useItems";
 
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
-
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Card } from "components/atoms/card/Card";
-import { Table } from "components/atoms/table/Table";
 import { CHF } from "lib/formatters/chf";
 
+import { Container } from "components/atoms/container/Container";
+import { Heading } from "components/atoms/heading/Heading";
+import { Card } from "components/atoms/card/Card";
+import { Table } from "components/atoms/table/Table";
+import { Button } from "components/atoms/button/Button";
+
+import { CreateItemModal } from "components/organisms/create-item-modal/CreateItemModal";
+
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+
 export function InventoryPage() {
+  const [isCreatingItem, setIsCreatingItem] = useState(false);
+
   const items = useItems();
 
   return (
@@ -20,6 +27,16 @@ export function InventoryPage() {
           title="Inventory"
           description="A list of all the items in your database."
         />
+
+        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+          <Root open={isCreatingItem} onOpenChange={setIsCreatingItem}>
+            <Trigger asChild>
+              <Button size="lg">Add item</Button>
+            </Trigger>
+
+            <CreateItemModal setIsOpen={setIsCreatingItem} />
+          </Root>
+        </div>
       </Container>
 
       <Container as="section">
@@ -48,6 +65,12 @@ export function InventoryPage() {
                 field: "price",
                 headerName: "Unitary price",
                 render: ({ price }) => CHF.format(price / 100),
+                sortable: true,
+              },
+              {
+                id: "quantity",
+                field: "quantity",
+                headerName: "Qty.",
                 sortable: true,
               },
             ]}

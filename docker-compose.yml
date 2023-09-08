@@ -2,7 +2,8 @@ version: "3.1"
 
 services:
   surreal:
-    image: surrealdb/surrealdb:latest
+    image: surrealdb/surrealdb:1.0.0-beta.9-20230402
+    # image: surrealdb/surrealdb:latest
     restart: unless-stopped
     command: start --bind 0.0.0.0:8080 --user root --pass root --log debug file://data/srdb.db
     # environment:
@@ -11,5 +12,6 @@ services:
     container_name: surreal
     volumes:
       - ./data:/data
+      - ./schema.surql/:/schema.surql
     ports:
       - 8080:8080

@@ -32,8 +32,6 @@ DEFINE EVENT profile ON TABLE user WHEN $before == NONE THEN (
 	CREATE profile SET user = $value.id
 );
 
-REMOVE EVENT customer_workspace ON TABLE customer;
-
 DEFINE EVENT customer_created ON TABLE customer WHEN $event = "CREATE" THEN {
 	UPDATE customer MERGE {
 		workspace: $auth.workspace,
@@ -45,14 +43,12 @@ DEFINE EVENT delete_customer_invoices ON TABLE customer WHEN $event = "DELETE" T
 	DELETE invoice WHERE customer = $before.id;
 };
 
-DEFINE EVENT invoice_workspace ON TABLE invoice WHEN $event = "CREATE" THEN {
+DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 	UPDATE invoice MERGE {
 		workspace: $auth.workspace,
 		created_at: time::now()
 	} WHERE id = $after.id;
 };
-
-REMOVE EVENT event_workspace ON TABLE customer;
 
 DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
 	UPDATE event MERGE {
@@ -72,7 +68,7 @@ DEFINE EVENT item_created ON TABLE item WHEN $event = "CREATE" THEN {
 -- TABLE: user
 -- ------------------------------
 
-DEFINE TABLE user SCHEMAFULL PERMISSIONS FOR select, update WHERE id = $auth.id, FOR create, delete NONE;
+DEFINE TABLE user SCHEMAFULL PERMISSIONS FOR select, update WHERE id = $auth.id, FOR create, delete WHERE true;
 
 DEFINE FIELD password ON user TYPE string;
 DEFINE FIELD email ON user TYPE string;

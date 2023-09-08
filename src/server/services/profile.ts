@@ -16,22 +16,10 @@ export class ProfileService extends Service {
 
   async read(): Promise<Profile> {
     await surreal.authenticate(this.token);
-
     const result = await surreal.query<Profile[]>(`SELECT * FROM profile`);
-    return (
-      profile
-        .omit({ user: true })
-        .default({
-          address: "",
-          city: "",
-          code: "",
-          country: "",
-          name: "",
-          photoUrl: "",
-        })
-        // @ts-ignore
-        .parse(result[0].result[0])
-    );
+
+    // @ts-ignore
+    return profile.omit({ user: true }).parse(result[0].result[0]);
   }
 
   async update(input: MutationUpdateUserProfileArgs["updateUserProfileArgs"]) {
