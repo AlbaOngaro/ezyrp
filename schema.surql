@@ -45,6 +45,15 @@ DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 		workspace: $auth.workspace,
 		created_at: time::now()
 	} WHERE id = $after.id;
+
+	LET $items = 
+		SELECT
+		(SELECT id, count() FROM $this.items GROUP BY	id) as items 
+	FROM $after.id FETCH items;
+
+	UPDATE item
+	SET
+		quantity = $this.quantity - (SELECT count FROM $items[0].items WHERE id = $parent.id)[0].count; 
 };
 
 DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
