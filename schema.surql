@@ -8,20 +8,17 @@ OPTION IMPORT;
 -- SCOPES
 -- ------------------------------
 
-DEFINE SCOPE allusers 
-SESSION 2w 
-SIGNUP (
-		CREATE user 
-		SET 
-			email = $email,
-			username = IF $username THEN $username ELSE string::concat('@', string::split($email, '@')[0]) END,
-			password = crypto::argon2::generate($password),
-			workspace = IF $workspace THEN $workspace ELSE (CREATE workspace).id END
-)
+DEFINE SCOPE allusers SESSION 2w 
 SIGNIN (
-	SELECT * FROM user 
-	WHERE 
-		email = $email AND crypto::argon2::compare(password, $password)
+	SELECT * FROM user WHERE email = $email AND crypto::argon2::compare(password, $password)
+)
+SIGNUP (
+	CREATE user CONTENT {
+		email: $email,
+		username: IF $username THEN $username ELSE string::concat('@', string::split($email, '@')[0]) END,
+		password: crypto::argon2::generate($password),
+		workspace: IF $workspace THEN $workspace ELSE type::string((SELECT VALUE id FROM (CREATE workspace))[0]) END
+	}
 );
 
 -- ------------------------------
@@ -68,7 +65,8 @@ DEFINE EVENT item_created ON TABLE item WHEN $event = "CREATE" THEN {
 -- TABLE: user
 -- ------------------------------
 
-DEFINE TABLE user SCHEMAFULL PERMISSIONS FOR select, update WHERE id = $auth.id, FOR create, delete WHERE true;
+DEFINE TABLE user SCHEMAFULL
+PERMISSIONS FOR select, update, delete WHERE id = $auth.id;
 
 DEFINE FIELD password ON user TYPE string;
 DEFINE FIELD email ON user TYPE string;
