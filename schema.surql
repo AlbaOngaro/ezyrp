@@ -8,20 +8,17 @@ OPTION IMPORT;
 -- SCOPES
 -- ------------------------------
 
-DEFINE SCOPE allusers 
-SESSION 2w 
-SIGNUP (
-		CREATE user 
-		SET 
-			email = $email,
-			username = IF $username THEN $username ELSE string::concat('@', string::split($email, '@')[0]) END,
-			password = crypto::argon2::generate($password),
-			workspace = IF $workspace THEN $workspace ELSE (CREATE workspace).id END
-)
+DEFINE SCOPE allusers SESSION 2w 
 SIGNIN (
-	SELECT * FROM user 
-	WHERE 
-		email = $email AND crypto::argon2::compare(password, $password)
+	SELECT * FROM user WHERE email = $email AND crypto::argon2::compare(password, $password)
+)
+SIGNUP (
+	CREATE user CONTENT {
+		email: $email,
+		username: IF $username THEN $username ELSE string::concat('@', string::split($email, '@')[0]) END,
+		password: crypto::argon2::generate($password),
+		workspace: IF $workspace THEN $workspace ELSE type::string((SELECT VALUE id FROM (CREATE workspace))[0]) END
+	}
 );
 
 -- ------------------------------
@@ -31,8 +28,6 @@ SIGNIN (
 DEFINE EVENT profile ON TABLE user WHEN $before == NONE THEN (
 	CREATE profile SET user = $value.id
 );
-
-REMOVE EVENT customer_workspace ON TABLE customer;
 
 DEFINE EVENT customer_created ON TABLE customer WHEN $event = "CREATE" THEN {
 	UPDATE customer MERGE {
@@ -45,14 +40,21 @@ DEFINE EVENT delete_customer_invoices ON TABLE customer WHEN $event = "DELETE" T
 	DELETE invoice WHERE customer = $before.id;
 };
 
-DEFINE EVENT invoice_workspace ON TABLE invoice WHEN $event = "CREATE" THEN {
+DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 	UPDATE invoice MERGE {
 		workspace: $auth.workspace,
 		created_at: time::now()
 	} WHERE id = $after.id;
-};
 
-REMOVE EVENT event_workspace ON TABLE customer;
+	LET $items = 
+		SELECT
+		(SELECT id, count() FROM $this.items GROUP BY	id) as items 
+	FROM $after.id FETCH items;
+
+	UPDATE item
+	SET
+		quantity = $this.quantity - (SELECT count FROM $items[0].items WHERE id = $parent.id)[0].count; 
+};
 
 DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
 	UPDATE event MERGE {
@@ -61,11 +63,25 @@ DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
 	} WHERE id = $after.id;
 };
 
+DEFINE EVENT item_created ON TABLE item WHEN $event = "CREATE" THEN {
+	UPDATE item MERGE {
+		workspace: $auth.workspace,
+		created_at: time::now()
+	} WHERE id = $after.id;
+};
+
+DEFINE EVENT item_deleted ON TABLE item WHEN $event = "DELETE" THEN {
+	UPDATE invoice 
+	SET items = (SELECT VALUE id FROM $this.items WHERE id != $before.id)
+	WHERE $before.id IN items.id;
+};
+
 -- ------------------------------
 -- TABLE: user
 -- ------------------------------
 
-DEFINE TABLE user SCHEMAFULL PERMISSIONS FOR select, update WHERE id = $auth.id, FOR create, delete NONE;
+DEFINE TABLE user SCHEMAFULL
+PERMISSIONS FOR select, update, delete WHERE id = $auth.id;
 
 DEFINE FIELD password ON user TYPE string;
 DEFINE FIELD email ON user TYPE string;
@@ -97,3 +113,9 @@ DEFINE TABLE invoice SCHEMALESS PERMISSIONS FOR select, update, delete WHERE wor
 -- ------------------------------
 
 DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+
+-- ------------------------------
+-- TABLE: item
+-- ------------------------------
+
+DEFINE TABLE item SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;

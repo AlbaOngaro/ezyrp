@@ -16,6 +16,8 @@ export const typeDefs = gql`
     event(id: ID!): Event!
     events: [Event!]!
 
+    items(filters: InputItemsFilters): PagedItemsResponse
+
     countries: [Country!]!
 
     stats(filters: InputStatsFilters): Stats!
@@ -40,6 +42,8 @@ export const typeDefs = gql`
     createEvents(createEventsInput: [InputCreateEventsArgs!]!): [Event]
     updateEvents(updateEventsInput: [InputUpdateEventsArgs!]!): [Event]
     deleteEvents(deleteEventsInput: [ID!]!): [ID]
+
+    createItems(createItemsInput: [InputCreateItems!]!): [Item]
   }
 
   input InputLoginCredentials {
@@ -127,17 +131,11 @@ export const typeDefs = gql`
     lastInvoice: LastInvoice
   }
 
-  input InputCreateInvoiceItems {
-    name: String!
-    quantity: Int!
-    price: Int!
-  }
-
   input InputCreateInvoicesArgs {
     customer: ID!
     description: String!
     status: String!
-    items: [InputCreateInvoiceItems!]!
+    items: [ID!]!
     due: String!
     emitted: String!
   }
@@ -163,7 +161,8 @@ export const typeDefs = gql`
     limit: Int
   }
 
-  type Item {
+  type InvoiceItem {
+    id: ID!
     name: String!
     quantity: Int!
     price: Int!
@@ -174,7 +173,7 @@ export const typeDefs = gql`
     customer: Customer!
     description: String!
     status: String!
-    items: [Item!]
+    items: [InvoiceItem!]!
     amount: Int!
     due: String!
     emitted: String!
@@ -245,7 +244,28 @@ export const typeDefs = gql`
     apiKey: String!
   }
 
-  union Pageable = Customer | Invoice
+  input InputCreateItems {
+    name: String!
+    description: String
+    price: Int!
+    quantity: Int!
+  }
+
+  input InputItemsFilters {
+    limit: Int
+    start: Int
+  }
+
+  type Item {
+    id: ID!
+    name: String!
+    description: String
+    price: Int!
+    "This is the quantity of items left in the inventory"
+    quantity: Int!
+  }
+
+  union Pageable = Customer | Invoice | Item
 
   interface PagedSearchResponse {
     total: Int!
@@ -260,5 +280,10 @@ export const typeDefs = gql`
   type PagedInvoicesResponse implements PagedSearchResponse {
     total: Int!
     results: [Invoice!]!
+  }
+
+  type PagedItemsResponse implements PagedSearchResponse {
+    total: Int!
+    results: [Item!]!
   }
 `;

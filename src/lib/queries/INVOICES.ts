@@ -15,6 +15,7 @@ export const INVOICES = graphql(`
         description
         status
         items {
+          id
           name
           quantity
           price

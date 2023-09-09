@@ -156,10 +156,6 @@ export function CreateCustomerModal({ setIsOpen }: Props) {
               phone: e.target.value,
             }))
           }
-          required
-          validations={{
-            valueMissing: "This field is required",
-          }}
         />
 
         <Button size="lg" className="w-fit min-w-[100px] mt-4 ml-auto">

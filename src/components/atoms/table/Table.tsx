@@ -68,7 +68,7 @@ export function Table<R extends Row = Row>({
       return columns.length + 2;
     }
 
-    columns.length + 1;
+    return columns.length + 1;
   };
 
   return (

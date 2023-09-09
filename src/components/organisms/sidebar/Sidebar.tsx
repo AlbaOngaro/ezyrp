@@ -1,4 +1,5 @@
 import {
+  ArchiveIcon,
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -15,6 +16,7 @@ import { twMerge } from "lib/utils/twMerge";
 const navigation = [
   { name: "Home", href: "/", icon: HomeIcon },
   { name: "Customers", href: "/customers", icon: PersonIcon },
+  { name: "Inventory", href: "/inventory", icon: ArchiveIcon },
   { name: "Invoices", href: "/invoices", icon: EnvelopeClosedIcon },
   { name: "Schedule", href: "/schedule", icon: CalendarIcon },
 ];

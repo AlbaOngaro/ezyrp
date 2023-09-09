@@ -36,7 +36,6 @@ export class InvoicesService extends Service {
     try {
       return z.array(invoice).parse(result[0].result);
     } catch (error: unknown) {
-      console.error(error);
       return [];
     }
   }
@@ -47,10 +46,11 @@ export class InvoicesService extends Service {
     const result = await surreal.query<Invoice[]>(
       `SELECT 
         *, 
-        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+        math::sum(items.price) as amount,
+        (SELECT id, name, price, count() as quantity FROM $this.items GROUP BY id, price, name) as items,
         IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
       FROM ${id}
-      FETCH customer`,
+      FETCH customer, items`,
     );
 
     try {
@@ -75,12 +75,13 @@ export class InvoicesService extends Service {
     const result = await surreal.query<[Invoice[], { total: number }[]]>(
       `SELECT 
         *, 
-        math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+        math::sum(items.price) as amount,
+        (SELECT id, name, price, count() as quantity FROM $this.items GROUP BY id, price, name) as items,
         IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
       FROM invoice
       LIMIT $limit
       START $start
-      FETCH customer;
+      FETCH customer, items;
       
       SELECT 
         count() AS total
