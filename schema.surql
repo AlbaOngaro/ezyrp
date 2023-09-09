@@ -70,6 +70,12 @@ DEFINE EVENT item_created ON TABLE item WHEN $event = "CREATE" THEN {
 	} WHERE id = $after.id;
 };
 
+DEFINE EVENT item_deleted ON TABLE item WHEN $event = "DELETE" THEN {
+	UPDATE invoice 
+	SET items = (SELECT VALUE id FROM $this.items WHERE id != $before.id)
+	WHERE $before.id IN items.id;
+};
+
 -- ------------------------------
 -- TABLE: user
 -- ------------------------------
