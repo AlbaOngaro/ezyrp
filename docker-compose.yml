@@ -3,13 +3,16 @@ version: "3.1"
 services:
   surreal:
     build:
-      context: .
-      dockerfile: services/surreal/Dockerfile
-    command: start --bind 0.0.0.0:8080 --auth --user root --pass root --log debug file://data/srdb.db
+      context: ./services/surreal
     restart: unless-stopped
     container_name: surreal
+    environment:
+      - SURREAL_USER=root
+      - SURREAL_PASS=root
     volumes:
-      - ./data:/data
-      - ./schema.surql/:/schema.surql
+      - surreal_data:/data
     ports:
       - 8080:8080
+
+volumes:
+  surreal_data:

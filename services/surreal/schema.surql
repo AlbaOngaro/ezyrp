@@ -22,6 +22,12 @@ SIGNUP (
 );
 
 -- ------------------------------
+-- PARAMS
+-- ------------------------------
+
+DEFINE PARAM $brevoapikey VALUE "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";
+
+-- ------------------------------
 -- EVENTS
 -- ------------------------------
 
@@ -53,7 +59,32 @@ DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 
 	UPDATE item
 	SET
-		quantity = $this.quantity - (SELECT count FROM $items[0].items WHERE id = $parent.id)[0].count; 
+		quantity = IF (SELECT count FROM $items[0].items WHERE id = $parent.id)[0].count THEN $this.quantity - (SELECT count FROM $items[0].items WHERE id = $parent.id)[0].count ELSE $this.quantity END; 
+
+	LET $customer = SELECT customer FROM invoice WHERE id = $after.id FETCH customer;
+
+	INSERT INTO email {
+		email: (SELECT VALUE customer FROM $customer)[0].email,
+		name: (SELECT VALUE customer FROM $customer)[0].name,
+		status: http::post('https://api.brevo.com/v3/smtp/email', {  
+			"sender": {  
+				"name": "Alba Ongaro",
+				"email": "alba.ongaro@outlook.com"
+			},
+			"to": [  
+				{  
+					"email": (SELECT VALUE customer FROM $customer)[0].email,
+					"name": (SELECT VALUE customer FROM $customer)[0].name
+				}
+			],
+			"subject":"New Invoice",
+			"htmlContent":"<html><head></head><body><p>Hello,</p>This is my first transactional email sent from Brevo.</p></body></html>"
+		}, {
+			accept: 'application/json',
+			'content-type': 'application/json',
+			'api-key': $brevoapikey
+		})
+	};
 };
 
 DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
@@ -119,3 +150,9 @@ DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE works
 -- ------------------------------
 
 DEFINE TABLE item SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+
+-- ------------------------------
+-- TABLE: email
+-- ------------------------------
+
+DEFINE TABLE email SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;

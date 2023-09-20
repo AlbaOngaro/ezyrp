@@ -1,3 +1,13 @@
-FROM surrealdb/surrealdb:latest
+FROM ubuntu:latest
+
+RUN apt-get update
+RUN apt-get install -y curl netcat
+
+RUN curl -sSf https://install.surrealdb.com | sh
+
 EXPOSE 8080
-CMD ["start", "--bind", "0.0.0.0:8080", "--auth", "file://data/srdb.db"]
+
+COPY entrypoint.sh schema.surql /
+RUN chmod +x ./entrypoint.sh
+
+ENTRYPOINT [ "./entrypoint.sh" ]
