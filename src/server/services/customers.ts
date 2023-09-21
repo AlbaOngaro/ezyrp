@@ -64,8 +64,9 @@ export class CustomersService extends Service {
             *, 
             (SELECT 
               *, 
-              math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
-              IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status 
+              math::sum(items.price) as amount,
+              (SELECT id, name, price, count() as quantity FROM $this.items GROUP BY id, price, name) as items,
+              IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
             FROM invoice
             WHERE customer = $parent.id 
             ORDER BY emitted 
@@ -127,7 +128,8 @@ export class CustomersService extends Service {
       SELECT *, 
       (SELECT 
           *, 
-          math::sum((SELECT price * quantity as total FROM $this.items).total) as amount,
+          math::sum(items.price) as amount,
+          (SELECT id, name, price, count() as quantity FROM $this.items GROUP BY id, price, name) as items,
           IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
         FROM invoice 
         WHERE customer = $parent.id 

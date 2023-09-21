@@ -39,7 +39,7 @@ export function ProfileForm({ profile: initialProfile }: Props) {
       "input[type=file]",
     )?.files;
 
-    if (files) {
+    if (files && files.length > 0) {
       const photoUrl = await handleFileUpload(files[0]);
 
       await update({

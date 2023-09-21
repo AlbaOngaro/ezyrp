@@ -132,7 +132,7 @@ export const updateUserProfile: MutationResolvers["updateUserProfile"] = async (
   { accessToken },
 ) => {
   const input = await profile
-    .omit({ user: true })
+    .omit({ user: true, id: true })
     .parseAsync(args.updateUserProfileArgs)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {
