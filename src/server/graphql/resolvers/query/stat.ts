@@ -25,19 +25,18 @@ export const stats: QueryResolvers["stats"] = async (
     const records = await surreal.query(
       `
         SELECT
-          status,
-          math::sum(
-            (SELECT price * quantity as amount FROM $this.items).amount
-          ) as amounts
+          *, 
+          math::sum(items.price) as amount,
+          (SELECT id, name, price, count() as quantity FROM $this.items GROUP BY id, price, name) as items,
+          IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
         FROM invoice 
         WHERE time::yday(time::now()) - time::yday(emitted) < $period;
   
         SELECT
-          emitted,
-          status,
-          math::sum(
-            (SELECT price * quantity as amount FROM $this.items).amount
-          ) as amounts
+          *, 
+          math::sum(items.price) as amount,
+          (SELECT id, name, price, count() as quantity FROM $this.items GROUP BY id, price, name) as items,
+          IF type::datetime(due) < time::now() AND status = "pending" THEN "overdue" ELSE status END as status
         FROM invoice
         WHERE 
           time::yday(time::now()) - time::yday(emitted) < ($period * 2) 
@@ -52,7 +51,7 @@ export const stats: QueryResolvers["stats"] = async (
     const current = z
       .array(
         z.object({
-          amounts: z.number(),
+          amount: z.number(),
           status: z.enum(["paid", "pending", "overdue"]),
         }),
       )
@@ -60,7 +59,7 @@ export const stats: QueryResolvers["stats"] = async (
       .reduce(
         (acc, curr) => ({
           ...acc,
-          [curr.status]: acc[curr.status] + curr.amounts,
+          [curr.status]: acc[curr.status] + curr.amount,
         }),
         {
           pending: 0,
@@ -72,7 +71,7 @@ export const stats: QueryResolvers["stats"] = async (
     const previous = z
       .array(
         z.object({
-          amounts: z.number(),
+          amount: z.number(),
           status: z.enum(["paid", "pending", "overdue"]),
         }),
       )
@@ -80,7 +79,7 @@ export const stats: QueryResolvers["stats"] = async (
       .reduce(
         (acc, curr) => ({
           ...acc,
-          [curr.status]: acc[curr.status] + curr.amounts,
+          [curr.status]: acc[curr.status] + curr.amount,
         }),
         {
           pending: 0,

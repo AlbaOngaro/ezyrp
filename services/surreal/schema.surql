@@ -68,8 +68,7 @@ DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 		name: (SELECT VALUE customer FROM $customer)[0].name,
 		status: http::post('https://api.brevo.com/v3/smtp/email', {  
 			"sender": {  
-				"name": "Alba Ongaro",
-				"email": "alba.ongaro@outlook.com"
+				"email": "info@nimblerp.com"
 			},
 			"to": [  
 				{  
@@ -77,8 +76,13 @@ DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 					"name": (SELECT VALUE customer FROM $customer)[0].name
 				}
 			],
-			"subject":"New Invoice",
-			"htmlContent":"<html><head></head><body><p>Hello,</p>This is my first transactional email sent from Brevo.</p></body></html>"
+			"params": {
+				"invoice_url": string::concat("http://localhost:3000/invoices/", $after.id) ,
+				"invoice_id": $after.id,
+				"emitted": time::format($after.emitted, "%d/%m/%Y"),
+				"due": time::format($after.due, "%d/%m/%Y")
+			},
+			"templateId": 3,
 		}, {
 			accept: 'application/json',
 			'content-type': 'application/json',

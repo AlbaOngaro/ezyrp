@@ -16,7 +16,9 @@ export function useUser() {
   const [logout] = useMutation(LOGOUT, {
     onCompleted: () => router.push("/login"),
   });
-  const [register] = useMutation(REGISTER);
+  const [register] = useMutation(REGISTER, {
+    onCompleted: () => router.push("/login"),
+  });
 
   const [update] = useMutation(UPDATE_USER_PROFILE, {
     refetchQueries: [USER],
