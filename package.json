@@ -11,7 +11,7 @@
     "codegen": "graphql-codegen --config codegen.ts",
     "codegen:watch": "graphql-codegen --watch 'src/**' --config codegen.ts",
     "prepare": "husky install",
-    "migrate": "ts-node --esm --project tsconfig.node.json src/lib/scripts/migrate.ts"
+    "migrate": "ts-node --esm --project tsconfig.node.json src/lib/scripts/migrate/index.ts"
   },
   "dependencies": {
     "@apollo/client": "3.8.2",
@@ -31,6 +31,7 @@
     "@radix-ui/react-toast": "1.1.4",
     "cloudinary": "1.40.0",
     "clsx": "2.0.0",
+    "commander": "11.0.0",
     "date-fns": "2.30.0",
     "framer-motion": "10.16.4",
     "graphql": "16.8.0",
