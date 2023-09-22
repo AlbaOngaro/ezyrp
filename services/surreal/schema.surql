@@ -5,13 +5,16 @@
 OPTION IMPORT;
 
 -- ------------------------------
+-- PARAMS
+-- ------------------------------
+
+DEFINE PARAM $brevoapikey VALUE "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";
+
+-- ------------------------------
 -- SCOPES
 -- ------------------------------
 
 DEFINE SCOPE allusers SESSION 2w 
-SIGNIN (
-	SELECT * FROM user WHERE email = $email AND crypto::argon2::compare(password, $password)
-)
 SIGNUP (
 	CREATE user CONTENT {
 		email: $email,
@@ -19,13 +22,10 @@ SIGNUP (
 		password: crypto::argon2::generate($password),
 		workspace: IF $workspace THEN $workspace ELSE type::string((SELECT VALUE id FROM (CREATE workspace))[0]) END
 	}
+)
+SIGNIN (
+	SELECT * FROM user WHERE email = $email AND crypto::argon2::compare(password, $password)
 );
-
--- ------------------------------
--- PARAMS
--- ------------------------------
-
-DEFINE PARAM $brevoapikey VALUE "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";
 
 -- ------------------------------
 -- EVENTS
@@ -115,8 +115,7 @@ DEFINE EVENT item_deleted ON TABLE item WHEN $event = "DELETE" THEN {
 -- TABLE: user
 -- ------------------------------
 
-DEFINE TABLE user SCHEMAFULL
-PERMISSIONS FOR select, update, delete WHERE id = $auth.id;
+DEFINE TABLE user SCHEMAFULL PERMISSIONS FOR select, update, delete WHERE id = $auth.id;
 
 DEFINE FIELD password ON user TYPE string;
 DEFINE FIELD email ON user TYPE string;
