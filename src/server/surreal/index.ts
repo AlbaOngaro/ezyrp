@@ -1,6 +1,10 @@
 import { Surreal, ExperimentalSurrealHTTP } from "surrealdb.js";
 
-export const surreal =
+const surreal =
   process.env.NEXT_RUNTIME === "edge"
-    ? new ExperimentalSurrealHTTP(process.env.SURREALDB_HOST)
-    : new Surreal(process.env.SURREALDB_HOST);
+    ? new ExperimentalSurrealHTTP(process.env.SURREAL_HOST)
+    : new Surreal();
+
+surreal.connect(process.env.SURREAL_HOST as string);
+
+export { surreal };
