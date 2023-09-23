@@ -1,0 +1,22 @@
+{
+  "name": "@nimblerp/migrate",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "type-check": "tsc --noEmit --incremental",
+    "lint": "eslint --ext .ts .",
+    "dev": "ts-node --esm src/lib/scripts/migrate/index.ts",
+    "prebuild": "rimraf dist",
+    "build": "tsc --outDir dist/migrate"
+  },
+  "dependencies": {
+    "commander": "11.0.0",
+    "date-fns": "2.30.0",
+    "rimraf": "5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.6.3",
+    "ts-node": "10.9.1",
+    "typescript": "5.1.6"
+  }
+}
