@@ -6,6 +6,7 @@ const fastify = Fastify({
   logger: true,
 });
 
+fastify.get("/health", (_, res) => res.status(200).send());
 fastify.post("/deployment", deployment);
 
 const start = async () => {
