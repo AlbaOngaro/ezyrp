@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { InputCreateItems, Item } from "../../__generated__/server";
 import { inputItemFilters, item } from "../schema/inventory";
-import { Service } from "./service";
-
 import { surreal } from "../surreal";
+import { Service } from "./service";
 
 export class ItemsService extends Service {
   constructor(token: string) {

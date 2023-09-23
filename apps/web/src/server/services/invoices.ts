@@ -3,7 +3,6 @@ import { ZodError, z } from "zod";
 import { GraphQLError } from "graphql";
 import { surreal } from "../surreal";
 import { inputInvoiceFilters, invoice } from "../schema/invoice";
-import { Service } from "./service";
 import {
   QueryInvoiceArgs,
   Invoice,
@@ -11,6 +10,7 @@ import {
   MutationUpdateInvoicesArgs,
   PagedInvoicesResponse,
 } from "../../__generated__/server";
+import { Service } from "./service";
 
 export class InvoicesService extends Service {
   constructor(token: string) {

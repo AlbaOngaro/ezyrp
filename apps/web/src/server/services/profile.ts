@@ -1,13 +1,13 @@
 import { Surreal } from "surrealdb.js";
 import { profile } from "../schema/profile";
 import { surreal } from "../surreal";
-import { Service } from "./service";
 import {
   MutationUpdateUserProfileArgs,
   Profile,
   User,
 } from "../../__generated__/server";
 import { user } from "../schema/auth";
+import { Service } from "./service";
 
 export class ProfileService extends Service {
   constructor(token: string) {

@@ -3,9 +3,9 @@ import * as Popover from "@radix-ui/react-popover";
 import { CalendarIcon } from "@radix-ui/react-icons";
 
 import { format, isValid } from "date-fns";
-import { DateTimeInputProps } from "./types";
 import { mergeRefs } from "../../../lib/utils/mergeRefs";
 import { MonthWidget } from "../month-widget/MonthWidget";
+import { DateTimeInputProps } from "./types";
 
 export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
   function DateTimeInput({ name, type, onChange, ...rest }, ref) {

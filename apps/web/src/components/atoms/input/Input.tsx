@@ -1,12 +1,11 @@
 import * as Form from "@radix-ui/react-form";
 import { forwardRef } from "react";
 
+import { twMerge } from "../../../lib/utils/twMerge";
 import { Props, isDateTimeInputProps } from "./types";
 
 import { FilePickerInput } from "./FilePickerInput";
 import { DateTimeInput } from "./DateTimeInput";
-
-import { twMerge } from "../../../lib/utils/twMerge";
 
 export const Input = forwardRef<HTMLInputElement, Props>(
   function Input(props, ref) {

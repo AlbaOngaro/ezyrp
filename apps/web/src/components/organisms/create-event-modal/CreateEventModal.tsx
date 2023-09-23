@@ -5,7 +5,6 @@ import * as Popover from "@radix-ui/react-popover";
 import { add, format, isAfter, roundToNearestMinutes, set } from "date-fns";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 
-import { Props } from "./types";
 import { InputCreateEventsArgs } from "../../../__generated__/graphql";
 
 import { Modal } from "../../atoms/modal/Modal";
@@ -16,6 +15,7 @@ import { variants } from "../../../server/schema/event";
 import { twMerge } from "../../../lib/utils/twMerge";
 import { Combobox } from "../../atoms/comobobox/Combobox";
 import { useCustomers } from "../../../hooks/useCustomers";
+import { Props } from "./types";
 
 function Value({
   children,

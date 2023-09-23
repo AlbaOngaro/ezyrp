@@ -3,13 +3,12 @@ import { Trigger, Portal, Root } from "@radix-ui/react-context-menu";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import { get } from "lodash";
 
-import { Row, Props } from "./types";
-import { wrapWithRow } from "./utils";
-
 import { twMerge } from "../../../lib/utils/twMerge";
 
 import { Checkbox } from "../checkbox/Checkbox";
 import { ContextMenu } from "../../organisms/context-menu/ContextMenu";
+import { wrapWithRow } from "./utils";
+import { Row, Props } from "./types";
 
 export function TableRowRenderer<R extends Row = Row>({
   withContextMenu,

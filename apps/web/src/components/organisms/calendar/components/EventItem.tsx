@@ -1,10 +1,6 @@
 import { forwardRef, useState } from "react";
 import { format, getWeekOfMonth, isSameDay } from "date-fns";
-import {
-  getGridColumn,
-  getGridRow,
-  getIsLongerThan24Hours,
-} from "../utils";
+import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../utils";
 import { twMerge } from "../../../../lib/utils/twMerge";
 import { useCalendarContext } from "../Calendar";
 import { Event } from "../../../../__generated__/graphql";

@@ -5,7 +5,10 @@ import { useCustomers } from "../../../hooks/useCustomers";
 import { Modal } from "../../atoms/modal/Modal";
 import { Input } from "../../atoms/input/Input";
 import { Button } from "../../atoms/button/Button";
-import { Customer, InputUpdateCustomerArgs } from "../../../__generated__/graphql";
+import {
+  Customer,
+  InputUpdateCustomerArgs,
+} from "../../../__generated__/graphql";
 import { useFileUpload } from "../../../hooks/useFileUpload";
 
 interface Props extends Customer {

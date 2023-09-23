@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Service } from "./service";
 
 import { event } from "../schema/event";
 import { surreal } from "../surreal";
@@ -9,6 +8,7 @@ import {
   MutationDeleteEventsArgs,
   MutationUpdateEventsArgs,
 } from "../../__generated__/server";
+import { Service } from "./service";
 
 export class EventsService extends Service {
   constructor(token: string) {

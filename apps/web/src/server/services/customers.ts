@@ -6,13 +6,13 @@ import {
   inputCustomerFilters,
   inputCustomersOrderBy,
 } from "../schema/customer";
-import { Service } from "./service";
 import {
   Customer,
   MutationCreateCustomersArgs,
   PagedCustomersResponse,
   QueryCustomerArgs,
 } from "../../__generated__/server";
+import { Service } from "./service";
 
 export class CustomersService extends Service {
   constructor(token: string) {

@@ -2,8 +2,8 @@ import * as Form from "@radix-ui/react-form";
 
 import { forwardRef } from "react";
 import { ImageIcon } from "@radix-ui/react-icons";
-import { DefaultInputProps } from "./types";
 import { twMerge } from "../../../lib/utils/twMerge";
+import { DefaultInputProps } from "./types";
 
 export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
   function FilePickerInput(

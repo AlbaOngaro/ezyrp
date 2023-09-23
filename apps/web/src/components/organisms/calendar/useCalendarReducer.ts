@@ -7,8 +7,8 @@ import {
   isWithinInterval,
 } from "date-fns";
 
-import { Day, View } from "./types";
 import { Event } from "../../../__generated__/graphql";
+import { Day, View } from "./types";
 
 export type State = {
   selected: Date;

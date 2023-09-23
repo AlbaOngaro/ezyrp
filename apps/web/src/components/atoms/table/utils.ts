@@ -1,5 +1,5 @@
-import { Row, TableContextMenuItem } from "./types";
 import { ContextMenuItem } from "../../organisms/context-menu/types";
+import { Row, TableContextMenuItem } from "./types";
 
 export function wrapWithRow<R extends Row = Row>(
   item: TableContextMenuItem<R>,
