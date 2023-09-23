@@ -241,7 +241,7 @@ export function CreateEventModal({
                   {
                     "bg-red-500": variant === "red",
                     "bg-orange-400": variant === "orange",
-                    "bg-orange-400": variant === "orange",
+                    "bg-yellow-400": variant === "yellow",
                     "bg-lime-500": variant === "lime",
                     "bg-green-500": variant === "green",
                     "bg-emerald-500": variant === "emerald",
@@ -249,7 +249,7 @@ export function CreateEventModal({
                     "bg-cyan-500": variant === "cyan",
                     "bg-sky-500": variant === "sky",
                     "bg-blue-500": variant === "blue",
-                    "bg-orange-400": variant === "orange",
+                    "bg-indigo-400": variant === "indigo",
                     "bg-violet-500": variant === "violet",
                     "bg-purple-500": variant === "purple",
                     "bg-fuchsia-500": variant === "fuchsia",
