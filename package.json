@@ -5,7 +5,8 @@
   "scripts": {
     "prepare": "husky install",
     "build": "turbo build",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "type-check": "turbo type-check"
   },
   "devDependencies": {
     "@commitlint/cli": "17.7.1",

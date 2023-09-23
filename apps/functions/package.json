@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "type-check": "tsc --noEmit --incremental",
     "lint": "eslint --ext .ts src/",
     "dev": "node --watch --loader=ts-node/esm ./src/index.ts",
     "prebuild": "rimraf dist",

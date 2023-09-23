@@ -3,8 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "ts-node --esm src/lib/scripts/migrate/index.ts",
+    "type-check": "tsc --noEmit --incremental",
     "lint": "eslint --ext .ts .",
+    "dev": "ts-node --esm src/lib/scripts/migrate/index.ts",
     "prebuild": "rimraf dist",
     "build": "tsc --outDir dist/migrate"
   },
