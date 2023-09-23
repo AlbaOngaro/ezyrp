@@ -80,8 +80,8 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
           <i
             className={twMerge("w-4 h-4 rounded-md", {
               "bg-red-500": event.variant === "red",
-              "bg-orange-500": event.variant === "orange",
-              "bg-yellow-500": event.variant === "yellow",
+              "bg-orange-400": event.variant === "orange",
+              "bg-orange-400": event.variant === "orange",
               "bg-lime-500": event.variant === "lime",
               "bg-green-500": event.variant === "green",
               "bg-emerald-500": event.variant === "emerald",
@@ -89,7 +89,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
               "bg-cyan-500": event.variant === "cyan",
               "bg-sky-500": event.variant === "sky",
               "bg-blue-500": event.variant === "blue",
-              "bg-indigo-500": event.variant === "indigo",
+              "bg-orange-400": event.variant === "orange",
               "bg-violet-500": event.variant === "violet",
               "bg-purple-500": event.variant === "purple",
               "bg-fuchsia-500": event.variant === "fuchsia",

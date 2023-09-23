@@ -68,7 +68,7 @@ export function LoginPage() {
         Not a member?
         <Link
           href="/register"
-          className="font-semibold leading-6 ml-1 text-indigo-600 hover:text-indigo-500"
+          className="font-semibold leading-6 ml-1 text-orange-500 hover:text-orange-400"
         >
           Sign up
         </Link>

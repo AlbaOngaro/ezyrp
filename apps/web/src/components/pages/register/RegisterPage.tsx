@@ -71,7 +71,7 @@ export function RegisterPage() {
         Already have an account?
         <Link
           href="/login"
-          className="font-semibold leading-6 ml-1 text-indigo-600 hover:text-indigo-500"
+          className="font-semibold leading-6 ml-1 text-orange-500 hover:text-orange-400"
         >
           Sign in
         </Link>
@@ -81,5 +81,5 @@ export function RegisterPage() {
 }
 
 RegisterPage.getLayout = (page: ReactElement) => (
-  <CenteredLayout>{page}</CenteredLayout>
+  <CenteredLayout title="Create your account">{page}</CenteredLayout>
 );

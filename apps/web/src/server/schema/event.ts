@@ -4,7 +4,7 @@ import { customer } from "./customer";
 export const variants: readonly [string, ...string[]] = [
   "red",
   "orange",
-  "yellow",
+  "orange",
   "lime",
   "green",
   "emerald",
@@ -12,7 +12,7 @@ export const variants: readonly [string, ...string[]] = [
   "cyan",
   "sky",
   "blue",
-  "indigo",
+  "orange",
   "violet",
   "purple",
   "fuchsia",

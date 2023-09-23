@@ -59,7 +59,7 @@ export function Header() {
                   <button
                     onClick={() => logout()}
                     className={twMerge(
-                      "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-50",
+                      "block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-50",
                     )}
                   >
                     Logout

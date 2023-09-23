@@ -90,7 +90,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
       className="overflow-scroll"
     >
       <Form className="mt-2 flex flex-col gap-2" onSubmit={handleSubmit}>
-        <h6 className="uppercase text-indigo-700 font-bold my-2">bill to</h6>
+        <h6 className="uppercase text-orange-600 font-bold my-2">bill to</h6>
         {!customers.isLoading && customers.data && customers.data.customers && (
           <Select
             label="Customer"
@@ -108,7 +108,7 @@ export function CreateInvoiceModal({ setIsOpen }: Props) {
           />
         )}
 
-        <h6 className="uppercase text-indigo-700 font-bold my-2">details</h6>
+        <h6 className="uppercase text-orange-600 font-bold my-2">details</h6>
 
         <TextArea
           label="Project Description"

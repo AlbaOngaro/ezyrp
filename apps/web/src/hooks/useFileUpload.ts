@@ -19,7 +19,7 @@ export function useFileUpload() {
       data.getCloudinarySignature.timestamp.toString(),
     );
     formData.append("signature", data.getCloudinarySignature.signature);
-    formData.append("folder", "crm");
+    formData.append("folder", "profiles");
 
     const url =
       "https://api.cloudinary.com/v1_1/" +

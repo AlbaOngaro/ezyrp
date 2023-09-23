@@ -30,9 +30,9 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
           "px-3 py-2 text-sm": size === "lg",
           "px-3.5 py-2.5 text-sm ": size === "xl",
 
-          "text-white bg-indigo-600  hover:bg-indigo-500 focus-visible:outline-indigo-600":
+          "text-white bg-orange-500  hover:bg-orange-400 focus-visible:outline-orange-500":
             variant === "primary",
-          "text-indigo-600 bg-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-600 hover:text-white":
+          "text-orange-500 bg-white ring-1 ring-inset ring-orange-500 hover:bg-orange-500 hover:text-white":
             variant === "secondary",
           "text-white bg-red-500 hover:bg-red-400 focus-visible:ring-red-300":
             variant === "danger",
