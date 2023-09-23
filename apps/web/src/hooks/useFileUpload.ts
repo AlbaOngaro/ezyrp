@@ -5,7 +5,11 @@ export function useFileUpload() {
   const [getCloudinarySignature] = useLazyQuery(GET_CLOUDINARY_SIGNATURE);
 
   return async (file: File) => {
-    const { data } = await getCloudinarySignature();
+    const { data } = await getCloudinarySignature({
+      variables: {
+        folder: "profiles",
+      },
+    });
 
     if (!data) {
       throw new Error("Something went wrong");
