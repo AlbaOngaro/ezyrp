@@ -64,7 +64,7 @@ export function Select({
                   disabled={option.disabled}
                   value={option.value}
                   className={twMerge(
-                    "text-dark-800 px-4 py-1 flex items-center justify-between relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-indigo-500 data-[highlighted]:text-white data-[disabled]:text-gray-300",
+                    "text-dark-800 px-4 py-1 flex items-center justify-between relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-orange-400 data-[highlighted]:text-white data-[disabled]:text-gray-300",
                   )}
                 >
                   <RUISelect.ItemText>{option.label}</RUISelect.ItemText>

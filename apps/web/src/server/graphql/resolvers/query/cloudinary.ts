@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { QueryResolvers } from "../../../../__generated__/server";
 
 export const getCloudinarySignature: QueryResolvers["getCloudinarySignature"] =
-  async () => {
+  async (_, args) => {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -15,7 +15,7 @@ export const getCloudinarySignature: QueryResolvers["getCloudinarySignature"] =
     const signature = cloudinary.utils.api_sign_request(
       {
         timestamp,
-        folder: "crm",
+        folder: args.folder || "nimblerp",
       },
       process.env.CLOUDINARY_API_SECRET as string,
     );

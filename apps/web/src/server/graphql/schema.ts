@@ -22,7 +22,7 @@ export const typeDefs = gql`
 
     stats(filters: InputStatsFilters): Stats!
 
-    getCloudinarySignature: CloudinarySignature!
+    getCloudinarySignature(folder: String): CloudinarySignature!
   }
 
   type Mutation {

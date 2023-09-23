@@ -124,7 +124,7 @@ export function MonthWidget({
                 !day.isCurrentMonth &&
                 !day.isToday &&
                 "text-gray-400",
-              day.isToday && !day.isSelected && "text-indigo-600",
+              day.isToday && !day.isSelected && "text-orange-500",
               dayIdx === 0 && "rounded-tl-lg",
               dayIdx === 6 && "rounded-tr-lg",
               dayIdx === days.length - 7 && "rounded-bl-lg",
@@ -135,7 +135,7 @@ export function MonthWidget({
               dateTime={day.date.toISOString()}
               className={twMerge(
                 {
-                  "bg-indigo-600 text-white":
+                  "bg-orange-500 text-white":
                     typeof showSelected === "function"
                       ? showSelected(day.date) && isToday(day.date)
                       : false,

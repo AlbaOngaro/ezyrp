@@ -61,7 +61,7 @@ export function HomePage() {
               <button
                 key={item.name}
                 className={twMerge("text-gray-700", {
-                  "text-indigo-600": item.value === timeSpan,
+                  "text-orange-500": item.value === timeSpan,
                 })}
                 onClick={() => {
                   setTimeSpan(item.value);
@@ -130,7 +130,7 @@ export function HomePage() {
           </h2>
           <Link
             href="/customers"
-            className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            className="text-sm font-semibold leading-6 text-orange-500 hover:text-orange-400"
           >
             View all<span className="sr-only">, customers</span>
           </Link>

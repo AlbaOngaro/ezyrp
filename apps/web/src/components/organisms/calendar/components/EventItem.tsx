@@ -85,8 +85,8 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
         className={twMerge("font-semibold", {
           truncate: view === "month",
           "text-red-500": event.variant === "red",
-          "text-orange-500": event.variant === "orange",
-          "text-yellow-500": event.variant === "yellow",
+          "text-orange-400": event.variant === "orange",
+          "text-yellow-400": event.variant === "yellow",
           "text-lime-500": event.variant === "lime",
           "text-green-500": event.variant === "green",
           "text-emerald-500": event.variant === "emerald",
@@ -94,7 +94,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
           "text-cyan-500": event.variant === "cyan",
           "text-sky-500": event.variant === "sky",
           "text-blue-500": event.variant === "blue",
-          "text-indigo-500": event.variant === "indigo",
+          "text-indigo-400": event.variant === "indigo",
           "text-violet-500": event.variant === "violet",
           "text-purple-500": event.variant === "purple",
           "text-fuchsia-500": event.variant === "fuchsia",
@@ -108,9 +108,9 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
         <p
           className={twMerge("shrink-0", {
             "text-red-500 group-hover:text-red-700": event.variant === "red",
-            "text-orange-500 group-hover:text-orange-700":
+            "text-orange-400 group-hover:text-orange-600":
               event.variant === "orange",
-            "text-yellow-500 group-hover:text-yellow-700":
+            "text-yellow-400 group-hover:text-yellow-600":
               event.variant === "yellow",
             "text-lime-500 group-hover:text-lime-700": event.variant === "lime",
             "text-green-500 group-hover:text-green-700":
@@ -121,7 +121,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
             "text-cyan-500 group-hover:text-cyan-700": event.variant === "cyan",
             "text-sky-500 group-hover:text-sky-700": event.variant === "sky",
             "text-blue-500 group-hover:text-blue-700": event.variant === "blue",
-            "text-indigo-500 group-hover:text-indigo-700":
+            "text-indigo-400 group-hover:text-indigo-600":
               event.variant === "indigo",
             "text-violet-500 group-hover:text-violet-700":
               event.variant === "violet",

@@ -196,7 +196,7 @@ export function Body() {
               <time
                 dateTime={day.date.toISOString()}
                 className={twMerge({
-                  "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white":
+                  "flex h-6 w-6 items-center justify-center rounded-full bg-orange-500 font-semibold text-white":
                     day.isToday,
                 })}
               >
@@ -244,7 +244,7 @@ export function Body() {
                   "bg-white": day.isCurrentMonth,
                   "font-semibold": day.isSelected || day.isToday,
                   "text-white": day.isSelected,
-                  "text-indigo-600": !day.isSelected && day.isToday,
+                  "text-orange-500": !day.isSelected && day.isToday,
                   "text-gray-900":
                     !day.isSelected && day.isCurrentMonth && !day.isToday,
                   "text-gray-500":
@@ -257,7 +257,7 @@ export function Body() {
                 className={twMerge(
                   day.isSelected &&
                     "flex h-6 w-6 items-center justify-center rounded-full",
-                  day.isSelected && day.isToday && "bg-indigo-600",
+                  day.isSelected && day.isToday && "bg-orange-500",
                   day.isSelected && !day.isToday && "bg-gray-900",
                   "ml-auto",
                 )}

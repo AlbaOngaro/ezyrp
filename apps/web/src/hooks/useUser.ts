@@ -9,7 +9,14 @@ import { USER } from "../lib/queries/USER";
 export function useUser() {
   const router = useRouter();
 
-  const { data, error, loading: isLoading } = useQuery(USER);
+  const {
+    data,
+    error,
+    loading: isLoading,
+  } = useQuery(USER, {
+    errorPolicy: "ignore",
+  });
+
   const [login] = useMutation(LOGIN, {
     onCompleted: () => router.push("/"),
   });

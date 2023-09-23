@@ -189,7 +189,7 @@ export function Body() {
                 <span className="flex items-baseline">
                   {format(day.date, "EEE")}
 
-                  <span className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
+                  <span className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 font-semibold text-white">
                     {format(day.date, "d")}
                   </span>
                 </span>
@@ -212,7 +212,7 @@ export function Body() {
                     className={twMerge(
                       "items-center justify-center font-semibold text-gray-900",
                       {
-                        "flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white":
+                        "flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 font-semibold text-white":
                           day.isToday,
                       },
                     )}
