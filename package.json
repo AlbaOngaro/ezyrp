@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build": "turbo build",
+    "lint": "turbo lint"
   },
   "devDependencies": {
     "@commitlint/cli": "17.7.1",
