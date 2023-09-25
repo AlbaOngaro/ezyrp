@@ -79,23 +79,24 @@ export function EditInvoiceModal({
         <Select
           label="Status"
           name="status"
-          defaultValue={invoice.status || "pending"}
-          onChange={(status) =>
+          defaultValue={{
+            value: invoice.status || "pending",
+            label: invoice.status || "Pending",
+          }}
+          onChange={(option) =>
             setInvoice((curr) => ({
               ...curr,
-              status: status as Invoice["status"],
+              status: option?.value as Invoice["status"],
             }))
           }
           options={[
             {
               label: "Pending",
               value: "pending",
-              disabled: true,
             },
             {
               label: "Overdue",
               value: "overdue",
-              disabled: true,
             },
             {
               label: "Paid",
@@ -112,10 +113,10 @@ export function EditInvoiceModal({
               label: customer.name,
               value: customer.id,
             }))}
-            onChange={(customer) =>
+            onChange={(option) =>
               setInvoice((curr) => ({
                 ...curr,
-                customer,
+                customer: option?.value,
               }))
             }
           />

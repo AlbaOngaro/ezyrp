@@ -5,21 +5,24 @@ import { clean } from "../utils/clean";
 
 export async function deploy() {
   const files = await new Promise<string[]>((resolve, reject) =>
-    fs.readdir(path.resolve("services/surreal/migrations"), (err, paths) => {
-      if (err) {
-        return reject(err);
-      }
+    fs.readdir(
+      path.resolve("../../services/surreal/migrations"),
+      (err, paths) => {
+        if (err) {
+          return reject(err);
+        }
 
-      resolve(
-        paths.map((p) =>
-          path.resolve(path.join("services/surreal/migrations", p)),
-        ),
-      );
-    }),
+        resolve(
+          paths.map((p) =>
+            path.resolve(path.join("../../services/surreal/migrations", p)),
+          ),
+        );
+      },
+    ),
   );
 
   const [theirs, ...merged] = await Promise.all([
-    fetch(process.env.SURREAL_HOST?.replace("/rpc", "") as string, {
+    fetch(process.env.SURREAL_HOST?.replace("/rpc", "/export") as string, {
       headers: {
         Accept: "application/json",
         NS: "crm",

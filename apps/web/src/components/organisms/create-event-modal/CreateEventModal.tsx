@@ -200,6 +200,7 @@ export function CreateEventModal({
 
         {!customers.isLoading && customers.data && customers.data.customers && (
           <Combobox
+            name="guests"
             label="Guests"
             placeholder="Search for customer"
             options={customers.data.customers.results.map((customer) => ({

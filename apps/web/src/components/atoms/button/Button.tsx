@@ -5,6 +5,7 @@ export interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "tertiary" | "danger";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   shape?: "default" | "circle";
+  loading?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
@@ -14,6 +15,8 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
     shape = "default",
     children,
     className,
+    loading,
+    disabled,
     ...props
   },
   ref,
@@ -22,7 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
     <button
       ref={ref}
       className={twMerge(
-        "rounded font-semibold shadow-sm transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+        "rounded font-semibold shadow-sm transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60 disabled:cursor-not-allowed",
         {
           "px-2 py-1 text-xs": size === "xs",
           "px-2 py-1 text-sm": size === "sm",
@@ -48,9 +51,10 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
         },
         className,
       )}
+      disabled={loading || disabled}
       {...props}
     >
-      {children}
+      {children} {loading && <img src="/images/loader.svg" alt="loader" />}
     </button>
   );
 });

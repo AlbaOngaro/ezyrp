@@ -1,5 +1,8 @@
 import * as Popover from "@radix-ui/react-popover";
+import * as Form from "@radix-ui/react-form";
+
 import {
+  ComponentPropsWithoutRef,
   JSXElementConstructor,
   KeyboardEventHandler,
   ReactNode,
@@ -7,8 +10,8 @@ import {
   useRef,
   useState,
 } from "react";
-
 import { CaretSortIcon, Cross1Icon } from "@radix-ui/react-icons";
+
 import { twMerge } from "../../../lib/utils/twMerge";
 
 interface Option {
@@ -17,7 +20,8 @@ interface Option {
   disabled?: boolean;
 }
 
-interface Props<O extends Option = Option> {
+interface Props<O extends Option = Option>
+  extends Omit<ComponentPropsWithoutRef<"input">, "onChange" | "options"> {
   label?: string;
   description?: string;
   className?: string;
@@ -32,6 +36,8 @@ interface Props<O extends Option = Option> {
       option: O;
     }>;
   }>;
+  name: string;
+  validations?: Partial<Record<Form.ValidityMatcher, string>>;
 }
 
 function DefaultValue<O extends Option = Option>({
@@ -67,6 +73,9 @@ export function Combobox<O extends Option = Option>({
   filterOption = (option, inputValue) =>
     option.value.toLowerCase().includes(inputValue),
   components,
+  name,
+  validations,
+  ...rest
 }: Props<O>) {
   const ul = useRef<HTMLUListElement | null>(null);
 
@@ -147,61 +156,96 @@ export function Combobox<O extends Option = Option>({
   return (
     <Popover.Root open={isOpen}>
       <Popover.Anchor asChild>
-        <div className={twMerge("flex flex-col gap-2", className)}>
-          {(label || description) && (
-            <label className="flex flex-col text-sm font-bold text-gray-800">
-              {label}
-              {description && (
-                <small className="text-sm font-normal text-dark-blue-gray">
-                  {description}
-                </small>
-              )}
-            </label>
-          )}
-          <fieldset className="relative flex flex-row flex-wrap items-center gap-2 m-0 resize-none py-2 px-4 pr-10 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500">
-            {selected.map((option, i) => (
-              <Value
-                option={option}
-                key={`${i}-${option.value.toLowerCase()}`}
-                onRemove={() =>
-                  setSelected((curr) =>
-                    curr.filter(
-                      (o, y) =>
-                        `${i}-${option.value.toLowerCase()}` !==
-                        `${y}-${o.value.toLowerCase()}`,
-                    ),
-                  )
-                }
+        <Form.Field name={name} id={name} asChild>
+          <div className={twMerge("flex flex-col gap-2", className)}>
+            {(label || description) && (
+              <label className="flex flex-col text-sm font-bold text-gray-800">
+                {label}
+                {description && (
+                  <small className="text-sm font-normal text-dark-blue-gray">
+                    {description}
+                  </small>
+                )}
+              </label>
+            )}
+            <fieldset className="relative flex flex-row flex-wrap items-center gap-2 m-0 resize-none py-2 px-4 pr-10 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500">
+              {selected.map((option, i) => (
+                <Value
+                  option={option}
+                  key={`${i}-${option.value.toLowerCase()}`}
+                  onRemove={() =>
+                    setSelected((curr) =>
+                      curr.filter(
+                        (o, y) =>
+                          `${i}-${option.value.toLowerCase()}` !==
+                          `${y}-${o.value.toLowerCase()}`,
+                      ),
+                    )
+                  }
+                >
+                  {option.label}
+                </Value>
+              ))}
+
+              <input
+                type="text"
+                className="border-none p-0 w-full flex-shrink-0 flex-grow basis-14 focus:ring-0 focus:outline-none"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setIsOpen(true);
+                }}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsOpen(true)}
+                placeholder={selected.length === 0 ? placeholder : undefined}
+              />
+
+              <Form.Control asChild>
+                <input
+                  aria-hidden
+                  className="hidden"
+                  type="text"
+                  name={name}
+                  list={`${name}-list`}
+                  value={selected.map((s) => s.value).join(",")}
+                  multiple
+                  {...rest}
+                />
+              </Form.Control>
+              <datalist
+                aria-hidden="true"
+                className="hidden"
+                id={`${name}-list`}
               >
-                {option.label}
-              </Value>
-            ))}
+                {options.map((option) => (
+                  <option key={option.value}>{option.label}</option>
+                ))}
+              </datalist>
 
-            <input
-              type="text"
-              className="border-none p-0 w-full flex-shrink-0 flex-grow basis-14 focus:ring-0 focus:outline-none"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setIsOpen(true);
-              }}
-              onKeyDown={handleKeyDown}
-              onFocus={() => setIsOpen(true)}
-              placeholder={selected.length === 0 ? placeholder : undefined}
-            />
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setQuery("");
+                  setIsOpen(true);
+                }}
+                className="absolute right-3"
+              >
+                <CaretSortIcon className="h-5 w-5" />
+              </button>
+            </fieldset>
 
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setQuery("");
-                setIsOpen(true);
-              }}
-              className="absolute right-3"
-            >
-              <CaretSortIcon className="h-5 w-5" />
-            </button>
-          </fieldset>
-        </div>
+            {validations &&
+              Object.entries(validations).map(([match, message]) => (
+                <Form.Message
+                  className="text-xs text-red-400"
+                  key={match}
+                  match={match as Form.ValidityMatcher}
+                >
+                  {message}
+                </Form.Message>
+              ))}
+          </div>
+        </Form.Field>
       </Popover.Anchor>
       <Popover.Content
         side="bottom"

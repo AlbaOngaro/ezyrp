@@ -13,12 +13,12 @@ export class ItemsService extends Service {
     await surreal.authenticate(this.token);
 
     const result = await surreal.query<Item[]>(`
-      INSERT INTO item (name, description, quantity, price) VALUES ${items
+      INSERT INTO item (name, description, quantity, price, onetime) VALUES ${items
         .map(
-          ({ name, description, quantity, price }) =>
+          ({ name, description, quantity, price, onetime = false }) =>
             `('${name}', ${JSON.stringify(
               description,
-            )}, ${quantity}, ${price})`,
+            )}, ${quantity}, ${price}, ${onetime})`,
         )
         .join(",")};
     `);
@@ -38,12 +38,14 @@ export class ItemsService extends Service {
       `SELECT 
         *
       FROM item
+      WHERE onetime != true
       LIMIT $limit
       START $start;
       
       SELECT 
         count() AS total
       FROM item
+      WHERE onetime != true
       GROUP ALL;
       `,
       {

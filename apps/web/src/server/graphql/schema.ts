@@ -249,6 +249,7 @@ export const typeDefs = gql`
     description: String
     price: Int!
     quantity: Int!
+    onetime: Boolean
   }
 
   input InputItemsFilters {
