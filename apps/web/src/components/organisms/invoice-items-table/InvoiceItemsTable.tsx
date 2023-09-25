@@ -5,11 +5,13 @@ import { v4 as uuid } from "uuid";
 import { InputCreateInvoicesArgs } from "__generated__/graphql";
 
 import { Button } from "components/atoms/button/Button";
+import { Input } from "components/atoms/input/Input";
+
+import { CHF } from "lib/formatters/chf";
 
 import { useItems } from "hooks/useItems";
 import { Select } from "components/atoms/select/Select";
-import { CHF } from "lib/formatters/chf";
-import { Input } from "components/atoms/input/Input";
+import { isSavedItem } from "components/pages/invoice/CreateInvoicePage";
 
 interface Props {
   invoice: InputCreateInvoicesArgs;
@@ -84,88 +86,123 @@ export function InvoiceItemsTable({ invoice, setInvoice }: Props) {
 
   return (
     <div>
-      <header className="grid grid-cols-[repeat(4,minmax(0,1fr)),4rem] mb-2">
-        <h6 className="font-bold">Name</h6>
-        <h6 className="font-bold text-center">Price</h6>
-        <h6 className="font-bold text-center">Qty</h6>
-        <h6 className="font-bold text-right">Total</h6>
+      <header className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 mb-2">
+        <h6 className="text-sm font-bold text-gray-800">Name</h6>
+        <h6 className="text-sm font-bold text-gray-800 text-left">Price</h6>
+        <h6 className="text-sm font-bold text-gray-800 text-left">Qty</h6>
+        <h6 className="text-sm font-bold text-gray-800 text-right">Total</h6>
       </header>
 
-      {items.map((item, i) => (
-        <div
-          key={item.id}
-          className="grid grid-cols-[repeat(4,minmax(0,1fr)),4rem]"
-        >
-          <Select
-            name="name"
-            defaultValue={item.id || " "}
-            onChange={(id) =>
-              setItems((curr) => {
-                const newItem = data?.items?.results?.find(
-                  (it) => it.id === id,
-                );
-
-                if (newItem) {
-                  const quantity = curr.at(i)?.quantity || 1;
-
-                  return curr.toSpliced(i, 1, {
-                    id: newItem.id,
-                    name: newItem.name,
-                    price: newItem.price,
-                    quantity,
-                    total: newItem.price * quantity,
+      <div className="flex flex-col gap-4">
+        {items.map((item, i) => (
+          <div
+            key={item.id}
+            className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 items-center"
+          >
+            <Select
+              name="name"
+              value={{ label: item.name, value: item.id }}
+              onChange={(option) => {
+                if (option) {
+                  setItems((curr) => {
+                    const newItem = data?.items?.results?.find(
+                      (it) => it.id === option.value,
+                    );
+                    if (newItem) {
+                      const quantity = curr.at(i)?.quantity || 1;
+                      return curr.toSpliced(i, 1, {
+                        id: newItem.id,
+                        name: newItem.name,
+                        price: newItem.price,
+                        quantity,
+                        total: newItem.price * quantity,
+                      });
+                    }
+                    return curr;
                   });
                 }
-
-                return curr;
-              })
-            }
-            options={
-              data?.items?.results?.map((i) => ({
-                label: i.name,
-                value: i.id,
-                disabled: items.some((it) => it.id === i.id),
-              })) || []
-            }
-          />
-
-          <span className="text-center">{CHF.format(item.price / 100)}</span>
-
-          <Input
-            name="quantity"
-            type="number"
-            value={item.quantity}
-            onChange={(e) => {
-              const newQuantity = Number(e.target.value);
-
-              if (newQuantity > 1) {
-                setItems((curr) =>
-                  curr.toSpliced(i, 1, {
+              }}
+              onCreateOption={(option) => {
+                setItems((curr) => {
+                  return curr.toSpliced(i, 1, {
                     ...item,
-                    quantity: newQuantity,
-                    total: item.price * newQuantity,
-                  }),
-                );
+                    name: option,
+                    price: 1000,
+                    quantity: 1,
+                    total: 1,
+                  });
+                });
+              }}
+              isOptionDisabled={(option) =>
+                items.some((it) => it.id === option.value)
               }
-            }}
-          />
+              options={
+                data?.items?.results?.map((i) => ({
+                  label: i.name,
+                  value: i.id,
+                })) || []
+              }
+            />
 
-          <span className="text-right">{CHF.format(item.total / 100)}</span>
+            <Input
+              className="relative [&>input]:pr-10 after:absolute after:content-['CHF'] after:text-xs after:text-gray-500 after:-translate-y-[50%] after:top-[50%] after:right-2"
+              name="price"
+              type="number"
+              disabled={isSavedItem(item.id)}
+              min="1"
+              step={0.05}
+              value={item.price / 100}
+              onChange={(e) => {
+                const price = Number(e.target.value) * 100;
 
-          <Button
-            variant="danger"
-            size="sm"
-            className="w-6 h-6 rounded-full flex justify-center items-center justify-self-end"
-            onClick={() =>
-              setItems((curr) => curr.filter((it) => it.id !== item.id))
-            }
-          >
-            <MinusIcon />
-          </Button>
-        </div>
-      ))}
+                setItems((curr) => {
+                  return curr.toSpliced(i, 1, {
+                    ...item,
+                    price,
+                    total: item.quantity * price,
+                  });
+                });
+              }}
+            />
+
+            <Input
+              name="quantity"
+              type="number"
+              value={item.quantity}
+              onChange={(e) => {
+                const newQuantity = Number(e.target.value);
+
+                if (newQuantity > 1) {
+                  setItems((curr) =>
+                    curr.toSpliced(i, 1, {
+                      ...item,
+                      quantity: newQuantity,
+                      total: item.price * newQuantity,
+                    }),
+                  );
+                }
+              }}
+            />
+
+            <span className="text-right">{CHF.format(item.total / 100)}</span>
+
+            <Button
+              variant="danger"
+              className="w-6 h-6 p-1.5 rounded-full flex justify-center items-center justify-self-end"
+              onClick={() =>
+                setItems((curr) => curr.filter((it) => it.id !== item.id))
+              }
+            >
+              <MinusIcon />
+            </Button>
+          </div>
+        ))}
+      </div>
 
       <Button
+        variant="tertiary"
+        size="xl"
+        className="w-full mt-4 flex justify-center"
         onClick={() =>
           setItems((curr) => [
             ...curr,

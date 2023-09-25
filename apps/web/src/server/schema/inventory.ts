@@ -6,6 +6,7 @@ export const item = z.object({
   description: z.string().default(""),
   price: z.number(),
   quantity: z.number(),
+  onetime: z.boolean().nullable().default(false),
 });
 
 export const inputItemFilters = z.object({

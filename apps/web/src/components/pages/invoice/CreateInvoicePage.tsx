@@ -11,17 +11,19 @@ import { Input } from "components/atoms/input/Input";
 import { Select } from "components/atoms/select/Select";
 import { TextArea } from "components/atoms/textarea/TextArea";
 
+import { InvoiceItemsTable } from "components/organisms/invoice-items-table/InvoiceItemsTable";
+
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { useCustomers } from "hooks/useCustomers";
-
-import { InvoiceItemsTable } from "components/organisms/invoice-items-table/InvoiceItemsTable";
+// import { useInvoices } from "hooks/useInvoices";
 
 export function isSavedItem(id: string): boolean {
   return /item\:.{20}/.test(id);
 }
 
 export function CreateInvoicePage() {
+  // const invoices = useInvoices();
   const customers = useCustomers();
 
   const [invoice, setInvoice] = useState<InputCreateInvoicesArgs>({
@@ -36,18 +38,16 @@ export function CreateInvoicePage() {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    // try {
-    //   await invoices.create({
-    //     variables: {
-    //       createInvoicesArgs: [invoice],
-    //     },
-    //   });
-    // } catch (error: unknown) {
-    //   console.error(error);
-    // }
+    try {
+      // await invoices.create({
+      //   variables: {
+      //     createInvoicesArgs: [invoice],
+      //   },
+      // });
+    } catch (error: unknown) {
+      console.error(error);
+    }
   };
-
-  console.debug(invoice.items);
 
   return (
     <Container as="section" className="py-10 ">
@@ -62,12 +62,14 @@ export function CreateInvoicePage() {
               label: customer.name,
               value: customer.id,
             }))}
-            onChange={(customer) =>
-              setInvoice((curr) => ({
-                ...curr,
-                customer,
-              }))
-            }
+            onChange={(option) => {
+              if (option) {
+                return setInvoice((curr) => ({
+                  ...curr,
+                  customer: option.value,
+                }));
+              }
+            }}
           />
         )}
 

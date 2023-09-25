@@ -91,6 +91,7 @@ export type InputCreateInvoicesArgs = {
 export type InputCreateItems = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
+  onetime?: InputMaybe<Scalars['Boolean']['input']>;
   price: Scalars['Int']['input'];
   quantity: Scalars['Int']['input'];
 };

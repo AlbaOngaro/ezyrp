@@ -38,12 +38,14 @@ export class ItemsService extends Service {
       `SELECT 
         *
       FROM item
+      WHERE onetime != true
       LIMIT $limit
       START $start;
       
       SELECT 
         count() AS total
       FROM item
+      WHERE onetime != true
       GROUP ALL;
       `,
       {
