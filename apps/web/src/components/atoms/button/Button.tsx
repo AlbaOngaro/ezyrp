@@ -5,6 +5,7 @@ export interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "tertiary" | "danger";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   shape?: "default" | "circle";
+  loading?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
@@ -14,6 +15,8 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
     shape = "default",
     children,
     className,
+    loading,
+    disabled,
     ...props
   },
   ref,
@@ -48,9 +51,10 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
         },
         className,
       )}
+      disabled={loading || disabled}
       {...props}
     >
-      {children}
+      {children} {loading && <img src="/images/loader.svg" alt="loader" />}
     </button>
   );
 });

@@ -22,6 +22,8 @@ import { customer } from "server/schema/customer";
 import { item } from "server/schema/inventory";
 import { useInvoices } from "hooks/useInvoices";
 import { useRouter } from "next/router";
+import { useItems } from "hooks/useItems";
+import { Item } from "__generated__/graphql";
 
 export function isSavedItem(id: string): boolean {
   return /item\:.{20}/.test(id);
@@ -35,6 +37,7 @@ const schema = invoice.omit({ id: true }).extend({
 export type InvoiceFormValue = z.infer<typeof schema>;
 
 export function CreateInvoicePage() {
+  const items = useItems();
   const router = useRouter();
   const invoices = useInvoices();
   const customers = useCustomers();
@@ -54,8 +57,55 @@ export function CreateInvoicePage() {
     });
 
   const onSubmit = handleSubmit(
-    (data) =>
-      invoices.create({
+    async (data) => {
+      const createItemsInput = data.items
+        .filter((item) => !isSavedItem(item.id))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .map(({ id, ...item }) => ({
+          ...item,
+          onetime: true,
+        }));
+
+      if (createItemsInput.length) {
+        const newItems = await items.create({
+          variables: {
+            createItemsInput,
+          },
+        });
+
+        const itemsToBeAdded = [
+          ...data.items.filter((item) => isSavedItem(item.id)),
+          ...(newItems?.data?.createItems || []),
+        ] as Item[];
+
+        await invoices.create({
+          variables: {
+            createInvoicesArgs: [
+              {
+                customer: data.customer.id,
+                description: data.description,
+                status: "pending",
+                due: data.due,
+                emitted: data.emitted,
+                items: Array.from(
+                  {
+                    length: itemsToBeAdded.length,
+                  },
+                  (_, i) => i,
+                ).flatMap((i) =>
+                  Array.from(
+                    { length: itemsToBeAdded[i].quantity },
+                    () => itemsToBeAdded[i].id,
+                  ),
+                ),
+              },
+            ],
+          },
+        });
+        return router.push("/invoices");
+      }
+
+      await invoices.create({
         variables: {
           createInvoicesArgs: [
             {
@@ -65,7 +115,9 @@ export function CreateInvoicePage() {
               due: data.due,
               emitted: data.emitted,
               items: Array.from(
-                { length: data.items.length },
+                {
+                  length: data.items.length,
+                },
                 (_, i) => i,
               ).flatMap((i) =>
                 Array.from(
@@ -76,8 +128,10 @@ export function CreateInvoicePage() {
             },
           ],
         },
-        onCompleted: () => router.push("/invoices"),
-      }),
+      });
+
+      return router.push("/invoices");
+    },
     (errors) => console.error(errors),
   );
 
@@ -164,6 +218,7 @@ export function CreateInvoicePage() {
           <InvoiceItemsTable />
 
           <Button
+            loading={items.loading || invoices.isLoading}
             disabled={!methods.formState.isValid}
             size="lg"
             className="ml-auto px-6"

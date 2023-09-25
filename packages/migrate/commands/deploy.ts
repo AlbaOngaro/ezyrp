@@ -22,7 +22,7 @@ export async function deploy() {
   );
 
   const [theirs, ...merged] = await Promise.all([
-    fetch(process.env.SURREAL_HOST?.replace("/rpc", "") as string, {
+    fetch(process.env.SURREAL_HOST?.replace("/rpc", "/export") as string, {
       headers: {
         Accept: "application/json",
         NS: "crm",

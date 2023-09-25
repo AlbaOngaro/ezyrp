@@ -45,7 +45,7 @@ export function InvoiceItemsTable() {
         {controlledFields.map((item, i) => (
           <div
             key={item.key}
-            className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 items-center"
+            className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 items-start"
           >
             <Select
               name="name"
@@ -108,9 +108,19 @@ export function InvoiceItemsTable() {
               name="quantity"
               type="number"
               value={item.quantity}
+              max={
+                items?.data?.items?.results.find((it) => it.id === item.id)
+                  ?.quantity
+              }
               onChange={(e) => {
                 const quantity = Number(e.target.value);
                 setValue(`items.${i}.quantity` as const, quantity);
+              }}
+              validations={{
+                rangeOverflow: `You don't have enough of this item in stock (${
+                  items?.data?.items?.results.find((it) => it.id === item.id)
+                    ?.quantity || undefined
+                } in stock)`,
               }}
             />
 
