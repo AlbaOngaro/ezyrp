@@ -1,7 +1,7 @@
 import * as Form from "@radix-ui/react-form";
 import { TextareaHTMLAttributes, forwardRef, useEffect, useRef } from "react";
 import { mergeRefs } from "lib/utils/mergeRefs";
-import { twMerge } from "../../../lib/utils/twMerge";
+import { twMerge } from "lib/utils/twMerge";
 
 interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;

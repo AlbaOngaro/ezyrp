@@ -181,13 +181,16 @@ export function Calendar({
               <Select
                 name="views"
                 className="min-w-[150px]"
-                defaultValue={view}
+                defaultValue={{
+                  label: view,
+                  value: view,
+                }}
                 options={views}
                 onChange={(value) =>
                   dispatch({
                     type: "SET_VIEW",
                     payload: {
-                      view: value as View,
+                      view: value?.value as View,
                     },
                   })
                 }

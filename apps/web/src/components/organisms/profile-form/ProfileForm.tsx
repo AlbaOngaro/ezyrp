@@ -155,15 +155,18 @@ export function ProfileForm({ profile: initialProfile }: Props) {
           <Select
             label="Country"
             name="country"
-            defaultValue={profile.country || ""}
+            defaultValue={{
+              label: profile.country || "",
+              value: profile.country || "",
+            }}
             options={((data.countries || []) as Country[]).map((country) => ({
               label: country.name.common,
               value: country.name.common,
             }))}
-            onChange={(country) =>
+            onChange={(option) =>
               setProfile((curr) => ({
                 ...curr,
-                country,
+                country: option?.value,
               }))
             }
           />
