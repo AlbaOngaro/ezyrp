@@ -1,4 +1,5 @@
 import { forwardRef, useRef, useState } from "react";
+import * as Form from "@radix-ui/react-form";
 import * as Popover from "@radix-ui/react-popover";
 import { CalendarIcon } from "@radix-ui/react-icons";
 
@@ -21,24 +22,26 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
       <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
         <Popover.Anchor>
           <div className="relative">
-            <input
-              ref={mergeRefs(input, ref)}
-              className="w-full m-0 resize-none py-2 px-4 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500 data-[invalid=true]:text-red-400 data-[invalid=true]:border-red-400"
-              name={name}
-              id={name}
-              type={type}
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-              onChange={(e) => {
-                if (typeof onChange === "function") {
-                  if (isValid(new Date(e.target.value))) {
-                    onChange(new Date(e.target.value));
+            <Form.Control asChild>
+              <input
+                ref={mergeRefs(input, ref)}
+                className="w-full m-0 resize-none py-2 px-4 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500 data-[invalid=true]:text-red-400 data-[invalid=true]:border-red-400"
+                name={name}
+                id={name}
+                type={type}
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+                onChange={(e) => {
+                  if (typeof onChange === "function") {
+                    if (isValid(new Date(e.target.value))) {
+                      onChange(new Date(e.target.value));
+                    }
                   }
-                }
-              }}
-              {...rest}
-            />
+                }}
+                {...rest}
+              />
+            </Form.Control>
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -53,7 +56,7 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
         <Popover.Content
           className="rounded p-5 w-[300px] bg-white shadow-2xl z-10"
           sideOffset={8}
-          align="center"
+          align="end"
         >
           <MonthWidget
             date={date}

@@ -53,13 +53,13 @@ export function TableRowRenderer<R extends Row = Row>({
             </td>
           )}
 
-          {columns.map(({ field, render }) => (
+          {columns.map(({ field, render }, index) => (
             <td
               key={field}
               className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
             >
               {typeof render === "function"
-                ? render(row)
+                ? render(row, index)
                 : (get(row, field, null) as ReactNode)}
             </td>
           ))}
