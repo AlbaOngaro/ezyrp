@@ -5,7 +5,7 @@
   "scripts": {
     "type-check": "tsc --noEmit --incremental",
     "lint": "eslint --ext .ts .",
-    "dev": "ts-node --esm src/lib/scripts/migrate/index.ts",
+    "dev": "ts-node --esm index.ts",
     "prebuild": "rimraf dist",
     "build": "tsc --outDir dist/migrate",
     "prepublishOnly": "yarn build",
