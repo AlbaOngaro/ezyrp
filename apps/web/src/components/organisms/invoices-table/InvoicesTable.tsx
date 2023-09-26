@@ -1,4 +1,3 @@
-import { Root as ModalRoot } from "@radix-ui/react-dialog";
 import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
@@ -18,7 +17,6 @@ import { Button } from "../../atoms/button/Button";
 import { Badge } from "../../atoms/badge/Badge";
 import { Dialog } from "../../atoms/dialog/Dialog";
 
-import { EditInvoiceModal } from "../edit-invoice-modal/EditInvoiceModal";
 import { getBadgeVariantFromStatus } from "../../../lib/utils/getBadgeVariantFromStatus";
 
 export function InvoicesTable() {
@@ -28,7 +26,6 @@ export function InvoicesTable() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
@@ -123,10 +120,7 @@ export function InvoicesTable() {
           {
             type: "item",
             label: "Edit",
-            onClick: (row) => {
-              setInvoice(row as Invoice);
-              setIsModalOpen(true);
-            },
+            onClick: (row) => router.push(`/invoices/${row.id}/edit`),
           },
           {
             type: "sub",
@@ -173,18 +167,6 @@ export function InvoicesTable() {
             }),
         }}
       />
-
-      <ModalRoot
-        open={isModalOpen}
-        onOpenChange={(state) => {
-          setInvoice(null);
-          setIsModalOpen(state);
-        }}
-      >
-        {invoice ? (
-          <EditInvoiceModal {...invoice} setIsOpen={setIsModalOpen} />
-        ) : null}
-      </ModalRoot>
 
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Dialog

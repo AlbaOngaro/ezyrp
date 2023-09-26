@@ -4,15 +4,14 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
+import { Select } from "components/atoms/select/Select";
+
+import { InvoiceFormValue } from "components/organisms/invoice-form/schema";
+
+import { isSavedItem } from "components/pages/invoice/CreateInvoicePage";
 
 import { CHF } from "lib/formatters/chf";
 
-import { Select } from "components/atoms/select/Select";
-
-import {
-  InvoiceFormValue,
-  isSavedItem,
-} from "components/pages/invoice/CreateInvoicePage";
 import { useItems } from "hooks/useItems";
 
 export function InvoiceItemsTable() {
@@ -95,7 +94,7 @@ export function InvoiceItemsTable() {
               name="price"
               type="number"
               disabled={isSavedItem(item.id)}
-              min="1"
+              min={1}
               step={0.05}
               value={item.price / 100}
               onChange={(e) => {
@@ -108,6 +107,7 @@ export function InvoiceItemsTable() {
               name="quantity"
               type="number"
               value={item.quantity}
+              min={1}
               max={
                 items?.data?.items?.results.find((it) => it.id === item.id)
                   ?.quantity
