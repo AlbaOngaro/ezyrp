@@ -48,13 +48,18 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
           "w-8 h-8": shape === "circle" && size === "md",
           "w-10 h-10": shape === "circle" && size === "lg",
           "w-12 h-12": shape === "circle" && size === "xl",
+
+          "flex flex-row items-center gap-2": loading,
         },
         className,
       )}
       disabled={loading || disabled}
       {...props}
     >
-      {children} {loading && <img src="/images/loader.svg" alt="loader" />}
+      {children}{" "}
+      {loading && (
+        <img className="w-4 h-4" src="/images/loader.svg" alt="loader" />
+      )}
     </button>
   );
 });

@@ -1,0 +1,7 @@
+{
+  "eslint.workingDirectories": [
+    "apps/web",
+    "apps/functions",
+    "packages/migrate"
+  ]
+}
