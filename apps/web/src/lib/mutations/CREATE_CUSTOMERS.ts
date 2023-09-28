@@ -6,7 +6,6 @@ export const CREATE_CUSTOMERS = graphql(`
       id
       email
       name
-      phone
     }
   }
 `);

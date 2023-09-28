@@ -21,6 +21,8 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
     },
     ref,
   ) {
+    console.debug(value);
+
     return (
       <Form.Field
         ref={ref}

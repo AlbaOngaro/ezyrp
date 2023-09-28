@@ -8,7 +8,6 @@ export const CUSTOMERS = graphql(`
         id
         email
         name
-        phone
         photoUrl
       }
     }

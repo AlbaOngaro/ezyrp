@@ -1,7 +1,7 @@
 import {
   EditInvoicePage,
   getServerSideProps,
-} from "components/pages/invoice/EditInvoicePage";
+} from "components/pages/invoices/EditInvoicePage";
 
 export { getServerSideProps };
 

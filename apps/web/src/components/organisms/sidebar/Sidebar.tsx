@@ -71,6 +71,7 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
               {navigation.map((item) => (
                 <li key={item.name}>
                   <Link
+                    title={item.name}
                     href={item.href}
                     className={twMerge(
                       "group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-orange-200",

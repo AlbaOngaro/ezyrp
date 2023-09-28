@@ -8,7 +8,7 @@ import { Select } from "components/atoms/select/Select";
 
 import { InvoiceFormValue } from "components/organisms/invoice-form/schema";
 
-import { isSavedItem } from "components/pages/invoice/CreateInvoicePage";
+import { isSavedItem } from "components/pages/invoices/CreateInvoicePage";
 
 import { CHF } from "lib/formatters/chf";
 

@@ -1,3 +1,3 @@
-import { InvoicePage } from "components/pages/invoice/InvoicePage";
+import { InvoicePage } from "components/pages/invoices/InvoicePage";
 
 export default InvoicePage;

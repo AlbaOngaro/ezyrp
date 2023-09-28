@@ -12,7 +12,6 @@ export const UPDATE_EVENTS = graphql(`
         id
         email
         name
-        phone
       }
     }
   }

@@ -6,7 +6,6 @@ export const UPDATE_CUSTOMERS = graphql(`
       id
       email
       name
-      phone
     }
   }
 `);

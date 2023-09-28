@@ -38,11 +38,14 @@ export type CountryName = {
 
 export type Customer = {
   __typename?: 'Customer';
+  address: Scalars['String']['output'];
+  city: Scalars['String']['output'];
+  code: Scalars['String']['output'];
+  country: Scalars['String']['output'];
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lastInvoice?: Maybe<LastInvoice>;
   name: Scalars['String']['output'];
-  phone?: Maybe<Scalars['String']['output']>;
   photoUrl?: Maybe<Scalars['String']['output']>;
 };
 
@@ -65,9 +68,12 @@ export type Guest = {
 };
 
 export type InputCreateCustomerArgs = {
+  address: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  code: Scalars['String']['input'];
+  country: Scalars['String']['input'];
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  phone?: InputMaybe<Scalars['String']['input']>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -135,10 +141,13 @@ export type InputStatsFilters = {
 };
 
 export type InputUpdateCustomerArgs = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
   photoUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -606,11 +615,14 @@ export type CountryNameResolvers<ContextType = GraphqlContext, ParentType extend
 }>;
 
 export type CustomerResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Customer'] = ResolversParentTypes['Customer']> = ResolversObject<{
+  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastInvoice?: Resolver<Maybe<ResolversTypes['LastInvoice']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
