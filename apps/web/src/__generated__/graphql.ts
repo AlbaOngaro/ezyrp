@@ -63,7 +63,6 @@ export type Guest = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  phone: Scalars['String']['output'];
 };
 
 export type InputCreateCustomerArgs = {
@@ -105,7 +104,6 @@ export type InputCustomersFilters = {
   email?: InputMaybe<Scalars['String']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
   start?: InputMaybe<Scalars['Int']['input']>;
 };
 

@@ -29,7 +29,7 @@ export function InvoicesTable() {
 
   return (
     <>
-      <Table<Invoice>
+      <Table
         loading={invoices.isLoading}
         columns={[
           {

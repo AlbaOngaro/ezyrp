@@ -64,7 +64,6 @@ export type Guest = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  phone: Scalars['String']['output'];
 };
 
 export type InputCreateCustomerArgs = {
@@ -106,7 +105,6 @@ export type InputCustomersFilters = {
   email?: InputMaybe<Scalars['String']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
   start?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -641,7 +639,6 @@ export type GuestResolvers<ContextType = GraphqlContext, ParentType extends Reso
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -89,7 +89,6 @@ export const typeDefs = gql`
     limit: Int
     email: String
     name: String
-    phone: String
   }
 
   enum Sort {
@@ -209,7 +208,6 @@ export const typeDefs = gql`
     id: ID!
     email: String!
     name: String!
-    phone: String!
   }
 
   type Event {

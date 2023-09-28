@@ -13,27 +13,35 @@ import {
 } from "@radix-ui/react-alert-dialog";
 
 import { useRouter } from "next/router";
-import { useInvoice } from "../../../hooks/useInvoice";
-import { useUser } from "../../../hooks/useUser";
 
-import { getBadgeVariantFromStatus } from "../../../lib/utils/getBadgeVariantFromStatus";
+import { useQuery } from "@apollo/client";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { useInvoices } from "hooks/useInvoices";
+import { CHF } from "lib/formatters/chf";
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { Container } from "components/atoms/container/Container";
+import { Badge } from "components/atoms/badge/Badge";
+import { Button } from "components/atoms/button/Button";
+import { Card } from "components/atoms/card/Card";
 
-import { Container } from "../../atoms/container/Container";
-import { Badge } from "../../atoms/badge/Badge";
-import { Button } from "../../atoms/button/Button";
-import { Card } from "../../atoms/card/Card";
+import { Dialog } from "components/atoms/dialog/Dialog";
+import { getBadgeVariantFromStatus } from "lib/utils/getBadgeVariantFromStatus";
+import { useUser } from "hooks/useUser";
+import { INVOICE } from "lib/queries/INVOICE";
 
-import { SidebarLayout } from "../../layouts/sidebar/SidebarLayout";
+type Props = {
+  id: string;
+};
 
-import { CHF } from "../../../lib/formatters/chf";
-import { useInvoices } from "../../../hooks/useInvoices";
-import { Dialog } from "../../atoms/dialog/Dialog";
-
-export function InvoicePage() {
+export function InvoicePage({ id }: Props) {
   const user = useUser();
   const router = useRouter();
   const invoices = useInvoices();
-  const { data, loading } = useInvoice();
+  const { data, loading } = useQuery(INVOICE, {
+    variables: {
+      id,
+    },
+  });
 
   if (loading || !data) {
     return null;
@@ -170,3 +178,21 @@ export function InvoicePage() {
 InvoicePage.getLayout = function getLayout(page: ReactElement) {
   return <SidebarLayout isSidebarOpen={false}>{page}</SidebarLayout>;
 };
+
+export async function getServerSideProps({
+  query,
+}: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
+  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+
+  if (!id) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      id,
+    },
+  };
+}

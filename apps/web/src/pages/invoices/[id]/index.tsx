@@ -1,3 +1,8 @@
-import { InvoicePage } from "components/pages/invoices/InvoicePage";
+import {
+  InvoicePage,
+  getServerSideProps,
+} from "components/pages/invoices/InvoicePage";
+
+export { getServerSideProps };
 
 export default InvoicePage;
