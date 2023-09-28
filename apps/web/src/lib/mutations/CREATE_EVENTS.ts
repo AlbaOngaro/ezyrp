@@ -12,7 +12,6 @@ export const CREATE_EVENTS = graphql(`
         id
         email
         name
-        phone
       }
     }
   }

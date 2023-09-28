@@ -10,7 +10,6 @@ export const INVOICES = graphql(`
           id
           email
           name
-          phone
         }
         description
         status

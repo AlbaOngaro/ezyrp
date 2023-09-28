@@ -49,7 +49,7 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
               />
             </picture>
           ) : (
-            <article className="w-[min(100%,193px)] cursor-pointer bg-orange-300 text-white aspect-[1/1] flex flex-col justify-center items-center gap-2 text-sm font-semibold leading-[150%] text-center transition-colors duration-300 rounded-xl hover:bg-orange-400">
+            <article className="w-[193px] cursor-pointer bg-orange-300 text-white aspect-[1/1] flex flex-col justify-center items-center gap-2 text-sm font-semibold leading-[150%] text-center transition-colors duration-300 rounded-xl hover:bg-orange-400">
               <ImageIcon /> + Upload Image
             </article>
           )}

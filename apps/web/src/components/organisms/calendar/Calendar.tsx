@@ -7,9 +7,6 @@ import {
 } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
-import { twMerge } from "../../../lib/utils/twMerge";
-import { Select } from "../../atoms/select/Select";
-import { Event } from "../../../__generated__/graphql";
 import { View } from "./types";
 import { State, defaultInitialState, Action } from "./useCalendarReducer";
 
@@ -19,6 +16,9 @@ import * as MonthView from "./views/Month";
 import * as WeekView from "./views/Week";
 import * as DayView from "./views/Day";
 import * as YearView from "./views/Year";
+import { twMerge } from "lib/utils/twMerge";
+import { Select } from "components/atoms/select/Select";
+import { Event } from "__generated__/graphql";
 
 const CalendarContext = createContext<{
   state: State;

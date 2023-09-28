@@ -1,30 +1,29 @@
 import { useState } from "react";
-import { Root as ModalRoot } from "@radix-ui/react-dialog";
 import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
+import { useRouter } from "next/router";
 
-import { EditCustomerModal } from "../edit-customer-modal/EditCustomerModal";
+import { Customer } from "__generated__/graphql";
 
-import { useCustomers } from "../../../hooks/useCustomers";
+import { Dialog } from "components/atoms/dialog/Dialog";
+import { Table } from "components/atoms/table/Table";
+import { Button } from "components/atoms/button/Button";
 
-import { Table } from "../../atoms/table/Table";
-import { Button } from "../../atoms/button/Button";
-import { Dialog } from "../../atoms/dialog/Dialog";
-import { Customer } from "../../../__generated__/graphql";
+import { useCustomers } from "hooks/useCustomers";
 
 export function CustomersTable() {
+  const router = useRouter();
   const customers = useCustomers();
 
   const [customer, setCustomer] = useState<Customer | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      <Table<Customer>
+      <Table
         loading={customers.isLoading}
         columns={[
           {
@@ -42,11 +41,6 @@ export function CustomersTable() {
             id: "email",
             field: "email",
             headerName: "E-mail",
-          },
-          {
-            id: "phone",
-            field: "phone",
-            headerName: "Phone",
           },
         ]}
         rows={customers?.data?.customers?.results || []}
@@ -78,10 +72,7 @@ export function CustomersTable() {
           {
             type: "item",
             label: "Edit",
-            onClick: (row) => {
-              setCustomer(row);
-              setIsModalOpen(true);
-            },
+            onClick: (row) => router.push(`/customers/${row.id}/edit`),
           },
           {
             type: "separator",
@@ -107,18 +98,6 @@ export function CustomersTable() {
             }),
         }}
       />
-
-      <ModalRoot
-        open={isModalOpen}
-        onOpenChange={(state) => {
-          setCustomer(null);
-          setIsModalOpen(state);
-        }}
-      >
-        {customer ? (
-          <EditCustomerModal {...customer} setIsOpen={setIsModalOpen} />
-        ) : null}
-      </ModalRoot>
 
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Dialog

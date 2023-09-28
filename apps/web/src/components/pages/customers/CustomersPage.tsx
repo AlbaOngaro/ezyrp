@@ -1,8 +1,7 @@
-import { Trigger, Root } from "@radix-ui/react-dialog";
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 
+import { useRouter } from "next/router";
 import { Button } from "../../atoms/button/Button";
-import { CreateCustomerModal } from "../../organisms/create-customer-modal/CreateCustomerModal";
 
 import { CustomersTable } from "../../organisms/customers-table/CustomersTable";
 import { SidebarLayout } from "../../layouts/sidebar/SidebarLayout";
@@ -11,7 +10,7 @@ import { Heading } from "../../atoms/heading/Heading";
 import { Card } from "../../atoms/card/Card";
 
 export function CustomersPage() {
-  const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -22,13 +21,9 @@ export function CustomersPage() {
         />
 
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Root open={isCreatingCustomer} onOpenChange={setIsCreatingCustomer}>
-            <Trigger asChild>
-              <Button size="lg">Add customer</Button>
-            </Trigger>
-
-            <CreateCustomerModal setIsOpen={setIsCreatingCustomer} />
-          </Root>
+          <Button size="lg" onClick={() => router.push("/customers/create")}>
+            Add customer
+          </Button>
         </div>
       </Container>
 
