@@ -1,4 +1,4 @@
-import { graphql } from "../../__generated__";
+import { graphql } from "__generated__";
 
 export const CUSTOMERS = graphql(`
   query getCustomers($filters: InputCustomersFilters) {
@@ -9,6 +9,10 @@ export const CUSTOMERS = graphql(`
         email
         name
         photoUrl
+        address
+        city
+        code
+        country
       }
     }
   }

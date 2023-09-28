@@ -43,9 +43,8 @@ export class CustomersService extends Service {
 
   async read(id: QueryCustomerArgs["id"]): Promise<Customer> {
     await surreal.authenticate(this.token);
-
     const result = await surreal.select<Customer>(id);
-    return customer.parse(result[0]);
+    return customer.partial({ lastInvoice: true }).parse(result[0]);
   }
 
   async list(

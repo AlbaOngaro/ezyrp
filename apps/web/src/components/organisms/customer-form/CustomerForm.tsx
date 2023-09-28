@@ -14,7 +14,7 @@ export function CustomerForm() {
     handleSubmit,
     register,
     control,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty, isValid },
   } = useFormContext<Customer>();
 
   return (
@@ -135,6 +135,7 @@ export function CustomerForm() {
       />
 
       <Button
+        disabled={!isDirty || !isValid}
         loading={isSubmitting}
         size="lg"
         className="w-fit min-w-[100px] mt-4 ml-auto col-start-12 row-start-8"

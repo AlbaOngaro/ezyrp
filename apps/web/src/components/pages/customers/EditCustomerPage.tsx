@@ -1,32 +1,41 @@
 import { ReactElement } from "react";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { useLazyQuery } from "@apollo/client";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
-
 import { useRouter } from "next/router";
+
 import { Customer } from "__generated__/graphql";
 
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
 
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { CUSTOMER } from "lib/queries/CUSTOMER";
+
 import { useCustomers } from "hooks/useCustomers";
 import { useFileUpload } from "hooks/useFileUpload";
 
-export function CreateCustomerPage() {
+type Props = {
+  id: string;
+};
+
+export function EditCustomerPage({ id }: Props) {
   const router = useRouter();
   const customers = useCustomers();
+  const [getCustomer] = useLazyQuery(CUSTOMER);
   const handleFileUpload = useFileUpload();
 
   const { handleSubmit, ...methods } = useForm<Customer>({
-    defaultValues: {
-      email: "",
-      name: "",
-      photoUrl: "",
-      address: "",
-      city: "",
-      code: "",
-      country: "",
+    defaultValues: async () => {
+      const { data } = await getCustomer({
+        variables: {
+          id,
+        },
+      });
+
+      return data?.customer as Customer;
     },
   });
 
@@ -34,8 +43,8 @@ export function CreateCustomerPage() {
     onSuccess,
     onError,
   ) =>
-    handleSubmit(async ({ __typename, ...data }) => {
-      if (data.photoUrl && !data.photoUrl.startsWith("https")) {
+    handleSubmit(async (data) => {
+      if (data.photoUrl) {
         const file = await fetch(data.photoUrl)
           .then((res) => res.blob())
           .then(
@@ -49,9 +58,9 @@ export function CreateCustomerPage() {
         try {
           const photoUrl = await handleFileUpload(file);
 
-          await customers.create({
+          await customers.update({
             variables: {
-              createCustomerArgs: [
+              updateCustomerArgs: [
                 {
                   ...data,
                   photoUrl,
@@ -68,9 +77,9 @@ export function CreateCustomerPage() {
         }
       }
 
-      await customers.create({
+      await customers.update({
         variables: {
-          createCustomerArgs: [data],
+          updateCustomerArgs: [data],
         },
       });
 
@@ -80,9 +89,8 @@ export function CreateCustomerPage() {
     }, onError);
 
   return (
-    <Container as="section" className="py-10">
-      <Heading title="Create new customer" />
-
+    <Container>
+      <Heading title="Edit customer" />
       <FormProvider {...methods} handleSubmit={handleSubmitWrapper}>
         <CustomerForm />
       </FormProvider>
@@ -90,6 +98,24 @@ export function CreateCustomerPage() {
   );
 }
 
-CreateCustomerPage.getLayout = function getLayout(page: ReactElement) {
+EditCustomerPage.getLayout = function getLayout(page: ReactElement) {
   return <SidebarLayout>{page}</SidebarLayout>;
 };
+
+export async function getServerSideProps({
+  query,
+}: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
+  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+
+  if (!id) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      id,
+    },
+  };
+}

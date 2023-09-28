@@ -28,7 +28,8 @@ const documents = {
     "\n  mutation updateInvoices($updateInvoicesArgs: [InputUpdateInvoicesArgs!]!) {\n    updateInvoices(updateInvoicesArgs: $updateInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n": types.UpdateInvoicesDocument,
     "\n  mutation updateUserProfile(\n    $updateUserProfileArgs: InputUpdateUserProfileArgs!\n  ) {\n    updateUserProfile(updateUserProfileArgs: $updateUserProfileArgs) {\n      id\n      email\n      password\n      username\n      profile {\n        photoUrl\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.UpdateUserProfileDocument,
     "\n  query countries {\n    countries {\n      name {\n        common\n        official\n      }\n    }\n  }\n": types.CountriesDocument,
-    "\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n      }\n    }\n  }\n": types.GetCustomersDocument,
+    "\n  query getCustomer($id: ID!) {\n    customer(id: $id) {\n      id\n      email\n      name\n      photoUrl\n      address\n      city\n      code\n      country\n    }\n  }\n": types.GetCustomerDocument,
+    "\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n        address\n        city\n        code\n        country\n      }\n    }\n  }\n": types.GetCustomersDocument,
     "\n  query customersWithLastInvoice {\n    customers(filters: { limit: 3 }, orderBy: { lastInvoice: desc }) {\n      results {\n        id\n        name\n        email\n        photoUrl\n        lastInvoice {\n          status\n          amount\n          emitted\n        }\n      }\n    }\n  }\n": types.CustomersWithLastInvoiceDocument,
     "\n  query events {\n    events {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.EventsDocument,
     "\n  query getCloudinarySignature($folder: String = \"nimblerp\") {\n    getCloudinarySignature(folder: $folder) {\n      timestamp\n      signature\n      cloudname\n      apiKey\n    }\n  }\n": types.GetCloudinarySignatureDocument,
@@ -116,7 +117,11 @@ export function graphql(source: "\n  query countries {\n    countries {\n      n
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n      }\n    }\n  }\n"): (typeof documents)["\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query getCustomer($id: ID!) {\n    customer(id: $id) {\n      id\n      email\n      name\n      photoUrl\n      address\n      city\n      code\n      country\n    }\n  }\n"): (typeof documents)["\n  query getCustomer($id: ID!) {\n    customer(id: $id) {\n      id\n      email\n      name\n      photoUrl\n      address\n      city\n      code\n      country\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n        address\n        city\n        code\n        country\n      }\n    }\n  }\n"): (typeof documents)["\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n        address\n        city\n        code\n        country\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
