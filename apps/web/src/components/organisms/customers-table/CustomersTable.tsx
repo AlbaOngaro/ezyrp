@@ -18,7 +18,6 @@ export function CustomersTable() {
   const customers = useCustomers();
 
   const [customer, setCustomer] = useState<Customer | null>(null);
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (

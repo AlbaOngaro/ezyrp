@@ -16,6 +16,7 @@ export const typeDefs = gql`
     event(id: ID!): Event!
     events: [Event!]!
 
+    item(id: ID!): Item!
     items(filters: InputItemsFilters): PagedItemsResponse
 
     countries: [Country!]!
@@ -44,6 +45,8 @@ export const typeDefs = gql`
     deleteEvents(deleteEventsInput: [ID!]!): [ID]
 
     createItems(createItemsInput: [InputCreateItems!]!): [Item]
+    updateItems(updateItemsInput: [InputUpdateItems!]!): [Item]
+    deleteItems(deleteItemsInput: [ID!]!): [ID]
   }
 
   input InputLoginCredentials {
@@ -257,6 +260,14 @@ export const typeDefs = gql`
     price: Int!
     quantity: Int!
     onetime: Boolean
+  }
+
+  input InputUpdateItems {
+    id: ID!
+    name: String
+    description: String
+    price: Int
+    quantity: Int
   }
 
   input InputItemsFilters {
