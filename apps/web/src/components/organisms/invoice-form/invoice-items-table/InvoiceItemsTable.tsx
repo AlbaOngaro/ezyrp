@@ -47,6 +47,7 @@ export function InvoiceItemsTable() {
             className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 items-start"
           >
             <Select
+              isCreatable
               name="name"
               value={{ label: item.name, value: item.id }}
               onChange={(option) => {
