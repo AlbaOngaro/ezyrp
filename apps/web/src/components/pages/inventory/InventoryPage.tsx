@@ -1,24 +1,29 @@
 import { ReactElement, useState } from "react";
-import { Trigger, Root } from "@radix-ui/react-dialog";
+import {
+  Root as DialogRoot,
+  Trigger as DialogTrigger,
+} from "@radix-ui/react-alert-dialog";
+import { useRouter } from "next/router";
+import { useItems } from "hooks/useItems";
 
-import { useItems } from "../../../hooks/useItems";
+import { CHF } from "lib/formatters/chf";
 
-import { CHF } from "../../../lib/formatters/chf";
+import { Container } from "components/atoms/container/Container";
+import { Heading } from "components/atoms/heading/Heading";
+import { Card } from "components/atoms/card/Card";
+import { Table } from "components/atoms/table/Table";
+import { Button } from "components/atoms/button/Button";
 
-import { Container } from "../../atoms/container/Container";
-import { Heading } from "../../atoms/heading/Heading";
-import { Card } from "../../atoms/card/Card";
-import { Table } from "../../atoms/table/Table";
-import { Button } from "../../atoms/button/Button";
-
-import { CreateItemModal } from "../../organisms/create-item-modal/CreateItemModal";
-
-import { SidebarLayout } from "../../layouts/sidebar/SidebarLayout";
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { Dialog } from "components/atoms/dialog/Dialog";
+import { Item } from "__generated__/graphql";
 
 export function InventoryPage() {
-  const [isCreatingItem, setIsCreatingItem] = useState(false);
-
   const items = useItems();
+  const router = useRouter();
+
+  const [item, setItem] = useState<Item | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <>
@@ -29,13 +34,9 @@ export function InventoryPage() {
         />
 
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Root open={isCreatingItem} onOpenChange={setIsCreatingItem}>
-            <Trigger asChild>
-              <Button size="lg">Add item</Button>
-            </Trigger>
-
-            <CreateItemModal setIsOpen={setIsCreatingItem} />
-          </Root>
+          <Button onClick={() => router.push("/inventory/create")} size="lg">
+            Add item
+          </Button>
         </div>
       </Container>
 
@@ -75,6 +76,28 @@ export function InventoryPage() {
               },
             ]}
             withMultiSelect
+            renderSelectedActions={(rows) => (
+              <DialogRoot>
+                <DialogTrigger asChild>
+                  <Button variant="danger" size="sm">
+                    Delete all
+                  </Button>
+                </DialogTrigger>
+
+                <Dialog
+                  overlayClassname="!ml-0"
+                  title="Do you really want to delete all the selected items?"
+                  description="This action cannot be undone"
+                  onConfirm={() =>
+                    items.delete({
+                      variables: {
+                        deleteItemsInput: rows.map((row) => row.id),
+                      },
+                    })
+                  }
+                />
+              </DialogRoot>
+            )}
             withPagination
             pagination={{
               total: items.data?.items?.total || 0,
@@ -96,17 +119,36 @@ export function InventoryPage() {
               {
                 type: "item",
                 label: "Edit",
-                onClick: console.debug,
+                onClick: ({ id }) => router.push(`/inventory/${id}/edit`),
               },
               { type: "separator" },
               {
                 type: "item",
                 label: "Delete",
-                onClick: console.debug,
+                onClick: (row) => {
+                  setItem(row);
+                  setIsDialogOpen(true);
+                },
               },
             ]}
           />
         </Card>
+
+        <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog
+            title="Do you really want to delete this item?"
+            description="This action cannot be undone."
+            onConfirm={() => {
+              if (item) {
+                return items.delete({
+                  variables: {
+                    deleteItemsInput: [item.id],
+                  },
+                });
+              }
+            }}
+          />
+        </DialogRoot>
       </Container>
     </>
   );

@@ -174,6 +174,14 @@ export type InputUpdateInvoicesArgs = {
   status?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type InputUpdateItems = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<Scalars['Int']['input']>;
+  quantity?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type InputUpdateUserProfileArgs = {
   address?: InputMaybe<Scalars['String']['input']>;
   city?: InputMaybe<Scalars['String']['input']>;
@@ -229,12 +237,14 @@ export type Mutation = {
   deleteCustomers?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteEvents?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteInvoices?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
+  deleteItems?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   login?: Maybe<User>;
   logout?: Maybe<Scalars['Boolean']['output']>;
   register?: Maybe<User>;
   updateCustomers?: Maybe<Array<Maybe<Customer>>>;
   updateEvents?: Maybe<Array<Maybe<Event>>>;
   updateInvoices?: Maybe<Array<Maybe<Invoice>>>;
+  updateItems?: Maybe<Array<Maybe<Item>>>;
   updateUserProfile?: Maybe<User>;
 };
 
@@ -274,6 +284,11 @@ export type MutationDeleteInvoicesArgs = {
 };
 
 
+export type MutationDeleteItemsArgs = {
+  deleteItemsInput: Array<Scalars['ID']['input']>;
+};
+
+
 export type MutationLoginArgs = {
   credentials?: InputMaybe<InputLoginCredentials>;
 };
@@ -296,6 +311,11 @@ export type MutationUpdateEventsArgs = {
 
 export type MutationUpdateInvoicesArgs = {
   updateInvoicesArgs: Array<InputUpdateInvoicesArgs>;
+};
+
+
+export type MutationUpdateItemsArgs = {
+  updateItemsInput: Array<InputUpdateItems>;
 };
 
 
@@ -348,6 +368,7 @@ export type Query = {
   getCloudinarySignature: CloudinarySignature;
   invoice: Invoice;
   invoices?: Maybe<PagedInvoicesResponse>;
+  item: Item;
   items?: Maybe<PagedItemsResponse>;
   stats: Stats;
   user?: Maybe<User>;
@@ -382,6 +403,11 @@ export type QueryInvoiceArgs = {
 
 export type QueryInvoicesArgs = {
   filters?: InputMaybe<InputInvoicesFilters>;
+};
+
+
+export type QueryItemArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -526,6 +552,7 @@ export type ResolversTypes = ResolversObject<{
   InputUpdateEventsArgs: InputUpdateEventsArgs;
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
+  InputUpdateItems: InputUpdateItems;
   InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Invoice: ResolverTypeWrapper<Invoice>;
@@ -573,6 +600,7 @@ export type ResolversParentTypes = ResolversObject<{
   InputUpdateEventsArgs: InputUpdateEventsArgs;
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
+  InputUpdateItems: InputUpdateItems;
   InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: Scalars['Int']['output'];
   Invoice: Invoice;
@@ -686,12 +714,14 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   deleteCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteCustomersArgs, 'deleteCustomerArgs'>>;
   deleteEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteEventsArgs, 'deleteEventsInput'>>;
   deleteInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteInvoicesArgs, 'deleteInvoicesArgs'>>;
+  deleteItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteItemsArgs, 'deleteItemsInput'>>;
   login?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationLoginArgs>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   register?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationRegisterArgs>>;
   updateCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Customer']>>>, ParentType, ContextType, RequireFields<MutationUpdateCustomersArgs, 'updateCustomerArgs'>>;
   updateEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationUpdateEventsArgs, 'updateEventsInput'>>;
   updateInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationUpdateInvoicesArgs, 'updateInvoicesArgs'>>;
+  updateItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['Item']>>>, ParentType, ContextType, RequireFields<MutationUpdateItemsArgs, 'updateItemsInput'>>;
   updateUserProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserProfileArgs, 'updateUserProfileArgs'>>;
 }>;
 
@@ -742,6 +772,7 @@ export type QueryResolvers<ContextType = GraphqlContext, ParentType extends Reso
   getCloudinarySignature?: Resolver<ResolversTypes['CloudinarySignature'], ParentType, ContextType, Partial<QueryGetCloudinarySignatureArgs>>;
   invoice?: Resolver<ResolversTypes['Invoice'], ParentType, ContextType, RequireFields<QueryInvoiceArgs, 'id'>>;
   invoices?: Resolver<Maybe<ResolversTypes['PagedInvoicesResponse']>, ParentType, ContextType, Partial<QueryInvoicesArgs>>;
+  item?: Resolver<ResolversTypes['Item'], ParentType, ContextType, RequireFields<QueryItemArgs, 'id'>>;
   items?: Resolver<Maybe<ResolversTypes['PagedItemsResponse']>, ParentType, ContextType, Partial<QueryItemsArgs>>;
   stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType, Partial<QueryStatsArgs>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;

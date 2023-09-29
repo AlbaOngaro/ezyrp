@@ -1,4 +1,5 @@
-import RSelect, { CreatableProps } from "react-select/creatable";
+import RSelect, { Props as DefaultRSelecProps } from "react-select";
+import CreatableRSelect, { CreatableProps } from "react-select/creatable";
 import { GroupBase } from "react-select";
 
 import { ChevronDownIcon } from "@radix-ui/react-icons";
@@ -10,19 +11,35 @@ interface Option {
   value: string;
 }
 
-interface Props extends CreatableProps<Option, false, GroupBase<Option>> {
+type BaseProps = {
   name: string;
   label?: string;
   description?: string;
-}
+  isCreatable?: boolean;
+};
+
+type CreatableSelectProps = BaseProps &
+  CreatableProps<Option, false, GroupBase<Option>> & {
+    isCreatable: true;
+  };
+
+type DefaultSelectProps = BaseProps &
+  DefaultRSelecProps<Option, false, GroupBase<Option>> & {
+    isCreatable?: false;
+  };
+
+type Props = CreatableSelectProps | DefaultSelectProps;
 
 export function Select({
   name,
   label,
   description,
   className,
+  isCreatable = false,
   ...rest
 }: Props) {
+  const Component = isCreatable ? CreatableRSelect : RSelect;
+
   return (
     <div className={twMerge("flex flex-col gap-2", className)}>
       {(label || description) && (
@@ -36,7 +53,7 @@ export function Select({
         </label>
       )}
 
-      <RSelect
+      <Component
         unstyled
         name={name}
         components={{
