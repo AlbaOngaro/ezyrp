@@ -233,6 +233,7 @@ export type Mutation = {
   createEvents?: Maybe<Array<Maybe<Event>>>;
   createInvoices?: Maybe<Array<Maybe<Invoice>>>;
   createItems?: Maybe<Array<Maybe<Item>>>;
+  createSubscription?: Maybe<Subscription>;
   deleteCustomers?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteEvents?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteInvoices?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
@@ -265,6 +266,11 @@ export type MutationCreateInvoicesArgs = {
 
 export type MutationCreateItemsArgs = {
   createItemsInput: Array<InputCreateItems>;
+};
+
+
+export type MutationCreateSubscriptionArgs = {
+  subscriptionInput?: InputMaybe<SubscriptionInput>;
 };
 
 
@@ -370,6 +376,7 @@ export type Query = {
   item: Item;
   items?: Maybe<PagedItemsResponse>;
   stats: Stats;
+  subscription?: Maybe<Subscription>;
   user?: Maybe<User>;
 };
 
@@ -438,6 +445,30 @@ export type Stats = {
   pending: Stat;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  endpoint: Scalars['String']['output'];
+  expirationTime?: Maybe<Scalars['Int']['output']>;
+  keys: SubscrptionKey;
+};
+
+export type SubscriptionInput = {
+  endpoint: Scalars['String']['input'];
+  expirationTime?: InputMaybe<Scalars['Int']['input']>;
+  keys: SubscrptionKeyInput;
+};
+
+export type SubscrptionKey = {
+  __typename?: 'SubscrptionKey';
+  auth: Scalars['String']['output'];
+  p256dh: Scalars['String']['output'];
+};
+
+export type SubscrptionKeyInput = {
+  auth: Scalars['String']['input'];
+  p256dh: Scalars['String']['input'];
+};
+
 export type User = {
   __typename?: 'User';
   email: Scalars['String']['output'];
@@ -474,6 +505,13 @@ export type CreateItemsMutationVariables = Exact<{
 
 
 export type CreateItemsMutation = { __typename?: 'Mutation', createItems?: Array<{ __typename?: 'Item', id: string, name: string, description?: string | null, price: number, quantity: number } | null> | null };
+
+export type CreateSubscriptionMutationVariables = Exact<{
+  subscriptionInput: SubscriptionInput;
+}>;
+
+
+export type CreateSubscriptionMutation = { __typename?: 'Mutation', createSubscription?: { __typename?: 'Subscription', endpoint: string, expirationTime?: number | null, keys: { __typename?: 'SubscrptionKey', p256dh: string, auth: string } } | null };
 
 export type DeleteCustomersMutationVariables = Exact<{
   deleteCustomerArgs: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
@@ -638,6 +676,7 @@ export const CreateCustomersDocument = {"kind":"Document","definitions":[{"kind"
 export const CreateEventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createEvents"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createEventsInput"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreateEventsArgs"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createEvents"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createEventsInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createEventsInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"end"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"variant"}},{"kind":"Field","name":{"kind":"Name","value":"guests"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<CreateEventsMutation, CreateEventsMutationVariables>;
 export const CreateInvoicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createInvoices"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createInvoicesArgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreateInvoicesArgs"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInvoices"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createInvoicesArgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createInvoicesArgs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"customer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"due"}},{"kind":"Field","name":{"kind":"Name","value":"emitted"}}]}}]}}]} as unknown as DocumentNode<CreateInvoicesMutation, CreateInvoicesMutationVariables>;
 export const CreateItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createItems"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createItemsInput"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreateItems"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createItems"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createItemsInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createItemsInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}}]}}]} as unknown as DocumentNode<CreateItemsMutation, CreateItemsMutationVariables>;
+export const CreateSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createSubscription"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subscriptionInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubscriptionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"subscriptionInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subscriptionInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"expirationTime"}},{"kind":"Field","name":{"kind":"Name","value":"keys"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"p256dh"}},{"kind":"Field","name":{"kind":"Name","value":"auth"}}]}}]}}]}}]} as unknown as DocumentNode<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>;
 export const DeleteCustomersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteCustomers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deleteCustomerArgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteCustomers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"deleteCustomerArgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deleteCustomerArgs"}}}]}]}}]} as unknown as DocumentNode<DeleteCustomersMutation, DeleteCustomersMutationVariables>;
 export const DeleteEventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteEvents"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deleteEventsInput"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteEvents"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"deleteEventsInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deleteEventsInput"}}}]}]}}]} as unknown as DocumentNode<DeleteEventsMutation, DeleteEventsMutationVariables>;
 export const DeleteInvoicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteInvoices"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"deleteInvoicesArgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInvoices"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"deleteInvoicesArgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"deleteInvoicesArgs"}}}]}]}}]} as unknown as DocumentNode<DeleteInvoicesMutation, DeleteInvoicesMutationVariables>;

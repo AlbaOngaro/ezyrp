@@ -234,6 +234,7 @@ export type Mutation = {
   createEvents?: Maybe<Array<Maybe<Event>>>;
   createInvoices?: Maybe<Array<Maybe<Invoice>>>;
   createItems?: Maybe<Array<Maybe<Item>>>;
+  createSubscription?: Maybe<Subscription>;
   deleteCustomers?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteEvents?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteInvoices?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
@@ -266,6 +267,11 @@ export type MutationCreateInvoicesArgs = {
 
 export type MutationCreateItemsArgs = {
   createItemsInput: Array<InputCreateItems>;
+};
+
+
+export type MutationCreateSubscriptionArgs = {
+  subscriptionInput?: InputMaybe<SubscriptionInput>;
 };
 
 
@@ -371,6 +377,7 @@ export type Query = {
   item: Item;
   items?: Maybe<PagedItemsResponse>;
   stats: Stats;
+  subscription?: Maybe<Subscription>;
   user?: Maybe<User>;
 };
 
@@ -437,6 +444,30 @@ export type Stats = {
   overdue: Stat;
   paid: Stat;
   pending: Stat;
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  endpoint: Scalars['String']['output'];
+  expirationTime?: Maybe<Scalars['Int']['output']>;
+  keys: SubscrptionKey;
+};
+
+export type SubscriptionInput = {
+  endpoint: Scalars['String']['input'];
+  expirationTime?: InputMaybe<Scalars['Int']['input']>;
+  keys: SubscrptionKeyInput;
+};
+
+export type SubscrptionKey = {
+  __typename?: 'SubscrptionKey';
+  auth: Scalars['String']['output'];
+  p256dh: Scalars['String']['output'];
+};
+
+export type SubscrptionKeyInput = {
+  auth: Scalars['String']['input'];
+  p256dh: Scalars['String']['input'];
 };
 
 export type User = {
@@ -571,6 +602,10 @@ export type ResolversTypes = ResolversObject<{
   Stat: ResolverTypeWrapper<Stat>;
   Stats: ResolverTypeWrapper<Stats>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Subscription: ResolverTypeWrapper<{}>;
+  SubscriptionInput: SubscriptionInput;
+  SubscrptionKey: ResolverTypeWrapper<SubscrptionKey>;
+  SubscrptionKeyInput: SubscrptionKeyInput;
   User: ResolverTypeWrapper<User>;
 }>;
 
@@ -618,6 +653,10 @@ export type ResolversParentTypes = ResolversObject<{
   Stat: Stat;
   Stats: Stats;
   String: Scalars['String']['output'];
+  Subscription: {};
+  SubscriptionInput: SubscriptionInput;
+  SubscrptionKey: SubscrptionKey;
+  SubscrptionKeyInput: SubscrptionKeyInput;
   User: User;
 }>;
 
@@ -711,6 +750,7 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   createEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationCreateEventsArgs, 'createEventsInput'>>;
   createInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationCreateInvoicesArgs, 'createInvoicesArgs'>>;
   createItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['Item']>>>, ParentType, ContextType, RequireFields<MutationCreateItemsArgs, 'createItemsInput'>>;
+  createSubscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType, Partial<MutationCreateSubscriptionArgs>>;
   deleteCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteCustomersArgs, 'deleteCustomerArgs'>>;
   deleteEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteEventsArgs, 'deleteEventsInput'>>;
   deleteInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteInvoicesArgs, 'deleteInvoicesArgs'>>;
@@ -775,6 +815,7 @@ export type QueryResolvers<ContextType = GraphqlContext, ParentType extends Reso
   item?: Resolver<ResolversTypes['Item'], ParentType, ContextType, RequireFields<QueryItemArgs, 'id'>>;
   items?: Resolver<Maybe<ResolversTypes['PagedItemsResponse']>, ParentType, ContextType, Partial<QueryItemsArgs>>;
   stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType, Partial<QueryStatsArgs>>;
+  subscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;
 
@@ -789,6 +830,18 @@ export type StatsResolvers<ContextType = GraphqlContext, ParentType extends Reso
   overdue?: Resolver<ResolversTypes['Stat'], ParentType, ContextType>;
   paid?: Resolver<ResolversTypes['Stat'], ParentType, ContextType>;
   pending?: Resolver<ResolversTypes['Stat'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SubscriptionResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  endpoint?: SubscriptionResolver<ResolversTypes['String'], "endpoint", ParentType, ContextType>;
+  expirationTime?: SubscriptionResolver<Maybe<ResolversTypes['Int']>, "expirationTime", ParentType, ContextType>;
+  keys?: SubscriptionResolver<ResolversTypes['SubscrptionKey'], "keys", ParentType, ContextType>;
+}>;
+
+export type SubscrptionKeyResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['SubscrptionKey'] = ResolversParentTypes['SubscrptionKey']> = ResolversObject<{
+  auth?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  p256dh?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -822,6 +875,8 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;
   Stats?: StatsResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
+  SubscrptionKey?: SubscrptionKeyResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
 

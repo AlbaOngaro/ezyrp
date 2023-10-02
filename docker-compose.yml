@@ -9,10 +9,34 @@ services:
     environment:
       - SURREAL_USER=root
       - SURREAL_PASS=root
+      - BREVO_API_KEY=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
     volumes:
       - surreal_data:/data
     ports:
       - 8080:8080
+
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile
+    entrypoint: yarn workspace @nimblerp/web dev
+    restart: unless-stopped
+    working_dir: /workspace
+    environment:
+      - SURREAL_HOST=http://surreal:8080/rpc
+      - SURREAL_PASS=root
+      - SURREAL_USER=root
+      - CLOUDINARY_CLOUD_NAME=dlha07ue9
+      - CLOUDINARY_API_KEY=822445486482886
+      - CLOUDINARY_API_SECRET=NNrYlZ_0UsHpAIpHd4TO5BJTZQQ
+      - PUSH_PUBLIC_KEY=BMoh1Tx_SLrp2UVqd6jfVf-l-dsOTLWini3EtXpMPGpr9n-BF-645RXrBWHEY3Y1ltEZqJEHNLaP-E_Ga129Ywo
+      - PUSH_SECRET_KEY=j6gitd8g9SHW7vwLMgF0UW0ZFiNv4a0JhGzO-_sK2qA
+    volumes:
+      - ./apps/web/src:/workspace/apps/web/src
+    ports:
+      - 3000:3000
+    depends_on:
+      - surreal
 
 volumes:
   surreal_data:

@@ -45,6 +45,7 @@
     "swr": "2.2.1",
     "tailwind-merge": "1.14.0",
     "uuid": "9.0.1",
+    "web-push": "3.6.6",
     "zod": "3.22.1"
   },
   "devDependencies": {
@@ -60,6 +61,7 @@
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
     "@types/uuid": "9.0.4",
+    "@types/web-push": "3.6.1",
     "@typescript-eslint/eslint-plugin": "6.4.0",
     "@typescript-eslint/parser": "6.4.0",
     "autoprefixer": "10.4.15",

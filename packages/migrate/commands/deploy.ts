@@ -2,32 +2,30 @@ import fs from "fs";
 import path from "path";
 
 import { clean } from "../utils/clean";
+import { getConfig } from "../utils/getConfig";
 
-export async function deploy() {
+export async function deploy({ profile }) {
+  const config = (await getConfig())[profile];
+
   const files = await new Promise<string[]>((resolve, reject) =>
-    fs.readdir(
-      path.resolve("../../services/surreal/migrations"),
-      (err, paths) => {
-        if (err) {
-          return reject(err);
-        }
+    fs.readdir(config.migrations, (err, paths) => {
+      if (err) {
+        return reject(err);
+      }
 
-        resolve(
-          paths.map((p) =>
-            path.resolve(path.join("../../services/surreal/migrations", p)),
-          ),
-        );
-      },
-    ),
+      resolve(paths.map((p) => path.join(config.migrations, p)));
+    }),
   );
 
   const [theirs, ...merged] = await Promise.all([
-    fetch(process.env.SURREAL_HOST?.replace("/rpc", "/export") as string, {
+    fetch(config.surreal_host.replace("/rpc", "/export") as string, {
       headers: {
         Accept: "application/json",
         NS: "crm",
         DB: "crm",
-        Authorization: "Basic cm9vdDpyb290",
+        Authorization: `Basic ${Buffer.from(
+          `${config.surreal_user}:${config.surreal_password}`,
+        ).toString("base64")}`,
       },
     })
       .then((res) => res.text())
@@ -55,16 +53,21 @@ export async function deploy() {
 
   migrations.unshift("OPTION IMPORT;");
 
-  fetch(process.env.SURREAL_HOST?.replace("/rpc", "/import") as string, {
-    method: "POST",
-    body: migrations.join("\n"),
-    headers: {
-      Accept: "application/json",
-      NS: "crm",
-      DB: "crm",
-      Authorization: "Basic cm9vdDpyb290",
+  const res = await fetch(
+    config.surreal_host.replace("/rpc", "/import") as string,
+    {
+      method: "POST",
+      body: migrations.join("\n"),
+      headers: {
+        Accept: "application/json",
+        NS: "crm",
+        DB: "crm",
+        Authorization: `Basic ${Buffer.from(
+          `${config.surreal_user}:${config.surreal_password}`,
+        ).toString("base64")}`,
+      },
     },
-  })
-    .then((res) => res.text())
-    .then((text) => clean(text));
+  ).then((res) => res.json());
+
+  console.debug(res);
 }

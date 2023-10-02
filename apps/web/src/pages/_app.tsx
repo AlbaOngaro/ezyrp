@@ -12,6 +12,7 @@ import "styles/globals.css";
 import { getClient } from "../lib/apollo/client";
 
 import { Toast } from "../components/atoms/toast/Toast";
+import { PushProvider } from "components/providers/push/PushProvider";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,7 +25,7 @@ type AppPropsWithLayout = AppProps & {
 function isGraphlError(
   error: GraphQLError | NetworkError,
 ): error is GraphQLError {
-  return !!(error as GraphQLError).extensions;
+  return error instanceof GraphQLError;
 }
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
@@ -49,7 +50,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <Provider swipeDirection="right" duration={Infinity}>
       <ApolloProvider client={client}>
-        {getLayout(<Component {...pageProps} />)}
+        <PushProvider>{getLayout(<Component {...pageProps} />)}</PushProvider>
       </ApolloProvider>
 
       {errors.map((error, idx) => {

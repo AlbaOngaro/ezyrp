@@ -3,13 +3,10 @@ import path from "path";
 
 import { format } from "date-fns";
 
-export function create() {
-  console.debug("create");
+import { getConfig } from "../utils/getConfig";
 
+export async function create({ profile }) {
+  const config = (await getConfig())[profile];
   const filename = `${format(new Date(), "yyyy_MM_dd_HH:mm")}.surql`;
-
-  fs.writeFileSync(
-    path.join(path.resolve("../../services/surreal/migrations"), filename),
-    "",
-  );
+  fs.writeFileSync(path.join(config.migrations, filename), "");
 }
