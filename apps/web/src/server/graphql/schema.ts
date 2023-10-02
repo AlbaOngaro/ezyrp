@@ -19,6 +19,8 @@ export const typeDefs = gql`
     item(id: ID!): Item!
     items(filters: InputItemsFilters): PagedItemsResponse
 
+    subscription: Subscription
+
     countries: [Country!]!
 
     stats(filters: InputStatsFilters): Stats!
@@ -47,6 +49,8 @@ export const typeDefs = gql`
     createItems(createItemsInput: [InputCreateItems!]!): [Item]
     updateItems(updateItemsInput: [InputUpdateItems!]!): [Item]
     deleteItems(deleteItemsInput: [ID!]!): [ID]
+
+    createSubscription(subscriptionInput: SubscriptionInput): Subscription
   }
 
   input InputLoginCredentials {
@@ -304,5 +308,27 @@ export const typeDefs = gql`
   type PagedItemsResponse implements PagedSearchResponse {
     total: Int!
     results: [Item!]!
+  }
+
+  input SubscrptionKeyInput {
+    p256dh: String!
+    auth: String!
+  }
+
+  input SubscriptionInput {
+    endpoint: String!
+    expirationTime: Int
+    keys: SubscrptionKeyInput!
+  }
+
+  type SubscrptionKey {
+    p256dh: String!
+    auth: String!
+  }
+
+  type Subscription {
+    endpoint: String!
+    expirationTime: Int
+    keys: SubscrptionKey!
   }
 `;

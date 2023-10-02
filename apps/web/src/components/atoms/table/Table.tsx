@@ -72,7 +72,7 @@ export function Table<R extends Row = Row>({
   return (
     <div className={twMerge("flow-root relative", className)}>
       {selectedRows.length > 0 && renderSelectedActions && (
-        <div className="absolute left-[6.5rem] top-0 flex h-12 items-center space-x-3 bg-white">
+        <div className="absolute left-[3.5rem] top-0 flex h-12 items-center space-x-3 bg-white">
           {renderSelectedActions(selectedRows)}
         </div>
       )}
