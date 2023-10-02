@@ -4,10 +4,7 @@ self.addEventListener("push", function (event) {
   }
 
   const data = event?.data?.json() ?? {};
-  const title = data.title || "Something Has Happened";
-  const body = data.body || "Here's something you might want to check out.";
+  const { title, ...rest } = data;
 
-  self.registration.showNotification(title, {
-    body,
-  });
+  self.registration.showNotification(title, rest);
 });
