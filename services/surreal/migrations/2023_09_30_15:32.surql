@@ -13,4 +13,4 @@ DEFINE EVENT item_updated ON TABLE item WHEN $event = "UPDATE" THEN {
 			});
 		}
 	} END;
-}
+};
