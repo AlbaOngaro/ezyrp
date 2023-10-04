@@ -9,6 +9,17 @@ import {
   MutationUpdateEventsArgs,
 } from "../../__generated__/server";
 import { Service } from "./service";
+import { newCalendarEventTrigger } from "jobs";
+
+function dateToCron(date: Date) {
+  const minutes = date.getMinutes();
+  const hours = date.getHours();
+  const days = date.getDate();
+  const months = date.getMonth() + 1;
+  const dayOfWeek = date.getDay();
+
+  return `${minutes} ${hours} ${days} ${months} ${dayOfWeek}`;
+}
 
 export class EventsService extends Service {
   constructor(token: string) {
@@ -20,20 +31,38 @@ export class EventsService extends Service {
   ): Promise<Event[]> {
     await surreal.authenticate(this.token);
 
-    console.debug("create event!");
+    const result = await surreal.query<Event[]>(
+      `INSERT INTO event (start, end, title, variant, guests) VALUES ${events
+        .map(
+          ({ start, end, title, variant, guests }) =>
+            `("${start}", "${end}", "${title}", "${variant}", ${JSON.stringify(
+              guests,
+            )})`,
+        )
+        .join(",")}`,
+    );
 
-    await surreal
-      .query<Event[]>(
-        `INSERT INTO event (start, end, title, variant, guests) VALUES ${events
-          .map(
-            ({ start, end, title, variant, guests }) =>
-              `("${start}", "${end}", "${title}", "${variant}", ${JSON.stringify(
-                guests,
-              )})`,
-          )
-          .join(",")}`,
-      )
-      .catch(console.error);
+    try {
+      const events = z
+        .array(
+          event.omit({
+            guests: true,
+          }),
+        )
+        .parse(result[0].result);
+
+      for (const e of events) {
+        const cron = dateToCron(new Date(e.start));
+        await newCalendarEventTrigger.register(e.id, {
+          type: "cron",
+          options: {
+            cron,
+          },
+        });
+      }
+    } catch (error: unknown) {
+      console.error(error);
+    }
 
     try {
       // @ts-ignore
