@@ -201,7 +201,7 @@ export class SurrealTrigger implements TriggerIntegration {
   }
 
   onRecordCreated<T extends Record<string, unknown>>(params: TriggerParams) {
-    return createTrigger<SurrealEvents<T>, T>(
+    return createTrigger<EventSpecification<events.OnRecordCreatedEvent<T>>, T>(
       this.source,
       events.onCreate<T>(),
       params,
@@ -209,7 +209,7 @@ export class SurrealTrigger implements TriggerIntegration {
   }
 
   onRecordUpdated<T extends Record<string, unknown>>(params: TriggerParams) {
-    return createTrigger<SurrealEvents<T>, T>(
+    return createTrigger<EventSpecification<events.OnRecordUpdatedEvent<T>>, T>(
       this.source,
       events.onUpdate<T>(),
       params,
@@ -217,7 +217,7 @@ export class SurrealTrigger implements TriggerIntegration {
   }
 
   onRecordDeleted<T extends Record<string, unknown>>(params: TriggerParams) {
-    return createTrigger<SurrealEvents<T>, T>(
+    return createTrigger<EventSpecification<events.OnRecordDeletedEvent<T>>, T>(
       this.source,
       events.onDelete<T>(),
       params,

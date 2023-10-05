@@ -1,8 +1,10 @@
 import { SurrealTrigger } from "@nimblerp/surreal-trigger";
-import { Invoice } from "__generated__/graphql";
-import { Event } from "__generated__/server";
+import { z } from "zod";
 
 import { client } from "lib/trigger";
+
+import { inputCreateInvoiceArgs } from "server/schema/invoice";
+import { createEventInput } from "server/schema/event";
 
 const surreal = new SurrealTrigger({
   id: "surreal",
@@ -18,13 +20,10 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  trigger: surreal.onRecordCreated<Event>({
+  trigger: surreal.onRecordCreated<z.infer<typeof createEventInput>>({
     table: "event",
   }),
-  run: async (payload, io, _ctx) => {
-    await io.logger.log("onEventCreated");
-    await io.logger.log("Payload", payload);
-  },
+  run: async (_payload, _io, _ctx) => {},
 });
 
 client.defineJob({
@@ -34,11 +33,10 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  trigger: surreal.onRecordCreated<Invoice>({
+  trigger: surreal.onRecordCreated<z.infer<typeof inputCreateInvoiceArgs>>({
     table: "invoice",
   }),
-  run: async (payload, io, _ctx) => {
-    await io.logger.log("onInvoiceCreated");
-    await io.logger.log("Payload", payload);
+  run: async (payload, _io, _ctx) => {
+    payload.after.customer;
   },
 });
