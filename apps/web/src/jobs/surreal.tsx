@@ -1,5 +1,9 @@
 import { SurrealTrigger } from "@nimblerp/surreal-trigger";
 import { z } from "zod";
+import nodemailer from "nodemailer";
+import { render } from "@react-email/render";
+
+import { NewInvoice } from "@nimblerp/emails";
 
 import { client } from "lib/trigger";
 
@@ -36,7 +40,26 @@ client.defineJob({
   trigger: surreal.onRecordCreated<z.infer<typeof inputCreateInvoiceArgs>>({
     table: "invoice",
   }),
-  run: async (payload, _io, _ctx) => {
-    payload.after.customer;
+  run: async ({ after: { id, due, emitted } }) => {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMPT_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    await transporter.verify();
+
+    const html = render(<NewInvoice id={id} due={due} emitted={emitted} />);
+
+    await transporter.sendMail({
+      from: "info@nimblerp.com",
+      to: "dolcebunny15@gmail.com",
+      subject: "New invoice",
+      html,
+    });
   },
 });

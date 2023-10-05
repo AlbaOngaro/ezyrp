@@ -21,7 +21,7 @@
           buildInputs = with pkgs; [
             docker # our container provider of choice. For now.
             docker-compose
-            flyctl
+            ngrok
           ];
         };
       }
