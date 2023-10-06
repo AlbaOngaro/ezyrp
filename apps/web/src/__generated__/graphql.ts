@@ -379,17 +379,18 @@ export type Query = {
   __typename?: 'Query';
   countries: Array<Country>;
   customer: Customer;
-  customers?: Maybe<PagedCustomersResponse>;
+  customers: PagedCustomersResponse;
   event: Event;
   events: Array<Event>;
   getCloudinarySignature: CloudinarySignature;
   invoice: Invoice;
-  invoices?: Maybe<PagedInvoicesResponse>;
+  invoices: PagedInvoicesResponse;
   item: Item;
-  items?: Maybe<PagedItemsResponse>;
+  items: PagedItemsResponse;
   stats: Stats;
   subscription?: Maybe<Subscription>;
-  user?: Maybe<User>;
+  user: User;
+  users: Array<TeamUser>;
 };
 
 
@@ -479,6 +480,14 @@ export type SubscrptionKey = {
 export type SubscrptionKeyInput = {
   auth: Scalars['String']['input'];
   p256dh: Scalars['String']['input'];
+};
+
+export type TeamUser = {
+  __typename?: 'TeamUser';
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  photoUrl?: Maybe<Scalars['String']['output']>;
+  username: Scalars['String']['output'];
 };
 
 export type User = {
@@ -631,12 +640,12 @@ export type GetCustomersQueryVariables = Exact<{
 }>;
 
 
-export type GetCustomersQuery = { __typename?: 'Query', customers?: { __typename?: 'PagedCustomersResponse', total: number, results: Array<{ __typename?: 'Customer', id: string, email: string, name: string, photoUrl?: string | null, address: string, city: string, code: string, country: string }> } | null };
+export type GetCustomersQuery = { __typename?: 'Query', customers: { __typename?: 'PagedCustomersResponse', total: number, results: Array<{ __typename?: 'Customer', id: string, email: string, name: string, photoUrl?: string | null, address: string, city: string, code: string, country: string }> } };
 
 export type CustomersWithLastInvoiceQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CustomersWithLastInvoiceQuery = { __typename?: 'Query', customers?: { __typename?: 'PagedCustomersResponse', results: Array<{ __typename?: 'Customer', id: string, name: string, email: string, photoUrl?: string | null, lastInvoice?: { __typename?: 'LastInvoice', status: string, amount: number, emitted: string } | null }> } | null };
+export type CustomersWithLastInvoiceQuery = { __typename?: 'Query', customers: { __typename?: 'PagedCustomersResponse', results: Array<{ __typename?: 'Customer', id: string, name: string, email: string, photoUrl?: string | null, lastInvoice?: { __typename?: 'LastInvoice', status: string, amount: number, emitted: string } | null }> } };
 
 export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -662,7 +671,7 @@ export type InvoicesQueryVariables = Exact<{
 }>;
 
 
-export type InvoicesQuery = { __typename?: 'Query', invoices?: { __typename?: 'PagedInvoicesResponse', total: number, results: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string }, items: Array<{ __typename?: 'InvoiceItem', id: string, name: string, quantity: number, price: number }> }> } | null };
+export type InvoicesQuery = { __typename?: 'Query', invoices: { __typename?: 'PagedInvoicesResponse', total: number, results: Array<{ __typename?: 'Invoice', id: string, description: string, status: string, amount: number, due: string, emitted: string, customer: { __typename?: 'Customer', id: string, email: string, name: string }, items: Array<{ __typename?: 'InvoiceItem', id: string, name: string, quantity: number, price: number }> }> } };
 
 export type ItemQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -676,7 +685,7 @@ export type ItemsQueryVariables = Exact<{
 }>;
 
 
-export type ItemsQuery = { __typename?: 'Query', items?: { __typename?: 'PagedItemsResponse', total: number, results: Array<{ __typename?: 'Item', id: string, name: string, quantity: number, price: number, description?: string | null }> } | null };
+export type ItemsQuery = { __typename?: 'Query', items: { __typename?: 'PagedItemsResponse', total: number, results: Array<{ __typename?: 'Item', id: string, name: string, quantity: number, price: number, description?: string | null }> } };
 
 export type StatsQueryVariables = Exact<{
   filters?: InputMaybe<InputStatsFilters>;
@@ -688,7 +697,12 @@ export type StatsQuery = { __typename?: 'Query', stats: { __typename?: 'Stats', 
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, email: string, username: string, profile?: { __typename?: 'Profile', photoUrl?: string | null, address: string, city: string, country: string, code: string, name: string } | null } | null };
+export type GetUserQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, email: string, username: string, profile?: { __typename?: 'Profile', photoUrl?: string | null, address: string, city: string, country: string, code: string, name: string } | null } };
+
+export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'TeamUser', id: string, email: string, username: string, photoUrl?: string | null }> };
 
 
 export const CreateCustomersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createCustomers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createCustomerArgs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreateCustomerArgs"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCustomers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createCustomerArgs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createCustomerArgs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<CreateCustomersMutation, CreateCustomersMutationVariables>;
@@ -721,3 +735,4 @@ export const ItemDocument = {"kind":"Document","definitions":[{"kind":"Operation
 export const ItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"items"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filters"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"InputItemsFilters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"results"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]} as unknown as DocumentNode<ItemsQuery, ItemsQueryVariables>;
 export const StatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"stats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filters"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"InputStatsFilters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pending"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"change"}}]}},{"kind":"Field","name":{"kind":"Name","value":"overdue"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"change"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paid"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"change"}}]}}]}}]}}]} as unknown as DocumentNode<StatsQuery, StatsQueryVariables>;
 export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserQuery, GetUserQueryVariables>;
+export const UsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"photoUrl"}}]}}]}}]} as unknown as DocumentNode<UsersQuery, UsersQueryVariables>;

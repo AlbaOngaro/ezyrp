@@ -380,17 +380,18 @@ export type Query = {
   __typename?: 'Query';
   countries: Array<Country>;
   customer: Customer;
-  customers?: Maybe<PagedCustomersResponse>;
+  customers: PagedCustomersResponse;
   event: Event;
   events: Array<Event>;
   getCloudinarySignature: CloudinarySignature;
   invoice: Invoice;
-  invoices?: Maybe<PagedInvoicesResponse>;
+  invoices: PagedInvoicesResponse;
   item: Item;
-  items?: Maybe<PagedItemsResponse>;
+  items: PagedItemsResponse;
   stats: Stats;
   subscription?: Maybe<Subscription>;
-  user?: Maybe<User>;
+  user: User;
+  users: Array<TeamUser>;
 };
 
 
@@ -480,6 +481,14 @@ export type SubscrptionKey = {
 export type SubscrptionKeyInput = {
   auth: Scalars['String']['input'];
   p256dh: Scalars['String']['input'];
+};
+
+export type TeamUser = {
+  __typename?: 'TeamUser';
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  photoUrl?: Maybe<Scalars['String']['output']>;
+  username: Scalars['String']['output'];
 };
 
 export type User = {
@@ -619,6 +628,7 @@ export type ResolversTypes = ResolversObject<{
   SubscriptionInput: SubscriptionInput;
   SubscrptionKey: ResolverTypeWrapper<SubscrptionKey>;
   SubscrptionKeyInput: SubscrptionKeyInput;
+  TeamUser: ResolverTypeWrapper<TeamUser>;
   User: ResolverTypeWrapper<User>;
 }>;
 
@@ -671,6 +681,7 @@ export type ResolversParentTypes = ResolversObject<{
   SubscriptionInput: SubscriptionInput;
   SubscrptionKey: SubscrptionKey;
   SubscrptionKeyInput: SubscrptionKeyInput;
+  TeamUser: TeamUser;
   User: User;
 }>;
 
@@ -821,17 +832,18 @@ export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends Re
 export type QueryResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   countries?: Resolver<Array<ResolversTypes['Country']>, ParentType, ContextType>;
   customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'id'>>;
-  customers?: Resolver<Maybe<ResolversTypes['PagedCustomersResponse']>, ParentType, ContextType, Partial<QueryCustomersArgs>>;
+  customers?: Resolver<ResolversTypes['PagedCustomersResponse'], ParentType, ContextType, Partial<QueryCustomersArgs>>;
   event?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   getCloudinarySignature?: Resolver<ResolversTypes['CloudinarySignature'], ParentType, ContextType, Partial<QueryGetCloudinarySignatureArgs>>;
   invoice?: Resolver<ResolversTypes['Invoice'], ParentType, ContextType, RequireFields<QueryInvoiceArgs, 'id'>>;
-  invoices?: Resolver<Maybe<ResolversTypes['PagedInvoicesResponse']>, ParentType, ContextType, Partial<QueryInvoicesArgs>>;
+  invoices?: Resolver<ResolversTypes['PagedInvoicesResponse'], ParentType, ContextType, Partial<QueryInvoicesArgs>>;
   item?: Resolver<ResolversTypes['Item'], ParentType, ContextType, RequireFields<QueryItemArgs, 'id'>>;
-  items?: Resolver<Maybe<ResolversTypes['PagedItemsResponse']>, ParentType, ContextType, Partial<QueryItemsArgs>>;
+  items?: Resolver<ResolversTypes['PagedItemsResponse'], ParentType, ContextType, Partial<QueryItemsArgs>>;
   stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType, Partial<QueryStatsArgs>>;
   subscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['TeamUser']>, ParentType, ContextType>;
 }>;
 
 export type StatResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Stat'] = ResolversParentTypes['Stat']> = ResolversObject<{
@@ -857,6 +869,14 @@ export type SubscriptionResolvers<ContextType = GraphqlContext, ParentType exten
 export type SubscrptionKeyResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['SubscrptionKey'] = ResolversParentTypes['SubscrptionKey']> = ResolversObject<{
   auth?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   p256dh?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TeamUserResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['TeamUser'] = ResolversParentTypes['TeamUser']> = ResolversObject<{
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  photoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -892,6 +912,7 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   Stats?: StatsResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   SubscrptionKey?: SubscrptionKeyResolvers<ContextType>;
+  TeamUser?: TeamUserResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
 

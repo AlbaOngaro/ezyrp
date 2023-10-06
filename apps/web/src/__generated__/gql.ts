@@ -43,6 +43,7 @@ const documents = {
     "\n  query items($filters: InputItemsFilters) {\n    items(filters: $filters) {\n      total\n      results {\n        id\n        name\n        quantity\n        price\n        description\n      }\n    }\n  }\n": types.ItemsDocument,
     "\n  query stats($filters: InputStatsFilters) {\n    stats(filters: $filters) {\n      pending {\n        name\n        value\n        change\n      }\n      overdue {\n        name\n        value\n        change\n      }\n      paid {\n        name\n        value\n        change\n      }\n    }\n  }\n": types.StatsDocument,
     "\n  query getUser {\n    user {\n      id\n      email\n      username\n      profile {\n        photoUrl\n        address\n        city\n        country\n        code\n        name\n      }\n    }\n  }\n": types.GetUserDocument,
+    "\n  query users {\n    users {\n      id\n      email\n      username\n      photoUrl\n    }\n  }\n": types.UsersDocument,
 };
 
 /**
@@ -179,6 +180,10 @@ export function graphql(source: "\n  query stats($filters: InputStatsFilters) {\
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query getUser {\n    user {\n      id\n      email\n      username\n      profile {\n        photoUrl\n        address\n        city\n        country\n        code\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  query getUser {\n    user {\n      id\n      email\n      username\n      profile {\n        photoUrl\n        address\n        city\n        country\n        code\n        name\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query users {\n    users {\n      id\n      email\n      username\n      photoUrl\n    }\n  }\n"): (typeof documents)["\n  query users {\n    users {\n      id\n      email\n      username\n      photoUrl\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

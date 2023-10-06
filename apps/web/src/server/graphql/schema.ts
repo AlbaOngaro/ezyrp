@@ -2,22 +2,23 @@ import gql from "graphql-tag";
 
 export const typeDefs = gql`
   type Query {
-    user: User
+    user: User!
+    users: [TeamUser!]!
 
     customer(id: ID!): Customer!
     customers(
       filters: InputCustomersFilters
       orderBy: InputCustomersOrderBy
-    ): PagedCustomersResponse
+    ): PagedCustomersResponse!
 
     invoice(id: ID!): Invoice!
-    invoices(filters: InputInvoicesFilters): PagedInvoicesResponse
+    invoices(filters: InputInvoicesFilters): PagedInvoicesResponse!
 
     event(id: ID!): Event!
     events: [Event!]!
 
     item(id: ID!): Item!
-    items(filters: InputItemsFilters): PagedItemsResponse
+    items(filters: InputItemsFilters): PagedItemsResponse!
 
     subscription: Subscription
 
@@ -96,6 +97,13 @@ export const typeDefs = gql`
     password: String!
     username: String!
     profile: Profile
+  }
+
+  type TeamUser {
+    id: ID!
+    email: String!
+    username: String!
+    photoUrl: String
   }
 
   input InputCustomersFilters {
