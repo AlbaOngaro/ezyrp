@@ -100,8 +100,8 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
           </li>
 
           <li className="mt-auto">
-            <a
-              href="#"
+            <Link
+              href="/settings"
               className={twMerge(
                 "group -mx-2 flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-orange-200",
                 {
@@ -115,7 +115,7 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
                 aria-hidden="true"
               />
               Settings
-            </a>
+            </Link>
           </li>
         </ul>
       </nav>

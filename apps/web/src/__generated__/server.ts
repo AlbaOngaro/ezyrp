@@ -134,6 +134,12 @@ export type InputRegisterCredentials = {
   workspace?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type InputResetPasswordCredentials = {
+  confirmPassword: Scalars['String']['input'];
+  currentPassword: Scalars['String']['input'];
+  newPassword: Scalars['String']['input'];
+};
+
 export type InputStatsFilters = {
   period: Scalars['Int']['input'];
 };
@@ -242,6 +248,7 @@ export type Mutation = {
   login?: Maybe<User>;
   logout?: Maybe<Scalars['Boolean']['output']>;
   register?: Maybe<User>;
+  resetPassword?: Maybe<User>;
   updateCustomers?: Maybe<Array<Maybe<Customer>>>;
   updateEvents?: Maybe<Array<Maybe<Event>>>;
   updateInvoices?: Maybe<Array<Maybe<Invoice>>>;
@@ -302,6 +309,11 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   credentials?: InputMaybe<InputRegisterCredentials>;
+};
+
+
+export type MutationResetPasswordArgs = {
+  credentials?: InputMaybe<InputResetPasswordCredentials>;
 };
 
 
@@ -578,6 +590,7 @@ export type ResolversTypes = ResolversObject<{
   InputItemsFilters: InputItemsFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;
+  InputResetPasswordCredentials: InputResetPasswordCredentials;
   InputStatsFilters: InputStatsFilters;
   InputUpdateCustomerArgs: InputUpdateCustomerArgs;
   InputUpdateEventsArgs: InputUpdateEventsArgs;
@@ -630,6 +643,7 @@ export type ResolversParentTypes = ResolversObject<{
   InputItemsFilters: InputItemsFilters;
   InputLoginCredentials: InputLoginCredentials;
   InputRegisterCredentials: InputRegisterCredentials;
+  InputResetPasswordCredentials: InputResetPasswordCredentials;
   InputStatsFilters: InputStatsFilters;
   InputUpdateCustomerArgs: InputUpdateCustomerArgs;
   InputUpdateEventsArgs: InputUpdateEventsArgs;
@@ -758,6 +772,7 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   login?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationLoginArgs>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   register?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationRegisterArgs>>;
+  resetPassword?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationResetPasswordArgs>>;
   updateCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Customer']>>>, ParentType, ContextType, RequireFields<MutationUpdateCustomersArgs, 'updateCustomerArgs'>>;
   updateEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationUpdateEventsArgs, 'updateEventsInput'>>;
   updateInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationUpdateInvoicesArgs, 'updateInvoicesArgs'>>;

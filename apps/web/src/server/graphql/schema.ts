@@ -32,6 +32,7 @@ export const typeDefs = gql`
     logout: Boolean
     login(credentials: InputLoginCredentials): User
     register(credentials: InputRegisterCredentials): User
+    resetPassword(credentials: InputResetPasswordCredentials): User
     updateUserProfile(updateUserProfileArgs: InputUpdateUserProfileArgs!): User
 
     createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
@@ -63,6 +64,12 @@ export const typeDefs = gql`
     password: String!
     username: String
     workspace: String
+  }
+
+  input InputResetPasswordCredentials {
+    currentPassword: String!
+    newPassword: String!
+    confirmPassword: String!
   }
 
   input InputUpdateUserProfileArgs {
