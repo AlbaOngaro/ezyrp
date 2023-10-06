@@ -55,12 +55,12 @@ function createTrigger<
 }
 
 async function webhookHandler(event: HandlerEvent<"HTTP">, logger: Logger) {
-  logger.debug("[@nimblerp/surreal] Handling webhook payload");
+  console.debug("[@nimblerp/surreal] Handling webhook payload");
 
   const { rawEvent: request } = event;
 
   if (!request.body) {
-    logger.debug("[@nimblerp/surreal] No body found");
+    console.debug("[@nimblerp/surreal] No body found");
     return { events: [] };
   }
 
@@ -78,6 +78,8 @@ async function webhookHandler(event: HandlerEvent<"HTTP">, logger: Logger) {
     ],
   };
 }
+
+const ALLOWED_EVENTS = ["CREATE", "UPDATE", "DELETE"];
 
 function createWebhookEventSource(
   integration: SurrealTrigger,
@@ -97,7 +99,7 @@ function createWebhookEventSource(
 
       const allEvents = Array.from(
         new Set([...options.event.desired, ...options.event.missing]),
-      );
+      ).filter((e) => ALLOWED_EVENTS.includes(e));
 
       await io.integration.webhookEndpoints.create(
         "create-webhook",

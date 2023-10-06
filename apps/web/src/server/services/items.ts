@@ -76,7 +76,6 @@ export class ItemsService extends Service {
     try {
       return z.array(item).parse(result[0].result);
     } catch (error: unknown) {
-      console.debug(error);
       return [];
     }
   }

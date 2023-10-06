@@ -43,3 +43,4 @@ DEFINE EVENT set_item_workspace ON TABLE item WHEN $event = "CREATE" THEN {
 };
 
 REMOVE EVENT item_deleted ON TABLE item;
+REMOVE EVENT item_updated ON TABLE item;

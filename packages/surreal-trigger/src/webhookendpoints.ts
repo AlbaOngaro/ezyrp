@@ -24,7 +24,7 @@ export class WebhookEndpoints {
       const response = await client.query(
         `DEFINE EVENT ${eventName} ON TABLE ${table} WHEN $event = "${event}" THEN {
 					RETURN http::post("${url}", {
-						name: string::concat("record", ".", string::lowercase($event), "d"),
+						name: $event,
 						before: $before,
 						after: $after,
 					});
