@@ -1,14 +1,14 @@
-import { SurrealTrigger } from "@nimblerp/surreal-trigger";
 import { z } from "zod";
 import nodemailer from "nodemailer";
 import { render } from "@react-email/render";
-
+import { SurrealTrigger } from "@nimblerp/surreal-trigger";
 import { NewInvoice } from "@nimblerp/emails";
 
 import { client } from "lib/trigger";
 
 import { inputCreateInvoiceArgs } from "server/schema/invoice";
 import { createEventInput } from "server/schema/event";
+import { item } from "server/schema/inventory";
 
 const surreal = new SurrealTrigger({
   id: "surreal",
@@ -21,6 +21,7 @@ client.defineJob({
   id: "event.created",
   name: "Event created trigger",
   version: "0.0.2",
+  enabled: false,
   integrations: {
     surreal,
   },
@@ -34,6 +35,7 @@ client.defineJob({
   id: "invoice.created",
   name: "Invoice created trigger",
   version: "0.0.2",
+  enabled: false,
   integrations: {
     surreal,
   },
@@ -61,5 +63,21 @@ client.defineJob({
       subject: "New invoice",
       html,
     });
+  },
+});
+
+client.defineJob({
+  id: "item.updated",
+  name: "Item updated trigger",
+  version: "0.0.1",
+  enabled: false,
+  integrations: {
+    surreal,
+  },
+  trigger: surreal.onRecordUpdated<z.infer<typeof item>>({
+    table: "item",
+  }),
+  run: async (payload, io) => {
+    await io.logger.info("Processing item", payload);
   },
 });

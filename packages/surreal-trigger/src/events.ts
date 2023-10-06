@@ -11,14 +11,14 @@ export function onCreate<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(): EventSpecification<OnRecordCreatedEvent<T>> {
   return {
-    name: "record.created",
+    name: "CREATE",
     title: "Record created",
     source: "SurrealDb",
     icon: "Surrealdb",
     examples: [
       {
         id: "asdf",
-        name: "record.created",
+        name: "CREATE",
         icon: "Surrealdb",
         payload: {
           before: null,
@@ -43,14 +43,14 @@ export function onUpdate<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(): EventSpecification<OnRecordUpdatedEvent<T>> {
   return {
-    name: "record.updated",
+    name: "UPDATE",
     title: "Record updated",
     source: "SurrealDb",
     icon: "Surrealdb",
     examples: [
       {
         id: "asdf",
-        name: "record.updated",
+        name: "UPDATE",
         icon: "Surrealdb",
         payload: {
           before: {
@@ -77,14 +77,14 @@ export function onDelete<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(): EventSpecification<OnRecordDeletedEvent<T>> {
   return {
-    name: "record.deleted",
+    name: "DELETE",
     title: "Record deleted",
     source: "SurrealDb",
     icon: "Surrealdb",
     examples: [
       {
         id: "asdf",
-        name: "record.deleted",
+        name: "DELETE",
         icon: "Surrealdb",
         payload: {
           before: {

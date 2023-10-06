@@ -36,7 +36,6 @@ type CreateTriggersResult<
 
 export type TriggerParams = {
   table: string;
-  name?: string;
 };
 
 function createTrigger<

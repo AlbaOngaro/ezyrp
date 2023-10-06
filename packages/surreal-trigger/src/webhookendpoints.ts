@@ -15,11 +15,11 @@ export class WebhookEndpoints {
 
   create(
     key: IntegrationTaskKey,
-    { name, table, url }: CreateWebhookParams,
+    { table, url }: CreateWebhookParams,
     event: string,
   ) {
     return this.runTask(key, async (client, task, io) => {
-      const eventName = name || `${table.toLowerCase()}_${event.toLowerCase()}`;
+      const eventName = `${table.toLowerCase()}_${event.toLowerCase()}`;
 
       const response = await client.query(
         `DEFINE EVENT ${eventName} ON TABLE ${table} WHEN $event = "${event}" THEN {
