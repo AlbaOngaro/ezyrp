@@ -20,20 +20,16 @@ export class EventsService extends Service {
   ): Promise<Event[]> {
     await surreal.authenticate(this.token);
 
-    console.debug("create event!");
-
-    await surreal
-      .query<Event[]>(
-        `INSERT INTO event (start, end, title, variant, guests) VALUES ${events
-          .map(
-            ({ start, end, title, variant, guests }) =>
-              `("${start}", "${end}", "${title}", "${variant}", ${JSON.stringify(
-                guests,
-              )})`,
-          )
-          .join(",")}`,
-      )
-      .catch(console.error);
+    await surreal.query<Event[]>(
+      `INSERT INTO event (start, end, title, variant, guests) VALUES ${events
+        .map(
+          ({ start, end, title, variant, guests }) =>
+            `("${start}", "${end}", "${title}", "${variant}", ${JSON.stringify(
+              guests,
+            )})`,
+        )
+        .join(",")}`,
+    );
 
     try {
       // @ts-ignore

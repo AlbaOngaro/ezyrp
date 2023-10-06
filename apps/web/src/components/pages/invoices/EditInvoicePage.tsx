@@ -32,6 +32,7 @@ export function EditInvoicePage({ id }: Props) {
       const { data } = await getInvoice();
       return data?.invoice;
     },
+    // @ts-ignore
     resolver: zodResolver(schema),
   });
 

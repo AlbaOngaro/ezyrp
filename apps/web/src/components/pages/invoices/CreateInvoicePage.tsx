@@ -39,6 +39,7 @@ export function CreateInvoicePage() {
         due: new Date().toISOString(),
         emitted: new Date().toISOString(),
       },
+      // @ts-ignore
       resolver: zodResolver(schema),
     });
 
