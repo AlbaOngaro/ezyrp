@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 import { Surreal } from "surrealdb.js";
 import { destroyCookie, setCookie } from "nookies";
 
@@ -115,6 +115,89 @@ export const register: MutationResolvers["register"] = async (
   return record as User;
 };
 
+export const resetPassword: MutationResolvers["resetPassword"] = async (
+  _,
+  args,
+  { accessToken, res },
+) => {
+  const { currentPassword, newPassword } = await z
+    .object({
+      currentPassword: z.string(),
+      newPassword: z.string(),
+      confirmPassword: z.string(),
+    })
+    .parseAsync(args.credentials)
+    .catch((errors) => {
+      throw new GraphQLError("Invalid argument value", {
+        extensions: {
+          code: "BAD_USER_INPUT",
+          errors: (errors as ZodError).issues,
+        },
+      });
+    });
+
+  await surreal.authenticate(accessToken as string);
+  const user = (await (surreal as Surreal).info()) as User;
+
+  try {
+    await surreal.signin({
+      NS: "crm",
+      DB: "crm",
+      SC: "allusers",
+      email: user.email,
+      password: currentPassword,
+    });
+  } catch (error: unknown) {
+    throw new GraphQLError("Your credentials did not match.", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+      },
+    });
+  }
+
+  try {
+    await surreal.query<[User[]]>(
+      `UPDATE ${user.id} MERGE {
+        password: crypto::argon2::generate($password)
+      }`,
+      {
+        password: newPassword,
+      },
+    );
+
+    const token = await surreal.signin({
+      NS: "crm",
+      DB: "crm",
+      SC: "allusers",
+      email: user.email,
+      password: newPassword,
+    });
+
+    if (!token) {
+      throw new GraphQLError("You are not authorized to perform this action.", {
+        extensions: {
+          code: "FORBIDDEN",
+        },
+      });
+    }
+
+    setCookie({ res }, ACCESS_TOKEN_ID, token, {
+      secure: true,
+      sameSite: true,
+      httpOnly: true,
+      path: "/",
+    });
+
+    return (await (surreal as Surreal).info()) as User;
+  } catch (error: unknown) {
+    throw new GraphQLError("You are not authorized to perform this action.", {
+      extensions: {
+        code: "FORBIDDEN",
+      },
+    });
+  }
+};
+
 export const logout: MutationResolvers["logout"] = async (_, __, { res }) => {
   destroyCookie({ res }, ACCESS_TOKEN_ID, {
     secure: true,
@@ -145,4 +228,26 @@ export const updateUserProfile: MutationResolvers["updateUserProfile"] = async (
 
   const profileService = new ProfileService(accessToken as string);
   return profileService.update(input);
+};
+
+export const deleteAccount: MutationResolvers["deleteAccount"] = async (
+  _,
+  __,
+  { accessToken, res },
+) => {
+  await surreal.authenticate(accessToken as string);
+  const response = await surreal.query(
+    `DELETE workspace WHERE id = $auth.workspace;`,
+  );
+
+  console.debug(JSON.stringify(response));
+
+  destroyCookie({ res }, ACCESS_TOKEN_ID, {
+    secure: true,
+    sameSite: true,
+    httpOnly: true,
+    path: "/",
+  });
+
+  return true;
 };

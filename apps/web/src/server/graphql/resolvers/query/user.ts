@@ -1,9 +1,9 @@
 import { Surreal } from "surrealdb.js";
 
-import { QueryResolvers, User } from "../../../../__generated__/server";
-
-import { ProfileService } from "../../../services/profile";
-import { surreal } from "../../../surreal";
+import { surreal } from "server/surreal";
+import { ProfileService } from "server/services/profile";
+import { QueryResolvers, User } from "__generated__/server";
+import { TeamUser } from "__generated__/graphql";
 
 export const user: QueryResolvers["user"] = async (_, __, { accessToken }) => {
   await surreal.authenticate(accessToken as string);
@@ -15,4 +15,16 @@ export const user: QueryResolvers["user"] = async (_, __, { accessToken }) => {
     ...(user as Omit<User, "profile">),
     profile,
   };
+};
+
+export const users: QueryResolvers["users"] = async (
+  _,
+  __,
+  { accessToken },
+) => {
+  await surreal.authenticate(accessToken as string);
+  const [{ result }] = await surreal.query<[TeamUser[]]>(
+    `SELECT *, (SELECT VALUE photoUrl FROM profile WHERE user = $parent.id)[0] as photoUrl FROM user;`,
+  );
+  return result || [];
 };

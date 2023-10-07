@@ -4,3 +4,4 @@ export * from "./invoice";
 export * from "./event";
 export * from "./item";
 export * from "./subscription";
+export * from "./invites";

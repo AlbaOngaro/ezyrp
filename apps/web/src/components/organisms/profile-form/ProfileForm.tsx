@@ -1,179 +1,108 @@
-import { FormEventHandler, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import {
-  Country,
-  InputUpdateUserProfileArgs,
-  User,
-} from "../../../__generated__/graphql";
-
-import { useCountries } from "../../../hooks/useCountries";
-import { useUser } from "../../../hooks/useUser";
-
-import { Input } from "../../atoms/input/Input";
-import { Button } from "../../atoms/button/Button";
-import { Select } from "../../atoms/select/Select";
-import { useFileUpload } from "../../../hooks/useFileUpload";
+import { Controller, useFormContext } from "react-hook-form";
+import { Button } from "components/atoms/button/Button";
+import { Select } from "components/atoms/select/Select";
+import { Input } from "components/atoms/input/Input";
+import { useCountries } from "hooks/useCountries";
+import { Country, Profile } from "__generated__/graphql";
+import { twMerge } from "lib/utils/twMerge";
 
 interface Props {
-  profile: User["profile"];
+  className?: string;
 }
 
-export function ProfileForm({ profile: initialProfile }: Props) {
-  const { update } = useUser();
+export function ProfileForm({ className }: Props) {
   const { data } = useCountries();
-  const handleFileUpload = useFileUpload();
 
-  const [profile, setProfile] = useState<InputUpdateUserProfileArgs>({
-    photoUrl: initialProfile?.photoUrl || "",
-    address: initialProfile?.address || "",
-    city: initialProfile?.city || "",
-    code: initialProfile?.code || "",
-    country: initialProfile?.country || "",
-    name: initialProfile?.name || "",
-  });
-
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    const files = (e.target as HTMLFormElement).querySelector<HTMLInputElement>(
-      "input[type=file]",
-    )?.files;
-
-    if (files && files.length > 0) {
-      const photoUrl = await handleFileUpload(files[0]);
-
-      await update({
-        variables: {
-          updateUserProfileArgs: {
-            ...profile,
-            photoUrl,
-          },
-        },
-      });
-
-      return;
-    }
-
-    await update({
-      variables: {
-        updateUserProfileArgs: profile,
-      },
-    });
-  };
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { isValid, isSubmitting },
+  } = useFormContext<Profile>();
 
   return (
     <Form
-      className="px-12 py-8 flex flex-col gap-4 lg:w-2/3"
-      onSubmit={handleSubmit}
+      className={twMerge("px-12 py-8 flex flex-col gap-4 lg:w-2/3", className)}
+      onSubmit={handleSubmit(console.debug, console.error)}
     >
-      <Input
-        label="Profile picture"
+      <Controller
+        control={control}
         name="photoUrl"
-        type="file"
-        value={profile.photoUrl || ""}
-        onChange={async (e) => {
-          if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
+        render={({ field: { value = "", onChange } }) => (
+          <Input
+            label="Profile picture"
+            name="photoUrl"
+            type="file"
+            value={value || ""}
+            onChange={async (e) => {
+              if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
 
-            const fr = new FileReader();
-            const promise = new Promise<string | undefined>(
-              (resolve, reject) => {
-                fr.onload = () => {
-                  if (fr.result && typeof fr.result === "string") {
-                    return resolve(fr.result);
-                  }
+                const fr = new FileReader();
+                const promise = new Promise<string | undefined>(
+                  (resolve, reject) => {
+                    fr.onload = () => {
+                      if (fr.result && typeof fr.result === "string") {
+                        return resolve(fr.result);
+                      }
 
-                  reject();
-                };
-              },
-            );
+                      reject();
+                    };
+                  },
+                );
 
-            fr.readAsDataURL(file);
+                fr.readAsDataURL(file);
 
-            const photoUrl = await promise;
+                const photoUrl = await promise;
 
-            setProfile((curr) => ({
-              ...curr,
-              photoUrl,
-            }));
-          }
-        }}
+                onChange(photoUrl);
+              }
+            }}
+          />
+        )}
       />
 
-      <Input
-        label="Name"
-        name="name"
-        value={profile.name || ""}
-        onChange={(e) =>
-          setProfile((curr) => ({
-            ...curr,
-            name: e.target.value,
-          }))
-        }
-      />
+      <Input label="Name" {...register("name", { required: true })} />
 
-      <hr />
-
-      <Input
-        label="Address"
-        name="address"
-        value={profile.address || ""}
-        onChange={(e) =>
-          setProfile((curr) => ({
-            ...curr,
-            address: e.target.value,
-          }))
-        }
-      />
+      <Input label="Address" {...register("address")} />
 
       <div className="grid grid-cols-3 gap-4">
-        <Input
-          label="City"
-          name="city"
-          value={profile.city || ""}
-          onChange={(e) =>
-            setProfile((curr) => ({
-              ...curr,
-              city: e.target.value,
-            }))
-          }
-        />
-
-        <Input
-          label="Post Code"
-          name="code"
-          value={profile.code || ""}
-          onChange={(e) =>
-            setProfile((curr) => ({
-              ...curr,
-              code: e.target.value,
-            }))
-          }
-        />
+        <Input label="City" {...register("city")} />
+        <Input label="Post Code" {...register("code")} />
 
         {data?.countries && (
-          <Select
-            label="Country"
+          <Controller
+            control={control}
             name="country"
-            defaultValue={{
-              label: profile.country || "",
-              value: profile.country || "",
-            }}
-            options={((data.countries || []) as Country[]).map((country) => ({
-              label: country.name.common,
-              value: country.name.common,
-            }))}
-            onChange={(option) =>
-              setProfile((curr) => ({
-                ...curr,
-                country: option?.value,
-              }))
-            }
+            render={({ field: { value, onChange } }) => (
+              <Select
+                label="Country"
+                name="country"
+                defaultValue={{
+                  label: value,
+                  value: value,
+                }}
+                options={((data.countries || []) as Country[]).map(
+                  (country) => ({
+                    label: country.name.common,
+                    value: country.name.common,
+                  }),
+                )}
+                onChange={(option) => onChange(option?.value)}
+              />
+            )}
           />
         )}
       </div>
 
-      <Button size="lg" className="ml-auto px-6">
+      <Button
+        size="lg"
+        className="px-6 w-fit"
+        disabled={!isValid}
+        loading={isSubmitting}
+      >
         Save
       </Button>
     </Form>

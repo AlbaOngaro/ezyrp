@@ -1,9 +1,10 @@
 import { z } from "zod";
 import nodemailer from "nodemailer";
+import webpush, { PushSubscription } from "web-push";
+import { v2 as cloudinary } from "cloudinary";
 import { render } from "@react-email/render";
 import { SurrealTrigger } from "@nimblerp/surreal-trigger";
-import { NewInvoice } from "@nimblerp/emails";
-import webpush, { PushSubscription } from "web-push";
+import { Invite, NewInvoice } from "@nimblerp/emails";
 
 import { client } from "lib/trigger";
 
@@ -58,12 +59,16 @@ client.defineJob({
       await transporter.verify();
 
       const html = render(<NewInvoice id={id} due={due} emitted={emitted} />);
+      const text = render(<NewInvoice id={id} due={due} emitted={emitted} />, {
+        plainText: true,
+      });
 
       await transporter.sendMail({
         from: "info@nimblerp.com",
         to: "dolcebunny15@gmail.com",
         subject: "New invoice",
         html,
+        text,
       });
     } catch (error: unknown) {
       console.error(error);
@@ -126,5 +131,124 @@ client.defineJob({
         }
       });
     }
+  },
+});
+
+const inviteData = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  workspace: z.string(),
+  sent_at: z.string().nullable(),
+});
+
+type InviteData = z.infer<typeof inviteData>;
+
+client.defineJob({
+  id: "invite.updated",
+  name: "Invite updated trigger",
+  version: "0.0.2",
+  integrations: {
+    surreal,
+  },
+  enabled: true,
+  trigger: surreal.onRecordUpdated<InviteData>({
+    table: "invite",
+  }),
+  run: async ({ before: { sent_at }, after: { email, id, workspace } }, io) => {
+    if (!sent_at) {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.SMPT_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+
+      await transporter.verify();
+
+      const html = render(
+        <Invite invitee={email} inviter="Alba Ongaro" workspace={workspace} />,
+      );
+
+      const text = render(
+        <Invite invitee={email} inviter="Alba Ongaro" workspace={workspace} />,
+        {
+          plainText: true,
+        },
+      );
+
+      await transporter.sendMail({
+        from: "info@nimblerp.com",
+        to: email,
+        subject: "Workspace invite",
+        html,
+        text,
+      });
+
+      await io.surreal.runTask("invite.sent", async (client) => {
+        await client.merge(id, {
+          sent_at: new Date().toISOString(),
+        });
+      });
+    }
+  },
+});
+
+client.defineJob({
+  id: "workspace.deleted",
+  name: "Workspace deleted trigger",
+  version: "0.0.2",
+  integrations: {
+    surreal,
+  },
+  enabled: true,
+  trigger: surreal.onRecordDeleted({
+    table: "workspace",
+  }),
+  run: async ({ before: { id } }, io) => {
+    await io.surreal.runTask("delete.workspace.data", async (client) => {
+      const [{ result }] = await client.query<
+        [
+          {
+            analyzers: Record<string, string>;
+            functions: Record<string, string>;
+            params: Record<string, string>;
+            scopes: Record<string, string>;
+            tables: Record<string, string>;
+            tokens: Record<string, string>;
+            users: Record<string, string>;
+          },
+        ]
+      >("INFO FOR DB");
+
+      if (!result) {
+        return;
+      }
+
+      const tables = Object.keys(result.tables);
+
+      await client.query(`
+        BEGIN TRANSACTION;
+
+        ${tables
+          .map(
+            (table) =>
+              `DELETE ${table} WHERE workspace = type::string("${id}");`,
+          )
+          .join("\n")}
+
+        COMMIT TRANSACTION;
+      `);
+
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+      });
+
+      await cloudinary.api.delete_resources_by_tag(id);
+    });
   },
 });

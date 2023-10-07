@@ -1,12 +1,10 @@
 import { BellIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import * as Menu from "@radix-ui/react-navigation-menu";
-import Link from "next/link";
 
-import { twMerge } from "../../../lib/utils/twMerge";
+import { Avatar } from "components/atoms/avatar/Avatar";
+import { useUser } from "hooks/useUser";
 
-import { useUser } from "../../../hooks/useUser";
-
-import { Avatar } from "../../atoms/avatar/Avatar";
+import { twMerge } from "lib/utils/twMerge";
 
 export function Header() {
   const { data, logout } = useUser();
@@ -45,16 +43,6 @@ export function Header() {
                 </span>
               </Menu.Trigger>
               <Menu.Content className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                <Menu.Link asChild>
-                  <Link
-                    href="/profile"
-                    className={twMerge(
-                      "block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-slate-50",
-                    )}
-                  >
-                    Your profile
-                  </Link>
-                </Menu.Link>
                 <Menu.Link asChild>
                   <button
                     onClick={() => logout()}

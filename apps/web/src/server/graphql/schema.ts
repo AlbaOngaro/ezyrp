@@ -2,22 +2,24 @@ import gql from "graphql-tag";
 
 export const typeDefs = gql`
   type Query {
-    user: User
+    user: User!
+    users: [TeamUser!]!
+    invites: [Invite!]!
 
     customer(id: ID!): Customer!
     customers(
       filters: InputCustomersFilters
       orderBy: InputCustomersOrderBy
-    ): PagedCustomersResponse
+    ): PagedCustomersResponse!
 
     invoice(id: ID!): Invoice!
-    invoices(filters: InputInvoicesFilters): PagedInvoicesResponse
+    invoices(filters: InputInvoicesFilters): PagedInvoicesResponse!
 
     event(id: ID!): Event!
     events: [Event!]!
 
     item(id: ID!): Item!
-    items(filters: InputItemsFilters): PagedItemsResponse
+    items(filters: InputItemsFilters): PagedItemsResponse!
 
     subscription: Subscription
 
@@ -32,7 +34,11 @@ export const typeDefs = gql`
     logout: Boolean
     login(credentials: InputLoginCredentials): User
     register(credentials: InputRegisterCredentials): User
+    resetPassword(credentials: InputResetPasswordCredentials): User
     updateUserProfile(updateUserProfileArgs: InputUpdateUserProfileArgs!): User
+    deleteAccount: Boolean
+
+    createInvites(createInviteArgs: [InputCreateInviteArgs!]!): [Invite!]!
 
     createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
     updateCustomers(updateCustomerArgs: [InputUpdateCustomerArgs!]!): [Customer]
@@ -65,6 +71,12 @@ export const typeDefs = gql`
     workspace: String
   }
 
+  input InputResetPasswordCredentials {
+    currentPassword: String!
+    newPassword: String!
+    confirmPassword: String!
+  }
+
   input InputUpdateUserProfileArgs {
     photoUrl: String
     address: String
@@ -91,6 +103,19 @@ export const typeDefs = gql`
     profile: Profile
   }
 
+  type TeamUser {
+    id: ID!
+    email: String!
+    username: String!
+    photoUrl: String
+  }
+
+  type Invite {
+    id: ID!
+    email: String!
+    sent_at: String
+  }
+
   input InputCustomersFilters {
     start: Int
     limit: Int
@@ -105,6 +130,10 @@ export const typeDefs = gql`
 
   input InputCustomersOrderBy {
     lastInvoice: Sort
+  }
+
+  input InputCreateInviteArgs {
+    email: String!
   }
 
   input InputCreateCustomerArgs {
@@ -256,6 +285,7 @@ export const typeDefs = gql`
     signature: String!
     cloudname: String!
     apiKey: String!
+    tags: [String!]!
   }
 
   input InputCreateItems {
