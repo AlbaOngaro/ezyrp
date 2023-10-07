@@ -229,3 +229,25 @@ export const updateUserProfile: MutationResolvers["updateUserProfile"] = async (
   const profileService = new ProfileService(accessToken as string);
   return profileService.update(input);
 };
+
+export const deleteAccount: MutationResolvers["deleteAccount"] = async (
+  _,
+  __,
+  { accessToken, res },
+) => {
+  await surreal.authenticate(accessToken as string);
+  const response = await surreal.query(
+    `DELETE workspace WHERE id = $auth.workspace;`,
+  );
+
+  console.debug(JSON.stringify(response));
+
+  destroyCookie({ res }, ACCESS_TOKEN_ID, {
+    secure: true,
+    sameSite: true,
+    httpOnly: true,
+    path: "/",
+  });
+
+  return true;
+};

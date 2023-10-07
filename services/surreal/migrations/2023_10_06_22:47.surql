@@ -12,3 +12,5 @@ DEFINE EVENT set_invite_workspace ON TABLE invite WHEN $event = "CREATE" THEN {
 };
 
 DEFINE INDEX idx_invite ON invite FIELDS email UNIQUE;
+
+DEFINE TABLE workspace SCHEMALESS PERMISSIONS FOR create, delete WHERE true;

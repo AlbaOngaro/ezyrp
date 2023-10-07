@@ -6,6 +6,7 @@ import { REGISTER } from "../lib/mutations/REGISTER";
 import { UPDATE_USER_PROFILE } from "../lib/mutations/UPDATE_USER_PROFILE";
 import { USER } from "../lib/queries/USER";
 import { RESET_PASSWORD } from "lib/mutations/RESET_PASSWORD";
+import { DELETE_ACCOUNT } from "lib/mutations/DELETE_ACCOUNT";
 
 export function useUser() {
   const router = useRouter();
@@ -33,6 +34,10 @@ export function useUser() {
     refetchQueries: [USER],
   });
 
+  const [deleteAccount] = useMutation(DELETE_ACCOUNT, {
+    onCompleted: () => router.push("/register"),
+  });
+
   return {
     data,
     error,
@@ -42,5 +47,6 @@ export function useUser() {
     register,
     update,
     resetPassword,
+    delete: deleteAccount,
   };
 }

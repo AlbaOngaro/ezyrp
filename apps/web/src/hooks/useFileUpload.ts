@@ -11,7 +11,7 @@ export function useFileUpload() {
       },
     });
 
-    if (!data) {
+    if (!data || !file) {
       throw new Error("Something went wrong");
     }
 
@@ -24,6 +24,7 @@ export function useFileUpload() {
     );
     formData.append("signature", data.getCloudinarySignature.signature);
     formData.append("folder", "profiles");
+    formData.append("tags", data.getCloudinarySignature.tags.join(","));
 
     const url =
       "https://api.cloudinary.com/v1_1/" +

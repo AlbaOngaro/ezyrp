@@ -36,6 +36,7 @@ export const typeDefs = gql`
     register(credentials: InputRegisterCredentials): User
     resetPassword(credentials: InputResetPasswordCredentials): User
     updateUserProfile(updateUserProfileArgs: InputUpdateUserProfileArgs!): User
+    deleteAccount: Boolean
 
     createInvites(createInviteArgs: [InputCreateInviteArgs!]!): [Invite!]!
 
@@ -284,6 +285,7 @@ export const typeDefs = gql`
     signature: String!
     cloudname: String!
     apiKey: String!
+    tags: [String!]!
   }
 
   input InputCreateItems {

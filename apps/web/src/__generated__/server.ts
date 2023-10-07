@@ -22,6 +22,7 @@ export type CloudinarySignature = {
   apiKey: Scalars['String']['output'];
   cloudname: Scalars['String']['output'];
   signature: Scalars['String']['output'];
+  tags: Array<Scalars['String']['output']>;
   timestamp: Scalars['Int']['output'];
 };
 
@@ -253,6 +254,7 @@ export type Mutation = {
   createInvoices?: Maybe<Array<Maybe<Invoice>>>;
   createItems?: Maybe<Array<Maybe<Item>>>;
   createSubscription?: Maybe<Subscription>;
+  deleteAccount?: Maybe<Scalars['Boolean']['output']>;
   deleteCustomers?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteEvents?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteInvoices?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
@@ -711,6 +713,7 @@ export type CloudinarySignatureResolvers<ContextType = GraphqlContext, ParentTyp
   apiKey?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   cloudname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   signature?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -806,6 +809,7 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   createInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationCreateInvoicesArgs, 'createInvoicesArgs'>>;
   createItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['Item']>>>, ParentType, ContextType, RequireFields<MutationCreateItemsArgs, 'createItemsInput'>>;
   createSubscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType, Partial<MutationCreateSubscriptionArgs>>;
+  deleteAccount?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   deleteCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteCustomersArgs, 'deleteCustomerArgs'>>;
   deleteEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteEventsArgs, 'deleteEventsInput'>>;
   deleteInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteInvoicesArgs, 'deleteInvoicesArgs'>>;

@@ -1,4 +1,4 @@
-import { graphql } from "../../__generated__";
+import { graphql } from "__generated__";
 
 export const GET_CLOUDINARY_SIGNATURE = graphql(`
   query getCloudinarySignature($folder: String = "nimblerp") {
@@ -7,6 +7,7 @@ export const GET_CLOUDINARY_SIGNATURE = graphql(`
       signature
       cloudname
       apiKey
+      tags
     }
   }
 `);

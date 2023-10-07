@@ -1,6 +1,8 @@
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { useLazyQuery } from "@apollo/client";
+import { Trigger, Root } from "@radix-ui/react-alert-dialog";
+
 import { Button } from "components/atoms/button/Button";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
@@ -10,6 +12,7 @@ import { useUser } from "hooks/useUser";
 import { USER } from "lib/queries/USER";
 import { useFileUpload } from "hooks/useFileUpload";
 import { InputResetPasswordCredentials, Profile } from "__generated__/graphql";
+import { Dialog } from "components/atoms/dialog/Dialog";
 
 export function AccountSettings() {
   const user = useUser();
@@ -37,7 +40,7 @@ export function AccountSettings() {
     onSuccess,
     onError,
   ) =>
-    handleProfileSubmit(async (updateUserProfileArgs) => {
+    handleProfileSubmit(async ({ __typename, ...updateUserProfileArgs }) => {
       if (
         updateUserProfileArgs.photoUrl &&
         !updateUserProfileArgs.photoUrl.startsWith("http")
@@ -128,9 +131,18 @@ export function AccountSettings() {
         description="No longer want to use our service? You can delete your account here. This action is not reversible. All information related to this account will be deleted permanently."
       />
 
-      <Button variant="danger" size="xl" className="h-fit w-fit">
-        Yes, delete my account
-      </Button>
+      <Root>
+        <Trigger asChild>
+          <Button variant="danger" size="xl" className="h-fit w-fit">
+            Yes, delete my account
+          </Button>
+        </Trigger>
+        <Dialog
+          title="Are you sure you want to delete all your data?"
+          description="This action is not reversible!"
+          onConfirm={() => user.delete()}
+        />
+      </Root>
     </Container>
   );
 }

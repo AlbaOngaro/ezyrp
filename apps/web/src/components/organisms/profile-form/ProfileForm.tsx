@@ -64,7 +64,7 @@ export function ProfileForm({ className }: Props) {
         )}
       />
 
-      <Input label="Name" {...register("name")} />
+      <Input label="Name" {...register("name", { required: true })} />
 
       <Input label="Address" {...register("address")} />
 

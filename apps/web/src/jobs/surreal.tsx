@@ -1,9 +1,10 @@
 import { z } from "zod";
 import nodemailer from "nodemailer";
+import webpush, { PushSubscription } from "web-push";
+import { v2 as cloudinary } from "cloudinary";
 import { render } from "@react-email/render";
 import { SurrealTrigger } from "@nimblerp/surreal-trigger";
 import { Invite, NewInvoice } from "@nimblerp/emails";
-import webpush, { PushSubscription } from "web-push";
 
 import { client } from "lib/trigger";
 
@@ -192,5 +193,62 @@ client.defineJob({
         });
       });
     }
+  },
+});
+
+client.defineJob({
+  id: "workspace.deleted",
+  name: "Workspace deleted trigger",
+  version: "0.0.2",
+  integrations: {
+    surreal,
+  },
+  enabled: true,
+  trigger: surreal.onRecordDeleted({
+    table: "workspace",
+  }),
+  run: async ({ before: { id } }, io) => {
+    await io.surreal.runTask("delete.workspace.data", async (client) => {
+      const [{ result }] = await client.query<
+        [
+          {
+            analyzers: Record<string, string>;
+            functions: Record<string, string>;
+            params: Record<string, string>;
+            scopes: Record<string, string>;
+            tables: Record<string, string>;
+            tokens: Record<string, string>;
+            users: Record<string, string>;
+          },
+        ]
+      >("INFO FOR DB");
+
+      if (!result) {
+        return;
+      }
+
+      const tables = Object.keys(result.tables);
+
+      await client.query(`
+        BEGIN TRANSACTION;
+
+        ${tables
+          .map(
+            (table) =>
+              `DELETE ${table} WHERE workspace = type::string("${id}");`,
+          )
+          .join("\n")}
+
+        COMMIT TRANSACTION;
+      `);
+
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+      });
+
+      await cloudinary.api.delete_resources_by_tag(id);
+    });
   },
 });
