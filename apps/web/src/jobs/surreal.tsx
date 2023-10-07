@@ -2,7 +2,7 @@ import { z } from "zod";
 import nodemailer from "nodemailer";
 import { render } from "@react-email/render";
 import { SurrealTrigger } from "@nimblerp/surreal-trigger";
-import { NewInvoice } from "@nimblerp/emails";
+import { Invite, NewInvoice } from "@nimblerp/emails";
 import webpush, { PushSubscription } from "web-push";
 
 import { client } from "lib/trigger";
@@ -58,12 +58,16 @@ client.defineJob({
       await transporter.verify();
 
       const html = render(<NewInvoice id={id} due={due} emitted={emitted} />);
+      const text = render(<NewInvoice id={id} due={due} emitted={emitted} />, {
+        plainText: true,
+      });
 
       await transporter.sendMail({
         from: "info@nimblerp.com",
         to: "dolcebunny15@gmail.com",
         subject: "New invoice",
         html,
+        text,
       });
     } catch (error: unknown) {
       console.error(error);
@@ -124,6 +128,68 @@ client.defineJob({
 
           await io.logger.info("Response ", response);
         }
+      });
+    }
+  },
+});
+
+const inviteData = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  workspace: z.string(),
+  sent_at: z.string().nullable(),
+});
+
+type InviteData = z.infer<typeof inviteData>;
+
+client.defineJob({
+  id: "invite.updated",
+  name: "Invite updated trigger",
+  version: "0.0.2",
+  integrations: {
+    surreal,
+  },
+  enabled: true,
+  trigger: surreal.onRecordUpdated<InviteData>({
+    table: "invite",
+  }),
+  run: async ({ before: { sent_at }, after: { email, id, workspace } }, io) => {
+    if (!sent_at) {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.SMPT_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+
+      await transporter.verify();
+
+      const html = render(
+        <Invite invitee={email} inviter="Alba Ongaro" workspace={workspace} />,
+      );
+
+      const text = render(
+        <Invite invitee={email} inviter="Alba Ongaro" workspace={workspace} />,
+        {
+          plainText: true,
+        },
+      );
+
+      await transporter.sendMail({
+        from: "info@nimblerp.com",
+        to: email,
+        subject: "Workspace invite",
+        html,
+        text,
+      });
+
+      await io.surreal.runTask("invite.sent", async (client) => {
+        await client.merge(id, {
+          sent_at: new Date().toISOString(),
+        });
       });
     }
   },

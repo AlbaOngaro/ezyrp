@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
     "\n  mutation createCustomers($createCustomerArgs: [InputCreateCustomerArgs!]!) {\n    createCustomers(createCustomerArgs: $createCustomerArgs) {\n      id\n      email\n      name\n    }\n  }\n": types.CreateCustomersDocument,
     "\n  mutation createEvents($createEventsInput: [InputCreateEventsArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.CreateEventsDocument,
+    "\n  mutation createInvites($createInviteArgs: [InputCreateInviteArgs!]!) {\n    createInvites(createInviteArgs: $createInviteArgs) {\n      id\n      email\n      sent_at\n    }\n  }\n": types.CreateInvitesDocument,
     "\n  mutation createInvoices($createInvoicesArgs: [InputCreateInvoicesArgs!]!) {\n    createInvoices(createInvoicesArgs: $createInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n": types.CreateInvoicesDocument,
     "\n  mutation createItems($createItemsInput: [InputCreateItems!]!) {\n    createItems(createItemsInput: $createItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n": types.CreateItemsDocument,
     "\n  mutation createSubscription($subscriptionInput: SubscriptionInput!) {\n    createSubscription(subscriptionInput: $subscriptionInput) {\n      endpoint\n      expirationTime\n      keys {\n        p256dh\n        auth\n      }\n    }\n  }\n": types.CreateSubscriptionDocument,
@@ -37,6 +38,7 @@ const documents = {
     "\n  query customersWithLastInvoice {\n    customers(filters: { limit: 3 }, orderBy: { lastInvoice: desc }) {\n      results {\n        id\n        name\n        email\n        photoUrl\n        lastInvoice {\n          status\n          amount\n          emitted\n        }\n      }\n    }\n  }\n": types.CustomersWithLastInvoiceDocument,
     "\n  query events {\n    events {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.EventsDocument,
     "\n  query getCloudinarySignature($folder: String = \"nimblerp\") {\n    getCloudinarySignature(folder: $folder) {\n      timestamp\n      signature\n      cloudname\n      apiKey\n    }\n  }\n": types.GetCloudinarySignatureDocument,
+    "\n  query invites {\n    invites {\n      id\n      email\n      sent_at\n    }\n  }\n": types.InvitesDocument,
     "\n  query invoice($id: ID!) {\n    invoice(id: $id) {\n      id\n      status\n      description\n      due\n      emitted\n      amount\n      items {\n        name\n        price\n        quantity\n      }\n      customer {\n        id\n        name\n        email\n      }\n    }\n  }\n": types.InvoiceDocument,
     "\n  query invoices($filters: InputInvoicesFilters) {\n    invoices(filters: $filters) {\n      total\n      results {\n        id\n        customer {\n          id\n          email\n          name\n        }\n        description\n        status\n        items {\n          id\n          name\n          quantity\n          price\n        }\n        amount\n        due\n        emitted\n      }\n    }\n  }\n": types.InvoicesDocument,
     "\n  query item($id: ID!) {\n    item(id: $id) {\n      id\n      name\n      quantity\n      price\n      description\n    }\n  }\n": types.ItemDocument,
@@ -68,6 +70,10 @@ export function graphql(source: "\n  mutation createCustomers($createCustomerArg
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation createEvents($createEventsInput: [InputCreateEventsArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation createEvents($createEventsInput: [InputCreateEventsArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation createInvites($createInviteArgs: [InputCreateInviteArgs!]!) {\n    createInvites(createInviteArgs: $createInviteArgs) {\n      id\n      email\n      sent_at\n    }\n  }\n"): (typeof documents)["\n  mutation createInvites($createInviteArgs: [InputCreateInviteArgs!]!) {\n    createInvites(createInviteArgs: $createInviteArgs) {\n      id\n      email\n      sent_at\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -156,6 +162,10 @@ export function graphql(source: "\n  query events {\n    events {\n      id\n   
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query getCloudinarySignature($folder: String = \"nimblerp\") {\n    getCloudinarySignature(folder: $folder) {\n      timestamp\n      signature\n      cloudname\n      apiKey\n    }\n  }\n"): (typeof documents)["\n  query getCloudinarySignature($folder: String = \"nimblerp\") {\n    getCloudinarySignature(folder: $folder) {\n      timestamp\n      signature\n      cloudname\n      apiKey\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query invites {\n    invites {\n      id\n      email\n      sent_at\n    }\n  }\n"): (typeof documents)["\n  query invites {\n    invites {\n      id\n      email\n      sent_at\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

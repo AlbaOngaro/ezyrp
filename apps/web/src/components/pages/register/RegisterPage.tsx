@@ -1,22 +1,24 @@
 import Link from "next/link";
 import { FormEventHandler, ReactElement, useState } from "react";
 import { Root as Form } from "@radix-ui/react-form";
+import { useSearchParams } from "next/navigation";
 
-import { InputRegisterCredentials } from "../../../__generated__/graphql";
+import { InputRegisterCredentials } from "__generated__/graphql";
 
-import { Input } from "../../atoms/input/Input";
-import { Button } from "../../atoms/button/Button";
-import { CenteredLayout } from "../../layouts/centered/CenteredLayout";
-import { useUser } from "../../../hooks/useUser";
+import { Input } from "components/atoms/input/Input";
+import { Button } from "components/atoms/button/Button";
+import { CenteredLayout } from "components/layouts/centered/CenteredLayout";
+import { useUser } from "hooks/useUser";
 
 export function RegisterPage() {
   const { register } = useUser();
+  const { get } = useSearchParams();
 
   const [credentials, setCredentials] = useState<InputRegisterCredentials>({
     email: "",
     username: "",
     password: "",
-    workspace: "",
+    workspace: get("workspace") || "",
   });
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {

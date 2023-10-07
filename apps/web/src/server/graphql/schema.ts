@@ -4,6 +4,7 @@ export const typeDefs = gql`
   type Query {
     user: User!
     users: [TeamUser!]!
+    invites: [Invite!]!
 
     customer(id: ID!): Customer!
     customers(
@@ -35,6 +36,8 @@ export const typeDefs = gql`
     register(credentials: InputRegisterCredentials): User
     resetPassword(credentials: InputResetPasswordCredentials): User
     updateUserProfile(updateUserProfileArgs: InputUpdateUserProfileArgs!): User
+
+    createInvites(createInviteArgs: [InputCreateInviteArgs!]!): [Invite!]!
 
     createCustomers(createCustomerArgs: [InputCreateCustomerArgs!]!): [Customer]
     updateCustomers(updateCustomerArgs: [InputUpdateCustomerArgs!]!): [Customer]
@@ -106,6 +109,12 @@ export const typeDefs = gql`
     photoUrl: String
   }
 
+  type Invite {
+    id: ID!
+    email: String!
+    sent_at: String
+  }
+
   input InputCustomersFilters {
     start: Int
     limit: Int
@@ -120,6 +129,10 @@ export const typeDefs = gql`
 
   input InputCustomersOrderBy {
     lastInvoice: Sort
+  }
+
+  input InputCreateInviteArgs {
+    email: String!
   }
 
   input InputCreateCustomerArgs {
