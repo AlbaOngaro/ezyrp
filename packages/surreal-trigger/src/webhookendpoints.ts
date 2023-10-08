@@ -16,22 +16,31 @@ export class WebhookEndpoints {
   create(
     key: IntegrationTaskKey,
     { table, url }: CreateWebhookParams,
-    event: string,
+    events: string[],
   ) {
     return this.runTask(key, async (client, task, io) => {
-      const eventName = `${table.toLowerCase()}_${event.toLowerCase()}`;
-
       const response = await client.query(
-        `DEFINE EVENT ${eventName} ON TABLE ${table} WHEN $event = "${event}" THEN {
-					RETURN http::post("${url}", {
-						name: $event,
-						before: $before,
-						after: $after,
-					});
-				};`,
+        `BEGIN TRANSACTION;
+        
+        ${events
+          .map((event) => {
+            return `
+            DEFINE EVENT ${table}_${event.toLowerCase()}d ON TABLE ${table} WHEN $event = "${event}" THEN {
+              RETURN http::post("${url}", {
+                name: $event,
+                before: $before,
+                after: $after,
+              });
+            };
+          `;
+          })
+          .join("\n")}
+
+        COMMIT TRANSACTION;`,
       );
 
-      await io.logger.info("define surreal event: ", response);
+      await io.logger.info("Defined surreal event: ", response);
+      console.info("Defined surreal events: ", response);
 
       return response;
     });

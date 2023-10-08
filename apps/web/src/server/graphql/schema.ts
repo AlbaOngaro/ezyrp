@@ -28,6 +28,8 @@ export const typeDefs = gql`
     stats(filters: InputStatsFilters): Stats!
 
     getCloudinarySignature(folder: String): CloudinarySignature!
+
+    settings: Settings
   }
 
   type Mutation {
@@ -57,6 +59,8 @@ export const typeDefs = gql`
     deleteItems(deleteItemsInput: [ID!]!): [ID]
 
     createSubscription(subscriptionInput: SubscriptionInput): Subscription
+
+    updateSettings(updateSettingsInput: InputUpdateSettings): Settings
   }
 
   input InputLoginCredentials {
@@ -253,6 +257,7 @@ export const typeDefs = gql`
     title: String!
     variant: String!
     guests: [Guest!]!
+    notes: String
   }
 
   type CountryName {
@@ -360,5 +365,17 @@ export const typeDefs = gql`
     endpoint: String!
     expirationTime: Int
     keys: SubscrptionKey!
+  }
+
+  input InputUpdateSettings {
+    start: String!
+    end: String!
+    days: [Int!]!
+  }
+
+  type Settings {
+    start: String
+    end: String
+    days: [Int!]
   }
 `;
