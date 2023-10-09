@@ -21,7 +21,7 @@ const HOURS = Array.from({ length: 48 }, (_, i) => {
 
   return {
     label: format(date, "HH:mm"),
-    value: format(date, "HH:mm"),
+    value: format(date, "HHmm"),
   };
 });
 
@@ -75,7 +75,10 @@ export function ScheduleSettings() {
             <Select
               name="start"
               label="Work day starts at"
-              value={{ value: value || "", label: value || "" }}
+              value={{
+                value: value || "",
+                label: HOURS.find((h) => h.value === value)?.label || "",
+              }}
               options={HOURS}
               onChange={(option) => onChange(option?.value)}
             />
@@ -92,7 +95,10 @@ export function ScheduleSettings() {
             <Select
               name="end"
               label="Work day ends at"
-              value={{ value: value || "", label: value || "" }}
+              value={{
+                value: value || "",
+                label: HOURS.find((h) => h.value === value)?.label || "",
+              }}
               options={HOURS}
               onChange={(option) => onChange(option?.value)}
             />

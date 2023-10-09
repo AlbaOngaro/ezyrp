@@ -197,26 +197,6 @@ client.defineJob({
 });
 
 client.defineJob({
-  id: "workspace.created",
-  name: "Workspace created trigger",
-  version: "0.0.1",
-  integrations: {
-    surreal,
-  },
-  enabled: false,
-  trigger: surreal.onRecordCreated({
-    table: "workspace",
-  }),
-  run: async ({ after: { id } }, io) => {
-    await io.surreal.runTask("create.workspace.settings", async (client) => {
-      await client.query(`CREATE settings SET workspace = $workspace`, {
-        workspace: id,
-      });
-    });
-  },
-});
-
-client.defineJob({
   id: "workspace.deleted",
   name: "Workspace deleted trigger",
   version: "0.0.2",
