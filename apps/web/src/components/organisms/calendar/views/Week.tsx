@@ -112,7 +112,6 @@ export function Body() {
   } = useCalendarContext();
 
   const { data } = useSettings();
-  console.debug(data, days);
 
   const events = days.flatMap((day) => day.events);
   const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
