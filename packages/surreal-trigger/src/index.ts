@@ -107,7 +107,7 @@ function createWebhookEventSource(
           ...params,
           url: httpSource.url,
         },
-        allEvents[0],
+        allEvents,
       );
 
       return {

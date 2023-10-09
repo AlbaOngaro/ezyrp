@@ -224,6 +224,7 @@ client.defineJob({
       >("INFO FOR DB");
 
       if (!result) {
+        await io.logger.error("FAiled to load db info, aborting!");
         return;
       }
 

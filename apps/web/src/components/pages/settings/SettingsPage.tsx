@@ -6,12 +6,18 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { AccountSettings } from "components/organisms/account-settings/AccountSettings";
 import { TeamSettings } from "components/organisms/team-settings/TeamSettings";
 import { BillingSettings } from "components/organisms/billing-settings/BillingSettings";
+import { ScheduleSettings } from "components/organisms/schedule-settings/ScheduleSettings";
 
 const nav = [
   {
     value: "account",
     label: "Account",
     content: <AccountSettings />,
+  },
+  {
+    value: "schedule",
+    label: "Schedule",
+    content: <ScheduleSettings />,
   },
   {
     value: "team",

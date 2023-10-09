@@ -55,6 +55,7 @@ export type Event = {
   end: Scalars['String']['output'];
   guests: Array<Guest>;
   id: Scalars['ID']['output'];
+  notes?: Maybe<Scalars['String']['output']>;
   start: Scalars['String']['output'];
   title: Scalars['String']['output'];
   variant: Scalars['String']['output'];
@@ -193,6 +194,12 @@ export type InputUpdateItems = {
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type InputUpdateSettings = {
+  days: Array<Scalars['Int']['input']>;
+  end: Scalars['Float']['input'];
+  start: Scalars['Float']['input'];
+};
+
 export type InputUpdateUserProfileArgs = {
   address?: InputMaybe<Scalars['String']['input']>;
   city?: InputMaybe<Scalars['String']['input']>;
@@ -267,6 +274,7 @@ export type Mutation = {
   updateEvents?: Maybe<Array<Maybe<Event>>>;
   updateInvoices?: Maybe<Array<Maybe<Invoice>>>;
   updateItems?: Maybe<Array<Maybe<Item>>>;
+  updateSettings?: Maybe<Settings>;
   updateUserProfile?: Maybe<User>;
 };
 
@@ -356,6 +364,11 @@ export type MutationUpdateItemsArgs = {
 };
 
 
+export type MutationUpdateSettingsArgs = {
+  updateSettingsInput?: InputMaybe<InputUpdateSettings>;
+};
+
+
 export type MutationUpdateUserProfileArgs = {
   updateUserProfileArgs: InputUpdateUserProfileArgs;
 };
@@ -408,6 +421,7 @@ export type Query = {
   invoices: PagedInvoicesResponse;
   item: Item;
   items: PagedItemsResponse;
+  settings?: Maybe<Settings>;
   stats: Stats;
   subscription?: Maybe<Subscription>;
   user: User;
@@ -458,6 +472,13 @@ export type QueryItemsArgs = {
 
 export type QueryStatsArgs = {
   filters?: InputMaybe<InputStatsFilters>;
+};
+
+export type Settings = {
+  __typename?: 'Settings';
+  days?: Maybe<Array<Scalars['Int']['output']>>;
+  end?: Maybe<Scalars['Float']['output']>;
+  start?: Maybe<Scalars['Float']['output']>;
 };
 
 export enum Sort {
@@ -627,6 +648,7 @@ export type ResolversTypes = ResolversObject<{
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
   InputUpdateItems: InputUpdateItems;
+  InputUpdateSettings: InputUpdateSettings;
   InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Invite: ResolverTypeWrapper<Invite>;
@@ -642,6 +664,7 @@ export type ResolversTypes = ResolversObject<{
   PagedSearchResponse: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['PagedSearchResponse']>;
   Profile: ResolverTypeWrapper<Profile>;
   Query: ResolverTypeWrapper<{}>;
+  Settings: ResolverTypeWrapper<Settings>;
   Sort: Sort;
   Stat: ResolverTypeWrapper<Stat>;
   Stats: ResolverTypeWrapper<Stats>;
@@ -683,6 +706,7 @@ export type ResolversParentTypes = ResolversObject<{
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
   InputUpdateItems: InputUpdateItems;
+  InputUpdateSettings: InputUpdateSettings;
   InputUpdateUserProfileArgs: InputUpdateUserProfileArgs;
   Int: Scalars['Int']['output'];
   Invite: Invite;
@@ -698,6 +722,7 @@ export type ResolversParentTypes = ResolversObject<{
   PagedSearchResponse: ResolversInterfaceTypes<ResolversParentTypes>['PagedSearchResponse'];
   Profile: Profile;
   Query: {};
+  Settings: Settings;
   Stat: Stat;
   Stats: Stats;
   String: Scalars['String']['output'];
@@ -746,6 +771,7 @@ export type EventResolvers<ContextType = GraphqlContext, ParentType extends Reso
   end?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   guests?: Resolver<Array<ResolversTypes['Guest']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   variant?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -822,6 +848,7 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   updateEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationUpdateEventsArgs, 'updateEventsInput'>>;
   updateInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationUpdateInvoicesArgs, 'updateInvoicesArgs'>>;
   updateItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['Item']>>>, ParentType, ContextType, RequireFields<MutationUpdateItemsArgs, 'updateItemsInput'>>;
+  updateSettings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType, Partial<MutationUpdateSettingsArgs>>;
   updateUserProfile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserProfileArgs, 'updateUserProfileArgs'>>;
 }>;
 
@@ -875,10 +902,18 @@ export type QueryResolvers<ContextType = GraphqlContext, ParentType extends Reso
   invoices?: Resolver<ResolversTypes['PagedInvoicesResponse'], ParentType, ContextType, Partial<QueryInvoicesArgs>>;
   item?: Resolver<ResolversTypes['Item'], ParentType, ContextType, RequireFields<QueryItemArgs, 'id'>>;
   items?: Resolver<ResolversTypes['PagedItemsResponse'], ParentType, ContextType, Partial<QueryItemsArgs>>;
+  settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
   stats?: Resolver<ResolversTypes['Stats'], ParentType, ContextType, Partial<QueryStatsArgs>>;
   subscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   users?: Resolver<Array<ResolversTypes['TeamUser']>, ParentType, ContextType>;
+}>;
+
+export type SettingsResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Settings'] = ResolversParentTypes['Settings']> = ResolversObject<{
+  days?: Resolver<Maybe<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
+  end?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  start?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type StatResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Stat'] = ResolversParentTypes['Stat']> = ResolversObject<{
@@ -944,6 +979,7 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   PagedSearchResponse?: PagedSearchResponseResolvers<ContextType>;
   Profile?: ProfileResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Settings?: SettingsResolvers<ContextType>;
   Stat?: StatResolvers<ContextType>;
   Stats?: StatsResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;

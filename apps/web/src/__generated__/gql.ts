@@ -32,6 +32,7 @@ const documents = {
     "\n  mutation updateEvents($updateEventsInput: [InputUpdateEventsArgs!]!) {\n    updateEvents(updateEventsInput: $updateEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.UpdateEventsDocument,
     "\n  mutation updateInvoices($updateInvoicesArgs: [InputUpdateInvoicesArgs!]!) {\n    updateInvoices(updateInvoicesArgs: $updateInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n": types.UpdateInvoicesDocument,
     "\n  mutation updateItems($updateItemsInput: [InputUpdateItems!]!) {\n    updateItems(updateItemsInput: $updateItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n": types.UpdateItemsDocument,
+    "\n  mutation updateSettings($updateSettingsInput: InputUpdateSettings) {\n    updateSettings(updateSettingsInput: $updateSettingsInput) {\n      start\n      end\n      days\n    }\n  }\n": types.UpdateSettingsDocument,
     "\n  mutation updateUserProfile(\n    $updateUserProfileArgs: InputUpdateUserProfileArgs!\n  ) {\n    updateUserProfile(updateUserProfileArgs: $updateUserProfileArgs) {\n      id\n      email\n      password\n      username\n      profile {\n        photoUrl\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.UpdateUserProfileDocument,
     "\n  query countries {\n    countries {\n      name {\n        common\n        official\n      }\n    }\n  }\n": types.CountriesDocument,
     "\n  query getCustomer($id: ID!) {\n    customer(id: $id) {\n      id\n      email\n      name\n      photoUrl\n      address\n      city\n      code\n      country\n    }\n  }\n": types.GetCustomerDocument,
@@ -44,6 +45,7 @@ const documents = {
     "\n  query invoices($filters: InputInvoicesFilters) {\n    invoices(filters: $filters) {\n      total\n      results {\n        id\n        customer {\n          id\n          email\n          name\n        }\n        description\n        status\n        items {\n          id\n          name\n          quantity\n          price\n        }\n        amount\n        due\n        emitted\n      }\n    }\n  }\n": types.InvoicesDocument,
     "\n  query item($id: ID!) {\n    item(id: $id) {\n      id\n      name\n      quantity\n      price\n      description\n    }\n  }\n": types.ItemDocument,
     "\n  query items($filters: InputItemsFilters) {\n    items(filters: $filters) {\n      total\n      results {\n        id\n        name\n        quantity\n        price\n        description\n      }\n    }\n  }\n": types.ItemsDocument,
+    "\n  query settings {\n    settings {\n      start\n      end\n      days\n    }\n  }\n": types.SettingsDocument,
     "\n  query stats($filters: InputStatsFilters) {\n    stats(filters: $filters) {\n      pending {\n        name\n        value\n        change\n      }\n      overdue {\n        name\n        value\n        change\n      }\n      paid {\n        name\n        value\n        change\n      }\n    }\n  }\n": types.StatsDocument,
     "\n  query getUser {\n    user {\n      id\n      email\n      username\n      profile {\n        photoUrl\n        address\n        city\n        country\n        code\n        name\n      }\n    }\n  }\n": types.GetUserDocument,
     "\n  query users {\n    users {\n      id\n      email\n      username\n      photoUrl\n    }\n  }\n": types.UsersDocument,
@@ -142,6 +144,10 @@ export function graphql(source: "\n  mutation updateItems($updateItemsInput: [In
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  mutation updateSettings($updateSettingsInput: InputUpdateSettings) {\n    updateSettings(updateSettingsInput: $updateSettingsInput) {\n      start\n      end\n      days\n    }\n  }\n"): (typeof documents)["\n  mutation updateSettings($updateSettingsInput: InputUpdateSettings) {\n    updateSettings(updateSettingsInput: $updateSettingsInput) {\n      start\n      end\n      days\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation updateUserProfile(\n    $updateUserProfileArgs: InputUpdateUserProfileArgs!\n  ) {\n    updateUserProfile(updateUserProfileArgs: $updateUserProfileArgs) {\n      id\n      email\n      password\n      username\n      profile {\n        photoUrl\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation updateUserProfile(\n    $updateUserProfileArgs: InputUpdateUserProfileArgs!\n  ) {\n    updateUserProfile(updateUserProfileArgs: $updateUserProfileArgs) {\n      id\n      email\n      password\n      username\n      profile {\n        photoUrl\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -187,6 +193,10 @@ export function graphql(source: "\n  query item($id: ID!) {\n    item(id: $id) {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query items($filters: InputItemsFilters) {\n    items(filters: $filters) {\n      total\n      results {\n        id\n        name\n        quantity\n        price\n        description\n      }\n    }\n  }\n"): (typeof documents)["\n  query items($filters: InputItemsFilters) {\n    items(filters: $filters) {\n      total\n      results {\n        id\n        name\n        quantity\n        price\n        description\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query settings {\n    settings {\n      start\n      end\n      days\n    }\n  }\n"): (typeof documents)["\n  query settings {\n    settings {\n      start\n      end\n      days\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

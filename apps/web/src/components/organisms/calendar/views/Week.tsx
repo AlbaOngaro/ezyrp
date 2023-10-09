@@ -7,12 +7,13 @@ import { useCalendarContext } from "../Calendar";
 import { EventItem } from "../components/EventItem";
 import { EventPopover } from "../components/EventPopover";
 
-import { twMerge } from "../../../../lib/utils/twMerge";
-import { convertRemToPx } from "../../../../lib/utils/convertRemToPx";
-
-import { CreateEventModal } from "../../create-event-modal/CreateEventModal";
 import { Indicator } from "../components/Indicator";
-import { Event } from "../../../../__generated__/graphql";
+import { twMerge } from "lib/utils/twMerge";
+import { convertRemToPx } from "lib/utils/convertRemToPx";
+
+import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+import { Event } from "__generated__/graphql";
+import { useSettings } from "hooks/useSettings";
 
 function EventItemWrapper({
   event,
@@ -109,6 +110,8 @@ export function Body() {
     state: { days },
     dispatch,
   } = useCalendarContext();
+
+  const { data } = useSettings();
 
   const events = days.flatMap((day) => day.events);
   const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
@@ -405,8 +408,40 @@ export function Body() {
             >
               <Indicator />
 
-              {days.map((day) => (
+              {days.map((day, i) => (
                 <Fragment key={day.date.toISOString()}>
+                  {data?.settings?.days?.includes(i) ? (
+                    <>
+                      <div
+                        className="bg-gray-100/30 pointer-events-none"
+                        style={{
+                          gridColumnStart: i + 1,
+                          gridRow: `2 / ${
+                            (data?.settings?.start || 0) * 12 + 2
+                          }`,
+                        }}
+                      />
+
+                      <div
+                        className="bg-gray-100/30 pointer-events-none"
+                        style={{
+                          gridColumnStart: i + 1,
+                          gridRow: `${
+                            (data?.settings?.end || 0) * 12 + 2
+                          } / 288`,
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <div
+                      className="bg-gray-100/30 pointer-events-none"
+                      style={{
+                        gridColumnStart: i + 1,
+                        gridRow: "2 / -1",
+                      }}
+                    />
+                  )}
+
                   {day.events.map((event) => (
                     <EventItemWrapper
                       key={event.id}

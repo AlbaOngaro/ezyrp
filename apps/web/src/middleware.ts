@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    surreal.authenticate(token);
+    await surreal.authenticate(token);
     if (["/login", "/register"].some((path) => req.url.endsWith(path))) {
       return NextResponse.redirect(new URL("/", req.url));
     }

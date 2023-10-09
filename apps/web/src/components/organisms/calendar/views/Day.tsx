@@ -6,13 +6,16 @@ import { EventItem } from "../components/EventItem";
 import { EventPopover } from "../components/EventPopover";
 import { useCalendarContext } from "../Calendar";
 import { isSavedEvent } from "../utils";
-
-import { convertRemToPx } from "../../../../lib/utils/convertRemToPx";
-
-import { MonthWidget } from "../../../atoms/month-widget/MonthWidget";
-import { CreateEventModal } from "../../create-event-modal/CreateEventModal";
 import { Indicator } from "../components/Indicator";
-import { Event } from "../../../../__generated__/graphql";
+
+import { Event } from "__generated__/graphql";
+
+import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+
+import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
+
+import { convertRemToPx } from "lib/utils/convertRemToPx";
+import { useSettings } from "hooks/useSettings";
 
 function EventItemWrapper({
   event,
@@ -95,6 +98,9 @@ export function Body() {
     state: { selected, days },
     dispatch,
   } = useCalendarContext();
+
+  const { data } = useSettings();
+  const weekDay = selected.getDay() === 0 ? 6 : selected.getDay() - 1;
 
   const events = days.flatMap((day) => day.events);
   const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
@@ -390,6 +396,31 @@ export function Body() {
               onClick={handleGridClick}
               id="grid"
             >
+              {data?.settings?.days?.includes(weekDay) ? (
+                <>
+                  <div
+                    className="bg-gray-100/30 pointer-events-none"
+                    style={{
+                      gridRow: `2 / ${(data?.settings?.start || 0) * 12 + 2}`,
+                    }}
+                  />
+
+                  <div
+                    className="bg-gray-100/30 pointer-events-none"
+                    style={{
+                      gridRow: `${(data?.settings?.end || 0) * 12 + 2} / 288`,
+                    }}
+                  />
+                </>
+              ) : (
+                <div
+                  className="bg-gray-100/30 pointer-events-none"
+                  style={{
+                    gridRow: "2 / -1",
+                  }}
+                />
+              )}
+
               <Indicator />
 
               {days

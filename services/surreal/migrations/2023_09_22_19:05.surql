@@ -31,7 +31,7 @@ DEFINE EVENT profile ON TABLE user WHEN $before == NONE THEN (
 
 DEFINE EVENT customer_created ON TABLE customer WHEN $event = "CREATE" THEN {
 	UPDATE customer MERGE {
-		workspace: $auth.workspace,
+		workspace: type::string($auth.workspace),
 		created_at: time::now()
 	} WHERE id = $after.id;
 };
@@ -42,7 +42,7 @@ DEFINE EVENT delete_customer_invoices ON TABLE customer WHEN $event = "DELETE" T
 
 DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 	UPDATE invoice MERGE {
-		workspace: $auth.workspace,
+		workspace: type::string($auth.workspace),
 		created_at: time::now()
 	} WHERE id = $after.id;
 
@@ -87,14 +87,14 @@ DEFINE EVENT invoice_created ON TABLE invoice WHEN $event = "CREATE" THEN {
 
 DEFINE EVENT event_created ON TABLE event WHEN $event = "CREATE" THEN {
 	UPDATE event MERGE {
-		workspace: $auth.workspace,
+		workspace: type::string($auth.workspace),
 		created_at: time::now()
 	} WHERE id = $after.id;
 };
 
 DEFINE EVENT item_created ON TABLE item WHEN $event = "CREATE" THEN {
 	UPDATE item MERGE {
-		workspace: $auth.workspace,
+		workspace: type::string($auth.workspace),
 		created_at: time::now()
 	} WHERE id = $after.id;
 };
@@ -128,28 +128,28 @@ DEFINE TABLE profile SCHEMALESS PERMISSIONS FOR select, update WHERE user = $aut
 -- TABLE: customer
 -- ------------------------------
 
-DEFINE TABLE customer SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+DEFINE TABLE customer SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = type::string($auth.workspace), FOR create WHERE true;
 
 -- ------------------------------
 -- TABLE: invoice
 -- ------------------------------
 
-DEFINE TABLE invoice SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+DEFINE TABLE invoice SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = type::string($auth.workspace), FOR create WHERE true;
 
 -- ------------------------------
 -- TABLE: event
 -- ------------------------------
 
-DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = type::string($auth.workspace), FOR create WHERE true;
 
 -- ------------------------------
 -- TABLE: item
 -- ------------------------------
 
-DEFINE TABLE item SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+DEFINE TABLE item SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = type::string($auth.workspace), FOR create WHERE true;
 
 -- ------------------------------
 -- TABLE: email
 -- ------------------------------
 
-DEFINE TABLE email SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = $auth.workspace, FOR create WHERE true;
+DEFINE TABLE email SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = type::string($auth.workspace), FOR create WHERE true;
