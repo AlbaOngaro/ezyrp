@@ -195,8 +195,8 @@ export type InputUpdateItems = {
 
 export type InputUpdateSettings = {
   days: Array<Scalars['Int']['input']>;
-  end: Scalars['String']['input'];
-  start: Scalars['String']['input'];
+  end: Scalars['Float']['input'];
+  start: Scalars['Float']['input'];
 };
 
 export type InputUpdateUserProfileArgs = {
@@ -476,8 +476,8 @@ export type QueryStatsArgs = {
 export type Settings = {
   __typename?: 'Settings';
   days?: Maybe<Array<Scalars['Int']['output']>>;
-  end?: Maybe<Scalars['String']['output']>;
-  start?: Maybe<Scalars['String']['output']>;
+  end?: Maybe<Scalars['Float']['output']>;
+  start?: Maybe<Scalars['Float']['output']>;
 };
 
 export enum Sort {
@@ -674,7 +674,7 @@ export type UpdateSettingsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateSettingsMutation = { __typename?: 'Mutation', updateSettings?: { __typename?: 'Settings', start?: string | null, end?: string | null, days?: Array<number> | null } | null };
+export type UpdateSettingsMutation = { __typename?: 'Mutation', updateSettings?: { __typename?: 'Settings', start?: number | null, end?: number | null, days?: Array<number> | null } | null };
 
 export type UpdateUserProfileMutationVariables = Exact<{
   updateUserProfileArgs: InputUpdateUserProfileArgs;
@@ -755,7 +755,7 @@ export type ItemsQuery = { __typename?: 'Query', items: { __typename?: 'PagedIte
 export type SettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SettingsQuery = { __typename?: 'Query', settings?: { __typename?: 'Settings', start?: string | null, end?: string | null, days?: Array<number> | null } | null };
+export type SettingsQuery = { __typename?: 'Query', settings?: { __typename?: 'Settings', start?: number | null, end?: number | null, days?: Array<number> | null } | null };
 
 export type StatsQueryVariables = Exact<{
   filters?: InputMaybe<InputStatsFilters>;

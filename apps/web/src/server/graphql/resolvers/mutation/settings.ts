@@ -13,8 +13,8 @@ export const updateSettings: MutationResolvers["updateSettings"] = async (
 
   const settings = await z
     .object({
-      start: z.string(),
-      end: z.string(),
+      start: z.number(),
+      end: z.number(),
       days: z.array(z.number()),
     })
     .parseAsync(args.updateSettingsInput)

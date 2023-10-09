@@ -368,14 +368,14 @@ export const typeDefs = gql`
   }
 
   input InputUpdateSettings {
-    start: String!
-    end: String!
+    start: Float!
+    end: Float!
     days: [Int!]!
   }
 
   type Settings {
-    start: String
-    end: String
+    start: Float
+    end: Float
     days: [Int!]
   }
 `;

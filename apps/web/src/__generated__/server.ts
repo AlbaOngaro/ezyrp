@@ -196,8 +196,8 @@ export type InputUpdateItems = {
 
 export type InputUpdateSettings = {
   days: Array<Scalars['Int']['input']>;
-  end: Scalars['String']['input'];
-  start: Scalars['String']['input'];
+  end: Scalars['Float']['input'];
+  start: Scalars['Float']['input'];
 };
 
 export type InputUpdateUserProfileArgs = {
@@ -477,8 +477,8 @@ export type QueryStatsArgs = {
 export type Settings = {
   __typename?: 'Settings';
   days?: Maybe<Array<Scalars['Int']['output']>>;
-  end?: Maybe<Scalars['String']['output']>;
-  start?: Maybe<Scalars['String']['output']>;
+  end?: Maybe<Scalars['Float']['output']>;
+  start?: Maybe<Scalars['Float']['output']>;
 };
 
 export enum Sort {
@@ -911,8 +911,8 @@ export type QueryResolvers<ContextType = GraphqlContext, ParentType extends Reso
 
 export type SettingsResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Settings'] = ResolversParentTypes['Settings']> = ResolversObject<{
   days?: Resolver<Maybe<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
-  end?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  start?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  end?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  start?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -21,7 +21,7 @@ const HOURS = Array.from({ length: 48 }, (_, i) => {
 
   return {
     label: format(date, "HH:mm"),
-    value: format(date, "HHmm"),
+    value: i * 0.5,
   };
 });
 
@@ -41,8 +41,8 @@ export function ScheduleSettings() {
     defaultValues: async () => {
       const { data } = await loadSettings();
       return {
-        start: data?.settings?.start || "",
-        end: data?.settings?.end || "",
+        start: data?.settings?.start || 0,
+        end: data?.settings?.end || 0,
         days: data?.settings?.days || [],
       };
     },
@@ -71,14 +71,16 @@ export function ScheduleSettings() {
           rules={{
             required: true,
           }}
-          render={({ field: { value = "", onChange } }) => (
+          render={({ field: { value = 0, onChange } }) => (
             <Select
               name="start"
               label="Work day starts at"
+              // @ts-ignore
               value={{
-                value: value || "",
+                value: value || 0,
                 label: HOURS.find((h) => h.value === value)?.label || "",
               }}
+              // @ts-ignore
               options={HOURS}
               onChange={(option) => onChange(option?.value)}
             />
@@ -91,14 +93,16 @@ export function ScheduleSettings() {
           rules={{
             required: true,
           }}
-          render={({ field: { value = "", onChange } }) => (
+          render={({ field: { value = 0, onChange } }) => (
             <Select
               name="end"
               label="Work day ends at"
+              // @ts-ignore
               value={{
-                value: value || "",
+                value: value || 0,
                 label: HOURS.find((h) => h.value === value)?.label || "",
               }}
+              // @ts-ignore
               options={HOURS}
               onChange={(option) => onChange(option?.value)}
             />
