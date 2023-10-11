@@ -178,6 +178,15 @@ export type InputUpdateCustomerArgs = {
   photoUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type InputUpdateEventTypeArgs = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** Event duration, in minutes */
+  duration?: InputMaybe<Scalars['Int']['input']>;
+  id: Scalars['ID']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  variant?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputUpdateEventsArgs = {
   end?: InputMaybe<Scalars['String']['input']>;
   guests?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -290,6 +299,7 @@ export type Mutation = {
   register?: Maybe<User>;
   resetPassword?: Maybe<User>;
   updateCustomers?: Maybe<Array<Maybe<Customer>>>;
+  updateEventTypes: Array<EventType>;
   updateEvents?: Maybe<Array<Maybe<Event>>>;
   updateInvoices?: Maybe<Array<Maybe<Invoice>>>;
   updateItems?: Maybe<Array<Maybe<Item>>>;
@@ -375,6 +385,11 @@ export type MutationResetPasswordArgs = {
 
 export type MutationUpdateCustomersArgs = {
   updateCustomerArgs: Array<InputUpdateCustomerArgs>;
+};
+
+
+export type MutationUpdateEventTypesArgs = {
+  updateEventTypesInput: Array<InputUpdateEventTypeArgs>;
 };
 
 
@@ -682,6 +697,7 @@ export type ResolversTypes = ResolversObject<{
   InputResetPasswordCredentials: InputResetPasswordCredentials;
   InputStatsFilters: InputStatsFilters;
   InputUpdateCustomerArgs: InputUpdateCustomerArgs;
+  InputUpdateEventTypeArgs: InputUpdateEventTypeArgs;
   InputUpdateEventsArgs: InputUpdateEventsArgs;
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
@@ -742,6 +758,7 @@ export type ResolversParentTypes = ResolversObject<{
   InputResetPasswordCredentials: InputResetPasswordCredentials;
   InputStatsFilters: InputStatsFilters;
   InputUpdateCustomerArgs: InputUpdateCustomerArgs;
+  InputUpdateEventTypeArgs: InputUpdateEventTypeArgs;
   InputUpdateEventsArgs: InputUpdateEventsArgs;
   InputUpdateInvoiceItems: InputUpdateInvoiceItems;
   InputUpdateInvoicesArgs: InputUpdateInvoicesArgs;
@@ -896,6 +913,7 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   register?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationRegisterArgs>>;
   resetPassword?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationResetPasswordArgs>>;
   updateCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Customer']>>>, ParentType, ContextType, RequireFields<MutationUpdateCustomersArgs, 'updateCustomerArgs'>>;
+  updateEventTypes?: Resolver<Array<ResolversTypes['EventType']>, ParentType, ContextType, RequireFields<MutationUpdateEventTypesArgs, 'updateEventTypesInput'>>;
   updateEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationUpdateEventsArgs, 'updateEventsInput'>>;
   updateInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationUpdateInvoicesArgs, 'updateInvoicesArgs'>>;
   updateItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['Item']>>>, ParentType, ContextType, RequireFields<MutationUpdateItemsArgs, 'updateItemsInput'>>;

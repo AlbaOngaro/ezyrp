@@ -56,6 +56,9 @@ export const typeDefs = gql`
     createEventTypes(
       createEventTypesInput: [InputCreateEventTypeArgs!]!
     ): [EventType!]!
+    updateEventTypes(
+      updateEventTypesInput: [InputUpdateEventTypeArgs!]!
+    ): [EventType!]!
     deleteEventTypes(ids: [ID!]!): [ID!]!
 
     createEvents(createEventsInput: [InputCreateEventArgs!]!): [Event]
@@ -262,6 +265,15 @@ export const typeDefs = gql`
     variant: String!
     "Event duration, in minutes"
     duration: Int!
+    description: String
+  }
+
+  input InputUpdateEventTypeArgs {
+    id: ID!
+    name: String
+    variant: String
+    "Event duration, in minutes"
+    duration: Int
     description: String
   }
 
