@@ -15,6 +15,9 @@ export const typeDefs = gql`
     invoice(id: ID!): Invoice!
     invoices(filters: InputInvoicesFilters): PagedInvoicesResponse!
 
+    eventType(id: ID!): EventType!
+    eventTypes: [EventType!]!
+
     event(id: ID!): Event!
     events: [Event!]!
 
@@ -50,7 +53,12 @@ export const typeDefs = gql`
     updateInvoices(updateInvoicesArgs: [InputUpdateInvoicesArgs!]!): [Invoice]
     deleteInvoices(deleteInvoicesArgs: [ID!]!): [ID]
 
-    createEvents(createEventsInput: [InputCreateEventsArgs!]!): [Event]
+    createEventTypes(
+      createEventTypesInput: [InputCreateEventTypeArgs!]!
+    ): [EventType!]!
+    deleteEventTypes(ids: [ID!]!): [ID!]!
+
+    createEvents(createEventsInput: [InputCreateEventArgs!]!): [Event]
     updateEvents(updateEventsInput: [InputUpdateEventsArgs!]!): [Event]
     deleteEvents(deleteEventsInput: [ID!]!): [ID]
 
@@ -227,11 +235,10 @@ export const typeDefs = gql`
     emitted: String!
   }
 
-  input InputCreateEventsArgs {
+  input InputCreateEventArgs {
     start: String!
     end: String!
     title: String!
-    variant: String!
     guests: [String]
   }
 
@@ -250,12 +257,29 @@ export const typeDefs = gql`
     name: String!
   }
 
+  input InputCreateEventTypeArgs {
+    name: String!
+    variant: String!
+    "Event duration, in minutes"
+    duration: Int!
+    description: String
+  }
+
+  type EventType {
+    id: ID!
+    name: String!
+    description: String
+    variant: String!
+    "Event duration, in minutes"
+    duration: Int!
+  }
+
   type Event {
     id: ID!
+    type: ID!
     start: String!
     end: String!
     title: String!
-    variant: String!
     guests: [Guest!]!
     notes: String
   }

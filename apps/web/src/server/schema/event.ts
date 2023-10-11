@@ -12,7 +12,7 @@ export const variants: readonly [string, ...string[]] = [
   "cyan",
   "sky",
   "blue",
-  "orange",
+  "indigo",
   "violet",
   "purple",
   "fuchsia",

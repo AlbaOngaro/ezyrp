@@ -58,6 +58,16 @@ export type Event = {
   notes?: Maybe<Scalars['String']['output']>;
   start: Scalars['String']['output'];
   title: Scalars['String']['output'];
+  type: Scalars['ID']['output'];
+};
+
+export type EventType = {
+  __typename?: 'EventType';
+  description?: Maybe<Scalars['String']['output']>;
+  /** Event duration, in minutes */
+  duration: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
   variant: Scalars['String']['output'];
 };
 
@@ -78,11 +88,18 @@ export type InputCreateCustomerArgs = {
   photoUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type InputCreateEventsArgs = {
+export type InputCreateEventArgs = {
   end: Scalars['String']['input'];
   guests?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   start: Scalars['String']['input'];
   title: Scalars['String']['input'];
+};
+
+export type InputCreateEventTypeArgs = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** Event duration, in minutes */
+  duration: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
   variant: Scalars['String']['input'];
 };
 
@@ -256,6 +273,7 @@ export type LastInvoice = {
 export type Mutation = {
   __typename?: 'Mutation';
   createCustomers?: Maybe<Array<Maybe<Customer>>>;
+  createEventTypes: Array<EventType>;
   createEvents?: Maybe<Array<Maybe<Event>>>;
   createInvites: Array<Invite>;
   createInvoices?: Maybe<Array<Maybe<Invoice>>>;
@@ -263,6 +281,7 @@ export type Mutation = {
   createSubscription?: Maybe<Subscription>;
   deleteAccount?: Maybe<Scalars['Boolean']['output']>;
   deleteCustomers?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
+  deleteEventTypes: Array<Scalars['ID']['output']>;
   deleteEvents?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteInvoices?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   deleteItems?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
@@ -284,8 +303,13 @@ export type MutationCreateCustomersArgs = {
 };
 
 
+export type MutationCreateEventTypesArgs = {
+  createEventTypesInput: Array<InputCreateEventTypeArgs>;
+};
+
+
 export type MutationCreateEventsArgs = {
-  createEventsInput: Array<InputCreateEventsArgs>;
+  createEventsInput: Array<InputCreateEventArgs>;
 };
 
 
@@ -311,6 +335,11 @@ export type MutationCreateSubscriptionArgs = {
 
 export type MutationDeleteCustomersArgs = {
   deleteCustomerArgs: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteEventTypesArgs = {
+  ids: Array<Scalars['ID']['input']>;
 };
 
 
@@ -414,6 +443,8 @@ export type Query = {
   customer: Customer;
   customers: PagedCustomersResponse;
   event: Event;
+  eventType: EventType;
+  eventTypes: Array<EventType>;
   events: Array<Event>;
   getCloudinarySignature: CloudinarySignature;
   invites: Array<Invite>;
@@ -441,6 +472,11 @@ export type QueryCustomersArgs = {
 
 
 export type QueryEventArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryEventTypeArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -627,11 +663,13 @@ export type ResolversTypes = ResolversObject<{
   CountryName: ResolverTypeWrapper<CountryName>;
   Customer: ResolverTypeWrapper<Customer>;
   Event: ResolverTypeWrapper<Event>;
+  EventType: ResolverTypeWrapper<EventType>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Guest: ResolverTypeWrapper<Guest>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   InputCreateCustomerArgs: InputCreateCustomerArgs;
-  InputCreateEventsArgs: InputCreateEventsArgs;
+  InputCreateEventArgs: InputCreateEventArgs;
+  InputCreateEventTypeArgs: InputCreateEventTypeArgs;
   InputCreateInviteArgs: InputCreateInviteArgs;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCreateItems: InputCreateItems;
@@ -685,11 +723,13 @@ export type ResolversParentTypes = ResolversObject<{
   CountryName: CountryName;
   Customer: Customer;
   Event: Event;
+  EventType: EventType;
   Float: Scalars['Float']['output'];
   Guest: Guest;
   ID: Scalars['ID']['output'];
   InputCreateCustomerArgs: InputCreateCustomerArgs;
-  InputCreateEventsArgs: InputCreateEventsArgs;
+  InputCreateEventArgs: InputCreateEventArgs;
+  InputCreateEventTypeArgs: InputCreateEventTypeArgs;
   InputCreateInviteArgs: InputCreateInviteArgs;
   InputCreateInvoicesArgs: InputCreateInvoicesArgs;
   InputCreateItems: InputCreateItems;
@@ -774,6 +814,15 @@ export type EventResolvers<ContextType = GraphqlContext, ParentType extends Reso
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type EventTypeResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['EventType'] = ResolversParentTypes['EventType']> = ResolversObject<{
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   variant?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -830,6 +879,7 @@ export type LastInvoiceResolvers<ContextType = GraphqlContext, ParentType extend
 
 export type MutationResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Customer']>>>, ParentType, ContextType, RequireFields<MutationCreateCustomersArgs, 'createCustomerArgs'>>;
+  createEventTypes?: Resolver<Array<ResolversTypes['EventType']>, ParentType, ContextType, RequireFields<MutationCreateEventTypesArgs, 'createEventTypesInput'>>;
   createEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationCreateEventsArgs, 'createEventsInput'>>;
   createInvites?: Resolver<Array<ResolversTypes['Invite']>, ParentType, ContextType, RequireFields<MutationCreateInvitesArgs, 'createInviteArgs'>>;
   createInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invoice']>>>, ParentType, ContextType, RequireFields<MutationCreateInvoicesArgs, 'createInvoicesArgs'>>;
@@ -837,6 +887,7 @@ export type MutationResolvers<ContextType = GraphqlContext, ParentType extends R
   createSubscription?: Resolver<Maybe<ResolversTypes['Subscription']>, ParentType, ContextType, Partial<MutationCreateSubscriptionArgs>>;
   deleteAccount?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   deleteCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteCustomersArgs, 'deleteCustomerArgs'>>;
+  deleteEventTypes?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteEventTypesArgs, 'ids'>>;
   deleteEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteEventsArgs, 'deleteEventsInput'>>;
   deleteInvoices?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteInvoicesArgs, 'deleteInvoicesArgs'>>;
   deleteItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType, RequireFields<MutationDeleteItemsArgs, 'deleteItemsInput'>>;
@@ -895,6 +946,8 @@ export type QueryResolvers<ContextType = GraphqlContext, ParentType extends Reso
   customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'id'>>;
   customers?: Resolver<ResolversTypes['PagedCustomersResponse'], ParentType, ContextType, Partial<QueryCustomersArgs>>;
   event?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
+  eventType?: Resolver<ResolversTypes['EventType'], ParentType, ContextType, RequireFields<QueryEventTypeArgs, 'id'>>;
+  eventTypes?: Resolver<Array<ResolversTypes['EventType']>, ParentType, ContextType>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType>;
   getCloudinarySignature?: Resolver<ResolversTypes['CloudinarySignature'], ParentType, ContextType, Partial<QueryGetCloudinarySignatureArgs>>;
   invites?: Resolver<Array<ResolversTypes['Invite']>, ParentType, ContextType>;
@@ -965,6 +1018,7 @@ export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
   CountryName?: CountryNameResolvers<ContextType>;
   Customer?: CustomerResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
+  EventType?: EventTypeResolvers<ContextType>;
   Guest?: GuestResolvers<ContextType>;
   Invite?: InviteResolvers<ContextType>;
   Invoice?: InvoiceResolvers<ContextType>;

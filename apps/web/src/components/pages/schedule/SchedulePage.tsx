@@ -1,37 +1,50 @@
-import { ReactElement, useState } from "react";
-import { Root, Trigger } from "@radix-ui/react-dialog";
+import { ReactElement } from "react";
+import * as Tabs from "@radix-ui/react-tabs";
 
-import { useEvents } from "hooks/useEvents";
+import { ScheduleContents } from "./ScheduleContents";
+import { EventTypesContents } from "./EventTypesContents";
 
-import { Button } from "components/atoms/button/Button";
-import { Container } from "components/atoms/container/Container";
-
-import { Calendar } from "components/organisms/calendar/Calendar";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
+
+const nav = [
+  {
+    value: "event-types",
+    label: "Event Types",
+    content: <EventTypesContents />,
+  },
+  {
+    value: "schedule",
+    label: "Schedule",
+    content: <ScheduleContents />,
+  },
+];
 
 export function SchedulePage() {
-  const events = useEvents();
-  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-
   return (
-    <Container
-      as="section"
-      className="lg:h-[calc(100vh_-_64px)] overflow-hidden"
-    >
-      <Calendar
-        actions={
-          <Root open={isCreatingEvent} onOpenChange={setIsCreatingEvent}>
-            <Trigger asChild>
-              <Button size="lg">Add event</Button>
-            </Trigger>
+    <Tabs.Root defaultValue={nav[0].value}>
+      <Tabs.List
+        asChild
+        className="flex gap-x-4 overflow-x-auto py-4 px-8 border-b border-gray-200 bg-white"
+      >
+        <nav>
+          {nav.map((item) => (
+            <Tabs.Trigger
+              key={item.value}
+              className="data-[state='active']:text-orange-400 font-medium"
+              value={item.value}
+            >
+              {item.label}
+            </Tabs.Trigger>
+          ))}
+        </nav>
+      </Tabs.List>
 
-            <CreateEventModal as="modal" setIsOpen={setIsCreatingEvent} />
-          </Root>
-        }
-        events={events?.data?.events}
-      />
-    </Container>
+      {nav.map(({ content, value }) => (
+        <Tabs.Content key={value} value={value} asChild>
+          {content}
+        </Tabs.Content>
+      ))}
+    </Tabs.Root>
   );
 }
 

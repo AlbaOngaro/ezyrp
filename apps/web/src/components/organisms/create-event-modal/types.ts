@@ -3,16 +3,16 @@ import { PopoverContentProps } from "@radix-ui/react-popover";
 
 import { Props as ModalProps } from "../../atoms/modal/Modal";
 
-import { Event, InputCreateEventsArgs } from "../../../__generated__/graphql";
+import { Event, InputCreateEventArgs } from "../../../__generated__/graphql";
 
 type CreateEventModalProps = {
   as: "modal";
-  onChange?: (event: InputCreateEventsArgs & { id: string }) => void;
+  onChange?: (event: InputCreateEventArgs & { id: string }) => void;
 } & Omit<ModalProps, "onChange">;
 
 type CreateEventPopoverProps = {
   as: "popover";
-  onChange?: (event: InputCreateEventsArgs & { id: string }) => void;
+  onChange?: (event: InputCreateEventArgs & { id: string }) => void;
 } & Omit<PopoverContentProps, "onChange">;
 
 export type Props = {

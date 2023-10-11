@@ -9,3 +9,4 @@ export * from "./items";
 export * from "./subscription";
 export * from "./invites";
 export * from "./settings";
+export * from "./eventTypes";

@@ -5,7 +5,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { add, format, isAfter, roundToNearestMinutes, set } from "date-fns";
 import { CheckIcon, Cross1Icon } from "@radix-ui/react-icons";
 
-import { InputCreateEventsArgs } from "../../../__generated__/graphql";
+import { InputCreateEventArgs } from "../../../__generated__/graphql";
 
 import { Modal } from "../../atoms/modal/Modal";
 import { useEvents } from "../../../hooks/useEvents";
@@ -48,7 +48,7 @@ export function CreateEventModal({
   const events = useEvents();
   const customers = useCustomers();
 
-  const [event, setEvent] = useState<InputCreateEventsArgs & { id: string }>(
+  const [event, setEvent] = useState<InputCreateEventArgs & { id: string }>(
     () => {
       if (initialEvent) {
         return {
