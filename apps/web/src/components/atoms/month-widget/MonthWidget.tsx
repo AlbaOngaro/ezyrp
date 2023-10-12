@@ -15,6 +15,9 @@ interface Props {
   onNextClick?: () => void;
   onPreviousClick?: () => void;
   showSelected?: (date: Date) => boolean;
+  isDayDisabled?: (date: Date) => boolean;
+  isPrevDisabled?: (date: Date) => boolean;
+  isNextDisabled?: (date: Date) => boolean;
 }
 
 export function MonthWidget({
@@ -25,6 +28,9 @@ export function MonthWidget({
   onPreviousClick,
   onDayClick,
   showSelected,
+  isDayDisabled,
+  isPrevDisabled,
+  isNextDisabled,
 }: Props) {
   const [{ selected, days }, dispatch] = useCalendarReducer({
     view: "month",
@@ -48,7 +54,7 @@ export function MonthWidget({
         {withNavigation && (
           <button
             type="button"
-            className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+            className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 disabled:cursor-not-allowed hover:[&:not(:disabled)]:text-gray-500"
             onClick={() => {
               if (typeof onPreviousClick === "function") {
                 onPreviousClick();
@@ -58,6 +64,11 @@ export function MonthWidget({
                 });
               }
             }}
+            disabled={
+              typeof isPrevDisabled === "function"
+                ? isPrevDisabled(selected)
+                : false
+            }
           >
             <span className="sr-only">Previous month</span>
             <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -79,6 +90,11 @@ export function MonthWidget({
                 });
               }
             }}
+            disabled={
+              typeof isNextDisabled === "function"
+                ? isNextDisabled(selected)
+                : false
+            }
           >
             <span className="sr-only">Next month</span>
             <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -97,6 +113,11 @@ export function MonthWidget({
       <div className="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
         {days.map((day, dayIdx) => (
           <button
+            disabled={
+              typeof isDayDisabled === "function"
+                ? isDayDisabled(day.date)
+                : false
+            }
             key={day.date.toISOString()}
             onClick={() => {
               dispatch({
@@ -112,7 +133,7 @@ export function MonthWidget({
             }}
             type="button"
             className={twMerge(
-              "py-1.5 hover:bg-gray-100 focus:z-10",
+              "py-1.5 hover:bg-gray-100 focus:z-10 disabled:bg-gray-50 disabled:cursor-not-allowed",
               day.isCurrentMonth ? "bg-white" : "bg-gray-50",
               (day.isSelected || day.isToday) && "font-semibold",
               day.isSelected && "text-white",

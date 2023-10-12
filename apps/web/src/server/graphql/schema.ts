@@ -21,6 +21,8 @@ export const typeDefs = gql`
     event(id: ID!): Event!
     events: [Event!]!
 
+    booking(id: ID!): Booking
+
     item(id: ID!): Item!
     items(filters: InputItemsFilters): PagedItemsResponse!
 
@@ -294,6 +296,11 @@ export const typeDefs = gql`
     title: String!
     guests: [Guest!]!
     notes: String
+  }
+
+  type Booking {
+    event: EventType
+    settings: Settings
   }
 
   type CountryName {

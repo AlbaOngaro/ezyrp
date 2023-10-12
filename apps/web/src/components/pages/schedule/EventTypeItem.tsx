@@ -9,7 +9,9 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { EventType } from "__generated__/graphql";
+
 import { twMerge } from "lib/utils/twMerge";
+
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
 import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
 
@@ -116,7 +118,9 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
               <button
                 onClick={async () => {
                   try {
-                    await navigator.clipboard.writeText(event.id);
+                    await navigator.clipboard.writeText(
+                      `${window.location.origin}/booking/${event.id}`,
+                    );
                     setIsCopySuccesful(true);
                   } catch (error: unknown) {
                     console.error(error);

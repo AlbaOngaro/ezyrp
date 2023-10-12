@@ -17,6 +17,12 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Booking = {
+  __typename?: 'Booking';
+  event?: Maybe<EventType>;
+  settings?: Maybe<Settings>;
+};
+
 export type CloudinarySignature = {
   __typename?: 'CloudinarySignature';
   apiKey: Scalars['String']['output'];
@@ -454,6 +460,7 @@ export type Profile = {
 
 export type Query = {
   __typename?: 'Query';
+  booking?: Maybe<Booking>;
   countries: Array<Country>;
   customer: Customer;
   customers: PagedCustomersResponse;
@@ -472,6 +479,11 @@ export type Query = {
   subscription?: Maybe<Subscription>;
   user: User;
   users: Array<TeamUser>;
+};
+
+
+export type QueryBookingArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -672,6 +684,7 @@ export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = R
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  Booking: ResolverTypeWrapper<Booking>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CloudinarySignature: ResolverTypeWrapper<CloudinarySignature>;
   Country: ResolverTypeWrapper<Country>;
@@ -733,6 +746,7 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  Booking: Booking;
   Boolean: Scalars['Boolean']['output'];
   CloudinarySignature: CloudinarySignature;
   Country: Country;
@@ -789,6 +803,12 @@ export type ResolversParentTypes = ResolversObject<{
   SubscrptionKeyInput: SubscrptionKeyInput;
   TeamUser: TeamUser;
   User: User;
+}>;
+
+export type BookingResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Booking'] = ResolversParentTypes['Booking']> = ResolversObject<{
+  event?: Resolver<Maybe<ResolversTypes['EventType']>, ParentType, ContextType>;
+  settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type CloudinarySignatureResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['CloudinarySignature'] = ResolversParentTypes['CloudinarySignature']> = ResolversObject<{
@@ -960,6 +980,7 @@ export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends Re
 }>;
 
 export type QueryResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  booking?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingArgs, 'id'>>;
   countries?: Resolver<Array<ResolversTypes['Country']>, ParentType, ContextType>;
   customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'id'>>;
   customers?: Resolver<ResolversTypes['PagedCustomersResponse'], ParentType, ContextType, Partial<QueryCustomersArgs>>;
@@ -1031,6 +1052,7 @@ export type UserResolvers<ContextType = GraphqlContext, ParentType extends Resol
 }>;
 
 export type Resolvers<ContextType = GraphqlContext> = ResolversObject<{
+  Booking?: BookingResolvers<ContextType>;
   CloudinarySignature?: CloudinarySignatureResolvers<ContextType>;
   Country?: CountryResolvers<ContextType>;
   CountryName?: CountryNameResolvers<ContextType>;
