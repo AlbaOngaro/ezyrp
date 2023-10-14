@@ -1,163 +1,17 @@
-import {
-  add,
-  eachDayOfInterval,
-  format,
-  isSameDay,
-  isSameWeek,
-} from "date-fns";
-import { Root, Trigger, Anchor } from "@radix-ui/react-popover";
-import { MouseEvent } from "react";
+import { eachDayOfInterval, format } from "date-fns";
 
-import { EventPopover } from "../components/EventPopover";
 import { EventItem } from "../components/EventItem";
 
 import { useCalendarContext } from "../Calendar";
-import { getIsLongerThan24Hours, isSavedEvent } from "../utils";
 
 import { twMerge } from "../../../../lib/utils/twMerge";
-import { CreateEventModal } from "../../create-event-modal/CreateEventModal";
-import { Event } from "../../../../__generated__/graphql";
-
-function EventItemWrapper({
-  event,
-  currentDate,
-}: {
-  event: Event;
-  currentDate: Date;
-}) {
-  const {
-    state: { days },
-    dispatch,
-  } = useCalendarContext();
-
-  const events = days.flatMap((day) => day.events);
-
-  const startDate = new Date(event.start);
-  const endDate = new Date(event.end);
-  const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
-
-  if (
-    isLongerThan24Hours &&
-    isSameWeek(currentDate, startDate, {
-      weekStartsOn: 1,
-    }) &&
-    !isSameDay(currentDate, startDate)
-  ) {
-    return null;
-  }
-
-  if (isSavedEvent(event)) {
-    return (
-      <Root>
-        <Trigger
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          asChild
-        >
-          <EventItem event={event} currentDate={currentDate} />
-        </Trigger>
-
-        <EventPopover event={event} />
-      </Root>
-    );
-  }
-
-  return (
-    <Root open>
-      <Anchor asChild>
-        <EventItem event={event} currentDate={currentDate} />
-      </Anchor>
-
-      <CreateEventModal
-        event={event}
-        onChange={(updated) =>
-          dispatch({
-            type: "SET_EVENTS",
-            payload: {
-              events: events.map((e) => {
-                if (e.id !== event.id) {
-                  return e;
-                }
-
-                return {
-                  ...updated,
-                  guests:
-                    updated?.guests?.map((guest) => ({
-                      id: guest as string,
-                      email: "",
-                      name: "",
-                      phone: "",
-                    })) || [],
-                };
-              }),
-            },
-          })
-        }
-        className="z-50"
-        setIsOpen={console.debug}
-        as="popover"
-        side="left"
-        align="start"
-        sideOffset={8}
-      />
-    </Root>
-  );
-}
 
 export function Body() {
   const {
     state: { days },
-    dispatch,
   } = useCalendarContext();
 
   const events = days.flatMap((day) => day.events);
-  const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
-
-  const handleGridClick = (e: MouseEvent<HTMLOListElement>) => {
-    if ((e.target as HTMLElement).id !== "grid") {
-      return;
-    }
-
-    if (isCreatingNewEvent) {
-      dispatch({
-        type: "SET_EVENTS",
-        payload: {
-          events: events.filter((event) => isSavedEvent(event)),
-        },
-      });
-      return;
-    }
-
-    const rect = (e.target as HTMLOListElement).getBoundingClientRect();
-    const y = e.clientY - rect.top;
-
-    const row = Math.floor(y / (rect.height / 6));
-    const col = Math.floor((e.clientX - rect.left) / (rect.width / 7));
-
-    const index = row * 7 + col;
-
-    const start = days[index].date;
-
-    dispatch({
-      type: "SET_EVENTS",
-      payload: {
-        events: [
-          ...events,
-          {
-            id: crypto.randomUUID(),
-            title: "",
-            start: start.toISOString(),
-            end: add(start, {
-              hours: 1,
-            }).toISOString(),
-            variant: "blue",
-            guests: [],
-          },
-        ],
-      },
-    });
-  };
 
   return (
     <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
@@ -213,7 +67,6 @@ export function Body() {
             style={{
               gridTemplateRows: `repeat(${days.length / 7}, minmax(0, 1fr))`,
             }}
-            onClick={handleGridClick}
           >
             {events.map((event) => {
               const startDate = new Date(event.start);
@@ -223,11 +76,7 @@ export function Body() {
                 start: startDate,
                 end: endDate,
               }).map((day) => (
-                <EventItemWrapper
-                  key={event.id}
-                  event={event}
-                  currentDate={day}
-                />
+                <EventItem key={event.id} event={event} currentDate={day} />
               ));
             })}
           </ol>

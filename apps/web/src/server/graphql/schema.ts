@@ -21,7 +21,7 @@ export const typeDefs = gql`
     event(id: ID!): Event!
     events: [Event!]!
 
-    booking(id: ID!): Booking
+    booking(id: ID!, day: String!): Booking
 
     item(id: ID!): Item!
     items(filters: InputItemsFilters): PagedItemsResponse!
@@ -242,8 +242,8 @@ export const typeDefs = gql`
 
   input InputCreateEventArgs {
     start: String!
-    end: String!
-    title: String!
+    type: ID!
+    notes: String
     guests: [String]
   }
 
@@ -290,17 +290,22 @@ export const typeDefs = gql`
 
   type Event {
     id: ID!
-    type: ID!
-    start: String!
     end: String!
+    start: String!
     title: String!
-    guests: [Guest!]!
     notes: String
+    variant: String!
+    guests: [Guest!]!
   }
 
   type Booking {
-    event: EventType
-    settings: Settings
+    id: ID!
+    name: String!
+    duration: Int!
+    description: String
+    slots: [String!]!
+    "Working days. 0 is monday."
+    days: [Int!]!
   }
 
   type CountryName {

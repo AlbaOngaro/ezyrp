@@ -1,6 +1,7 @@
 import { ZodError, z } from "zod";
 
 import { GraphQLError } from "graphql";
+import { formatISO } from "date-fns";
 import { surreal } from "../surreal";
 import { inputInvoiceFilters, invoice } from "../schema/invoice";
 import {
@@ -130,7 +131,7 @@ export class InvoicesService extends Service {
           ({ id, ...invoice }) =>
             `UPDATE ${id} MERGE ${JSON.stringify({
               ...invoice,
-              updated_at: new Date().toISOString(),
+              updated_at: formatISO(new Date()),
             })}`,
         )
         .join(";\n")};

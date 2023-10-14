@@ -1,97 +1,12 @@
-import { add, format, isSameDay, minutesToHours } from "date-fns";
-import { Root, Trigger, Anchor } from "@radix-ui/react-popover";
-import { MouseEvent } from "react";
+import { format, isSameDay } from "date-fns";
 
 import { EventItem } from "../components/EventItem";
-import { EventPopover } from "../components/EventPopover";
 import { useCalendarContext } from "../Calendar";
-import { isSavedEvent } from "../utils";
 import { Indicator } from "../components/Indicator";
-
-import { Event } from "__generated__/graphql";
-
-import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
 
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
 
-import { convertRemToPx } from "lib/utils/convertRemToPx";
 import { useSettings } from "hooks/useSettings";
-
-function EventItemWrapper({
-  event,
-  currentDate,
-}: {
-  event: Event;
-  currentDate: Date;
-}) {
-  const {
-    state: { days },
-    dispatch,
-  } = useCalendarContext();
-
-  const events = days.flatMap((day) => day.events);
-
-  if (isSavedEvent(event)) {
-    return (
-      <Root>
-        <Trigger
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          asChild
-        >
-          <EventItem event={event} currentDate={currentDate} />
-        </Trigger>
-
-        <EventPopover side="top" align="center" event={event} />
-      </Root>
-    );
-  }
-
-  return (
-    <Root open>
-      <Anchor asChild>
-        <EventItem event={event} currentDate={currentDate} />
-      </Anchor>
-
-      <CreateEventModal
-        event={event}
-        onChange={(updated) =>
-          dispatch({
-            type: "SET_EVENTS",
-            payload: {
-              events: events.map((e) => {
-                if (e.id !== event.id) {
-                  return e;
-                }
-
-                return {
-                  ...updated,
-                  guests:
-                    updated?.guests?.map((guest) => ({
-                      id: guest as string,
-                      email: "",
-                      name: "",
-                      phone: "",
-                    })) || [],
-                };
-              }),
-            },
-          })
-        }
-        className="z-50"
-        setIsOpen={console.debug}
-        as="popover"
-        side="left"
-        align="start"
-        sideOffset={8}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      />
-    </Root>
-  );
-}
 
 export function Body() {
   const {
@@ -101,65 +16,6 @@ export function Body() {
 
   const { data } = useSettings();
   const weekDay = selected.getDay() === 0 ? 6 : selected.getDay() - 1;
-
-  const events = days.flatMap((day) => day.events);
-  const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
-
-  const handleGridClick = (e: MouseEvent<HTMLOListElement>) => {
-    if ((e.target as HTMLElement).id !== "grid") {
-      return;
-    }
-
-    if (isCreatingNewEvent) {
-      dispatch({
-        type: "SET_EVENTS",
-        payload: {
-          events: events.filter((event) => isSavedEvent(event)),
-        },
-      });
-      return;
-    }
-
-    const rect = (e.target as HTMLOListElement).getBoundingClientRect();
-    const firstRow = convertRemToPx(1.75);
-    const y = e.clientY - (rect.top + firstRow);
-
-    if (y < 0) {
-      return;
-    }
-
-    const row = (rect.height - firstRow) / 288;
-    const minutes = Math.floor(y / row) * 5;
-
-    const day = selected;
-
-    const start = new Date(
-      day.getFullYear(),
-      day.getMonth(),
-      day.getDate(),
-      minutesToHours(minutes),
-      minutes - minutesToHours(minutes) * 60,
-    );
-
-    dispatch({
-      type: "SET_EVENTS",
-      payload: {
-        events: [
-          ...events,
-          {
-            id: crypto.randomUUID(),
-            title: "",
-            start: start.toISOString(),
-            end: add(start, {
-              hours: 1,
-            }).toISOString(),
-            variant: "blue",
-            guests: [],
-          },
-        ],
-      },
-    });
-  };
 
   return (
     <div className="isolate flex flex-auto overflow-hidden bg-white">
@@ -393,7 +249,6 @@ export function Body() {
               style={{
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
-              onClick={handleGridClick}
               id="grid"
             >
               {data?.settings?.days?.includes(weekDay) ? (
@@ -426,7 +281,7 @@ export function Body() {
               {days
                 .find((day) => isSameDay(day.date, selected))
                 ?.events.map((event) => (
-                  <EventItemWrapper
+                  <EventItem
                     key={event.id}
                     event={event}
                     currentDate={selected}

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { formatISO } from "date-fns";
 import { customer } from "./customer";
 
 import { item } from "./inventory";
@@ -14,11 +15,11 @@ export const invoice = z.object({
   items: z.array(item).default([]),
   amount: z.number().default(0),
 
-  due: z.string().datetime().default(new Date().toISOString()),
-  emitted: z.string().datetime().default(new Date().toISOString()),
+  due: z.string().datetime().default(formatISO(new Date())),
+  emitted: z.string().datetime().default(formatISO(new Date())),
 
-  created_at: z.string().datetime().default(new Date().toISOString()),
-  updated_at: z.string().datetime().default(new Date().toISOString()),
+  created_at: z.string().datetime().default(formatISO(new Date())),
+  updated_at: z.string().datetime().default(formatISO(new Date())),
 });
 
 export const inputCreateInvoiceArgs = z.object({
@@ -26,8 +27,8 @@ export const inputCreateInvoiceArgs = z.object({
   description: z.string(),
   status: z.enum(["paid", "pending", "overdue"]).default("pending"),
   items: z.array(z.string()),
-  due: z.string().datetime().default(new Date().toISOString()),
-  emitted: z.string().datetime().default(new Date().toISOString()),
+  due: z.string().datetime().default(formatISO(new Date())),
+  emitted: z.string().datetime().default(formatISO(new Date())),
 });
 
 export const inputInvoiceFilters = z.object({

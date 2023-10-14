@@ -6,6 +6,7 @@ import { render } from "@react-email/render";
 import { SurrealTrigger } from "@nimblerp/surreal-trigger";
 import { Invite, NewInvoice } from "@nimblerp/emails";
 
+import { formatISO } from "date-fns";
 import { client } from "lib/trigger";
 
 import { inputCreateInvoiceArgs } from "server/schema/invoice";
@@ -189,7 +190,7 @@ client.defineJob({
 
       await io.surreal.runTask("invite.sent", async (client) => {
         await client.merge(id, {
-          sent_at: new Date().toISOString(),
+          sent_at: formatISO(new Date()),
         });
       });
     }

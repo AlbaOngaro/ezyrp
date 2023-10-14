@@ -19,8 +19,13 @@ export type Scalars = {
 
 export type Booking = {
   __typename?: 'Booking';
-  event?: Maybe<EventType>;
-  settings?: Maybe<Settings>;
+  /** Working days. 0 is monday. */
+  days: Array<Scalars['Int']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  duration: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  slots: Array<Scalars['String']['output']>;
 };
 
 export type CloudinarySignature = {
@@ -64,7 +69,7 @@ export type Event = {
   notes?: Maybe<Scalars['String']['output']>;
   start: Scalars['String']['output'];
   title: Scalars['String']['output'];
-  type: Scalars['ID']['output'];
+  variant: Scalars['String']['output'];
 };
 
 export type EventType = {
@@ -95,10 +100,10 @@ export type InputCreateCustomerArgs = {
 };
 
 export type InputCreateEventArgs = {
-  end: Scalars['String']['input'];
   guests?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  notes?: InputMaybe<Scalars['String']['input']>;
   start: Scalars['String']['input'];
-  title: Scalars['String']['input'];
+  type: Scalars['ID']['input'];
 };
 
 export type InputCreateEventTypeArgs = {
@@ -483,6 +488,7 @@ export type Query = {
 
 
 export type QueryBookingArgs = {
+  day: Scalars['String']['input'];
   id: Scalars['ID']['input'];
 };
 
@@ -806,8 +812,12 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type BookingResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Booking'] = ResolversParentTypes['Booking']> = ResolversObject<{
-  event?: Resolver<Maybe<ResolversTypes['EventType']>, ParentType, ContextType>;
-  settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
+  days?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slots?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -851,7 +861,7 @@ export type EventResolvers<ContextType = GraphqlContext, ParentType extends Reso
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   start?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  variant?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -980,7 +990,7 @@ export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends Re
 }>;
 
 export type QueryResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  booking?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingArgs, 'id'>>;
+  booking?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingArgs, 'day' | 'id'>>;
   countries?: Resolver<Array<ResolversTypes['Country']>, ParentType, ContextType>;
   customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'id'>>;
   customers?: Resolver<ResolversTypes['PagedCustomersResponse'], ParentType, ContextType, Partial<QueryCustomersArgs>>;

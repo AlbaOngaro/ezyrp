@@ -1,20 +1,14 @@
 import { graphql } from "__generated__";
 
 export const BOOKING = graphql(`
-  query booking($id: ID!) {
-    booking(id: $id) {
-      event {
-        id
-        name
-        description
-        variant
-        duration
-      }
-      settings {
-        start
-        end
-        days
-      }
+  query booking($id: ID!, $day: String!) {
+    booking(id: $id, day: $day) {
+      id
+      days
+      name
+      slots
+      duration
+      description
     }
   }
 `);
