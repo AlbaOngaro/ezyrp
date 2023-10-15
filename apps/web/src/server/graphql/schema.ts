@@ -67,6 +67,8 @@ export const typeDefs = gql`
     updateEvents(updateEventsInput: [InputUpdateEventsArgs!]!): [Event]
     deleteEvents(deleteEventsInput: [ID!]!): [ID]
 
+    bookEvent(bookEventInput: BookEventInput!): Event!
+
     createItems(createItemsInput: [InputCreateItems!]!): [Item]
     updateItems(updateItemsInput: [InputUpdateItems!]!): [Item]
     deleteItems(deleteItemsInput: [ID!]!): [ID]
@@ -185,10 +187,10 @@ export const typeDefs = gql`
     email: String!
     name: String!
     photoUrl: String
-    address: String!
-    city: String!
-    code: String!
-    country: String!
+    address: String
+    city: String
+    code: String
+    country: String
     lastInvoice: LastInvoice
   }
 
@@ -296,6 +298,17 @@ export const typeDefs = gql`
     notes: String
     variant: String!
     guests: [Guest!]!
+  }
+
+  input BookGuestInput {
+    name: String!
+    email: String!
+  }
+
+  input BookEventInput {
+    type: ID!
+    start: String!
+    guests: [BookGuestInput!]!
   }
 
   type Booking {

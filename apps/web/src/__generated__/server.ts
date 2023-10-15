@@ -17,6 +17,17 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type BookEventInput = {
+  guests: Array<BookGuestInput>;
+  start: Scalars['String']['input'];
+  type: Scalars['ID']['input'];
+};
+
+export type BookGuestInput = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type Booking = {
   __typename?: 'Booking';
   /** Working days. 0 is monday. */
@@ -50,10 +61,10 @@ export type CountryName = {
 
 export type Customer = {
   __typename?: 'Customer';
-  address: Scalars['String']['output'];
-  city: Scalars['String']['output'];
-  code: Scalars['String']['output'];
-  country: Scalars['String']['output'];
+  address?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lastInvoice?: Maybe<LastInvoice>;
@@ -292,6 +303,7 @@ export type LastInvoice = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  bookEvent: Event;
   createCustomers?: Maybe<Array<Maybe<Customer>>>;
   createEventTypes: Array<EventType>;
   createEvents?: Maybe<Array<Maybe<Event>>>;
@@ -316,6 +328,11 @@ export type Mutation = {
   updateItems?: Maybe<Array<Maybe<Item>>>;
   updateSettings?: Maybe<Settings>;
   updateUserProfile?: Maybe<User>;
+};
+
+
+export type MutationBookEventArgs = {
+  bookEventInput: BookEventInput;
 };
 
 
@@ -690,6 +707,8 @@ export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = R
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  BookEventInput: BookEventInput;
+  BookGuestInput: BookGuestInput;
   Booking: ResolverTypeWrapper<Booking>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CloudinarySignature: ResolverTypeWrapper<CloudinarySignature>;
@@ -752,6 +771,8 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  BookEventInput: BookEventInput;
+  BookGuestInput: BookGuestInput;
   Booking: Booking;
   Boolean: Scalars['Boolean']['output'];
   CloudinarySignature: CloudinarySignature;
@@ -842,10 +863,10 @@ export type CountryNameResolvers<ContextType = GraphqlContext, ParentType extend
 }>;
 
 export type CustomerResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Customer'] = ResolversParentTypes['Customer']> = ResolversObject<{
-  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  city?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastInvoice?: Resolver<Maybe<ResolversTypes['LastInvoice']>, ParentType, ContextType>;
@@ -925,6 +946,7 @@ export type LastInvoiceResolvers<ContextType = GraphqlContext, ParentType extend
 }>;
 
 export type MutationResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  bookEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationBookEventArgs, 'bookEventInput'>>;
   createCustomers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Customer']>>>, ParentType, ContextType, RequireFields<MutationCreateCustomersArgs, 'createCustomerArgs'>>;
   createEventTypes?: Resolver<Array<ResolversTypes['EventType']>, ParentType, ContextType, RequireFields<MutationCreateEventTypesArgs, 'createEventTypesInput'>>;
   createEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['Event']>>>, ParentType, ContextType, RequireFields<MutationCreateEventsArgs, 'createEventsInput'>>;

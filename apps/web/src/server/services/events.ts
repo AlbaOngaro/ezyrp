@@ -52,8 +52,8 @@ export class EventsService extends Service {
           }); 
       
           const end = new Date(this.start);
-          end.setMinutes(type.duration);
-      
+          end.setMinutes(end.getMinutes() + type.duration);
+
           return end.toISOString();
         } as end, 
         type.name as title, 
@@ -100,8 +100,8 @@ export class EventsService extends Service {
           }); 
       
           const end = new Date(this.start);
-          end.setMinutes(type.duration);
-      
+      		end.setMinutes(end.getMinutes() + type.duration);
+
           return end.toISOString();
         } as end, 
         type.name as title, 

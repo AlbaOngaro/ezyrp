@@ -16,6 +16,17 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type BookEventInput = {
+  guests: Array<BookGuestInput>;
+  start: Scalars['String']['input'];
+  type: Scalars['ID']['input'];
+};
+
+export type BookGuestInput = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type Booking = {
   __typename?: 'Booking';
   /** Working days. 0 is monday. */
@@ -49,10 +60,10 @@ export type CountryName = {
 
 export type Customer = {
   __typename?: 'Customer';
-  address: Scalars['String']['output'];
-  city: Scalars['String']['output'];
-  code: Scalars['String']['output'];
-  country: Scalars['String']['output'];
+  address?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  code?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lastInvoice?: Maybe<LastInvoice>;
@@ -291,6 +302,7 @@ export type LastInvoice = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  bookEvent: Event;
   createCustomers?: Maybe<Array<Maybe<Customer>>>;
   createEventTypes: Array<EventType>;
   createEvents?: Maybe<Array<Maybe<Event>>>;
@@ -315,6 +327,11 @@ export type Mutation = {
   updateItems?: Maybe<Array<Maybe<Item>>>;
   updateSettings?: Maybe<Settings>;
   updateUserProfile?: Maybe<User>;
+};
+
+
+export type MutationBookEventArgs = {
+  bookEventInput: BookEventInput;
 };
 
 
@@ -791,14 +808,14 @@ export type GetCustomerQueryVariables = Exact<{
 }>;
 
 
-export type GetCustomerQuery = { __typename?: 'Query', customer: { __typename?: 'Customer', id: string, email: string, name: string, photoUrl?: string | null, address: string, city: string, code: string, country: string } };
+export type GetCustomerQuery = { __typename?: 'Query', customer: { __typename?: 'Customer', id: string, email: string, name: string, photoUrl?: string | null, address?: string | null, city?: string | null, code?: string | null, country?: string | null } };
 
 export type GetCustomersQueryVariables = Exact<{
   filters?: InputMaybe<InputCustomersFilters>;
 }>;
 
 
-export type GetCustomersQuery = { __typename?: 'Query', customers: { __typename?: 'PagedCustomersResponse', total: number, results: Array<{ __typename?: 'Customer', id: string, email: string, name: string, photoUrl?: string | null, address: string, city: string, code: string, country: string }> } };
+export type GetCustomersQuery = { __typename?: 'Query', customers: { __typename?: 'PagedCustomersResponse', total: number, results: Array<{ __typename?: 'Customer', id: string, email: string, name: string, photoUrl?: string | null, address?: string | null, city?: string | null, code?: string | null, country?: string | null }> } };
 
 export type CustomersWithLastInvoiceQueryVariables = Exact<{ [key: string]: never; }>;
 
