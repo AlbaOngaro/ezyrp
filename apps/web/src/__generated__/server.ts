@@ -19,6 +19,7 @@ export type Scalars = {
 
 export type BookEventInput = {
   guests: Array<BookGuestInput>;
+  notes?: InputMaybe<Scalars['String']['input']>;
   start: Scalars['String']['input'];
   type: Scalars['ID']['input'];
 };
@@ -30,6 +31,7 @@ export type BookGuestInput = {
 
 export type Booking = {
   __typename?: 'Booking';
+  day: Scalars['String']['output'];
   /** Working days. 0 is monday. */
   days: Array<Scalars['Int']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -505,7 +507,7 @@ export type Query = {
 
 
 export type QueryBookingArgs = {
-  day: Scalars['String']['input'];
+  day?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
 };
 
@@ -833,6 +835,7 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type BookingResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Booking'] = ResolversParentTypes['Booking']> = ResolversObject<{
+  day?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   days?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1012,7 +1015,7 @@ export type ProfileResolvers<ContextType = GraphqlContext, ParentType extends Re
 }>;
 
 export type QueryResolvers<ContextType = GraphqlContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  booking?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingArgs, 'day' | 'id'>>;
+  booking?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingArgs, 'id'>>;
   countries?: Resolver<Array<ResolversTypes['Country']>, ParentType, ContextType>;
   customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'id'>>;
   customers?: Resolver<ResolversTypes['PagedCustomersResponse'], ParentType, ContextType, Partial<QueryCustomersArgs>>;

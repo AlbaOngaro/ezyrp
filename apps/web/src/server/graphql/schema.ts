@@ -21,7 +21,7 @@ export const typeDefs = gql`
     event(id: ID!): Event!
     events: [Event!]!
 
-    booking(id: ID!, day: String!): Booking
+    booking(id: ID!, day: String): Booking
 
     item(id: ID!): Item!
     items(filters: InputItemsFilters): PagedItemsResponse!
@@ -308,6 +308,7 @@ export const typeDefs = gql`
   input BookEventInput {
     type: ID!
     start: String!
+    notes: String
     guests: [BookGuestInput!]!
   }
 
@@ -319,6 +320,7 @@ export const typeDefs = gql`
     slots: [String!]!
     "Working days. 0 is monday."
     days: [Int!]!
+    day: String!
   }
 
   type CountryName {

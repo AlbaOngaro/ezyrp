@@ -17,6 +17,11 @@ export function Body() {
   const { data } = useSettings();
   const weekDay = selected.getDay() === 0 ? 6 : selected.getDay() - 1;
 
+  const dayStartsAt =
+    (data?.settings?.start || 0) - new Date().getTimezoneOffset() / 60;
+  const dayEndsAt =
+    (data?.settings?.end || 0) - new Date().getTimezoneOffset() / 60;
+
   return (
     <div className="isolate flex flex-auto overflow-hidden bg-white">
       <div className="flex flex-auto flex-col overflow-auto">
@@ -256,14 +261,14 @@ export function Body() {
                   <div
                     className="bg-gray-100/30 pointer-events-none"
                     style={{
-                      gridRow: `2 / ${(data?.settings?.start || 0) * 12 + 2}`,
+                      gridRow: `2 / ${dayStartsAt * 12 + 2}`,
                     }}
                   />
 
                   <div
                     className="bg-gray-100/30 pointer-events-none"
                     style={{
-                      gridRow: `${(data?.settings?.end || 0) * 12 + 2} / 288`,
+                      gridRow: `${dayEndsAt * 12 + 2} / 288`,
                     }}
                   />
                 </>

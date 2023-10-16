@@ -27,7 +27,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordCreated<z.infer<typeof createEventInput>>({
     table: "event",
   }),
@@ -41,7 +41,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordCreated<z.infer<typeof inputCreateInvoiceArgs>>({
     table: "invoice",
   }),
@@ -97,7 +97,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordUpdated<z.infer<typeof item>>({
     table: "item",
   }),
@@ -151,7 +151,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordUpdated<InviteData>({
     table: "invite",
   }),
@@ -204,7 +204,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordDeleted({
     table: "workspace",
   }),

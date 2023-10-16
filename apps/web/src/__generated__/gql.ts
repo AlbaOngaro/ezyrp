@@ -13,6 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  mutation bookEvent($bookEventInput: BookEventInput!) {\n    bookEvent(bookEventInput: $bookEventInput) {\n      id\n      end\n      start\n      title\n      notes\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.BookEventDocument,
     "\n  mutation createCustomers($createCustomerArgs: [InputCreateCustomerArgs!]!) {\n    createCustomers(createCustomerArgs: $createCustomerArgs) {\n      id\n      email\n      name\n    }\n  }\n": types.CreateCustomersDocument,
     "\n  mutation createEvents($createEventsInput: [InputCreateEventArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.CreateEventsDocument,
     "\n  mutation createEventTypes(\n    $createEventTypesInput: [InputCreateEventTypeArgs!]!\n  ) {\n    createEventTypes(createEventTypesInput: $createEventTypesInput) {\n      id\n      name\n      variant\n      description\n    }\n  }\n": types.CreateEventTypesDocument,
@@ -37,7 +38,7 @@ const documents = {
     "\n  mutation updateItems($updateItemsInput: [InputUpdateItems!]!) {\n    updateItems(updateItemsInput: $updateItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n": types.UpdateItemsDocument,
     "\n  mutation updateSettings($updateSettingsInput: InputUpdateSettings) {\n    updateSettings(updateSettingsInput: $updateSettingsInput) {\n      start\n      end\n      days\n    }\n  }\n": types.UpdateSettingsDocument,
     "\n  mutation updateUserProfile(\n    $updateUserProfileArgs: InputUpdateUserProfileArgs!\n  ) {\n    updateUserProfile(updateUserProfileArgs: $updateUserProfileArgs) {\n      id\n      email\n      password\n      username\n      profile {\n        photoUrl\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.UpdateUserProfileDocument,
-    "\n  query booking($id: ID!, $day: String!) {\n    booking(id: $id, day: $day) {\n      id\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n": types.BookingDocument,
+    "\n  query booking($id: ID!, $day: String) {\n    booking(id: $id, day: $day) {\n      id\n      day\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n": types.BookingDocument,
     "\n  query countries {\n    countries {\n      name {\n        common\n        official\n      }\n    }\n  }\n": types.CountriesDocument,
     "\n  query getCustomer($id: ID!) {\n    customer(id: $id) {\n      id\n      email\n      name\n      photoUrl\n      address\n      city\n      code\n      country\n    }\n  }\n": types.GetCustomerDocument,
     "\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n        address\n        city\n        code\n        country\n      }\n    }\n  }\n": types.GetCustomersDocument,
@@ -71,6 +72,10 @@ const documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation bookEvent($bookEventInput: BookEventInput!) {\n    bookEvent(bookEventInput: $bookEventInput) {\n      id\n      end\n      start\n      title\n      notes\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation bookEvent($bookEventInput: BookEventInput!) {\n    bookEvent(bookEventInput: $bookEventInput) {\n      id\n      end\n      start\n      title\n      notes\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -170,7 +175,7 @@ export function graphql(source: "\n  mutation updateUserProfile(\n    $updateUse
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query booking($id: ID!, $day: String!) {\n    booking(id: $id, day: $day) {\n      id\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n"): (typeof documents)["\n  query booking($id: ID!, $day: String!) {\n    booking(id: $id, day: $day) {\n      id\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n"];
+export function graphql(source: "\n  query booking($id: ID!, $day: String) {\n    booking(id: $id, day: $day) {\n      id\n      day\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n"): (typeof documents)["\n  query booking($id: ID!, $day: String) {\n    booking(id: $id, day: $day) {\n      id\n      day\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

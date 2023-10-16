@@ -3,13 +3,36 @@ import { QueryResolvers, Booking } from "__generated__/server";
 
 import { surreal } from "server/surreal";
 
-export const booking: QueryResolvers["booking"] = async (_, { id, day }) => {
+function getFirstAvailableDay(schedule: number[]) {
+  const date = new Date();
+  let day = date.getDay() === 0 ? 6 : date.getDay() - 1;
+
+  while (!schedule.includes(day)) {
+    date.setDate(date.getDate() + 1);
+    day = date.getDay() === 0 ? 6 : date.getDay() - 1;
+  }
+
+  return date;
+}
+
+export const booking: QueryResolvers["booking"] = async (_, args) => {
   await surreal.signin({
     NS: "crm",
     DB: "crm",
     user: process.env.SURREAL_USER as string,
     pass: process.env.SURREAL_PASS as string,
   });
+
+  const [{ result: days }] = await surreal.query<[{ days: number[] }[]]>(
+    `SELECT days FROM settings WHERE workspace = ${args.id}.workspace`,
+  );
+
+  if (!days || !Array.isArray(days)) {
+    throw new GraphQLError("Internal server error...");
+  }
+
+  const day = args.day || getFirstAvailableDay(days[0].days);
+  const id = args.id;
 
   const [{ result }] = await surreal.query<[Booking[]]>(
     '\
@@ -18,6 +41,7 @@ export const booking: QueryResolvers["booking"] = async (_, { id, day }) => {
       name,\
       duration,\
       description,\
+      $day as day,\
       (SELECT VALUE\
         function() {\
           const $parent = await surrealdb.value("$parent");\

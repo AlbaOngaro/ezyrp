@@ -1,22 +1,30 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { CalendarIcon, ClockIcon } from "@radix-ui/react-icons";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { FormEvent, useMemo, useState } from "react";
-import { differenceInDays, format, isAfter, isSameDay } from "date-fns";
+import {
+  addHours,
+  differenceInDays,
+  format,
+  isAfter,
+  isSameDay,
+  subHours,
+  subMonths,
+} from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { Form } from "@radix-ui/react-form";
-import { z } from "zod";
 
 import { Container } from "components/atoms/container/Container";
 import { Card } from "components/atoms/card/Card";
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
 import { BOOKING } from "lib/queries/BOOKING";
 import { Button } from "components/atoms/button/Button";
-import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input/Input";
 import { TextArea } from "components/atoms/textarea/TextArea";
-import { bookEventInput } from "server/schema/booking";
+import { BOOK_EVENT } from "lib/mutations/BOOK_EVENT";
+import { BookEventInput } from "__generated__/graphql";
+import { EVENTS } from "lib/queries/EVENTS";
 
 type Props = {
   eventtype: string;
@@ -27,47 +35,60 @@ enum View {
   Details,
 }
 
-type BookEventFormData = z.infer<typeof bookEventInput>;
-
 export function BookingPage({ eventtype }: Props) {
   const today = useMemo(() => new Date(), []);
 
   const [view, setView] = useState(View.Time);
 
-  const events = useEvents();
+  const [loadBooking, { data, loading, error, refetch }] =
+    useLazyQuery(BOOKING);
+  const [bookEvent] = useMutation(BOOK_EVENT, {
+    refetchQueries: [EVENTS],
+  });
 
-  const { data, refetch } = useQuery(BOOKING, {
-    variables: {
-      id: eventtype,
-      day: today.toISOString(),
+  const {
+    control,
+    handleSubmit,
+    watch,
+    register,
+    formState: { isLoading, isSubmitting, isValid },
+  } = useForm<BookEventInput>({
+    defaultValues: async () => {
+      const { data } = await loadBooking({
+        variables: {
+          id: eventtype,
+        },
+      });
+
+      return {
+        type: eventtype,
+        start: data?.booking?.day as string,
+        guests: [],
+        notes: "",
+      };
     },
   });
 
-  const { control, handleSubmit, watch, register } = useForm<BookEventFormData>(
-    {
-      defaultValues: {
-        type: eventtype,
-        start: today.toISOString(),
-        guests: [],
-        notes: "",
-      },
-    },
-  );
-
   const onSubmit = (e: FormEvent<HTMLFormElement>) =>
-    handleSubmit(async (_data) => {
-      console.debug(_data);
-
+    handleSubmit(async (bookEventInput) => {
       try {
-        // await events.create({
-        //   variables: {
-        //     createEventsInput: [data],
-        //   },
-        // });
+        await bookEvent({
+          variables: {
+            bookEventInput,
+          },
+        });
       } catch (error: unknown) {
         console.error(error);
       }
     })(e);
+
+  if (loading || isLoading) {
+    return null;
+  }
+
+  if (error) {
+    return <p>{error.message}</p>;
+  }
 
   return (
     <Container className="flex justify-center items-center h-screen overflow-hidden pt-12 pb-16">
@@ -113,9 +134,16 @@ export function BookingPage({ eventtype }: Props) {
                           className="col-span-6"
                           date={new Date(value)}
                           onDayClick={(date) => {
-                            onChange(date.toISOString());
+                            const diff = new Date().getTimezoneOffset() / 60;
+
+                            const day =
+                              diff > 0
+                                ? addHours(date, diff)
+                                : subHours(date, diff);
+
+                            onChange(day.toISOString());
                             refetch({
-                              day: date.toISOString(),
+                              day: day.toISOString(),
                             });
                           }}
                           withNavigation
@@ -134,7 +162,9 @@ export function BookingPage({ eventtype }: Props) {
 
                             return !data?.booking?.days?.includes(day);
                           }}
-                          isPrevDisabled={(date) => !isAfter(date, today)}
+                          isPrevDisabled={(date) =>
+                            !isAfter(subMonths(date, 1), today)
+                          }
                         />
 
                         <div className="absolute row-start-2 col-start-8 col-end-13 h-full w-full overflow-y-auto">
@@ -151,25 +181,40 @@ export function BookingPage({ eventtype }: Props) {
                             }}
                           >
                             <ol>
-                              {data?.booking?.slots.map((item) => (
-                                <li
-                                  key={item}
-                                  className="grid grid-cols-2 gap-2 items-center"
-                                >
-                                  <RadioGroup.Item
-                                    value={item}
-                                    className="w-full text-center font-bold p-2 text-orange-400 border border-orange-400 rounded-sm cursor-pointer hover:bg-orange-50 focus:bg-orange-200 col-span-2  [&[data-state='checked']]:col-span-1 [&[data-state='checked']]:bg-orange-50 [&[data-state='checked']~button]:flex"
+                              {data?.booking?.slots.map((slot) => {
+                                const [hours, minutes] = slot
+                                  .split(":")
+                                  .map(Number);
+
+                                const item = `${(
+                                  hours -
+                                  new Date().getTimezoneOffset() / 60
+                                )
+                                  .toString()
+                                  .padStart(2, "0")}:${minutes
+                                  .toString()
+                                  .padEnd(2, "0")}`;
+
+                                return (
+                                  <li
+                                    key={slot}
+                                    className="grid grid-cols-2 gap-2 items-center"
                                   >
-                                    {item}
-                                  </RadioGroup.Item>
-                                  <Button
-                                    className="hidden items-center justify-center w-full h-full"
-                                    onClick={() => setView(View.Details)}
-                                  >
-                                    Next
-                                  </Button>
-                                </li>
-                              ))}
+                                    <RadioGroup.Item
+                                      value={slot}
+                                      className="w-full text-center font-bold p-2 text-orange-400 border border-orange-400 rounded-sm cursor-pointer hover:bg-orange-50 focus:bg-orange-200 col-span-2  [&[data-state='checked']]:col-span-1 [&[data-state='checked']]:bg-orange-50 [&[data-state='checked']~button]:flex"
+                                    >
+                                      {item}
+                                    </RadioGroup.Item>
+                                    <Button
+                                      className="hidden items-center justify-center w-full h-full"
+                                      onClick={() => setView(View.Details)}
+                                    >
+                                      Next
+                                    </Button>
+                                  </li>
+                                );
+                              })}
                             </ol>
                           </RadioGroup.Root>
                         </div>
@@ -198,7 +243,9 @@ export function BookingPage({ eventtype }: Props) {
                       >
                         Back
                       </Button>
-                      <Button>Schedule</Button>
+                      <Button disabled={!isValid} loading={isSubmitting}>
+                        Schedule
+                      </Button>
                     </footer>
                   </div>
                 );

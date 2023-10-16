@@ -247,49 +247,54 @@ export function Body() {
             >
               <Indicator />
 
-              {days.map((day, i) => (
-                <Fragment key={day.date.toISOString()}>
-                  {data?.settings?.days?.includes(i) ? (
-                    <>
+              {days.map((day, i) => {
+                const dayStartsAt =
+                  (data?.settings?.start || 0) -
+                  new Date().getTimezoneOffset() / 60;
+                const dayEndsAt =
+                  (data?.settings?.end || 0) -
+                  new Date().getTimezoneOffset() / 60;
+
+                return (
+                  <Fragment key={day.date.toISOString()}>
+                    {data?.settings?.days?.includes(i) ? (
+                      <>
+                        <div
+                          className="bg-gray-100/30 pointer-events-none"
+                          style={{
+                            gridColumnStart: i + 1,
+                            gridRow: `2 / ${dayStartsAt * 12 + 2}`,
+                          }}
+                        />
+
+                        <div
+                          className="bg-gray-100/30 pointer-events-none"
+                          style={{
+                            gridColumnStart: i + 1,
+                            gridRow: `${dayEndsAt * 12 + 2} / 288`,
+                          }}
+                        />
+                      </>
+                    ) : (
                       <div
                         className="bg-gray-100/30 pointer-events-none"
                         style={{
                           gridColumnStart: i + 1,
-                          gridRow: `2 / ${
-                            (data?.settings?.start || 0) * 12 + 2
-                          }`,
+                          gridRow: "2 / -1",
                         }}
                       />
+                    )}
 
-                      <div
-                        className="bg-gray-100/30 pointer-events-none"
-                        style={{
-                          gridColumnStart: i + 1,
-                          gridRow: `${
-                            (data?.settings?.end || 0) * 12 + 2
-                          } / 288`,
-                        }}
+                    {day.events.map((event) => (
+                      <EventItem
+                        key={event.id}
+                        event={event}
+                        currentDate={day.date}
                       />
-                    </>
-                  ) : (
-                    <div
-                      className="bg-gray-100/30 pointer-events-none"
-                      style={{
-                        gridColumnStart: i + 1,
-                        gridRow: "2 / -1",
-                      }}
-                    />
-                  )}
-
-                  {day.events.map((event) => (
-                    <EventItem
-                      key={event.id}
-                      event={event}
-                      currentDate={day.date}
-                    />
-                  ))}
-                </Fragment>
-              ))}
+                    ))}
+                  </Fragment>
+                );
+              })}
             </ol>
           </div>
         </div>

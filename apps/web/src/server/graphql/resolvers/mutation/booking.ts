@@ -18,6 +18,10 @@ export const bookEvent: MutationResolvers["bookEvent"] = async (_, args) => {
     type,
   );
 
+  if (!eventType) {
+    throw new GraphQLError("Not found");
+  }
+
   const [{ result: eventGuests }] = await surreal.query<[{ id: string }]>(`
 		${guests
       .map(
