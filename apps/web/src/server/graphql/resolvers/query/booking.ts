@@ -5,6 +5,7 @@ import { surreal } from "server/surreal";
 
 function getFirstAvailableDay(schedule: number[]) {
   const date = new Date();
+  date.setDate(date.getDate() + 1);
   let day = date.getDay() === 0 ? 6 : date.getDay() - 1;
 
   while (!schedule.includes(day)) {
