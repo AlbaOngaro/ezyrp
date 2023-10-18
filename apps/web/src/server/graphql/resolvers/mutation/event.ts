@@ -3,7 +3,7 @@ import { ZodError, z } from "zod";
 
 import { MutationResolvers } from "../../../../__generated__/server";
 
-import { createEventInput } from "../../../schema/event";
+import { createEventInput, updateEventInput } from "../../../schema/event";
 import { EventsService } from "../../../services/events";
 
 export const createEvents: MutationResolvers["createEvents"] = async (
@@ -12,7 +12,7 @@ export const createEvents: MutationResolvers["createEvents"] = async (
   { accessToken },
 ) => {
   const events = await z
-    .array(createEventInput.omit({ id: true }))
+    .array(createEventInput)
     .parseAsync(args.createEventsInput)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {
@@ -33,15 +33,7 @@ export const updateEvents: MutationResolvers["updateEvents"] = async (
   { accessToken },
 ) => {
   const events = await z
-    .array(
-      createEventInput.partial({
-        start: true,
-        end: true,
-        title: true,
-        variant: true,
-        guests: true,
-      }),
-    )
+    .array(updateEventInput)
     .parseAsync(args.updateEventsInput)
     .catch((errors) => {
       throw new GraphQLError("Invalid argument value", {

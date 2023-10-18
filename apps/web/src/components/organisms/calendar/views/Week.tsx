@@ -1,180 +1,20 @@
-import { add, format, isSameDay, isSameWeek, minutesToHours } from "date-fns";
-import { Fragment, MouseEvent } from "react";
-import { Anchor, Root, Trigger } from "@radix-ui/react-popover";
+import { format } from "date-fns";
+import { Fragment } from "react";
 
-import { getIsLongerThan24Hours, isSavedEvent } from "../utils";
 import { useCalendarContext } from "../Calendar";
 import { EventItem } from "../components/EventItem";
-import { EventPopover } from "../components/EventPopover";
 
 import { Indicator } from "../components/Indicator";
 import { twMerge } from "lib/utils/twMerge";
-import { convertRemToPx } from "lib/utils/convertRemToPx";
 
-import { CreateEventModal } from "components/organisms/create-event-modal/CreateEventModal";
-import { Event } from "__generated__/graphql";
 import { useSettings } from "hooks/useSettings";
-
-function EventItemWrapper({
-  event,
-  currentDate,
-}: {
-  event: Event;
-  currentDate: Date;
-}) {
-  const {
-    state: { days },
-    dispatch,
-  } = useCalendarContext();
-
-  const events = days.flatMap((day) => day.events);
-
-  const startDate = new Date(event.start);
-  const endDate = new Date(event.end);
-  const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
-
-  if (
-    isLongerThan24Hours &&
-    isSameWeek(currentDate, startDate, {
-      weekStartsOn: 1,
-    }) &&
-    !isSameDay(currentDate, startDate)
-  ) {
-    return null;
-  }
-
-  if (isSavedEvent(event)) {
-    return (
-      <Root>
-        <Trigger
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          asChild
-        >
-          <EventItem event={event} currentDate={currentDate} />
-        </Trigger>
-
-        <EventPopover event={event} />
-      </Root>
-    );
-  }
-
-  return (
-    <Root open>
-      <Anchor asChild>
-        <EventItem event={event} currentDate={currentDate} />
-      </Anchor>
-
-      <CreateEventModal
-        event={event}
-        onChange={(updated) =>
-          dispatch({
-            type: "SET_EVENTS",
-            payload: {
-              events: events.map((e) => {
-                if (e.id !== event.id) {
-                  return e;
-                }
-
-                return {
-                  ...updated,
-                  guests:
-                    updated?.guests?.map((guest) => ({
-                      id: guest as string,
-                      email: "",
-                      name: "",
-                      phone: "",
-                    })) || [],
-                };
-              }),
-            },
-          })
-        }
-        className="z-50"
-        setIsOpen={console.debug}
-        as="popover"
-        side="left"
-        align="start"
-        sideOffset={8}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      />
-    </Root>
-  );
-}
 
 export function Body() {
   const {
     state: { days },
-    dispatch,
   } = useCalendarContext();
 
   const { data } = useSettings();
-
-  const events = days.flatMap((day) => day.events);
-  const isCreatingNewEvent = events.some((event) => !isSavedEvent(event));
-
-  const handleGridClick = (e: MouseEvent<HTMLOListElement>) => {
-    if ((e.target as HTMLElement).id !== "grid") {
-      return;
-    }
-
-    if (isCreatingNewEvent) {
-      dispatch({
-        type: "SET_EVENTS",
-        payload: {
-          events: events.filter((event) => isSavedEvent(event)),
-        },
-      });
-      return;
-    }
-
-    const rect = (e.target as HTMLOListElement).getBoundingClientRect();
-    const firstRow = convertRemToPx(1.75);
-    const y = e.clientY - (rect.top + firstRow);
-
-    if (y < 0) {
-      return;
-    }
-
-    const row = (rect.height - firstRow) / 288;
-    const minutes = Math.floor(y / row) * 5;
-
-    const x = e.clientX - rect.left;
-    const col = rect.width / 7;
-    const weekDay = Math.floor(x / col);
-
-    const day = days[weekDay].date;
-
-    const start = new Date(
-      day.getFullYear(),
-      day.getMonth(),
-      day.getDate(),
-      minutesToHours(minutes),
-      minutes - minutesToHours(minutes) * 60,
-    );
-
-    dispatch({
-      type: "SET_EVENTS",
-      payload: {
-        events: [
-          ...events,
-          {
-            id: crypto.randomUUID(),
-            title: "",
-            start: start.toISOString(),
-            end: add(start, {
-              hours: 1,
-            }).toISOString(),
-            variant: "blue",
-            guests: [],
-          },
-        ],
-      },
-    });
-  };
 
   return (
     <div className="isolate flex flex-auto flex-col overflow-auto bg-white">
@@ -403,54 +243,58 @@ export function Body() {
               style={{
                 gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
               }}
-              onClick={handleGridClick}
               id="grid"
             >
               <Indicator />
 
-              {days.map((day, i) => (
-                <Fragment key={day.date.toISOString()}>
-                  {data?.settings?.days?.includes(i) ? (
-                    <>
+              {days.map((day, i) => {
+                const dayStartsAt =
+                  (data?.settings?.start || 0) -
+                  new Date().getTimezoneOffset() / 60;
+                const dayEndsAt =
+                  (data?.settings?.end || 0) -
+                  new Date().getTimezoneOffset() / 60;
+
+                return (
+                  <Fragment key={day.date.toISOString()}>
+                    {data?.settings?.days?.includes(i) ? (
+                      <>
+                        <div
+                          className="bg-gray-100/30 pointer-events-none"
+                          style={{
+                            gridColumnStart: i + 1,
+                            gridRow: `2 / ${dayStartsAt * 12 + 2}`,
+                          }}
+                        />
+
+                        <div
+                          className="bg-gray-100/30 pointer-events-none"
+                          style={{
+                            gridColumnStart: i + 1,
+                            gridRow: `${dayEndsAt * 12 + 2} / 288`,
+                          }}
+                        />
+                      </>
+                    ) : (
                       <div
                         className="bg-gray-100/30 pointer-events-none"
                         style={{
                           gridColumnStart: i + 1,
-                          gridRow: `2 / ${
-                            (data?.settings?.start || 0) * 12 + 2
-                          }`,
+                          gridRow: "2 / -1",
                         }}
                       />
+                    )}
 
-                      <div
-                        className="bg-gray-100/30 pointer-events-none"
-                        style={{
-                          gridColumnStart: i + 1,
-                          gridRow: `${
-                            (data?.settings?.end || 0) * 12 + 2
-                          } / 288`,
-                        }}
+                    {day.events.map((event) => (
+                      <EventItem
+                        key={event.id}
+                        event={event}
+                        currentDate={day.date}
                       />
-                    </>
-                  ) : (
-                    <div
-                      className="bg-gray-100/30 pointer-events-none"
-                      style={{
-                        gridColumnStart: i + 1,
-                        gridRow: "2 / -1",
-                      }}
-                    />
-                  )}
-
-                  {day.events.map((event) => (
-                    <EventItemWrapper
-                      key={event.id}
-                      event={event}
-                      currentDate={day.date}
-                    />
-                  ))}
-                </Fragment>
-              ))}
+                    ))}
+                  </Fragment>
+                );
+              })}
             </ol>
           </div>
         </div>

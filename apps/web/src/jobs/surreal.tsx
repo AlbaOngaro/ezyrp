@@ -6,6 +6,7 @@ import { render } from "@react-email/render";
 import { SurrealTrigger } from "@nimblerp/surreal-trigger";
 import { Invite, NewInvoice } from "@nimblerp/emails";
 
+import { formatISO } from "date-fns";
 import { client } from "lib/trigger";
 
 import { inputCreateInvoiceArgs } from "server/schema/invoice";
@@ -26,7 +27,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordCreated<z.infer<typeof createEventInput>>({
     table: "event",
   }),
@@ -40,7 +41,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordCreated<z.infer<typeof inputCreateInvoiceArgs>>({
     table: "invoice",
   }),
@@ -96,7 +97,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordUpdated<z.infer<typeof item>>({
     table: "item",
   }),
@@ -150,7 +151,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordUpdated<InviteData>({
     table: "invite",
   }),
@@ -189,7 +190,7 @@ client.defineJob({
 
       await io.surreal.runTask("invite.sent", async (client) => {
         await client.merge(id, {
-          sent_at: new Date().toISOString(),
+          sent_at: formatISO(new Date()),
         });
       });
     }
@@ -203,7 +204,7 @@ client.defineJob({
   integrations: {
     surreal,
   },
-  enabled: true,
+  enabled: false,
   trigger: surreal.onRecordDeleted({
     table: "workspace",
   }),

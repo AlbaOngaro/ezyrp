@@ -13,8 +13,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  mutation bookEvent($bookEventInput: BookEventInput!) {\n    bookEvent(bookEventInput: $bookEventInput) {\n      id\n      end\n      start\n      title\n      notes\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.BookEventDocument,
     "\n  mutation createCustomers($createCustomerArgs: [InputCreateCustomerArgs!]!) {\n    createCustomers(createCustomerArgs: $createCustomerArgs) {\n      id\n      email\n      name\n    }\n  }\n": types.CreateCustomersDocument,
-    "\n  mutation createEvents($createEventsInput: [InputCreateEventsArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.CreateEventsDocument,
+    "\n  mutation createEvents($createEventsInput: [InputCreateEventArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.CreateEventsDocument,
+    "\n  mutation createEventTypes(\n    $createEventTypesInput: [InputCreateEventTypeArgs!]!\n  ) {\n    createEventTypes(createEventTypesInput: $createEventTypesInput) {\n      id\n      name\n      variant\n      description\n    }\n  }\n": types.CreateEventTypesDocument,
     "\n  mutation createInvites($createInviteArgs: [InputCreateInviteArgs!]!) {\n    createInvites(createInviteArgs: $createInviteArgs) {\n      id\n      email\n      sent_at\n    }\n  }\n": types.CreateInvitesDocument,
     "\n  mutation createInvoices($createInvoicesArgs: [InputCreateInvoicesArgs!]!) {\n    createInvoices(createInvoicesArgs: $createInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n": types.CreateInvoicesDocument,
     "\n  mutation createItems($createItemsInput: [InputCreateItems!]!) {\n    createItems(createItemsInput: $createItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n": types.CreateItemsDocument,
@@ -22,6 +24,7 @@ const documents = {
     "\n  mutation deleteAccount {\n    deleteAccount\n  }\n": types.DeleteAccountDocument,
     "\n  mutation deleteCustomers($deleteCustomerArgs: [ID!]!) {\n    deleteCustomers(deleteCustomerArgs: $deleteCustomerArgs)\n  }\n": types.DeleteCustomersDocument,
     "\n  mutation deleteEvents($deleteEventsInput: [ID!]!) {\n    deleteEvents(deleteEventsInput: $deleteEventsInput)\n  }\n": types.DeleteEventsDocument,
+    "\n  mutation deleteEventTypes($ids: [ID!]!) {\n    deleteEventTypes(ids: $ids)\n  }\n": types.DeleteEventTypesDocument,
     "\n  mutation deleteInvoices($deleteInvoicesArgs: [ID!]!) {\n    deleteInvoices(deleteInvoicesArgs: $deleteInvoicesArgs)\n  }\n": types.DeleteInvoicesDocument,
     "\n  mutation deleteItems($deleteItemsInput: [ID!]!) {\n    deleteItems(deleteItemsInput: $deleteItemsInput)\n  }\n": types.DeleteItemsDocument,
     "\n  mutation login($credentials: InputLoginCredentials!) {\n    login(credentials: $credentials) {\n      id\n      email\n      password\n      username\n      profile {\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.LoginDocument,
@@ -29,16 +32,20 @@ const documents = {
     "\n  mutation register($credentials: InputRegisterCredentials!) {\n    register(credentials: $credentials) {\n      id\n      email\n      password\n      username\n      profile {\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.RegisterDocument,
     "\n  mutation resetPassword($credentials: InputResetPasswordCredentials!) {\n    resetPassword(credentials: $credentials) {\n      id\n      email\n      password\n      username\n      profile {\n        photoUrl\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.ResetPasswordDocument,
     "\n  mutation updateCustomers($updateCustomerArgs: [InputUpdateCustomerArgs!]!) {\n    updateCustomers(updateCustomerArgs: $updateCustomerArgs) {\n      id\n      email\n      name\n    }\n  }\n": types.UpdateCustomersDocument,
-    "\n  mutation updateEvents($updateEventsInput: [InputUpdateEventsArgs!]!) {\n    updateEvents(updateEventsInput: $updateEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.UpdateEventsDocument,
+    "\n  mutation updateEvents($updateEventsInput: [InputUpdateEventsArgs!]!) {\n    updateEvents(updateEventsInput: $updateEventsInput) {\n      id\n      start\n      end\n      title\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.UpdateEventsDocument,
+    "\n  mutation updateEventTypes(\n    $updateEventTypesInput: [InputUpdateEventTypeArgs!]!\n  ) {\n    updateEventTypes(updateEventTypesInput: $updateEventTypesInput) {\n      id\n      name\n      description\n      variant\n      duration\n    }\n  }\n": types.UpdateEventTypesDocument,
     "\n  mutation updateInvoices($updateInvoicesArgs: [InputUpdateInvoicesArgs!]!) {\n    updateInvoices(updateInvoicesArgs: $updateInvoicesArgs) {\n      id\n      customer {\n        id\n        email\n        name\n      }\n      description\n      status\n      items {\n        name\n        quantity\n        price\n      }\n      amount\n      due\n      emitted\n    }\n  }\n": types.UpdateInvoicesDocument,
     "\n  mutation updateItems($updateItemsInput: [InputUpdateItems!]!) {\n    updateItems(updateItemsInput: $updateItemsInput) {\n      id\n      name\n      description\n      price\n      quantity\n    }\n  }\n": types.UpdateItemsDocument,
     "\n  mutation updateSettings($updateSettingsInput: InputUpdateSettings) {\n    updateSettings(updateSettingsInput: $updateSettingsInput) {\n      start\n      end\n      days\n    }\n  }\n": types.UpdateSettingsDocument,
     "\n  mutation updateUserProfile(\n    $updateUserProfileArgs: InputUpdateUserProfileArgs!\n  ) {\n    updateUserProfile(updateUserProfileArgs: $updateUserProfileArgs) {\n      id\n      email\n      password\n      username\n      profile {\n        photoUrl\n        address\n        city\n        code\n        country\n        name\n      }\n    }\n  }\n": types.UpdateUserProfileDocument,
+    "\n  query booking($id: ID!, $day: String) {\n    booking(id: $id, day: $day) {\n      id\n      day\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n": types.BookingDocument,
     "\n  query countries {\n    countries {\n      name {\n        common\n        official\n      }\n    }\n  }\n": types.CountriesDocument,
     "\n  query getCustomer($id: ID!) {\n    customer(id: $id) {\n      id\n      email\n      name\n      photoUrl\n      address\n      city\n      code\n      country\n    }\n  }\n": types.GetCustomerDocument,
     "\n  query getCustomers($filters: InputCustomersFilters) {\n    customers(filters: $filters) {\n      total\n      results {\n        id\n        email\n        name\n        photoUrl\n        address\n        city\n        code\n        country\n      }\n    }\n  }\n": types.GetCustomersDocument,
     "\n  query customersWithLastInvoice {\n    customers(filters: { limit: 3 }, orderBy: { lastInvoice: desc }) {\n      results {\n        id\n        name\n        email\n        photoUrl\n        lastInvoice {\n          status\n          amount\n          emitted\n        }\n      }\n    }\n  }\n": types.CustomersWithLastInvoiceDocument,
-    "\n  query events {\n    events {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.EventsDocument,
+    "\n  query events {\n    events {\n      id\n      start\n      title\n      variant\n      notes\n      end\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n": types.EventsDocument,
+    "\n  query eventType($id: ID!) {\n    eventType(id: $id) {\n      id\n      name\n      description\n      variant\n      duration\n    }\n  }\n": types.EventTypeDocument,
+    "\n  query eventTypes {\n    eventTypes {\n      id\n      name\n      variant\n      duration\n      description\n    }\n  }\n": types.EventTypesDocument,
     "\n  query getCloudinarySignature($folder: String = \"nimblerp\") {\n    getCloudinarySignature(folder: $folder) {\n      timestamp\n      signature\n      cloudname\n      apiKey\n      tags\n    }\n  }\n": types.GetCloudinarySignatureDocument,
     "\n  query invites {\n    invites {\n      id\n      email\n      sent_at\n    }\n  }\n": types.InvitesDocument,
     "\n  query invoice($id: ID!) {\n    invoice(id: $id) {\n      id\n      status\n      description\n      due\n      emitted\n      amount\n      items {\n        name\n        price\n        quantity\n      }\n      customer {\n        id\n        name\n        email\n      }\n    }\n  }\n": types.InvoiceDocument,
@@ -68,11 +75,19 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  mutation bookEvent($bookEventInput: BookEventInput!) {\n    bookEvent(bookEventInput: $bookEventInput) {\n      id\n      end\n      start\n      title\n      notes\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation bookEvent($bookEventInput: BookEventInput!) {\n    bookEvent(bookEventInput: $bookEventInput) {\n      id\n      end\n      start\n      title\n      notes\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation createCustomers($createCustomerArgs: [InputCreateCustomerArgs!]!) {\n    createCustomers(createCustomerArgs: $createCustomerArgs) {\n      id\n      email\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation createCustomers($createCustomerArgs: [InputCreateCustomerArgs!]!) {\n    createCustomers(createCustomerArgs: $createCustomerArgs) {\n      id\n      email\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation createEvents($createEventsInput: [InputCreateEventsArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation createEvents($createEventsInput: [InputCreateEventsArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  mutation createEvents($createEventsInput: [InputCreateEventArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation createEvents($createEventsInput: [InputCreateEventArgs!]!) {\n    createEvents(createEventsInput: $createEventsInput) {\n      id\n      start\n      end\n      title\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation createEventTypes(\n    $createEventTypesInput: [InputCreateEventTypeArgs!]!\n  ) {\n    createEventTypes(createEventTypesInput: $createEventTypesInput) {\n      id\n      name\n      variant\n      description\n    }\n  }\n"): (typeof documents)["\n  mutation createEventTypes(\n    $createEventTypesInput: [InputCreateEventTypeArgs!]!\n  ) {\n    createEventTypes(createEventTypesInput: $createEventTypesInput) {\n      id\n      name\n      variant\n      description\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -104,6 +119,10 @@ export function graphql(source: "\n  mutation deleteEvents($deleteEventsInput: [
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  mutation deleteEventTypes($ids: [ID!]!) {\n    deleteEventTypes(ids: $ids)\n  }\n"): (typeof documents)["\n  mutation deleteEventTypes($ids: [ID!]!) {\n    deleteEventTypes(ids: $ids)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation deleteInvoices($deleteInvoicesArgs: [ID!]!) {\n    deleteInvoices(deleteInvoicesArgs: $deleteInvoicesArgs)\n  }\n"): (typeof documents)["\n  mutation deleteInvoices($deleteInvoicesArgs: [ID!]!) {\n    deleteInvoices(deleteInvoicesArgs: $deleteInvoicesArgs)\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -132,7 +151,11 @@ export function graphql(source: "\n  mutation updateCustomers($updateCustomerArg
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation updateEvents($updateEventsInput: [InputUpdateEventsArgs!]!) {\n    updateEvents(updateEventsInput: $updateEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation updateEvents($updateEventsInput: [InputUpdateEventsArgs!]!) {\n    updateEvents(updateEventsInput: $updateEventsInput) {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  mutation updateEvents($updateEventsInput: [InputUpdateEventsArgs!]!) {\n    updateEvents(updateEventsInput: $updateEventsInput) {\n      id\n      start\n      end\n      title\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation updateEvents($updateEventsInput: [InputUpdateEventsArgs!]!) {\n    updateEvents(updateEventsInput: $updateEventsInput) {\n      id\n      start\n      end\n      title\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation updateEventTypes(\n    $updateEventTypesInput: [InputUpdateEventTypeArgs!]!\n  ) {\n    updateEventTypes(updateEventTypesInput: $updateEventTypesInput) {\n      id\n      name\n      description\n      variant\n      duration\n    }\n  }\n"): (typeof documents)["\n  mutation updateEventTypes(\n    $updateEventTypesInput: [InputUpdateEventTypeArgs!]!\n  ) {\n    updateEventTypes(updateEventTypesInput: $updateEventTypesInput) {\n      id\n      name\n      description\n      variant\n      duration\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -152,6 +175,10 @@ export function graphql(source: "\n  mutation updateUserProfile(\n    $updateUse
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query booking($id: ID!, $day: String) {\n    booking(id: $id, day: $day) {\n      id\n      day\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n"): (typeof documents)["\n  query booking($id: ID!, $day: String) {\n    booking(id: $id, day: $day) {\n      id\n      day\n      days\n      name\n      slots\n      duration\n      description\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query countries {\n    countries {\n      name {\n        common\n        official\n      }\n    }\n  }\n"): (typeof documents)["\n  query countries {\n    countries {\n      name {\n        common\n        official\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -168,7 +195,15 @@ export function graphql(source: "\n  query customersWithLastInvoice {\n    custo
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query events {\n    events {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  query events {\n    events {\n      id\n      start\n      end\n      title\n      variant\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query events {\n    events {\n      id\n      start\n      title\n      variant\n      notes\n      end\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  query events {\n    events {\n      id\n      start\n      title\n      variant\n      notes\n      end\n      guests {\n        id\n        email\n        name\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query eventType($id: ID!) {\n    eventType(id: $id) {\n      id\n      name\n      description\n      variant\n      duration\n    }\n  }\n"): (typeof documents)["\n  query eventType($id: ID!) {\n    eventType(id: $id) {\n      id\n      name\n      description\n      variant\n      duration\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query eventTypes {\n    eventTypes {\n      id\n      name\n      variant\n      duration\n      description\n    }\n  }\n"): (typeof documents)["\n  query eventTypes {\n    eventTypes {\n      id\n      name\n      variant\n      duration\n      description\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

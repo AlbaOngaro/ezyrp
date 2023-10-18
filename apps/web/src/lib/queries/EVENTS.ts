@@ -5,9 +5,10 @@ export const EVENTS = graphql(`
     events {
       id
       start
-      end
       title
       variant
+      notes
+      end
       guests {
         id
         email

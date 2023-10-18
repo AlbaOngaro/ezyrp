@@ -15,8 +15,13 @@ export const typeDefs = gql`
     invoice(id: ID!): Invoice!
     invoices(filters: InputInvoicesFilters): PagedInvoicesResponse!
 
+    eventType(id: ID!): EventType!
+    eventTypes: [EventType!]!
+
     event(id: ID!): Event!
     events: [Event!]!
+
+    booking(id: ID!, day: String): Booking
 
     item(id: ID!): Item!
     items(filters: InputItemsFilters): PagedItemsResponse!
@@ -50,9 +55,19 @@ export const typeDefs = gql`
     updateInvoices(updateInvoicesArgs: [InputUpdateInvoicesArgs!]!): [Invoice]
     deleteInvoices(deleteInvoicesArgs: [ID!]!): [ID]
 
-    createEvents(createEventsInput: [InputCreateEventsArgs!]!): [Event]
+    createEventTypes(
+      createEventTypesInput: [InputCreateEventTypeArgs!]!
+    ): [EventType!]!
+    updateEventTypes(
+      updateEventTypesInput: [InputUpdateEventTypeArgs!]!
+    ): [EventType!]!
+    deleteEventTypes(ids: [ID!]!): [ID!]!
+
+    createEvents(createEventsInput: [InputCreateEventArgs!]!): [Event]
     updateEvents(updateEventsInput: [InputUpdateEventsArgs!]!): [Event]
     deleteEvents(deleteEventsInput: [ID!]!): [ID]
+
+    bookEvent(bookEventInput: BookEventInput!): Event!
 
     createItems(createItemsInput: [InputCreateItems!]!): [Item]
     updateItems(updateItemsInput: [InputUpdateItems!]!): [Item]
@@ -143,10 +158,10 @@ export const typeDefs = gql`
   input InputCreateCustomerArgs {
     email: String!
     name: String!
-    address: String!
-    city: String!
-    code: String!
-    country: String!
+    address: String
+    city: String
+    code: String
+    country: String
     photoUrl: String
   }
 
@@ -172,10 +187,10 @@ export const typeDefs = gql`
     email: String!
     name: String!
     photoUrl: String
-    address: String!
-    city: String!
-    code: String!
-    country: String!
+    address: String
+    city: String
+    code: String
+    country: String
     lastInvoice: LastInvoice
   }
 
@@ -227,11 +242,10 @@ export const typeDefs = gql`
     emitted: String!
   }
 
-  input InputCreateEventsArgs {
+  input InputCreateEventArgs {
     start: String!
-    end: String!
-    title: String!
-    variant: String!
+    type: ID!
+    notes: String
     guests: [String]
   }
 
@@ -250,14 +264,63 @@ export const typeDefs = gql`
     name: String!
   }
 
+  input InputCreateEventTypeArgs {
+    name: String!
+    variant: String!
+    "Event duration, in minutes"
+    duration: Int!
+    description: String
+  }
+
+  input InputUpdateEventTypeArgs {
+    id: ID!
+    name: String
+    variant: String
+    "Event duration, in minutes"
+    duration: Int
+    description: String
+  }
+
+  type EventType {
+    id: ID!
+    name: String!
+    description: String
+    variant: String!
+    "Event duration, in minutes"
+    duration: Int!
+  }
+
   type Event {
     id: ID!
-    start: String!
     end: String!
+    start: String!
     title: String!
+    notes: String
     variant: String!
     guests: [Guest!]!
+  }
+
+  input BookGuestInput {
+    name: String!
+    email: String!
+  }
+
+  input BookEventInput {
+    type: ID!
+    start: String!
     notes: String
+    guests: [BookGuestInput!]!
+  }
+
+  type Booking {
+    id: ID!
+    name: String!
+    duration: Int!
+    description: String
+    slots: [String!]!
+    "Working days. 0 is monday."
+    days: [Int!]!
+    day: String!
   }
 
   type CountryName {

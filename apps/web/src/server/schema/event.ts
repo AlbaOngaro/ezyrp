@@ -12,7 +12,7 @@ export const variants: readonly [string, ...string[]] = [
   "cyan",
   "sky",
   "blue",
-  "orange",
+  "indigo",
   "violet",
   "purple",
   "fuchsia",
@@ -22,18 +22,23 @@ export const variants: readonly [string, ...string[]] = [
 
 export const event = z.object({
   id: z.string(),
-  start: z.string().datetime(),
-  end: z.string().datetime(),
+  end: z.string(),
+  start: z.string(),
   title: z.string(),
-  variant: z.enum(variants).default("blue"),
+  notes: z.string().optional().nullable(),
+  variant: z.string(),
   guests: z.array(customer.omit({ lastInvoice: true })).default([]),
 });
 
 export const createEventInput = z.object({
-  id: z.string(),
-  start: z.string().datetime(),
-  end: z.string().datetime(),
-  title: z.string(),
-  variant: z.enum(variants).default("blue"),
+  type: z.string(),
+  start: z.string(),
   guests: z.array(z.string()),
+});
+
+export const updateEventInput = z.object({
+  id: z.string(),
+  type: z.string().optional(),
+  start: z.string().optional(),
+  guests: z.array(z.string()).optional(),
 });

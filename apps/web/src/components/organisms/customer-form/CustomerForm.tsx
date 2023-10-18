@@ -119,12 +119,12 @@ export function CustomerForm() {
         rules={{
           required: true,
         }}
-        render={({ field: { value, onChange } }) => (
+        render={({ field: { value = "", onChange } }) => (
           <Select
             className="col-span-4"
             name="country"
             label="Country"
-            value={{ label: value, value }}
+            value={{ label: value || "", value: value || "" }}
             options={(data?.countries || []).map((country) => ({
               label: country.name.common,
               value: country.name.common,

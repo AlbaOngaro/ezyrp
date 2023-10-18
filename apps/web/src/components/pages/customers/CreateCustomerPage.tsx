@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 
 import { useRouter } from "next/router";
-import { Customer } from "__generated__/graphql";
+import { Customer, InputCreateCustomerArgs } from "__generated__/graphql";
 
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
@@ -55,7 +55,7 @@ export function CreateCustomerPage() {
                 {
                   ...data,
                   photoUrl,
-                },
+                } as InputCreateCustomerArgs,
               ],
             },
           });
@@ -70,7 +70,7 @@ export function CreateCustomerPage() {
 
       await customers.create({
         variables: {
-          createCustomerArgs: [data],
+          createCustomerArgs: [data as InputCreateCustomerArgs],
         },
       });
 

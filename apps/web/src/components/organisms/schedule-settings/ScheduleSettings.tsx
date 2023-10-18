@@ -76,13 +76,21 @@ export function ScheduleSettings() {
               name="start"
               label="Work day starts at"
               // @ts-ignore
-              value={{
-                value: value || 0,
-                label: HOURS.find((h) => h.value === value)?.label || "",
-              }}
-              // @ts-ignore
               options={HOURS}
-              onChange={(option) => onChange(option?.value)}
+              // @ts-ignore
+              value={{
+                value: value - new Date().getTimezoneOffset() / 60 || 0,
+                label:
+                  HOURS.find(
+                    (h) =>
+                      h.value === value - new Date().getTimezoneOffset() / 60,
+                  )?.label || "",
+              }}
+              onChange={(option) =>
+                onChange(
+                  Number(option?.value) + new Date().getTimezoneOffset() / 60,
+                )
+              }
             />
           )}
         />
@@ -98,13 +106,21 @@ export function ScheduleSettings() {
               name="end"
               label="Work day ends at"
               // @ts-ignore
-              value={{
-                value: value || 0,
-                label: HOURS.find((h) => h.value === value)?.label || "",
-              }}
-              // @ts-ignore
               options={HOURS}
-              onChange={(option) => onChange(option?.value)}
+              // @ts-ignore
+              value={{
+                value: value - new Date().getTimezoneOffset() / 60 || 0,
+                label:
+                  HOURS.find(
+                    (h) =>
+                      h.value === value - new Date().getTimezoneOffset() / 60,
+                  )?.label || "",
+              }}
+              onChange={(option) =>
+                onChange(
+                  Number(option?.value) + new Date().getTimezoneOffset() / 60,
+                )
+              }
             />
           )}
         />

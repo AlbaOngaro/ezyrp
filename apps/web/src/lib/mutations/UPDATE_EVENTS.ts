@@ -7,7 +7,6 @@ export const UPDATE_EVENTS = graphql(`
       start
       end
       title
-      variant
       guests {
         id
         email

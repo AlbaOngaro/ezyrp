@@ -9,10 +9,12 @@ DEFINE EVENT create_user_profile ON TABLE user WHEN $event = "CREATE" THEN (
 REMOVE EVENT customer_created ON TABLE customer;
 
 DEFINE EVENT set_customer_workspace ON TABLE customer WHEN $event = "CREATE" THEN {
-	UPDATE customer MERGE {
-		workspace: type::string($auth.workspace),
-		created_at: time::now()
-	} WHERE id = $after.id;
+	IF $auth.workspace THEN {
+		UPDATE customer MERGE {
+			workspace: type::string($auth.workspace),
+			created_at: time::now()
+		} WHERE id = $after.id;
+	} END;
 };
 
 REMOVE EVENT invoice_created ON TABLE invoice;
@@ -27,10 +29,12 @@ DEFINE EVENT set_invoice_wrorkspace ON TABLE invoice WHEN $event = "CREATE" THEN
 REMOVE EVENT event_created ON TABLE event;
 
 DEFINE EVENT set_event_workspace ON TABLE event WHEN $event = "CREATE" THEN {
-	UPDATE event MERGE {
-		workspace: type::string($auth.workspace),
-		created_at: time::now()
-	} WHERE id = $after.id;
+	IF $auth.workspace THEN {
+		UPDATE event MERGE {
+			workspace: type::string($auth.workspace),
+			created_at: time::now()
+		} WHERE id = $after.id;
+	} END;
 };
 
 REMOVE EVENT item_created ON TABLE item;

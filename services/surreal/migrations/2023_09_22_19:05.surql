@@ -18,7 +18,7 @@ SIGNUP (
 	}
 )
 SIGNIN (
-	SELECT * FROM user WHERE email = $email AND crypto::argon2::compare(password, $password)
+	SELECT *, type::string(workspace) as workspace FROM user WHERE email = $email AND crypto::argon2::compare(password, $password)
 );
 
 -- ------------------------------
@@ -128,7 +128,7 @@ DEFINE TABLE profile SCHEMALESS PERMISSIONS FOR select, update WHERE user = $aut
 -- TABLE: customer
 -- ------------------------------
 
-DEFINE TABLE customer SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = type::string($auth.workspace), FOR create WHERE true;
+DEFINE TABLE customer SCHEMALESS PERMISSIONS FOR select, update, delete WHERE type::string(workspace) = type::string($auth.workspace) OR type::string(workspace) = $auth.workspace, FOR create WHERE true;
 
 -- ------------------------------
 -- TABLE: invoice
@@ -140,7 +140,7 @@ DEFINE TABLE invoice SCHEMALESS PERMISSIONS FOR select, update, delete WHERE wor
 -- TABLE: event
 -- ------------------------------
 
-DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE workspace = type::string($auth.workspace), FOR create WHERE true;
+DEFINE TABLE event SCHEMALESS PERMISSIONS FOR select, update, delete WHERE type::string(workspace) = type::string($auth.workspace) OR type::string(workspace) = $auth.workspace, FOR create WHERE true;
 
 -- ------------------------------
 -- TABLE: item
