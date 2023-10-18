@@ -158,10 +158,10 @@ export const typeDefs = gql`
   input InputCreateCustomerArgs {
     email: String!
     name: String!
-    address: String!
-    city: String!
-    code: String!
-    country: String!
+    address: String
+    city: String
+    code: String
+    country: String
     photoUrl: String
   }
 

@@ -37,7 +37,7 @@ export const createEventInput = z.object({
 });
 
 export const updateEventInput = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   type: z.string().optional(),
   start: z.string().optional(),
   guests: z.array(z.string()).optional(),

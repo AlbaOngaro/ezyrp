@@ -103,10 +103,10 @@ export type Guest = {
 };
 
 export type InputCreateCustomerArgs = {
-  address: Scalars['String']['input'];
-  city: Scalars['String']['input'];
-  code: Scalars['String']['input'];
-  country: Scalars['String']['input'];
+  address?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   photoUrl?: InputMaybe<Scalars['String']['input']>;
