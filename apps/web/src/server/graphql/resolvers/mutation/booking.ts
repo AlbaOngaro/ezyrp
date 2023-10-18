@@ -12,7 +12,12 @@ export const bookEvent: MutationResolvers["bookEvent"] = async (_, args) => {
     pass: process.env.SURREAL_PASS as string,
   });
 
-  const { type, start, guests } = bookEventInput.parse(args.bookEventInput);
+  const {
+    type,
+    start,
+    guests,
+    notes = "",
+  } = bookEventInput.parse(args.bookEventInput);
 
   const [eventType] = await surreal.select<EventType & { workspace: string }>(
     type,
@@ -44,8 +49,11 @@ export const bookEvent: MutationResolvers["bookEvent"] = async (_, args) => {
       type: eventType.id,
       start,
       workspace: eventType.workspace,
+      notes,
     })}
 	`);
+
+  console.debug(event);
 
   if (!event || !Array.isArray(event)) {
     throw new GraphQLError("Not found");

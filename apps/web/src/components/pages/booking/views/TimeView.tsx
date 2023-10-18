@@ -1,10 +1,8 @@
 import {
-  addHours,
   differenceInDays,
   format,
   isAfter,
   isSameDay,
-  subHours,
   subMonths,
 } from "date-fns";
 import { Controller, useFormContext } from "react-hook-form";
@@ -27,8 +25,6 @@ export function TimeView() {
   const { today, setView } = useBookingContext();
   const { control } = useFormContext();
 
-  console.debug(data);
-
   return (
     <Controller
       control={control}
@@ -50,14 +46,9 @@ export function TimeView() {
             className="col-span-6"
             date={new Date(value)}
             onDayClick={(date) => {
-              const diff = new Date().getTimezoneOffset() / 60;
-
-              const day =
-                diff > 0 ? addHours(date, diff) : subHours(date, diff);
-
-              onChange(day.toISOString());
+              onChange(date.toISOString());
               refetch({
-                day: day.toISOString(),
+                day: date.toISOString(),
               });
             }}
             withNavigation

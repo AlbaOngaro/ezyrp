@@ -13,7 +13,7 @@ function getFirstAvailableDay(schedule: number[]) {
     day = date.getDay() === 0 ? 6 : date.getDay() - 1;
   }
 
-  return date;
+  return date.toISOString();
 }
 
 export const booking: QueryResolvers["booking"] = async (_, args) => {
@@ -35,6 +35,8 @@ export const booking: QueryResolvers["booking"] = async (_, args) => {
   const day = args.day || getFirstAvailableDay(days[0].days);
   const id = args.id;
 
+  console.debug("day", day);
+
   const [{ result }] = await surreal.query<[Booking[]]>(
     '\
     SELECT \
@@ -50,7 +52,7 @@ export const booking: QueryResolvers["booking"] = async (_, args) => {
           return Array.from({ length: (this.end - this.start) * (60 / $parent.duration)}, (_, i) => {\
               const date = new Date();\
               date.setHours(this.start, $parent.duration * i);\
-              const hours = date.getHours();\
+              const hours = date.getHours().toString().padStart(2, "0");\
               const minutes = date.getMinutes().toString().padStart(2, "0");\
               return `${hours}:${minutes}`;\
             })\

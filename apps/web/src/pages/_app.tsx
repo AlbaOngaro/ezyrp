@@ -9,6 +9,7 @@ import { GraphQLError } from "graphql";
 
 import "styles/globals.css";
 
+import Head from "next/head";
 import { getClient } from "../lib/apollo/client";
 
 import { Toast } from "../components/atoms/toast/Toast";
@@ -49,6 +50,10 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <Provider swipeDirection="right" duration={Infinity}>
+      <Head>
+        <title>Nimblerp</title>
+      </Head>
+
       <ApolloProvider client={client}>
         <PushProvider>{getLayout(<Component {...pageProps} />)}</PushProvider>
       </ApolloProvider>
