@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev:next": "next dev",
+    "dev:trigger": "trigger-cli dev",
     "dev": "concurrently -n next,trigger \"next dev\" \"trigger-cli dev\"",
     "build": "next build",
     "start": "next start",
@@ -20,6 +22,7 @@
     "@hookform/resolvers": "3.3.1",
     "@nimblerp/emails": "*",
     "@nimblerp/surreal-trigger": "*",
+    "@nimblerp/railway-trigger": "*",
     "@radix-ui/react-alert-dialog": "1.0.4",
     "@radix-ui/react-context-menu": "2.1.4",
     "@radix-ui/react-dialog": "1.0.4",
