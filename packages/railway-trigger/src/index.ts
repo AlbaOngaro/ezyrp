@@ -35,7 +35,7 @@ export type TriggerParams = { projectId: string };
 function createTrigger<TEventSpecification extends RailwayEvents>(
   source: ReturnType<typeof createWebhookEventSource>,
   event: TEventSpecification,
-  params: TriggerParams
+  params: TriggerParams,
 ): CreateTriggersResult<TEventSpecification> {
   return new ExternalSourceTrigger({
     event,
@@ -70,7 +70,7 @@ async function webhookHandler(event: HandlerEvent<"HTTP">, logger: Logger) {
 }
 
 function createWebhookEventSource(
-  integration: RailwayTrigger
+  integration: RailwayTrigger,
 ): ExternalSource<RailwayTrigger, TriggerParams, "HTTP", {}> {
   return new ExternalSource("HTTP", {
     id: "railway.webhook",
@@ -86,7 +86,7 @@ function createWebhookEventSource(
 
       try {
         const allEvents = Array.from(
-          new Set([...options.event.desired, ...options.event.missing])
+          new Set([...options.event.desired, ...options.event.missing]),
         );
 
         await io.integration.webhookEndpoints.create("railway.webhook", {
@@ -148,10 +148,10 @@ export class RailwayTrigger implements TriggerIntegration {
     callback: (
       client: ApolloClient<NormalizedCacheObject>,
       task: IOTask,
-      io: IO
+      io: IO,
     ) => Promise<TResult>,
     options?: RunTaskOptions,
-    errorCallback?: RunTaskErrorCallback
+    errorCallback?: RunTaskErrorCallback,
   ): Promise<TResult> {
     if (!this._io) throw new Error("No IO");
     if (!this._connectionKey) throw new Error("No connection key");
@@ -168,7 +168,7 @@ export class RailwayTrigger implements TriggerIntegration {
         ...(options ?? {}),
         connectionKey: this._connectionKey,
       },
-      errorCallback
+      errorCallback,
     );
   }
 
