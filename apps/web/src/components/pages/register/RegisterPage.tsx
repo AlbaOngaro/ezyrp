@@ -61,9 +61,9 @@ export function RegisterPage() {
       code: "",
       country: "",
 
-      start: 9,
-      end: 18,
-      days: [],
+      start: 7,
+      end: 16,
+      days: [0, 1, 2, 3, 4],
     },
   });
 
