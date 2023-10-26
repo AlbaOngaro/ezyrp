@@ -10,9 +10,10 @@ import { twMerge } from "lib/utils/twMerge";
 
 interface Props {
   className?: string;
+  showSaveButton?: boolean;
 }
 
-export function ProfileForm({ className }: Props) {
+export function ProfileForm({ className, showSaveButton = true }: Props) {
   const { data } = useCountries();
 
   const {
@@ -30,6 +31,9 @@ export function ProfileForm({ className }: Props) {
       <Controller
         control={control}
         name="photoUrl"
+        rules={{
+          shouldUnregister: false,
+        }}
         render={({ field: { value = "", onChange } }) => (
           <Input
             label="Profile picture"
@@ -64,9 +68,15 @@ export function ProfileForm({ className }: Props) {
         )}
       />
 
-      <Input label="Name" {...register("name", { required: true })} />
+      <Input
+        label="Name"
+        {...register("name", { required: true, shouldUnregister: false })}
+      />
 
-      <Input label="Address" {...register("address")} />
+      <Input
+        label="Address"
+        {...register("address", { shouldUnregister: false })}
+      />
 
       <div className="grid grid-cols-3 gap-4">
         <Input label="City" {...register("city")} />
@@ -97,14 +107,16 @@ export function ProfileForm({ className }: Props) {
         )}
       </div>
 
-      <Button
-        size="lg"
-        className="px-6 w-fit"
-        disabled={!isValid}
-        loading={isSubmitting}
-      >
-        Save
-      </Button>
+      {showSaveButton && (
+        <Button
+          size="lg"
+          className="px-6 w-fit"
+          disabled={!isValid}
+          loading={isSubmitting}
+        >
+          Save
+        </Button>
+      )}
     </Form>
   );
 }

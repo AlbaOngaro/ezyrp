@@ -15,3 +15,8 @@ export const credentials = z.object({
   username: z.string(),
   workspace: z.string().nullable(),
 });
+
+export const inputRegisterCredentials = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});

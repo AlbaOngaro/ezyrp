@@ -1,8 +1,10 @@
-import { ZodError, z } from "zod";
+import { ZodError } from "zod";
 import { GraphQLError } from "graphql";
 import { MutationResolvers } from "__generated__/server";
 import { surreal } from "server/surreal";
 import { Settings } from "__generated__/graphql";
+
+import { inputUpdateSettings } from "server/schema/settings";
 
 export const updateSettings: MutationResolvers["updateSettings"] = async (
   _,
@@ -11,12 +13,7 @@ export const updateSettings: MutationResolvers["updateSettings"] = async (
 ) => {
   await surreal.authenticate(accessToken as string);
 
-  const settings = await z
-    .object({
-      start: z.number(),
-      end: z.number(),
-      days: z.array(z.number()),
-    })
+  const settings = await inputUpdateSettings
     .parseAsync(args.updateSettingsInput)
     .catch((errors) => {
       if (errors instanceof ZodError) {

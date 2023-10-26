@@ -44,6 +44,8 @@ export function InvoiceForm() {
                   (c) => c.id === option.value,
                 );
 
+                debugger;
+
                 if (customer) {
                   onChange(customer);
                 }

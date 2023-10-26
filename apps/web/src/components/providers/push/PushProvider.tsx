@@ -2,6 +2,7 @@ import { PropsWithChildren, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 
 import { CREATE_SUBSCRIPTION } from "lib/mutations/CREATE_SUBSCRIPTION";
+import { useUser } from "hooks/useUser";
 
 function urlBase64ToUint8Array(base64String: string) {
   var padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -17,11 +18,16 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export function PushProvider({ children }: PropsWithChildren) {
+  const { data } = useUser();
   const [createSubscription] = useMutation(CREATE_SUBSCRIPTION);
 
   useEffect(() => {
     (async () => {
-      if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      if (
+        !data ||
+        !("serviceWorker" in navigator) ||
+        !("PushManager" in window)
+      ) {
         return;
       }
 
@@ -66,7 +72,7 @@ export function PushProvider({ children }: PropsWithChildren) {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data]);
 
   return children;
 }

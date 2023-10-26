@@ -28,7 +28,7 @@ export const eventTypes: QueryResolvers["eventTypes"] = async (
   await surreal.authenticate(accessToken as string);
 
   const [{ result }] = await surreal.query<[EventType[]]>(
-    `SELECT * FROM eventtype`,
+    `SELECT * FROM eventtype WHERE workspace = type::string($auth.workspace);`,
   );
 
   if (!result) {

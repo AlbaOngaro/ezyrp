@@ -17,6 +17,7 @@ export function useUser() {
     loading: isLoading,
   } = useQuery(USER, {
     errorPolicy: "ignore",
+    skip: router.asPath.includes("login") || router.asPath.includes("register"),
   });
 
   const [login] = useMutation(LOGIN, {

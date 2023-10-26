@@ -1,4 +1,5 @@
-import { twMerge } from "../../../lib/utils/twMerge";
+import { Ref, forwardRef } from "react";
+import { twMerge } from "lib/utils/twMerge";
 
 interface Props<T extends React.ElementType> {
   as?: T;
@@ -6,18 +7,18 @@ interface Props<T extends React.ElementType> {
   className?: string;
 }
 
-export function Card<T extends React.ElementType = "article">({
-  as,
-  children,
-  className,
-}: Props<T>) {
+export const Card = forwardRef(function Card<
+  T extends React.ElementType = "article",
+>({ as, children, className, ...rest }: Props<T>, ref: Ref<HTMLElement>) {
   const Component = as || "article";
 
   return (
     <Component
+      ref={ref}
       className={twMerge("bg-white p-4 rounded-md shadow-sm", className)}
+      {...rest}
     >
       {children}
     </Component>
   );
-}
+});
