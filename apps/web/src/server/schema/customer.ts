@@ -4,10 +4,10 @@ export const customer = z.object({
   id: z.string(),
   email: z.string().email(),
   name: z.string(),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  code: z.string().optional(),
-  country: z.string().optional(),
+  address: z.string().optional().nullable(),
+  city: z.string().optional().nullable(),
+  code: z.string().optional().nullable(),
+  country: z.string().optional().nullable(),
   photoUrl: z.string().optional().default(""),
   lastInvoice: z
     .object({

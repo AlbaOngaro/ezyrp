@@ -10,7 +10,7 @@ export function CenteredLayout({
 }: Props) {
   return (
     <main className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <header className="sm:mx-auto sm:w-full sm:max-w-sm">
+      <header className="sm:mx-auto sm:w-full sm:max-w-md">
         <img
           className="mx-auto h-20 w-auto"
           src="https://res.cloudinary.com/dlha07ue9/image/upload/f_auto,q_auto/v1/assets/logo-notext"
@@ -21,7 +21,7 @@ export function CenteredLayout({
         </h2>
       </header>
 
-      <section className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <section className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
         {children}
       </section>
     </main>
