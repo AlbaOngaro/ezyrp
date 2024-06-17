@@ -1,22 +1,16 @@
 import { PropsWithChildren } from "react";
+import { Sidebar } from "components/organisms/sidebar";
+import { Header } from "components/organisms/header";
 
-import { Sidebar } from "../../organisms/sidebar/Sidebar";
-import { Header } from "../../organisms/header/Header";
-
-interface Props extends PropsWithChildren {
-  isSidebarOpen?: boolean;
-}
-
-export function SidebarLayout({ children, isSidebarOpen }: Props) {
+export function SidebarLayout({ children }: PropsWithChildren) {
   return (
-    <main className="h-full grid grid-cols-[min-content_1fr] bg-gray-50 print:grid-cols-1">
-      <Sidebar isOpen={isSidebarOpen} />
-
-      <section>
+    <main className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <Sidebar />
+      <div className="flex flex-col">
         <Header />
 
-        {children}
-      </section>
+        <main>{children}</main>
+      </div>
     </main>
   );
 }

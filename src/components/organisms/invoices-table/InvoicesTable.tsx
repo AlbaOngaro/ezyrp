@@ -15,7 +15,6 @@ import { useInvoices } from "hooks/useInvoices";
 import { Table } from "components/atoms/table";
 import { Dialog } from "components/atoms/dialog";
 
-import { getBadgeVariantFromStatus } from "lib/utils/getBadgeVariantFromStatus";
 import { Badge } from "components/atoms/badge";
 import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
@@ -73,14 +72,7 @@ export function InvoicesTable() {
             field: "status",
             headerName: "Status",
             sortable: true,
-            render: (invoice) => (
-              <Badge
-                size="sm"
-                variant={getBadgeVariantFromStatus(invoice.status)}
-              >
-                {invoice.status}
-              </Badge>
-            ),
+            render: (invoice) => <Badge>{invoice.status}</Badge>,
           },
           {
             id: "amount",

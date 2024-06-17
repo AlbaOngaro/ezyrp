@@ -25,7 +25,6 @@ import { Button } from "components/atoms/button";
 import { Card } from "components/atoms/card";
 
 import { Dialog } from "components/atoms/dialog";
-import { getBadgeVariantFromStatus } from "lib/utils/getBadgeVariantFromStatus";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 
@@ -58,9 +57,7 @@ export function InvoicePage({ id }: Props) {
 
       <Card className="p-6 flex items-center gap-2 print:hidden">
         <strong className="text-sm text-gray-800">Status</strong>
-        <Badge size="lg" variant={getBadgeVariantFromStatus(invoice.status)}>
-          {invoice.status}
-        </Badge>
+        <Badge>{invoice.status}</Badge>
 
         <Button title="Edit" size="lg" shape="circle" className="ml-auto">
           <Pencil1Icon />
@@ -174,7 +171,7 @@ export function InvoicePage({ id }: Props) {
 }
 
 InvoicePage.getLayout = function getLayout(page: ReactElement) {
-  return <SidebarLayout isSidebarOpen={false}>{page}</SidebarLayout>;
+  return <SidebarLayout>{page}</SidebarLayout>;
 };
 
 export async function getServerSideProps({
