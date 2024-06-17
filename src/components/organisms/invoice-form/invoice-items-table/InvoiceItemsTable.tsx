@@ -107,8 +107,8 @@ export function InvoiceItemsTable() {
                   item.onetime
                     ? undefined
                     : {
-                      rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
-                    }
+                        rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
+                      }
                 }
               />
 
