@@ -38,7 +38,7 @@ export function Header() {
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <item.icon className="h-6 w-6" />
-                <span className="sr-only">{item.name}</span>
+                <span>{item.name}</span>
               </Link>
             ))}
           </nav>

@@ -18,7 +18,7 @@ export function InvoicesPage() {
         <Heading title="Invoices" description="A list of all the invoices" />
 
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Button size="lg" onClick={() => router.push("/invoices/create")}>
+          <Button onClick={() => router.push("/invoices/create")}>
             Add invoice
           </Button>
         </div>

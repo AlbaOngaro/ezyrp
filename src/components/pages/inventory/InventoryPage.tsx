@@ -36,7 +36,7 @@ export function InventoryPage() {
         />
 
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Button onClick={() => router.push("/inventory/create")} size="lg">
+          <Button onClick={() => router.push("/inventory/create")}>
             Add item
           </Button>
         </div>

@@ -21,7 +21,7 @@ export function CustomersPage() {
         />
 
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Button size="lg" onClick={() => router.push("/customers/create")}>
+          <Button onClick={() => router.push("/customers/create")}>
             Add customer
           </Button>
         </div>
