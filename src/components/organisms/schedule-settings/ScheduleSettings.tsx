@@ -2,10 +2,10 @@ import { Form } from "@radix-ui/react-form";
 import { format } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "convex/react";
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
-import { Select } from "components/atoms/select/Select";
-import { Button } from "components/atoms/button/Button";
+import { Container } from "components/atoms/container";
+import { Heading } from "components/atoms/heading";
+import { Select } from "components/atoms/select";
+import { Button } from "components/atoms/button";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
 

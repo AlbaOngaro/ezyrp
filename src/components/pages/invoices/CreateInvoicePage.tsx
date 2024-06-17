@@ -3,8 +3,8 @@ import { useForm, FormProvider, UseFormHandleSubmit } from "react-hook-form";
 import { useRouter } from "next/router";
 
 import { FunctionReturnType } from "convex/server";
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
+import { Container } from "components/atoms/container";
+import { Heading } from "components/atoms/heading";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 

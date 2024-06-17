@@ -16,15 +16,15 @@ import { useRouter } from "next/router";
 
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { useQuery } from "convex-helpers/react";
+import { Container } from "components/atoms/container";
 import { useInvoices } from "hooks/useInvoices";
 import { CHF } from "lib/formatters/chf";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Container } from "components/atoms/container/Container";
-import { Badge } from "components/atoms/badge/Badge";
-import { Button } from "components/atoms/button/Button";
-import { Card } from "components/atoms/card/Card";
+import { Badge } from "components/atoms/badge";
+import { Button } from "components/atoms/button";
+import { Card } from "components/atoms/card";
 
-import { Dialog } from "components/atoms/dialog/Dialog";
+import { Dialog } from "components/atoms/dialog";
 import { getBadgeVariantFromStatus } from "lib/utils/getBadgeVariantFromStatus";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";

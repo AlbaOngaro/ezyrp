@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 
 import { twMerge } from "lib/utils/twMerge";
 
-import { Checkbox } from "components/atoms/checkbox/Checkbox";
+import { Checkbox } from "components/atoms/checkbox";
 import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
 import { Doc } from "convex/_generated/dataModel";
 

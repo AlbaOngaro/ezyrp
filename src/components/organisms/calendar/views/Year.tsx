@@ -1,7 +1,6 @@
 import { format } from "date-fns";
-import { MonthWidget } from "../../../atoms/month-widget/MonthWidget";
-
 import { useCalendarContext } from "../Calendar";
+import { MonthWidget } from "components/atoms/month-widget";
 
 export function Body() {
   const {

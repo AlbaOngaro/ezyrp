@@ -1,4 +1,4 @@
-import { Props as ButtonProps } from "../button/Button";
+import { Props as ButtonProps } from "../button";
 
 export interface Props {
   title: string;

@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { twMerge } from "../../../lib/utils/twMerge";
+import { twMerge } from "lib/utils/twMerge";
 
 export type Variant = "info" | "success" | "danger";
 

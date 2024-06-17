@@ -7,7 +7,7 @@ import {
 } from "date-fns";
 import { Controller, useFormContext } from "react-hook-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
+import { MonthWidget } from "components/atoms/month-widget";
 import { useBookingContext } from "components/pages/booking/BookingPage";
 
 export function TimeView() {

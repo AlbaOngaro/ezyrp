@@ -5,12 +5,12 @@ import {
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 
+import { Container } from "components/atoms/container";
 import { useEventTypes } from "hooks/useEventTypes";
 
-import { Button } from "components/atoms/button/Button";
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
-import { Dialog } from "components/atoms/dialog/Dialog";
+import { Button } from "components/atoms/button";
+import { Heading } from "components/atoms/heading";
+import { Dialog } from "components/atoms/dialog";
 import { EventTypeItem } from "components/pages/schedule/EventTypeItem";
 import { Id } from "convex/_generated/dataModel";
 

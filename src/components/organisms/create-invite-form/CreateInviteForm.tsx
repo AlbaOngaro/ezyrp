@@ -1,7 +1,7 @@
 import { Form } from "@radix-ui/react-form";
 import { useFormContext } from "react-hook-form";
-import { Button } from "components/atoms/button/Button";
-import { Input } from "components/atoms/input/Input";
+import { Button } from "components/atoms/button";
+import { Input } from "components/atoms/input";
 
 export function CreateInviteForm() {
   const {

@@ -4,10 +4,10 @@ import { addMonths, format } from "date-fns";
 
 import { InvoiceItemsTable } from "./invoice-items-table/InvoiceItemsTable";
 
-import { Select } from "components/atoms/select/Select";
-import { TextArea } from "components/atoms/textarea/TextArea";
-import { Input } from "components/atoms/input/Input";
-import { Button } from "components/atoms/button/Button";
+import { Select } from "components/atoms/select";
+import { TextArea } from "components/atoms/textarea";
+import { Input } from "components/atoms/input";
+import { Button } from "components/atoms/button";
 
 import { useCustomers } from "hooks/useCustomers";
 
@@ -84,12 +84,12 @@ export function InvoiceForm() {
                 value
                   ? format(new Date(value), "yyyy-MM-dd")
                   : format(
-                      addMonths(
-                        new Date(watch("emitted", new Date().toISOString())),
-                        1,
-                      ),
-                      "yyyy-MM-dd",
-                    )
+                    addMonths(
+                      new Date(watch("emitted", new Date().toISOString())),
+                      1,
+                    ),
+                    "yyyy-MM-dd",
+                  )
               }
               onChange={(due) => onChange(due.toISOString())}
               validations={{

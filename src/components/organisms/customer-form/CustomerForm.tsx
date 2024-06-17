@@ -1,9 +1,9 @@
 import { Form } from "@radix-ui/react-form";
 import { Controller, useFormContext } from "react-hook-form";
 
-import { Button } from "components/atoms/button/Button";
-import { Input } from "components/atoms/input/Input";
-import { Select } from "components/atoms/select/Select";
+import { Button } from "components/atoms/button";
+import { Input } from "components/atoms/input";
+import { Select } from "components/atoms/select";
 import { useCountries } from "hooks/useCountries";
 import { Doc } from "convex/_generated/dataModel";
 

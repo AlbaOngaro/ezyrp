@@ -17,7 +17,7 @@ import * as WeekView from "./views/Week";
 import * as DayView from "./views/Day";
 import * as YearView from "./views/Year";
 import { twMerge } from "lib/utils/twMerge";
-import { Select } from "components/atoms/select/Select";
+import { Select } from "components/atoms/select";
 import { Doc } from "convex/_generated/dataModel";
 
 const CalendarContext = createContext<{

@@ -17,10 +17,10 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { useEvents } from "../../../../hooks/useEvents";
 
-import { twMerge } from "../../../../lib/utils/twMerge";
+import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
+import { twMerge } from "lib/utils/twMerge";
 
-import { Dialog } from "../../../atoms/dialog/Dialog";
-import { EditEventModal } from "../../edit-event-modal/EditEventModal";
+import { Dialog } from "components/atoms/dialog";
 import { Doc } from "convex/_generated/dataModel";
 
 type Event = Doc<"events">;

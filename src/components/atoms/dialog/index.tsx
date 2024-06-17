@@ -1,8 +1,8 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
-import { Button } from "../button/Button";
 import { twMerge } from "../../../lib/utils/twMerge";
 import { Props } from "./types";
+import { Button } from "components/atoms/button";
 
 export function Dialog({
   title,

@@ -1,8 +1,8 @@
 import { Root as Form } from "@radix-ui/react-form";
 import { useFormContext } from "react-hook-form";
-import { Button } from "components/atoms/button/Button";
-import { Input } from "components/atoms/input/Input";
-import { TextArea } from "components/atoms/textarea/TextArea";
+import { Button } from "components/atoms/button";
+import { Input } from "components/atoms/input";
+import { TextArea } from "components/atoms/textarea";
 import { Doc } from "convex/_generated/dataModel";
 
 export function ItemForm() {

@@ -2,12 +2,12 @@ import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
 
-import { Card } from "components/atoms/card/Card";
+import { Container } from "components/atoms/container";
+import { Card } from "components/atoms/card";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Container } from "components/atoms/container/Container";
 import { InvoicesTable } from "components/organisms/invoices-table/InvoicesTable";
-import { Heading } from "components/atoms/heading/Heading";
-import { Button } from "components/atoms/button/Button";
+import { Heading } from "components/atoms/heading";
+import { Button } from "components/atoms/button";
 
 export function InvoicesPage() {
   const router = useRouter();

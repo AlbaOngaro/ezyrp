@@ -3,8 +3,8 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
+import { Container } from "components/atoms/container";
+import { Heading } from "components/atoms/heading";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { CustomerForm } from "components/organisms/customer-form/CustomerForm";

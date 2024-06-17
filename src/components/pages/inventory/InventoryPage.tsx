@@ -4,18 +4,18 @@ import {
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
+import { Container } from "components/atoms/container";
 import { useItems } from "hooks/useItems";
 
 import { CHF } from "lib/formatters/chf";
 
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
-import { Card } from "components/atoms/card/Card";
-import { Table } from "components/atoms/table/Table";
-import { Button } from "components/atoms/button/Button";
+import { Heading } from "components/atoms/heading";
+import { Card } from "components/atoms/card";
+import { Table } from "components/atoms/table";
+import { Button } from "components/atoms/button";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Dialog } from "components/atoms/dialog/Dialog";
+import { Dialog } from "components/atoms/dialog";
 import { Doc, Id } from "convex/_generated/dataModel";
 
 type Item = Doc<"items">;

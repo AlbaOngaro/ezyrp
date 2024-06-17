@@ -1,6 +1,6 @@
+import { Container } from "components/atoms/container";
 import { useEvents } from "hooks/useEvents";
 
-import { Container } from "components/atoms/container/Container";
 import { Calendar } from "components/organisms/calendar/Calendar";
 
 export function ScheduleContents() {

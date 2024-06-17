@@ -1,7 +1,7 @@
 import { ReactElement, useState } from "react";
 
+import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Container } from "components/atoms/container/Container";
 import { twMerge } from "lib/utils/twMerge";
 
 const secondaryNavigation = [

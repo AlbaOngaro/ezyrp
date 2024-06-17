@@ -12,8 +12,8 @@ import {
   setMonth,
   setYear,
 } from "date-fns";
-import { MonthWidget } from "../month-widget/MonthWidget";
 import { DateTimeInputProps } from "./types";
+import { MonthWidget } from "components/atoms/month-widget";
 
 export const DateTimeInput = forwardRef<
   HTMLFieldSetElement,

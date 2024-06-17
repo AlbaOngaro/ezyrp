@@ -5,9 +5,9 @@ import {
 } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
 
-import { Dialog } from "components/atoms/dialog/Dialog";
-import { Table } from "components/atoms/table/Table";
-import { Button } from "components/atoms/button/Button";
+import { Dialog } from "components/atoms/dialog";
+import { Table } from "components/atoms/table";
+import { Button } from "components/atoms/button";
 
 import { useCustomers } from "hooks/useCustomers";
 import { Doc, Id } from "convex/_generated/dataModel";

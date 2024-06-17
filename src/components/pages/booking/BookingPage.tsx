@@ -7,8 +7,8 @@ import { Form } from "@radix-ui/react-form";
 
 import { useMutation } from "convex/react";
 import { useQuery } from "convex-helpers/react";
-import { Card } from "components/atoms/card/Card";
-import { Container } from "components/atoms/container/Container";
+import { Container } from "components/atoms/container";
+import { Card } from "components/atoms/card";
 import { twMerge } from "lib/utils/twMerge";
 import { TimeView } from "components/pages/booking/views/TimeView";
 import { DetailsView } from "components/pages/booking/views/DetailsView";

@@ -4,7 +4,7 @@ import { EventItem } from "../components/EventItem";
 import { useCalendarContext } from "../Calendar";
 import { Indicator } from "../components/Indicator";
 
-import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
+import { MonthWidget } from "components/atoms/month-widget";
 
 import { useSettings } from "hooks/useSettings";
 

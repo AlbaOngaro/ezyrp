@@ -3,12 +3,12 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
+import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { ItemForm } from "components/organisms/item-form/ItemForm";
 
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
+import { Heading } from "components/atoms/heading";
 import { useItems } from "hooks/useItems";
 import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";

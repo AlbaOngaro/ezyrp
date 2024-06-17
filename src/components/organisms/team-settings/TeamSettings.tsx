@@ -2,11 +2,11 @@ import { Root, Trigger } from "@radix-ui/react-dialog";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { format } from "date-fns";
 
-import { Avatar } from "components/atoms/avatar/Avatar";
-import { Button } from "components/atoms/button/Button";
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
-import { Modal } from "components/atoms/modal/Modal";
+import { Container } from "components/atoms/container";
+import { Avatar } from "components/atoms/avatar";
+import { Button } from "components/atoms/button";
+import { Heading } from "components/atoms/heading";
+import { Modal } from "components/atoms/modal";
 
 import { useInvites } from "hooks/useInvites";
 

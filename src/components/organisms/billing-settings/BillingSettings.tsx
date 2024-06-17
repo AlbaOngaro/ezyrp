@@ -1,5 +1,5 @@
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
+import { Container } from "components/atoms/container";
+import { Heading } from "components/atoms/heading";
 
 export function BillingSettings() {
   return (

@@ -3,10 +3,10 @@ import { Root as Form } from "@radix-ui/react-form";
 
 import { format } from "date-fns";
 
-import { Modal } from "../../atoms/modal/Modal";
-import { useEvents } from "../../../hooks/useEvents";
-import { Input } from "../../atoms/input/Input";
-import { Button } from "../../atoms/button/Button";
+import { Modal } from "components/atoms/modal";
+import { useEvents } from "hooks/useEvents";
+import { Input } from "components/atoms/input";
+import { Button } from "components/atoms/button";
 import { Doc } from "convex/_generated/dataModel";
 
 interface Props {

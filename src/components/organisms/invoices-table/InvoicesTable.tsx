@@ -10,14 +10,14 @@ import { Link2Icon } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
 
 import { FunctionReturnType } from "convex/server";
-import { useInvoices } from "../../../hooks/useInvoices";
+import { useInvoices } from "hooks/useInvoices";
 
-import { Table } from "../../atoms/table/Table";
-import { Button } from "../../atoms/button/Button";
-import { Badge } from "../../atoms/badge/Badge";
-import { Dialog } from "../../atoms/dialog/Dialog";
+import { Table } from "components/atoms/table";
+import { Dialog } from "components/atoms/dialog";
 
-import { getBadgeVariantFromStatus } from "../../../lib/utils/getBadgeVariantFromStatus";
+import { getBadgeVariantFromStatus } from "lib/utils/getBadgeVariantFromStatus";
+import { Badge } from "components/atoms/badge";
+import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
 

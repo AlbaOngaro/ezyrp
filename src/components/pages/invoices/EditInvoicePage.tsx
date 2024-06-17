@@ -4,12 +4,12 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 import { FunctionReturnType } from "convex/server";
 import { useRouter } from "next/router";
+import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 
-import { Heading } from "components/atoms/heading/Heading";
-import { Container } from "components/atoms/container/Container";
+import { Heading } from "components/atoms/heading";
 
 import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";

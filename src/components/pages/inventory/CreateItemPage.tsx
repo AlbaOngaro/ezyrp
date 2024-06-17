@@ -1,8 +1,8 @@
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
+import { Container } from "components/atoms/container";
+import { Heading } from "components/atoms/heading";
 import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useItems } from "hooks/useItems";

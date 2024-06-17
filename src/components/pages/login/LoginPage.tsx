@@ -1,7 +1,7 @@
 import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 import Image from "next/image";
 
-import { Button } from "components/atoms/button/Button";
+import { Button } from "components/atoms/button";
 
 export function LoginPage() {
   return (

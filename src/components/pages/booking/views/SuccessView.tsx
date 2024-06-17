@@ -1,7 +1,7 @@
 import { CalendarIcon, PersonIcon } from "@radix-ui/react-icons";
 import { useFormContext } from "react-hook-form";
 import { format } from "date-fns";
-import { Card } from "components/atoms/card/Card";
+import { Card } from "components/atoms/card";
 
 export function SuccessView() {
   const { watch } = useFormContext();

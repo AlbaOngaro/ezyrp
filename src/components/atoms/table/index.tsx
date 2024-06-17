@@ -5,11 +5,11 @@ import {
   MinusIcon,
 } from "@radix-ui/react-icons";
 
-import { twMerge } from "../../../lib/utils/twMerge";
-import { Checkbox } from "../checkbox/Checkbox";
 import { Props, Row, Sort } from "./types";
 import { TableRowRenderer } from "./RowRenderer";
 import { Pagination } from "./Pagination";
+import { twMerge } from "lib/utils/twMerge";
+import { Checkbox } from "components/atoms/checkbox";
 
 export function Table<R extends Row = Row>({
   className,

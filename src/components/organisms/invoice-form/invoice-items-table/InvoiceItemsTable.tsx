@@ -3,9 +3,9 @@ import { v4 as uuid } from "uuid";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FunctionReturnType } from "convex/server";
-import { Button } from "components/atoms/button/Button";
-import { Input } from "components/atoms/input/Input";
-import { Select } from "components/atoms/select/Select";
+import { Button } from "components/atoms/button";
+import { Input } from "components/atoms/input";
+import { Select } from "components/atoms/select";
 
 import { CHF } from "lib/formatters/chf";
 
@@ -107,8 +107,8 @@ export function InvoiceItemsTable() {
                   item.onetime
                     ? undefined
                     : {
-                        rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
-                      }
+                      rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
+                    }
                 }
               />
 

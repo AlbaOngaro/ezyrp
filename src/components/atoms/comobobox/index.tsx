@@ -12,7 +12,7 @@ import {
 } from "react";
 import { CaretSortIcon, Cross1Icon } from "@radix-ui/react-icons";
 
-import { twMerge } from "../../../lib/utils/twMerge";
+import { twMerge } from "lib/utils/twMerge";
 
 interface Option {
   label: string;

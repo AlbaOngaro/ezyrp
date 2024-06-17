@@ -7,11 +7,11 @@ import {
 } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { Modal } from "../../atoms/modal/Modal";
-import { Button } from "../../atoms/button/Button";
+import { Modal } from "components/atoms/modal";
 
-import { useItems } from "../../../hooks/useItems";
-import { Input } from "../../atoms/input/Input";
+import { useItems } from "hooks/useItems";
+import { Input } from "components/atoms/input";
+import { Button } from "components/atoms/button";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;

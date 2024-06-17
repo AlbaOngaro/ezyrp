@@ -4,11 +4,11 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 import { useRouter } from "next/router";
 
+import { Container } from "components/atoms/container";
 import { EventTypeForm } from "components/organisms/event-type-form/EventTypeForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Container } from "components/atoms/container/Container";
 import { useEventTypes } from "hooks/useEventTypes";
-import { Heading } from "components/atoms/heading/Heading";
+import { Heading } from "components/atoms/heading";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";

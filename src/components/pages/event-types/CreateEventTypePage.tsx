@@ -1,9 +1,9 @@
 import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Container } from "components/atoms/container/Container";
-import { Heading } from "components/atoms/heading/Heading";
+import { Heading } from "components/atoms/heading";
 import { EventTypeForm } from "components/organisms/event-type-form/EventTypeForm";
 import { useEventTypes } from "hooks/useEventTypes";
 import { api } from "convex/_generated/api";

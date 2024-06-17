@@ -5,10 +5,10 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { DURATION_OPTIONS, VARIANTS } from "./constants";
 import { twMerge } from "lib/utils/twMerge";
-import { Button } from "components/atoms/button/Button";
-import { Input } from "components/atoms/input/Input";
-import { TextArea } from "components/atoms/textarea/TextArea";
-import { Select } from "components/atoms/select/Select";
+import { Button } from "components/atoms/button";
+import { Input } from "components/atoms/input";
+import { TextArea } from "components/atoms/textarea";
+import { Select } from "components/atoms/select";
 import { Doc } from "convex/_generated/dataModel";
 
 type Props = {
