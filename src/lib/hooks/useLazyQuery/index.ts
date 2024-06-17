@@ -29,6 +29,7 @@ export function useLazyQuery<Query extends FunctionReference<"query">>(
         promiseReject?.current?.call(undefined, error);
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, promiseResolve, promiseReject]);
 
   const execute = async (args?: Args<Query>) => {

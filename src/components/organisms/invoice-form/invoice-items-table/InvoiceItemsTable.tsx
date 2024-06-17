@@ -12,7 +12,7 @@ import { useItems } from "hooks/useItems";
 import { Doc, Id } from "convex/_generated/dataModel";
 
 export function InvoiceItemsTable() {
-  const items = useItems();
+  const { data: items, create } = useItems();
   const { control, setValue, watch } = useFormContext<{
     items: Doc<"items">[];
   }>();
@@ -23,12 +23,10 @@ export function InvoiceItemsTable() {
   });
 
   const watchFieldArray = watch("items");
-  const controlledFields = fields.map((field, index) => {
-    return {
-      ...field,
-      ...watchFieldArray[index],
-    };
-  });
+  const controlledFields = fields.map((field, index) => ({
+    ...field,
+    ...watchFieldArray[index],
+  }));
 
   return (
     <div>
@@ -40,107 +38,104 @@ export function InvoiceItemsTable() {
       </header>
 
       <div className="flex flex-col gap-4">
-        {controlledFields.map((item, i) => (
-          <div
-            key={item.key}
-            className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 items-start"
-          >
-            <Select
-              isCreatable
-              name="name"
-              value={{ label: item.name, value: item._id }}
-              onChange={(option) => {
-                if (option) {
-                  const newItem = items?.data?.find(
-                    (it) => it._id === option.value,
-                  );
-
-                  if (newItem) {
+        {controlledFields.map((item, i) => {
+          return (
+            <div
+              key={item.key}
+              className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 items-start"
+            >
+              <Select
+                isCreatable
+                name="name"
+                value={item}
+                getOptionLabel={(option) => option.name}
+                getOptionValue={(option) => option._id}
+                onChange={(option) => {
+                  if (option) {
                     const quantity = fields.at(i)?.quantity || 1;
                     update(i, {
-                      _id: newItem._id,
-                      _creationTime: 0,
-                      name: newItem.name,
-                      price: newItem.price,
-                      description: newItem.description || "",
-                      onetime: false,
+                      ...option,
                       quantity,
                     });
                   }
+                }}
+                onCreateOption={async (name) => {
+                  const newItem = await create({
+                    name,
+                    description: "",
+                    quantity: 0,
+                    price: 0,
+                    onetime: true,
+                  });
+
+                  if (newItem) {
+                    update(i, newItem);
+                  }
+                }}
+                isOptionDisabled={(option) =>
+                  fields.some((it) => it._id === option._id)
                 }
-              }}
-              onCreateOption={(option) =>
-                update(i, {
-                  _id: item._id,
-                  _creationTime: 0,
-                  description: "",
-                  name: option,
-                  price: 0,
-                  quantity: 1,
-                  onetime: true,
-                })
-              }
-              isOptionDisabled={(option) =>
-                fields.some((it) => it._id === option.value)
-              }
-              options={
-                items?.data?.map((i) => ({
-                  label: i.name,
-                  value: i._id,
-                })) || []
-              }
-            />
+                options={items}
+              />
 
-            <Input
-              className="relative [&>input]:pr-10 after:absolute after:content-['CHF'] after:text-xs after:text-gray-500 after:-translate-y-[50%] after:top-[50%] after:right-2"
-              name="price"
-              type="number"
-              min={1}
-              step={0.05}
-              value={item.price / 100}
-              onChange={(e) => {
-                const price = Number(e.target.value) * 100;
-                setValue(`items.${i}.price` as const, price);
-              }}
-            />
+              <Input
+                className="relative [&>input]:pr-10 after:absolute after:content-['CHF'] after:text-xs after:text-gray-500 after:-translate-y-[50%] after:top-[50%] after:right-2"
+                name="price"
+                type="number"
+                min={1}
+                step={0.05}
+                value={item.price / 100}
+                disabled={!item.onetime}
+                onChange={(e) => {
+                  const price = Number(e.target.value) * 100;
+                  setValue(`items.${i}.price` as const, price);
+                }}
+              />
 
-            <Input
-              name="quantity"
-              type="number"
-              value={item.quantity}
-              min={1}
-              max={items?.data?.find((it) => it._id === item._id)?.quantity}
-              onChange={(e) => {
-                const quantity = Number(e.target.value);
-                setValue(`items.${i}.quantity` as const, quantity);
-              }}
-              validations={{
-                rangeOverflow: `You don't have enough of this item in stock (${items?.data?.find((it) => it._id === item._id)?.quantity ||
-                  undefined
-                  } in stock)`,
-              }}
-            />
+              <Input
+                name="quantity"
+                type="number"
+                value={item.quantity}
+                min={1}
+                max={item.onetime ? undefined : item.quantity}
+                onChange={(e) => {
+                  const quantity = Number(e.target.value);
+                  setValue(`items.${i}.quantity` as const, quantity);
+                }}
+                validations={
+                  item.onetime
+                    ? undefined
+                    : {
+                        rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
+                      }
+                }
+              />
 
-            <span className="text-right">
-              {CHF.format((item.quantity * item.price) / 100)}
-            </span>
+              <span className="text-right">
+                {CHF.format((item.quantity * item.price) / 100)}
+              </span>
 
-            <Button
-              variant="danger"
-              className="w-6 h-6 p-1.5 rounded-full flex justify-center items-center justify-self-end"
-              onClick={() => remove(i)}
-            >
-              <MinusIcon />
-            </Button>
-          </div>
-        ))}
+              <Button
+                variant="danger"
+                className="w-6 h-6 p-1.5 rounded-full flex justify-center items-center justify-self-end"
+                onClick={() => {
+                  remove(i);
+                }}
+              >
+                <MinusIcon />
+              </Button>
+            </div>
+          );
+        })}
       </div>
 
       <Button
         variant="tertiary"
         size="xl"
         className="w-full mt-4 flex justify-center"
-        onClick={() =>
+        onClick={(e) => {
+          e.preventDefault();
+
           append({
             _id: uuid() as Id<"items">,
             _creationTime: 0,
@@ -149,8 +144,8 @@ export function InvoiceItemsTable() {
             quantity: 1,
             description: "",
             onetime: false,
-          })
-        }
+          });
+        }}
       >
         <PlusIcon />
       </Button>

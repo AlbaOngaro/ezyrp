@@ -6,11 +6,6 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 
 import { twMerge } from "lib/utils/twMerge";
 
-interface Option {
-  label: string;
-  value: string;
-}
-
 type BaseProps = {
   name: string;
   label?: string;
@@ -18,26 +13,26 @@ type BaseProps = {
   isCreatable?: boolean;
 };
 
-type CreatableSelectProps = BaseProps &
-  CreatableProps<Option, false, GroupBase<Option>> & {
+type CreatableSelectProps<O> = BaseProps &
+  CreatableProps<O, false, GroupBase<O>> & {
     isCreatable: true;
   };
 
-type DefaultSelectProps = BaseProps &
-  DefaultRSelecProps<Option, false, GroupBase<Option>> & {
+type DefaultSelectProps<O> = BaseProps &
+  DefaultRSelecProps<O, false, GroupBase<O>> & {
     isCreatable?: false;
   };
 
-type Props = CreatableSelectProps | DefaultSelectProps;
+type Props<O = unknown> = CreatableSelectProps<O> | DefaultSelectProps<O>;
 
-export function Select({
+export function Select<O = unknown>({
   name,
   label,
   description,
   className,
   isCreatable = false,
   ...rest
-}: Props) {
+}: Props<O>) {
   const Component = isCreatable ? CreatableRSelect : RSelect;
 
   return (

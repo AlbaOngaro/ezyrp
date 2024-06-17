@@ -9,14 +9,12 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { useCustomers } from "hooks/useCustomers";
 import { useInvoices } from "hooks/useInvoices";
-import { useItems } from "hooks/useItems";
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 import { api } from "convex/_generated/api";
 
 type CreateInvoiceFn = typeof api.invoices.create;
 
 export function CreateInvoicePage() {
-  const items = useItems();
   const router = useRouter();
   const invoices = useInvoices();
   const customers = useCustomers();
@@ -37,74 +35,7 @@ export function CreateInvoicePage() {
   const handleSubmitWrapper: UseFormHandleSubmit<any> = () =>
     handleSubmit(
       async (data) => {
-        const createItemsInput = data.items;
-        // .filter((item) => !isSavedItem(item.id))
-        // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        // .map(({ id, ...item }) => ({
-        //   ...item,
-        //   onetime: true,
-        // }));
-
-        if (createItemsInput.length) {
-          // const newItems = await items.create({
-          //   variables: {
-          //     createItemsInput,
-          //   },
-          // });
-
-          // const itemsToBeAdded = [
-          //   ...data.items.filter((item) => isSavedItem(item.id)),
-          //   ...(newItems?.data?.createItems || []),
-          // ] as Item[];
-
-          // await invoices.create({
-          //   variables: {
-          //     createInvoicesArgs: [
-          //       {
-          //         customer: data.customer.id,
-          //         description: data.description,
-          //         status: "pending",
-          //         due: data.due,
-          //         emitted: data.emitted,
-          //         items: Array.from(
-          //           {
-          //             length: itemsToBeAdded.length,
-          //           },
-          //           (_, i) => i,
-          //         ).flatMap((i) =>
-          //           Array.from(
-          //             { length: itemsToBeAdded[i].quantity },
-          //             () => itemsToBeAdded[i].id,
-          //           ),
-          //         ),
-          //       },
-          //     ],
-          //   },
-          // });
-
-          return router.push("/invoices");
-        }
-
-        // await invoices.create({
-        //   customer: data.customer._id,
-        //   description: data.description,
-        //   status: "pending",
-        //   due: data.due,
-        //   emitted: data.emitted,
-        //   amount: 10,
-        //   items: Array.from(
-        //     {
-        //       length: data.items.length,
-        //     },
-        //     (_, i) => i,
-        //   ).flatMap((i) =>
-        //     Array.from(
-        //       { length: data.items[i].quantity },
-        //       () => data.items[i].id,
-        //     ),
-        //   ),
-        // });
-
+        await invoices.create(data);
         return router.push("/invoices");
       },
       (errors) => {

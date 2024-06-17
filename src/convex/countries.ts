@@ -1,4 +1,4 @@
-import { action, query } from "./_generated/server";
+import { action } from "./_generated/server";
 
 interface Country {
   name: Name;
@@ -28,7 +28,6 @@ interface Country {
   timezones: string[];
   continents: string[];
   flags: Flags;
-  coatOfArms: CoatOfArms;
   startOfWeek: string;
   capitalInfo: CapitalInfo;
   postalCode: PostalCode;
@@ -243,8 +242,6 @@ interface Flags {
   png: string;
   svg: string;
 }
-
-interface CoatOfArms { }
 
 interface CapitalInfo {
   latlng: number[];

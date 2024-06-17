@@ -9,11 +9,7 @@ export const get = query({
 });
 
 export const list = query({
-  handler: async (ctx) =>
-    await ctx.db
-      .query("items")
-      .filter((q) => q.eq(q.field("onetime"), false))
-      .collect(),
+  handler: async (ctx) => await ctx.db.query("items").collect(),
 });
 
 export const create = mutation({
@@ -28,13 +24,15 @@ export const create = mutation({
     ctx,
     { name, description, price, quantity, onetime = false },
   ) => {
-    await ctx.db.insert("items", {
+    const id = await ctx.db.insert("items", {
       name,
       price,
       onetime,
       quantity,
       description,
     });
+
+    return await ctx.db.get(id);
   },
 });
 

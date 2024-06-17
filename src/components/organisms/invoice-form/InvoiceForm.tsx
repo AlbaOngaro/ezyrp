@@ -93,12 +93,12 @@ export function InvoiceForm() {
                 value
                   ? format(new Date(value), "yyyy-MM-dd")
                   : format(
-                    addMonths(
-                      new Date(watch("emitted", new Date().toISOString())),
-                      1,
-                    ),
-                    "yyyy-MM-dd",
-                  )
+                      addMonths(
+                        new Date(watch("emitted", new Date().toISOString())),
+                        1,
+                      ),
+                      "yyyy-MM-dd",
+                    )
               }
               onChange={(due) => onChange(due.toISOString())}
               validations={{
