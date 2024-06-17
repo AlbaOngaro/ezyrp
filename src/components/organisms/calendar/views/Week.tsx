@@ -5,7 +5,7 @@ import { useCalendarContext } from "../Calendar";
 import { EventItem } from "../components/EventItem";
 
 import { Indicator } from "../components/Indicator";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 import { useSettings } from "hooks/useSettings";
 
@@ -52,7 +52,7 @@ export function Body() {
                   {format(day.date, "EEE")}
 
                   <span
-                    className={twMerge(
+                    className={cn(
                       "items-center justify-center font-semibold text-gray-900",
                       {
                         "flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 font-semibold text-white":

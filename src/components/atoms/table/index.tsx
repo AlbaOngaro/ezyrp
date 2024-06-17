@@ -8,7 +8,7 @@ import {
 import { Props, Row, Sort } from "./types";
 import { TableRowRenderer } from "./RowRenderer";
 import { Pagination } from "./Pagination";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 import { Checkbox } from "components/atoms/checkbox";
 
 export function Table<R extends Row = Row>({
@@ -70,15 +70,13 @@ export function Table<R extends Row = Row>({
   };
 
   return (
-    <div className={twMerge("flow-root relative", className)}>
+    <div className={cn("flow-root relative", className)}>
       {selectedRows.length > 0 && renderSelectedActions && (
         <div className="absolute left-[3.5rem] top-0 flex h-12 items-center space-x-3 bg-white">
           {renderSelectedActions(selectedRows)}
         </div>
       )}
-      <table
-        className={twMerge("min-w-full table-fixed divide-y divide-gray-300")}
-      >
+      <table className={cn("min-w-full table-fixed divide-y divide-gray-300")}>
         <thead>
           <tr>
             {withMultiSelect && (
@@ -135,7 +133,7 @@ export function Table<R extends Row = Row>({
         </thead>
 
         <tbody
-          className={twMerge("divide-y divide-gray-200 bg-white", {
+          className={cn("divide-y divide-gray-200 bg-white", {
             "relative after:content-[''] after:bg-[url('/images/loader.svg')] after:bg-no-repeat after:bg-center after:bg-[size:30px_30px] after:absolute after:flex after:justify-center after:items-center after:w-full after:h-full after:inset-0 after:bg-white/70":
               loading,
           })}

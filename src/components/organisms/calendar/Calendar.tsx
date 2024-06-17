@@ -16,7 +16,7 @@ import * as MonthView from "./views/Month";
 import * as WeekView from "./views/Week";
 import * as DayView from "./views/Day";
 import * as YearView from "./views/Year";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 import { Select } from "components/atoms/select";
 import { Doc } from "convex/_generated/dataModel";
 
@@ -98,7 +98,7 @@ export function Calendar({
   }, [selected]);
 
   return (
-    <div className={twMerge("lg:flex lg:h-full lg:flex-col", className)}>
+    <div className={cn("lg:flex lg:h-full lg:flex-col", className)}>
       <CalendarContext.Provider
         value={{
           state: {

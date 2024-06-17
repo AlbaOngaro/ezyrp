@@ -8,7 +8,7 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 import { Checkbox } from "components/atoms/checkbox";
 import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
@@ -40,7 +40,7 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
 
   return (
     <article
-      className={twMerge("bg-white p-2 shadow-md rounded-md border-t-4", {
+      className={cn("bg-white p-2 shadow-md rounded-md border-t-4", {
         "border-red-400": event.variant === "red",
         "border-orange-400": event.variant === "orange",
         "border-yellow-400": event.variant === "yellow",

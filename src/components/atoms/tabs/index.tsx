@@ -1,5 +1,5 @@
 import * as RUITabs from "@radix-ui/react-tabs";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 type Props = {
   className?: string;
@@ -8,7 +8,7 @@ type Props = {
 export function Tabs({ className }: Props) {
   return (
     <RUITabs.Root
-      className={twMerge(
+      className={cn(
         "flex flex-col w-[300px] shadow-[0_2px_10px] shadow-blackA2",
         className,
       )}

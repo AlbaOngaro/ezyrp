@@ -1,11 +1,11 @@
 import { format, isToday } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { useEffect } from "react";
-import { twMerge } from "../../../lib/utils/twMerge";
 import {
   generateMonth,
   useCalendarReducer,
 } from "../../organisms/calendar/useCalendarReducer";
+import { cn } from "lib/utils/cn";
 
 interface Props {
   className?: string;
@@ -49,7 +49,7 @@ export function MonthWidget({
   }, [date]);
 
   return (
-    <div className={twMerge("text-center", className)}>
+    <div className={cn("text-center", className)}>
       <div className="flex items-center text-center text-gray-900">
         {withNavigation && (
           <button
@@ -132,7 +132,7 @@ export function MonthWidget({
               }
             }}
             type="button"
-            className={twMerge(
+            className={cn(
               "py-1.5 hover:bg-gray-100 focus:z-10 disabled:bg-gray-50 disabled:cursor-not-allowed",
               day.isCurrentMonth ? "bg-white" : "bg-gray-50",
               (day.isSelected || day.isToday) && "font-semibold",
@@ -154,7 +154,7 @@ export function MonthWidget({
           >
             <time
               dateTime={day.date.toISOString()}
-              className={twMerge(
+              className={cn(
                 {
                   "bg-orange-500 text-white":
                     typeof showSelected === "function"

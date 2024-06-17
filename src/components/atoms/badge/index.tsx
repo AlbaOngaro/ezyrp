@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 export type Variant = "info" | "success" | "danger";
 
@@ -18,7 +18,7 @@ export function Badge({
 }: Props) {
   return (
     <span
-      className={twMerge(
+      className={cn(
         "inline-flex flex-row items-center gap-2 rounded-md text-xs font-bold capitalize",
         {
           "text-red-500 bg-red-200": variant === "danger",
@@ -34,7 +34,7 @@ export function Badge({
       {...rest}
     >
       <i
-        className={twMerge("block w-2 h-2 rounded-full", {
+        className={cn("block w-2 h-2 rounded-full", {
           "bg-red-500": variant === "danger",
           "bg-orange-400": variant === "info",
           "bg-green-500": variant === "success",

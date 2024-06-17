@@ -2,8 +2,8 @@ import * as Form from "@radix-ui/react-form";
 
 import { forwardRef } from "react";
 import { ImageIcon } from "@radix-ui/react-icons";
-import { twMerge } from "../../../lib/utils/twMerge";
 import { DefaultInputProps } from "./types";
+import { cn } from "lib/utils/cn";
 
 export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
   function FilePickerInput(
@@ -24,7 +24,7 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
     return (
       <Form.Field
         ref={ref}
-        className={twMerge("flex flex-col gap-2 w-fit", className)}
+        className={cn("flex flex-col gap-2 w-fit", className)}
         name={name}
         asChild
       >

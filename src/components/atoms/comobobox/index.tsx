@@ -12,7 +12,7 @@ import {
 } from "react";
 import { CaretSortIcon, Cross1Icon } from "@radix-ui/react-icons";
 
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 interface Option {
   label: string;
@@ -157,7 +157,7 @@ export function Combobox<O extends Option = Option>({
     <Popover.Root open={isOpen}>
       <Popover.Anchor asChild>
         <Form.Field name={name} id={name} asChild>
-          <div className={twMerge("flex flex-col gap-2", className)}>
+          <div className={cn("flex flex-col gap-2", className)}>
             {(label || description) && (
               <label className="flex flex-col text-sm font-bold text-gray-800">
                 {label}
@@ -263,7 +263,7 @@ export function Combobox<O extends Option = Option>({
             <>
               {filteredOptions.map((option, i) => (
                 <li
-                  className={twMerge("w-full py-1 px-2 hover:bg-gray-100", {
+                  className={cn("w-full py-1 px-2 hover:bg-gray-100", {
                     "bg-gray-100": i === active,
                     "text-gray-400 cursor-not-allowed": option.disabled,
                   })}

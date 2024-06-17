@@ -2,7 +2,7 @@ import { ReactElement, useState } from "react";
 
 import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 const secondaryNavigation = [
   { name: "Last 7 days", value: 7 },
@@ -25,7 +25,7 @@ export function HomePage() {
             {secondaryNavigation.map((item) => (
               <button
                 key={item.name}
-                className={twMerge("text-gray-700", {
+                className={cn("text-gray-700", {
                   "text-orange-500": item.value === timeSpan,
                 })}
                 onClick={() => {
@@ -54,7 +54,7 @@ export function HomePage() {
               return (
                 <div
                   key={statIdx}
-                  className={twMerge(
+                  className={cn(
                     {
                       "sm:border-l": statIdx % 2 === 1,
                       "lg:border-l": statIdx === 2,
@@ -66,7 +66,7 @@ export function HomePage() {
                     {stat.name}
                   </dt>
                   <dd
-                    className={twMerge("text-gray-700 text-xs font-medium", {
+                    className={cn("text-gray-700 text-xs font-medium", {
                       "text-rose-600": stat.change < 0,
                     })}
                   >

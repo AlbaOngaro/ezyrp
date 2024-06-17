@@ -4,7 +4,7 @@ import { GroupBase } from "react-select";
 
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 type BaseProps = {
   name: string;
@@ -36,7 +36,7 @@ export function Select<O = unknown>({
   const Component = isCreatable ? CreatableRSelect : RSelect;
 
   return (
-    <div className={twMerge("flex flex-col gap-2", className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       {(label || description) && (
         <label className="flex flex-col text-sm font-bold text-gray-800">
           {label}
@@ -62,7 +62,7 @@ export function Select<O = unknown>({
           menuList: () =>
             "overflow-hidden mt-2 bg-white rounded-md shadow-[0px_10px_40px_-7px_rgba(55,_63,_104,_0.35)] w-[var(--radix-select-trigger-width)] z-50",
           option: ({ isSelected, isDisabled, isFocused }) =>
-            twMerge(
+            cn(
               "text-dark-800 px-4 py-1 flex items-center justify-between relative select-none",
               {
                 "bg-orange-400 text-white": isSelected,

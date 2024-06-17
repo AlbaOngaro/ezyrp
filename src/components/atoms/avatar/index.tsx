@@ -1,7 +1,7 @@
 import { createAvatar } from "@dicebear/core";
 import { initials } from "@dicebear/collection";
 
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 interface Props {
   className?: string;
@@ -12,10 +12,7 @@ interface Props {
 export function Avatar({ photoUrl, seed, className }: Props) {
   return (
     <picture
-      className={twMerge(
-        "relative h-8 w-8 rounded-full overflow-hidden",
-        className,
-      )}
+      className={cn("relative h-8 w-8 rounded-full overflow-hidden", className)}
     >
       <img
         className="absolute inset-0 h-full w-full object-cover object-center"

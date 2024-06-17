@@ -6,7 +6,7 @@ import { get } from "lodash";
 import { ContextMenu } from "../../organisms/context-menu/ContextMenu";
 import { wrapWithRow } from "./utils";
 import { Row, Props } from "./types";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 import { Checkbox } from "components/atoms/checkbox";
 
 export function TableRowRenderer<R extends Row = Row>({
@@ -33,7 +33,7 @@ export function TableRowRenderer<R extends Row = Row>({
       <Trigger disabled={!withContextMenu} asChild>
         <tr
           ref={tr}
-          className={twMerge("hover:bg-gray-50 group", {
+          className={cn("hover:bg-gray-50 group", {
             "bg-gray-50": selectedRows.includes(row),
           })}
         >

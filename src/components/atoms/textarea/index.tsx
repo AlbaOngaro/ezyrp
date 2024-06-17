@@ -1,7 +1,7 @@
 import * as Form from "@radix-ui/react-form";
 import { TextareaHTMLAttributes, forwardRef, useEffect, useRef } from "react";
 import { mergeRefs } from "lib/utils/mergeRefs";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -33,7 +33,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, Props>(
 
     return (
       <Form.Field
-        className={twMerge("flex flex-col gap-2 box-content", className)}
+        className={cn("flex flex-col gap-2 box-content", className)}
         name={name}
       >
         {(label || description) && (

@@ -1,4 +1,4 @@
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 interface Props<T extends React.ElementType> {
   as?: T;
@@ -16,10 +16,7 @@ export function Container<T extends React.ElementType = "div">({
 
   return (
     <Component
-      className={twMerge(
-        "mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8",
-        className,
-      )}
+      className={cn("mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8", className)}
       {...rest}
     >
       {children}

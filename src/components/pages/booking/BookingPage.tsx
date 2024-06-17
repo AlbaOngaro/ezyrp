@@ -7,9 +7,9 @@ import { Form } from "@radix-ui/react-form";
 
 import { useMutation } from "convex/react";
 import { useQuery } from "convex-helpers/react";
+import { cn } from "lib/utils/cn";
 import { Container } from "components/atoms/container";
 import { Card } from "components/atoms/card";
-import { twMerge } from "lib/utils/twMerge";
 import { TimeView } from "components/pages/booking/views/TimeView";
 import { DetailsView } from "components/pages/booking/views/DetailsView";
 import { SuccessView } from "components/pages/booking/views/SuccessView";
@@ -95,7 +95,7 @@ export function BookingPage({ eventtype }: Props) {
           )}
 
           <Form
-            className={twMerge(
+            className={cn(
               "col-span-9 p-4 pl-0 grid grid-cols-12 gap-y-4 relative",
               {
                 "col-span-12": view === View.Success,

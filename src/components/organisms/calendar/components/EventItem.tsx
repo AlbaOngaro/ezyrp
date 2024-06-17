@@ -4,8 +4,7 @@ import { Root, Trigger } from "@radix-ui/react-popover";
 
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../utils";
 import { useCalendarContext } from "../Calendar";
-
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 import { EventPopover } from "components/organisms/calendar/components/EventPopover";
 import { Doc } from "convex/_generated/dataModel";
@@ -51,7 +50,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
       >
         <li
           ref={ref}
-          className={twMerge(
+          className={cn(
             className,
             "flex cursor-pointer leading-5 text-xs p-2",
             {
@@ -99,7 +98,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
           {...rest}
         >
           <p
-            className={twMerge("font-semibold", {
+            className={cn("font-semibold", {
               truncate: view === "month",
               "text-red-500": event.variant === "red",
               "text-orange-400": event.variant === "orange",
@@ -123,7 +122,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
           </p>
           {(!isLongerThan24Hours || view === "month") && (
             <p
-              className={twMerge("shrink-0", {
+              className={cn("shrink-0", {
                 "text-red-500 group-hover:text-red-700":
                   event.variant === "red",
                 "text-orange-400 group-hover:text-orange-600":

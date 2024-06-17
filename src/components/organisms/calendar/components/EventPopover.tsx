@@ -16,9 +16,9 @@ import {
 import { format } from "date-fns";
 import { useState } from "react";
 import { useEvents } from "../../../../hooks/useEvents";
+import { cn } from "lib/utils/cn";
 
 import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
-import { twMerge } from "lib/utils/twMerge";
 
 import { Dialog } from "components/atoms/dialog";
 import { Doc } from "convex/_generated/dataModel";
@@ -78,7 +78,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
 
         <section className="grid grid-cols-[24px_1fr] gap-2 items-center">
           <i
-            className={twMerge("w-4 h-4 rounded-md", {
+            className={cn("w-4 h-4 rounded-md", {
               "bg-red-500": event.variant === "red",
               "bg-orange-400": event.variant === "orange",
               "bg-yellow-400": event.variant === "yellow",

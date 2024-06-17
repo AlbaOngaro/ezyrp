@@ -3,7 +3,7 @@ import * as RUIToast from "@radix-ui/react-toast";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { useState } from "react";
-import { twMerge } from "../../../lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 interface Props {
   onClose: () => void;
@@ -24,7 +24,7 @@ export function Toast({
     <AnimatePresence onExitComplete={() => onClose()}>
       {isOpen && (
         <RUIToast.Root
-          className={twMerge(
+          className={cn(
             "grid grid-cols-[1fr_1rem] items-start pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 p-4",
             {
               "border-green-400 border-t-4": variant === "success",

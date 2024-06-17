@@ -4,7 +4,7 @@ import { EventItem } from "../components/EventItem";
 
 import { useCalendarContext } from "../Calendar";
 
-import { twMerge } from "../../../../lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 export function Body() {
   const {
@@ -43,13 +43,13 @@ export function Body() {
           {days.map((day) => (
             <div
               key={day.date.toISOString()}
-              className={twMerge("px-3 py-2 bg-gray-50 text-gray-500", {
+              className={cn("px-3 py-2 bg-gray-50 text-gray-500", {
                 "bg-white": day.isCurrentMonth,
               })}
             >
               <time
                 dateTime={day.date.toISOString()}
-                className={twMerge({
+                className={cn({
                   "flex h-6 w-6 items-center justify-center rounded-full bg-orange-500 font-semibold text-white":
                     day.isToday,
                 })}
@@ -61,7 +61,7 @@ export function Body() {
 
           <ol
             id="grid"
-            className={twMerge(
+            className={cn(
               "absolute h-full w-full col-span-7 row-span-6 grid grid-cols-7",
             )}
             style={{
@@ -87,7 +87,7 @@ export function Body() {
             <button
               key={day.date.toISOString()}
               type="button"
-              className={twMerge(
+              className={cn(
                 "bg-gray-50 flex h-14 flex-col px-3 py-2 hover:bg-gray-100 focus:z-10",
                 {
                   "bg-white": day.isCurrentMonth,
@@ -103,7 +103,7 @@ export function Body() {
             >
               <time
                 dateTime={day.date.toISOString()}
-                className={twMerge(
+                className={cn(
                   day.isSelected &&
                     "flex h-6 w-6 items-center justify-center rounded-full",
                   day.isSelected && day.isToday && "bg-orange-500",

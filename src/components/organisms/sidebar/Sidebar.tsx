@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { twMerge } from "../../../lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 const navigation = [
   { name: "Home", href: "/", icon: HomeIcon },
@@ -48,7 +48,7 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
 
   return (
     <aside
-      className={twMerge(
+      className={cn(
         "left-0 flex grow flex-col gap-y-5 bg-orange-500 px-6 py-4 h-screen relative transition-all duration-300 w-[300px] print:hidden",
         {
           "pr-10": isOpen,
@@ -73,7 +73,7 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
                   <Link
                     title={item.name}
                     href={item.href}
-                    className={twMerge(
+                    className={cn(
                       "group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-orange-200",
                       {
                         "bg-orange-600 text-white":
@@ -84,7 +84,7 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
                     )}
                   >
                     <item.icon
-                      className={twMerge(
+                      className={cn(
                         "h-4 w-4 shrink-0 text-orange-200 group-hover:text-white",
                         {
                           "text-white": router.asPath === item.href,
@@ -102,7 +102,7 @@ export function Sidebar({ isOpen: initialIsOpen }: Props) {
           <li className="mt-auto">
             <Link
               href="/settings"
-              className={twMerge(
+              className={cn(
                 "group -mx-2 flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-orange-200",
                 {
                   "hover:bg-orange-600 hover:text-white": isOpen,

@@ -4,7 +4,7 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { Controller, useFormContext } from "react-hook-form";
 
 import { DURATION_OPTIONS, VARIANTS } from "./constants";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 import { Button } from "components/atoms/button";
 import { Input } from "components/atoms/input";
 import { TextArea } from "components/atoms/textarea";
@@ -28,7 +28,7 @@ export function EventTypeForm({ className }: Props) {
   return (
     <Form
       onSubmit={handleSubmit(console.debug, console.error)}
-      className={twMerge("mt-2 flex flex-col gap-2", className)}
+      className={cn("mt-2 flex flex-col gap-2", className)}
     >
       <Input label="Name" {...register("name", { required: true })} />
 
@@ -73,7 +73,7 @@ export function EventTypeForm({ className }: Props) {
               {VARIANTS.map((variant) => (
                 <RadioGroup.Item
                   key={variant}
-                  className={twMerge(
+                  className={cn(
                     "w-6 h-6 shrink-0 rounded-full opacity-100 transition-opacity duration-300 hover:opacity-80",
                     {
                       "bg-red-500": variant === "red",

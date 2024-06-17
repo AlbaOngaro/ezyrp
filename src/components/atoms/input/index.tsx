@@ -1,11 +1,11 @@
 import * as Form from "@radix-ui/react-form";
 import { forwardRef } from "react";
 
-import { twMerge } from "../../../lib/utils/twMerge";
 import { Props, isDateTimeInputProps } from "./types";
 
 import { FilePickerInput } from "./FilePickerInput";
 import { DateTimeInput } from "./DateTimeInput";
+import { cn } from "lib/utils/cn";
 
 export const Input = forwardRef<HTMLInputElement, Props>(
   function Input(props, ref) {
@@ -25,7 +25,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
       return (
         <Form.Field
           ref={ref}
-          className={twMerge("flex flex-col gap-2", className)}
+          className={cn("flex flex-col gap-2", className)}
           name={name}
           id={name}
           asChild
@@ -92,7 +92,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
     return (
       <Form.Field
         ref={ref}
-        className={twMerge("flex flex-col gap-2", className)}
+        className={cn("flex flex-col gap-2", className)}
         name={name}
         id={name}
         asChild

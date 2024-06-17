@@ -1,5 +1,5 @@
 import { Ref, forwardRef } from "react";
-import { twMerge } from "lib/utils/twMerge";
+import { cn } from "lib/utils/cn";
 
 interface Props<T extends React.ElementType> {
   as?: T;
@@ -15,7 +15,7 @@ export const Card = forwardRef(function Card<
   return (
     <Component
       ref={ref}
-      className={twMerge("bg-white p-4 rounded-md shadow-sm", className)}
+      className={cn("bg-white p-4 rounded-md shadow-sm", className)}
       {...rest}
     >
       {children}
