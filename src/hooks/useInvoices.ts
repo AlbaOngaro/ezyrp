@@ -1,31 +1,19 @@
-import { useMutation, useQuery } from "@apollo/client";
-
-import { INVOICES } from "../lib/queries/INVOICES";
-import { CREATE_INVOICES } from "../lib/mutations/CREATE_INVOICES";
-import { UPDATE_INVOICES } from "../lib/mutations/UPDATE_INVOICES";
-import { DELETE_INVOICES } from "../lib/mutations/DELETE_INVOICES";
-import { STATS } from "../lib/queries/STATS";
-import { ITEMS } from "../lib/queries/ITEMS";
+import { useQuery } from "convex-helpers/react";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export function useInvoices() {
-  const { data, error, loading: isLoading, refetch } = useQuery(INVOICES);
-  const [create] = useMutation(CREATE_INVOICES, {
-    refetchQueries: [INVOICES, ITEMS, STATS],
-  });
-  const [update] = useMutation(UPDATE_INVOICES, {
-    refetchQueries: [INVOICES, STATS],
-  });
-  const [deleteInvoices] = useMutation(DELETE_INVOICES, {
-    refetchQueries: [INVOICES, STATS],
-  });
+  const { data, error, status } = useQuery(api.invoices.list);
+  const create = useMutation(api.invoices.create);
+  const update = useMutation(api.invoices.update);
+  const remove = useMutation(api.invoices.remove);
 
   return {
     data,
     error,
-    isLoading,
+    isLoading: status === "pending",
     create,
-    refetch,
     update,
-    delete: deleteInvoices,
+    delete: remove,
   };
 }

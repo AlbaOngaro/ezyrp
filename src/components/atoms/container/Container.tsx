@@ -1,4 +1,4 @@
-import { twMerge } from "../../../lib/utils/twMerge";
+import { twMerge } from "lib/utils/twMerge";
 
 interface Props<T extends React.ElementType> {
   as?: T;

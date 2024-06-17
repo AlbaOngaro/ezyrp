@@ -1,8 +1,8 @@
 import { Form } from "@radix-ui/react-form";
 import { useFormContext } from "react-hook-form";
+import { InputResetPasswordCredentials } from "__generated__/graphql";
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
-import { InputResetPasswordCredentials } from "__generated__/graphql";
 
 export function ResetPasswordForm() {
   const {

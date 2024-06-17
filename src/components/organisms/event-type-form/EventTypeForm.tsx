@@ -3,36 +3,19 @@ import * as RadioGroup from "@radix-ui/react-radio-group";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Controller, useFormContext } from "react-hook-form";
 
-import { variants } from "server/schema/event";
+import { DURATION_OPTIONS, VARIANTS } from "./constants";
 import { twMerge } from "lib/utils/twMerge";
-import { EventType } from "__generated__/graphql";
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
 import { TextArea } from "components/atoms/textarea/TextArea";
 import { Select } from "components/atoms/select/Select";
+import { Doc } from "convex/_generated/dataModel";
 
 type Props = {
   className?: string;
 };
 
-const DURATION_OPTIONS = [
-  {
-    value: "15",
-    label: "15 min",
-  },
-  {
-    value: "30",
-    label: "30 min",
-  },
-  {
-    value: "45",
-    label: "45 min",
-  },
-  {
-    value: "60",
-    label: "60 min",
-  },
-];
+type EventType = Doc<"eventTypes">;
 
 export function EventTypeForm({ className }: Props) {
   const {
@@ -85,9 +68,9 @@ export function EventTypeForm({ className }: Props) {
               className="flex gap-2"
               value={value}
               onValueChange={(variant) => onChange(variant)}
-              defaultValue={variants[0]}
+              defaultValue={VARIANTS[0]}
             >
-              {variants.map((variant) => (
+              {VARIANTS.map((variant) => (
                 <RadioGroup.Item
                   key={variant}
                   className={twMerge(

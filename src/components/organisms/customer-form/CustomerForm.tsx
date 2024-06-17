@@ -3,9 +3,11 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
-import { Customer } from "__generated__/graphql";
 import { Select } from "components/atoms/select/Select";
 import { useCountries } from "hooks/useCountries";
+import { Doc } from "convex/_generated/dataModel";
+
+type Customer = Doc<"customers">;
 
 export function CustomerForm() {
   const { data } = useCountries();
@@ -125,7 +127,7 @@ export function CustomerForm() {
             name="country"
             label="Country"
             value={{ label: value || "", value: value || "" }}
-            options={(data?.countries || []).map((country) => ({
+            options={(data || []).map((country) => ({
               label: country.name.common,
               value: country.name.common,
             }))}

@@ -1,13 +1,12 @@
-import { useQuery } from "@apollo/client";
-
-import { COUNTRIES } from "../lib/queries/COUNTRIES";
+import { useQuery } from "convex-helpers/react";
+import { api } from "convex/_generated/api";
 
 export function useCountries() {
-  const { data, error, loading: isLoading } = useQuery(COUNTRIES);
+  const { data, error, status } = useQuery(api.countries.list, {});
 
   return {
     data,
     error,
-    isLoading,
+    isLoading: status === "pending",
   };
 }

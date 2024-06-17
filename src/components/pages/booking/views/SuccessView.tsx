@@ -1,18 +1,9 @@
 import { CalendarIcon, PersonIcon } from "@radix-ui/react-icons";
 import { useFormContext } from "react-hook-form";
-import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
 import { format } from "date-fns";
 import { Card } from "components/atoms/card/Card";
-import { BOOKING } from "lib/queries/BOOKING";
 
 export function SuccessView() {
-  const router = useRouter();
-  const { data } = useQuery(BOOKING, {
-    variables: {
-      id: router.query.eventtype as string,
-    },
-  });
   const { watch } = useFormContext();
 
   return (
@@ -22,7 +13,6 @@ export function SuccessView() {
         A calendar invitation has been sent to your email address.
       </p>
       <Card className="w-fit mx-auto border border-gray-100">
-        <h6 className="text-lg font-bold mb-4">{data?.booking?.name}</h6>
         <span className="flex gap-2 items-center mb-2">
           <PersonIcon /> {watch("guests.0.name")}
         </span>

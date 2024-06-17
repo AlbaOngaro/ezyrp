@@ -1,5 +1,7 @@
-import { Invoice } from "../../__generated__/graphql";
 import { Variant } from "../../components/atoms/badge/Badge";
+import { Doc } from "convex/_generated/dataModel";
+
+type Invoice = Doc<"invoices">;
 
 export function getBadgeVariantFromStatus(status?: Invoice["status"]): Variant {
   switch (status) {

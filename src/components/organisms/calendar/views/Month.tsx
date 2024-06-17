@@ -76,7 +76,7 @@ export function Body() {
                 start: startDate,
                 end: endDate,
               }).map((day) => (
-                <EventItem key={event.id} event={event} currentDate={day} />
+                <EventItem key={event._id} event={event} currentDate={day} />
               ));
             })}
           </ol>
@@ -118,7 +118,7 @@ export function Body() {
                 <span className="-mx-0.5 mt-auto flex flex-wrap-reverse">
                   {day.events.map((event) => (
                     <span
-                      key={event.id}
+                      key={event._id}
                       className="mx-0.5 mb-1 h-1.5 w-1.5 rounded-full bg-gray-400"
                     />
                   ))}

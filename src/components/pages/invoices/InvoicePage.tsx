@@ -14,8 +14,8 @@ import {
 
 import { useRouter } from "next/router";
 
-import { useQuery } from "@apollo/client";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { useQuery } from "convex-helpers/react";
 import { useInvoices } from "hooks/useInvoices";
 import { CHF } from "lib/formatters/chf";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
@@ -26,24 +26,21 @@ import { Card } from "components/atoms/card/Card";
 
 import { Dialog } from "components/atoms/dialog/Dialog";
 import { getBadgeVariantFromStatus } from "lib/utils/getBadgeVariantFromStatus";
-import { useUser } from "hooks/useUser";
-import { INVOICE } from "lib/queries/INVOICE";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 type Props = {
-  id: string;
+  id: Id<"invoices">;
 };
 
 export function InvoicePage({ id }: Props) {
-  const user = useUser();
   const router = useRouter();
   const invoices = useInvoices();
-  const { data, loading } = useQuery(INVOICE, {
-    variables: {
-      id,
-    },
+  const { data: invoice, status } = useQuery(api.invoices.get, {
+    id,
   });
 
-  if (loading || !data) {
+  if (status === "pending" || !invoice) {
     return null;
   }
 
@@ -61,11 +58,8 @@ export function InvoicePage({ id }: Props) {
 
       <Card className="p-6 flex items-center gap-2 print:hidden">
         <strong className="text-sm text-gray-800">Status</strong>
-        <Badge
-          size="lg"
-          variant={getBadgeVariantFromStatus(data.invoice.status)}
-        >
-          {data.invoice.status}
+        <Badge size="lg" variant={getBadgeVariantFromStatus(invoice.status)}>
+          {invoice.status}
         </Badge>
 
         <Button title="Edit" size="lg" shape="circle" className="ml-auto">
@@ -83,12 +77,11 @@ export function InvoicePage({ id }: Props) {
             title="Do you really want to delete this invoice?"
             description="This action cannot be undone!"
             onConfirm={() =>
-              invoices.delete({
-                variables: {
-                  deleteInvoicesArgs: [data.invoice.id],
-                },
-                onCompleted: () => router.push("/invoices"),
-              })
+              invoices
+                .delete({
+                  id: invoice._id,
+                })
+                .then(() => router.push("/invoices"))
             }
           />
         </DialogRoot>
@@ -108,38 +101,38 @@ export function InvoicePage({ id }: Props) {
         <header className="w-full flex flex-row justify-between items-center">
           <div>
             <h3 className="text-gray-800 text-lg font-bold mb-2">
-              {data?.invoice?.id}
+              {invoice?._id}
             </h3>
             <p className="text-gray-500 text-base font-normal">
-              {data?.invoice?.description}
+              {invoice?.description}
             </p>
           </div>
 
-          <p className="text-gray-500 text-base font-normal text-right">
+          {/* <p className="text-gray-500 text-base font-normal text-right">
             {user.data?.user?.profile?.address} <br />
             {user.data?.user?.profile?.code} {user.data?.user?.profile?.city}
             <br />
             {user.data?.user?.profile?.country}
-          </p>
+          </p> */}
         </header>
 
         <section className="grid grid-cols-3 items-start print:grid-cols-2">
           <p className="mb-2 inline-flex flex-col text-gray-600">
             <strong className="text-gray-800 mt-2">Emitted on</strong>
-            {format(new Date(data.invoice.emitted), "dd MMM yyyy")}
+            {format(new Date(invoice.emitted), "dd MMM yyyy")}
 
             <strong className="text-gray-800 mt-2">Invoice due</strong>
-            {format(new Date(data.invoice.due), "dd MMM yyyy")}
+            {format(new Date(invoice.due), "dd MMM yyyy")}
           </p>
 
           <p className="mb-2 inline-flex flex-col text-gray-600 print:text-right">
             <strong className="text-gray-800">Bill to</strong>
-            {data.invoice.customer.name}
+            {invoice.customer}
           </p>
 
           <p className="mb-2 inline-flex flex-col text-gray-600 print:hidden">
             <strong className="text-gray-800">Sent to</strong>
-            {data.invoice.customer.email}
+            {invoice.customer}
           </p>
         </section>
 
@@ -151,7 +144,7 @@ export function InvoicePage({ id }: Props) {
               <strong className="text-right">Price</strong>
               <strong className="text-right">Total</strong>
             </dt>
-            {data.invoice.items?.map((item) => (
+            {/* {invoice.items?.map((item) => (
               <dd key={item.name} className="grid grid-cols-4 text-gray-800">
                 <span>{item.name}</span>
                 <span className="text-center">{item.quantity}</span>
@@ -162,12 +155,12 @@ export function InvoicePage({ id }: Props) {
                   {CHF.format((item.price / 100) * item.quantity)}
                 </span>
               </dd>
-            ))}
+            ))} */}
           </dl>
 
           <footer className="-ml-6 -mb-6 mt-6 w-[calc(100%_+_3rem)] p-6 rounded-b-md flex justify-between bg-gray-800 text-white">
             <strong>Amount due</strong>
-            <span>{CHF.format(data.invoice.amount / 100)}</span>
+            <span>{CHF.format(invoice.amount / 100)}</span>
           </footer>
         </Card>
       </Card>
@@ -182,7 +175,9 @@ InvoicePage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const id = (
+    Array.isArray(query._id) ? query._id[0] : query._id
+  ) as Id<"invoices">;
 
   if (!id) {
     return {

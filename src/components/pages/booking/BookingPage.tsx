@@ -1,17 +1,12 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { useLazyQuery, useMutation } from "@apollo/client";
 import { CalendarIcon, ClockIcon } from "@radix-ui/react-icons";
 import { FormEvent, createContext, useContext, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@radix-ui/react-form";
 
-import { Container } from "components/atoms/container/Container";
 import { Card } from "components/atoms/card/Card";
-import { BOOKING } from "lib/queries/BOOKING";
-import { BOOK_EVENT } from "lib/mutations/BOOK_EVENT";
-import { BookEventInput } from "__generated__/graphql";
-import { EVENTS } from "lib/queries/EVENTS";
+import { Container } from "components/atoms/container/Container";
 import { twMerge } from "lib/utils/twMerge";
 import { TimeView } from "components/pages/booking/views/TimeView";
 import { DetailsView } from "components/pages/booking/views/DetailsView";

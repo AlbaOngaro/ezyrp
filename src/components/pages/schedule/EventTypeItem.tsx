@@ -8,12 +8,13 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { EventType } from "__generated__/graphql";
-
 import { twMerge } from "lib/utils/twMerge";
 
 import { Checkbox } from "components/atoms/checkbox/Checkbox";
 import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
+import { Doc } from "convex/_generated/dataModel";
+
+type EventType = Doc<"eventTypes">;
 
 type Props = {
   event: EventType;
@@ -57,18 +58,18 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
         "border-pink-400": event.variant === "pink",
         "border-rose-400": event.variant === "rose",
       })}
-      key={event.id}
+      key={event._id}
     >
       <header className="relative py-2 flex items-end justify-between">
         <Checkbox
-          checked={selected.includes(event.id)}
+          checked={selected.includes(event._id)}
           onChange={() =>
             setSelected((curr) => {
-              if (curr.includes(event.id)) {
-                return curr.filter((id) => id !== event.id);
+              if (curr.includes(event._id)) {
+                return curr.filter((id) => id !== event._id);
               }
 
-              return [...curr, event.id];
+              return [...curr, event._id];
             })
           }
           className="relative inset-0"
@@ -101,7 +102,7 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
                 {
                   type: "item",
                   label: "Edit",
-                  onClick: () => router.push(`/event-types/${event.id}/edit`),
+                  onClick: () => router.push(`/event-types/${event._id}/edit`),
                 },
               ]}
             />
@@ -119,7 +120,7 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
                 onClick={async () => {
                   try {
                     await navigator.clipboard.writeText(
-                      `${window.location.origin}/booking/${event.id}`,
+                      `${window.location.origin}/booking/${event._id}`,
                     );
                     setIsCopySuccesful(true);
                   } catch (error: unknown) {

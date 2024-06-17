@@ -1,28 +1,20 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { EVENTS } from "../lib/queries/EVENTS";
-import { CREATE_EVENTS } from "../lib/mutations/CREATE_EVENTS";
-import { UPDATE_EVENTS } from "../lib/mutations/UPDATE_EVENTS";
-import { DELETE_EVENTS } from "../lib/mutations/DELETE_EVENTS";
+import { useQuery } from "convex-helpers/react";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export function useEvents() {
-  const { data, error, loading: isLoading, refetch } = useQuery(EVENTS);
-  const [create] = useMutation(CREATE_EVENTS, {
-    refetchQueries: [EVENTS],
-  });
-  const [update] = useMutation(UPDATE_EVENTS, {
-    refetchQueries: [EVENTS],
-  });
-  const [deleteEvents] = useMutation(DELETE_EVENTS, {
-    refetchQueries: [EVENTS],
-  });
+  const { data, error, status } = useQuery(api.events.list);
+
+  const create = useMutation(api.events.create);
+  const update = useMutation(api.events.update);
+  const remove = useMutation(api.events.remove);
 
   return {
     data,
     error,
-    isLoading,
-    refetch,
+    isLoading: status === "pending",
     create,
     update,
-    delete: deleteEvents,
+    delete: remove,
   };
 }

@@ -14,7 +14,7 @@ type Extract<T, U> = T extends U ? T : never;
 
 export interface Row
   extends Record<string, ReactNode | Partial<Row> | Partial<Row>[]> {
-  id: string;
+  _id: string;
 }
 
 export interface Column<R extends Row = Row> {

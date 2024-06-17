@@ -4,6 +4,7 @@ import {
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
+import { Item } from "__generated__/graphql";
 import { useItems } from "hooks/useItems";
 
 import { CHF } from "lib/formatters/chf";
@@ -16,7 +17,6 @@ import { Button } from "components/atoms/button/Button";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Dialog } from "components/atoms/dialog/Dialog";
-import { Item } from "__generated__/graphql";
 
 export function InventoryPage() {
   const items = useItems();

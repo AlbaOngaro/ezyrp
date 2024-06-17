@@ -11,7 +11,7 @@ export function ScheduleContents() {
       as="section"
       className="lg:h-[calc(100vh_-_124px)] overflow-hidden"
     >
-      <Calendar events={events?.data?.events} />
+      <Calendar events={events?.data} />
     </Container>
   );
 }

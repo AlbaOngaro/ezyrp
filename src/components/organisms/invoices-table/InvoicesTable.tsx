@@ -8,7 +8,6 @@ import Link from "next/link";
 import { Link2Icon } from "@radix-ui/react-icons";
 
 import { useRouter } from "next/router";
-import { Invoice } from "../../../__generated__/graphql";
 
 import { useInvoices } from "../../../hooks/useInvoices";
 
@@ -18,6 +17,9 @@ import { Badge } from "../../atoms/badge/Badge";
 import { Dialog } from "../../atoms/dialog/Dialog";
 
 import { getBadgeVariantFromStatus } from "../../../lib/utils/getBadgeVariantFromStatus";
+import { Doc } from "convex/_generated/dataModel";
+
+type Invoice = Doc<"invoices">;
 
 export function InvoicesTable() {
   const router = useRouter();
@@ -34,7 +36,7 @@ export function InvoicesTable() {
         columns={[
           {
             id: "id",
-            field: "id",
+            field: "_id",
             headerName: "ID",
           },
           {

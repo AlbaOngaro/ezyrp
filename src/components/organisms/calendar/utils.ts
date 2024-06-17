@@ -5,7 +5,9 @@ import {
   isSameDay,
   isSameWeek,
 } from "date-fns";
-import { Event } from "../../../__generated__/graphql";
+import { Doc } from "convex/_generated/dataModel";
+
+type Event = Doc<"events">;
 
 export function getEventStartRow(
   startDate: Date,
@@ -80,5 +82,5 @@ export function getGridColumn(
 }
 
 export function isSavedEvent(event: Event): boolean {
-  return /event\:.{20}/.test(event.id);
+  return /event\:.{20}/.test(event._id);
 }

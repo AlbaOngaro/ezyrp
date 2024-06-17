@@ -7,8 +7,10 @@ import {
   isWithinInterval,
 } from "date-fns";
 
-import { Event } from "../../../__generated__/graphql";
 import { Day, View } from "./types";
+import { Doc } from "convex/_generated/dataModel";
+
+type Event = Doc<"events">;
 
 export type State = {
   selected: Date;

@@ -6,17 +6,18 @@ import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
 import { Select } from "components/atoms/select/Select";
 
-import { InvoiceFormValue } from "components/organisms/invoice-form/schema";
-
 import { isSavedItem } from "components/pages/invoices/CreateInvoicePage";
 
 import { CHF } from "lib/formatters/chf";
 
 import { useItems } from "hooks/useItems";
+import { Doc, Id } from "convex/_generated/dataModel";
 
 export function InvoiceItemsTable() {
   const items = useItems();
-  const { control, setValue, watch } = useFormContext<InvoiceFormValue>();
+  const { control, setValue, watch } = useFormContext<{
+    items: Doc<"items">[];
+  }>();
   const { fields, append, update, remove } = useFieldArray({
     control,
     name: "items",
@@ -49,17 +50,18 @@ export function InvoiceItemsTable() {
             <Select
               isCreatable
               name="name"
-              value={{ label: item.name, value: item.id }}
+              value={{ label: item.name, value: item._id }}
               onChange={(option) => {
                 if (option) {
-                  const newItem = items?.data?.items?.results?.find(
-                    (it) => it.id === option.value,
+                  const newItem = items?.data?.find(
+                    (it) => it._id === option.value,
                   );
 
                   if (newItem) {
                     const quantity = fields.at(i)?.quantity || 1;
                     update(i, {
-                      id: newItem.id,
+                      _id: newItem._id,
+                      _creationTime: 0,
                       name: newItem.name,
                       price: newItem.price,
                       description: newItem.description || "",
@@ -71,7 +73,8 @@ export function InvoiceItemsTable() {
               }}
               onCreateOption={(option) =>
                 update(i, {
-                  id: item.id,
+                  _id: item._id,
+                  _creationTime: 0,
                   description: "",
                   name: option,
                   price: 0,
@@ -80,12 +83,12 @@ export function InvoiceItemsTable() {
                 })
               }
               isOptionDisabled={(option) =>
-                fields.some((it) => it.id === option.value)
+                fields.some((it) => it._id === option.value)
               }
               options={
-                items?.data?.items?.results?.map((i) => ({
+                items?.data?.map((i) => ({
                   label: i.name,
-                  value: i.id,
+                  value: i._id,
                 })) || []
               }
             />
@@ -94,7 +97,7 @@ export function InvoiceItemsTable() {
               className="relative [&>input]:pr-10 after:absolute after:content-['CHF'] after:text-xs after:text-gray-500 after:-translate-y-[50%] after:top-[50%] after:right-2"
               name="price"
               type="number"
-              disabled={isSavedItem(item.id)}
+              disabled={isSavedItem(item._id)}
               min={1}
               step={0.05}
               value={item.price / 100}
@@ -109,19 +112,15 @@ export function InvoiceItemsTable() {
               type="number"
               value={item.quantity}
               min={1}
-              max={
-                items?.data?.items?.results.find((it) => it.id === item.id)
-                  ?.quantity
-              }
+              max={items?.data?.find((it) => it._id === item._id)?.quantity}
               onChange={(e) => {
                 const quantity = Number(e.target.value);
                 setValue(`items.${i}.quantity` as const, quantity);
               }}
               validations={{
-                rangeOverflow: `You don't have enough of this item in stock (${
-                  items?.data?.items?.results.find((it) => it.id === item.id)
-                    ?.quantity || undefined
-                } in stock)`,
+                rangeOverflow: `You don't have enough of this item in stock (${items?.data?.find((it) => it._id === item._id)?.quantity ||
+                  undefined
+                  } in stock)`,
               }}
             />
 
@@ -146,7 +145,8 @@ export function InvoiceItemsTable() {
         className="w-full mt-4 flex justify-center"
         onClick={() =>
           append({
-            id: uuid(),
+            _id: uuid() as Id<"items">,
+            _creationTime: 0,
             name: "",
             price: 0,
             quantity: 1,

@@ -12,6 +12,7 @@ import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 import { Dialog } from "components/atoms/dialog/Dialog";
 import { EventTypeItem } from "components/pages/schedule/EventTypeItem";
+import { Id } from "convex/_generated/dataModel";
 
 export function EventTypesContents() {
   const router = useRouter();
@@ -47,24 +48,23 @@ export function EventTypesContents() {
               title="Do you really want to delete all the selected event types?"
               description="This action cannot be undone"
               onConfirm={() =>
-                eventTypes.delete({
-                  variables: {
-                    ids: selected,
-                  },
-                  onCompleted: () => setSelected([]),
-                })
+                Promise.all(
+                  selected.map((id) =>
+                    eventTypes.delete({ id: id as Id<"eventTypes"> }),
+                  ),
+                ).then(() => setSelected([]))
               }
             />
           </DialogRoot>
         )}
       </Container>
       <Container className="grid grid-cols-4 gap-x-4 max-w-none max-h-[calc(100vh_-_122px)] overflow-y-scroll">
-        {eventTypes.data?.eventTypes?.map((event) => (
+        {eventTypes.data?.map((event) => (
           <EventTypeItem
             event={event}
             selected={selected}
             setSelected={setSelected}
-            key={event.id}
+            key={event._id}
           />
         ))}
       </Container>

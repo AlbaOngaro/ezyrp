@@ -7,8 +7,6 @@ import {
 } from "react";
 import { Root as Form } from "@radix-ui/react-form";
 
-import { InputCreateItems } from "../../../__generated__/graphql";
-
 import { Modal } from "../../atoms/modal/Modal";
 import { Button } from "../../atoms/button/Button";
 
@@ -22,7 +20,7 @@ interface Props {
 export function CreateItemModal({ setIsOpen }: Props) {
   const items = useItems();
 
-  const [item, setItem] = useState<InputCreateItems>({
+  const [item, setItem] = useState({
     name: "",
     description: "",
     price: 0,
@@ -47,14 +45,8 @@ export function CreateItemModal({ setIsOpen }: Props) {
 
     try {
       await items.create({
-        variables: {
-          createItemsInput: [
-            {
-              ...item,
-              price: item.price * 100,
-            },
-          ],
-        },
+        ...item,
+        price: item.price * 100,
       });
       _setIsOpen(false);
     } catch (error: unknown) {

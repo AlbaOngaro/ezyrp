@@ -7,22 +7,11 @@ import {
 } from "date-fns";
 import { Controller, useFormContext } from "react-hook-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
 import { MonthWidget } from "components/atoms/month-widget/MonthWidget";
-import { Button } from "components/atoms/button/Button";
 import { useBookingContext } from "components/pages/booking/BookingPage";
-import { BOOKING } from "lib/queries/BOOKING";
-import { View } from "components/pages/booking/types";
 
 export function TimeView() {
-  const router = useRouter();
-  const { data, refetch } = useQuery(BOOKING, {
-    variables: {
-      id: router.query.eventtype as string,
-    },
-  });
-  const { today, setView } = useBookingContext();
+  const { today } = useBookingContext();
   const { control } = useFormContext();
 
   return (
@@ -47,9 +36,6 @@ export function TimeView() {
             date={new Date(value)}
             onDayClick={(date) => {
               onChange(date.toISOString());
-              refetch({
-                day: date.toISOString(),
-              });
             }}
             withNavigation
             showSelected={(date) => isSameDay(date, new Date(value))}
@@ -60,9 +46,9 @@ export function TimeView() {
                 return true;
               }
 
-              const day = date.getDay() === 0 ? 6 : date.getDay() - 1;
+              // const day = date.getDay() === 0 ? 6 : date.getDay() - 1;
 
-              return !data?.booking?.days?.includes(day);
+              return true;
             }}
             isPrevDisabled={(date) => !isAfter(subMonths(date, 1), today)}
           />
@@ -79,7 +65,7 @@ export function TimeView() {
               }}
             >
               <ol>
-                {data?.booking?.slots.map((slot) => {
+                {/* {data?.booking?.slots.map((slot) => {
                   const [hours, minutes] = slot.split(":").map(Number);
 
                   const item = `${(hours - new Date().getTimezoneOffset() / 60)
@@ -105,7 +91,7 @@ export function TimeView() {
                       </Button>
                     </li>
                   );
-                })}
+                })} */}
               </ol>
             </RadioGroup.Root>
           </div>

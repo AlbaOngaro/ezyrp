@@ -1,31 +1,20 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_ITEMS } from "../lib/mutations/CREATE_ITEMS";
-import { ITEMS } from "../lib/queries/ITEMS";
-import { UPDATE_ITEMS } from "lib/mutations/UPDATE_ITEMS";
-import { DELETE_ITEMS } from "lib/mutations/DELETE_ITEMS";
+import { useQuery } from "convex-helpers/react";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export function useItems() {
-  const { data, error, loading, refetch } = useQuery(ITEMS);
+  const { data, error, status } = useQuery(api.items.list);
 
-  const [create] = useMutation(CREATE_ITEMS, {
-    refetchQueries: [ITEMS],
-  });
-
-  const [update] = useMutation(UPDATE_ITEMS, {
-    refetchQueries: [ITEMS],
-  });
-
-  const [deleteItems] = useMutation(DELETE_ITEMS, {
-    refetchQueries: [ITEMS],
-  });
+  const create = useMutation(api.items.create);
+  const update = useMutation(api.items.update);
+  const remove = useMutation(api.items.remove);
 
   return {
     data,
     error,
     create,
-    loading,
-    refetch,
+    loading: status === "pending",
     update,
-    delete: deleteItems,
+    delete: remove,
   };
 }

@@ -5,13 +5,14 @@ import {
 } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
 
-import { Customer } from "__generated__/graphql";
-
 import { Dialog } from "components/atoms/dialog/Dialog";
 import { Table } from "components/atoms/table/Table";
 import { Button } from "components/atoms/button/Button";
 
 import { useCustomers } from "hooks/useCustomers";
+import { Doc, Id } from "convex/_generated/dataModel";
+
+type Customer = Doc<"customers">;
 
 export function CustomersTable() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export function CustomersTable() {
         columns={[
           {
             id: "id",
-            field: "id",
+            field: "_id",
             headerName: "ID",
           },
           {
@@ -42,7 +43,7 @@ export function CustomersTable() {
             headerName: "E-mail",
           },
         ]}
-        rows={customers?.data?.customers?.results || []}
+        rows={customers?.data || []}
         withMultiSelect
         renderSelectedActions={(rows) => (
           <DialogRoot>
@@ -57,11 +58,11 @@ export function CustomersTable() {
               title="Do you really want to delete all the selected customers?"
               description="This action cannot be undone"
               onConfirm={() =>
-                customers.delete({
-                  variables: {
-                    deleteCustomerArgs: rows.map((row) => row.id),
-                  },
-                })
+                Promise.all(
+                  rows.map((row) =>
+                    customers.delete({ id: row._id as Id<"customers"> }),
+                  ),
+                )
               }
             />
           </DialogRoot>
@@ -71,7 +72,7 @@ export function CustomersTable() {
           {
             type: "item",
             label: "Edit",
-            onClick: (row) => router.push(`/customers/${row.id}/edit`),
+            onClick: (row) => router.push(`/customers/${row._id}/edit`),
           },
           {
             type: "separator",
@@ -85,17 +86,6 @@ export function CustomersTable() {
             },
           },
         ]}
-        withPagination
-        pagination={{
-          total: customers?.data?.customers?.total || 0,
-          onPageChange: ({ start, limit }) =>
-            customers.refetch({
-              filters: {
-                start,
-                limit,
-              },
-            }),
-        }}
       />
 
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -105,9 +95,7 @@ export function CustomersTable() {
           onConfirm={() => {
             if (customer) {
               return customers.delete({
-                variables: {
-                  deleteCustomerArgs: [customer.id],
-                },
+                id: customer._id,
               });
             }
           }}

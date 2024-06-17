@@ -176,7 +176,7 @@ export function Table<R extends Row = Row>({
             })
             .map((row) => (
               <TableRowRenderer
-                key={row.id}
+                key={row._id}
                 row={row}
                 withContextMenu={withContextMenu}
                 withMultiSelect={withMultiSelect}

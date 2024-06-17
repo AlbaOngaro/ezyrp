@@ -1,10 +1,6 @@
 import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
-import { useLazyQuery } from "@apollo/client";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Invoice } from "__generated__/graphql";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
@@ -13,27 +9,31 @@ import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 import { Heading } from "components/atoms/heading/Heading";
 import { Container } from "components/atoms/container/Container";
 
-import { INVOICE } from "lib/queries/INVOICE";
-import { schema } from "components/organisms/invoice-form/schema";
+import { Doc, Id } from "convex/_generated/dataModel";
+import { useLazyQuery } from "lib/hooks/useLazyQuery";
+import { api } from "convex/_generated/api";
+
+type Invoice = Doc<"invoices">;
 
 type Props = {
-  id: string;
+  id: Id<"invoices">;
 };
 
 export function EditInvoicePage({ id }: Props) {
-  const [getInvoice] = useLazyQuery(INVOICE, {
-    variables: {
-      id,
-    },
-  });
+  const [getInvoice] = useLazyQuery(api.invoices.get);
 
   const { handleSubmit, reset, ...methods } = useForm({
     defaultValues: async () => {
-      const { data } = await getInvoice();
-      return data?.invoice;
+      const invoice = await getInvoice({
+        id,
+      });
+
+      if (!invoice) {
+        return undefined;
+      }
+
+      return invoice;
     },
-    // @ts-ignore
-    resolver: zodResolver(schema),
   });
 
   const handleSubmitWrapper: UseFormHandleSubmit<Invoice> = () =>
@@ -69,7 +69,7 @@ export async function getServerSideProps({
 
   return {
     props: {
-      id: Array.isArray(query.id) ? query.id[0] : query.id,
+      id: (Array.isArray(query.id) ? query.id[0] : query.id) as Id<"invoices">,
     },
   };
 }

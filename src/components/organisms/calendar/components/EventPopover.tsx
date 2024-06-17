@@ -21,7 +21,9 @@ import { twMerge } from "../../../../lib/utils/twMerge";
 
 import { Dialog } from "../../../atoms/dialog/Dialog";
 import { EditEventModal } from "../../edit-event-modal/EditEventModal";
-import { Event } from "../../../../__generated__/graphql";
+import { Doc } from "convex/_generated/dataModel";
+
+type Event = Doc<"events">;
 
 interface Props {
   event: Event;
@@ -62,9 +64,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
               description="This action cannot be undone"
               onConfirm={() =>
                 events.delete({
-                  variables: {
-                    deleteEventsInput: [event.id],
-                  },
+                  id: event._id,
                 })
               }
             />
@@ -116,7 +116,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
                 {event.guests.length > 1 ? "Guests:" : "Guest:"}
                 <ul className="text-gray-500">
                   {event.guests.map((guest) => (
-                    <li key={guest.id}>{guest.name}</li>
+                    <li key={guest}>{guest}</li>
                   ))}
                 </ul>
               </p>

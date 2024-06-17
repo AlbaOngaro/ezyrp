@@ -249,15 +249,13 @@ export function Body() {
 
               {days.map((day, i) => {
                 const dayStartsAt =
-                  (data?.settings?.start || 0) -
-                  new Date().getTimezoneOffset() / 60;
+                  (data?.start || 0) - new Date().getTimezoneOffset() / 60;
                 const dayEndsAt =
-                  (data?.settings?.end || 0) -
-                  new Date().getTimezoneOffset() / 60;
+                  (data?.end || 0) - new Date().getTimezoneOffset() / 60;
 
                 return (
                   <Fragment key={day.date.toISOString()}>
-                    {data?.settings?.days?.includes(i) ? (
+                    {data?.days?.includes(i) ? (
                       <>
                         <div
                           className="bg-gray-100/30 pointer-events-none"
@@ -287,7 +285,7 @@ export function Body() {
 
                     {day.events.map((event) => (
                       <EventItem
-                        key={event.id}
+                        key={event._id}
                         event={event}
                         currentDate={day.date}
                       />

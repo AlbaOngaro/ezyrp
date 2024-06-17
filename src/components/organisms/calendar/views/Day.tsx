@@ -17,10 +17,8 @@ export function Body() {
   const { data } = useSettings();
   const weekDay = selected.getDay() === 0 ? 6 : selected.getDay() - 1;
 
-  const dayStartsAt =
-    (data?.settings?.start || 0) - new Date().getTimezoneOffset() / 60;
-  const dayEndsAt =
-    (data?.settings?.end || 0) - new Date().getTimezoneOffset() / 60;
+  const dayStartsAt = (data?.start || 0) - new Date().getTimezoneOffset() / 60;
+  const dayEndsAt = (data?.end || 0) - new Date().getTimezoneOffset() / 60;
 
   return (
     <div className="isolate flex flex-auto overflow-hidden bg-white">
@@ -256,7 +254,7 @@ export function Body() {
               }}
               id="grid"
             >
-              {data?.settings?.days?.includes(weekDay) ? (
+              {data?.days?.includes(weekDay) ? (
                 <>
                   <div
                     className="bg-gray-100/30 pointer-events-none"
@@ -287,7 +285,7 @@ export function Body() {
                 .find((day) => isSameDay(day.date, selected))
                 ?.events.map((event) => (
                   <EventItem
-                    key={event.id}
+                    key={event._id}
                     event={event}
                     currentDate={selected}
                   />

@@ -1,12 +1,7 @@
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { useLazyQuery } from "@apollo/client";
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
-
-import { Item } from "__generated__/graphql";
-
-import { ITEM } from "lib/queries/ITEM";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
@@ -15,25 +10,38 @@ import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 import { useItems } from "hooks/useItems";
+import { Doc, Id } from "convex/_generated/dataModel";
+import { useLazyQuery } from "lib/hooks/useLazyQuery";
+import { api } from "convex/_generated/api";
+
+type Item = Doc<"items">;
 
 type Props = {
-  id: string;
+  id: Id<"items">;
 };
 
 export function EditItemPage({ id }: Props) {
   const items = useItems();
   const router = useRouter();
-  const [getItem] = useLazyQuery(ITEM);
+  const [getItem] = useLazyQuery(api.items.get);
 
   const { handleSubmit, ...methods } = useForm<Item>({
     defaultValues: async () => {
-      const { data } = await getItem({
-        variables: {
-          id,
-        },
+      const item = await getItem({
+        id,
       });
 
-      const item = data?.item as Item;
+      if (!item) {
+        return {
+          _id: "" as Id<"items">,
+          _creationTime: 0,
+          name: "",
+          description: "",
+          price: 0,
+          onetime: false,
+          quantity: 0,
+        };
+      }
 
       return {
         ...item,
@@ -43,19 +51,18 @@ export function EditItemPage({ id }: Props) {
   });
 
   const handleSubmitWrapper: UseFormHandleSubmit<Item> = (onSuccess, onError) =>
-    handleSubmit(async ({ __typename, ...data }) => {
+    handleSubmit(async ({ _id, _creationTime, ...data }) => {
       await items.update({
-        variables: {
-          updateItemsInput: [
-            {
-              ...data,
-              price: data.price * 100,
-            },
-          ],
-        },
+        id: _id,
+        ...data,
+        price: data.price * 100,
       });
 
-      onSuccess(data);
+      onSuccess({
+        _id,
+        _creationTime,
+        ...data,
+      });
 
       return router.push("/inventory");
     }, onError);
@@ -77,7 +84,7 @@ EditItemPage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const id = (Array.isArray(query.id) ? query.id[0] : query.id) as Id<"items">;
 
   if (!id) {
     return {

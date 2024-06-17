@@ -1,11 +1,11 @@
-import { useQuery } from "@apollo/client";
-import { SETTINGS } from "lib/queries/SETTINGS";
+import { useQuery } from "convex-helpers/react";
+import { api } from "convex/_generated/api";
 
 export function useSettings() {
-  const { data, loading } = useQuery(SETTINGS);
+  const { data, status } = useQuery(api.settings.get);
 
   return {
     data,
-    loading,
+    loading: status === "pending",
   };
 }

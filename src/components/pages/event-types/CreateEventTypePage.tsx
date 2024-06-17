@@ -1,12 +1,12 @@
 import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { EventType } from "__generated__/graphql";
+import { variants } from "server/schema/event";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 import { EventTypeForm } from "components/organisms/event-type-form/EventTypeForm";
-import { EventType } from "__generated__/graphql";
-import { variants } from "server/schema/event";
 import { useEventTypes } from "hooks/useEventTypes";
 
 export function CreateEventTypePage() {

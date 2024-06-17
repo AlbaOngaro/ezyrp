@@ -2,14 +2,13 @@ import { Form } from "@radix-ui/react-form";
 import { useFormContext } from "react-hook-form";
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
-import { InputCreateInviteArgs } from "__generated__/graphql";
 
 export function CreateInviteForm() {
   const {
     register,
     handleSubmit,
     formState: { isValid, isSubmitting },
-  } = useFormContext<InputCreateInviteArgs>();
+  } = useFormContext();
 
   return (
     <Form

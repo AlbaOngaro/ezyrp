@@ -1,39 +1,20 @@
-import { useQuery, useMutation } from "@apollo/client";
-
-import { CREATE_CUSTOMERS } from "../lib/mutations/CREATE_CUSTOMERS";
-import { DELETE_CUSTOMERS } from "../lib/mutations/DELETE_CUSTOMERS";
-import { UPDATE_CUSTOMERS } from "../lib/mutations/UPDATE_CUSTOMERS";
-
-import { CUSTOMERS } from "../lib/queries/CUSTOMERS";
-import { CUSTOMERS_WITH_LAST_INVOICE } from "../lib/queries/CUSTOMERS_WITH_LAST_INVOICE";
-import { INVOICES } from "../lib/queries/INVOICES";
+import { useQuery } from "convex-helpers/react";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export function useCustomers() {
-  const {
-    data,
-    error,
-    loading: isLoading,
-    refetch,
-  } = useQuery(CUSTOMERS, {
-    fetchPolicy: "cache-and-network",
-  });
-  const [create] = useMutation(CREATE_CUSTOMERS, {
-    refetchQueries: [CUSTOMERS, CUSTOMERS_WITH_LAST_INVOICE],
-  });
-  const [update] = useMutation(UPDATE_CUSTOMERS, {
-    refetchQueries: [CUSTOMERS, CUSTOMERS_WITH_LAST_INVOICE],
-  });
-  const [deleteCustomer] = useMutation(DELETE_CUSTOMERS, {
-    refetchQueries: [CUSTOMERS, CUSTOMERS_WITH_LAST_INVOICE, INVOICES],
-  });
+  const { data, error, status } = useQuery(api.customers.list);
+
+  const create = useMutation(api.customers.create);
+  const update = useMutation(api.customers.update);
+  const remove = useMutation(api.customers.remove);
 
   return {
     data,
-    refetch,
     error,
-    isLoading,
+    isLoading: status === "pending",
     create,
     update,
-    delete: deleteCustomer,
+    delete: remove,
   };
 }

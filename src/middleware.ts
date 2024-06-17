@@ -1,25 +1,31 @@
 import { NextRequest, NextResponse, URLPattern } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { jwtDecode } from "jwt-decode";
 
-import { surreal } from "./server/surreal";
-import { ACCESS_TOKEN_ID } from "./lib/constants";
-
-const AUTH_ROUTES: URLPattern[] = [
-  new URLPattern({ pathname: "/login" }),
-  new URLPattern({ pathname: "/register" }),
-];
+const AUTH_ROUTES: URLPattern[] = [new URLPattern({ pathname: "/login" })];
 
 const PUBLIC_ROUTES: URLPattern[] = [
   new URLPattern({ pathname: "/booking/:eventtype(eventtype:.*)" }),
 ];
+
+type ClerkSession = {
+  azp: string;
+  exp: number;
+  iat: number;
+  iss: string;
+  nbf: number;
+  sid: string;
+  sub: string;
+};
 
 export async function middleware(req: NextRequest) {
   if (PUBLIC_ROUTES.some((route) => route.test(req.url))) {
     return;
   }
 
-  const token = req.cookies.get(ACCESS_TOKEN_ID)?.value;
+  const __session = req.cookies.get("__session")?.value;
 
-  if (!token) {
+  if (!__session) {
     if (!AUTH_ROUTES.some((route) => route.test(req.url))) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
@@ -28,7 +34,9 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    await surreal.authenticate(token);
+    const { sid } = jwtDecode<ClerkSession>(__session);
+    await clerkClient.sessions.getToken(sid, "convex");
+
     if (AUTH_ROUTES.some((route) => route.test(req.url))) {
       return NextResponse.redirect(new URL("/", req.url));
     }

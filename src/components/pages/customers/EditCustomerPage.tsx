@@ -1,10 +1,7 @@
 import { ReactElement } from "react";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { useLazyQuery } from "@apollo/client";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-
-import { Customer } from "__generated__/graphql";
 
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
@@ -12,30 +9,29 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
 
-import { CUSTOMER } from "lib/queries/CUSTOMER";
-
 import { useCustomers } from "hooks/useCustomers";
 import { useFileUpload } from "hooks/useFileUpload";
+import { Doc, Id } from "convex/_generated/dataModel";
+import { useLazyQuery } from "lib/hooks/useLazyQuery";
+import { api } from "convex/_generated/api";
+
+type Customer = Doc<"customers">;
 
 type Props = {
-  id: string;
+  id: Id<"customers">;
 };
 
 export function EditCustomerPage({ id }: Props) {
   const router = useRouter();
   const customers = useCustomers();
-  const [getCustomer] = useLazyQuery(CUSTOMER);
+  const [getCustomer] = useLazyQuery(api.customers.get);
   const handleFileUpload = useFileUpload();
 
   const { handleSubmit, ...methods } = useForm<Customer>({
     defaultValues: async () => {
-      const { data } = await getCustomer({
-        variables: {
-          id,
-        },
-      });
+      const customer = await getCustomer({ id });
 
-      return data?.customer as Customer;
+      return customer as Customer;
     },
   });
 
@@ -59,14 +55,9 @@ export function EditCustomerPage({ id }: Props) {
           const photoUrl = await handleFileUpload(file);
 
           await customers.update({
-            variables: {
-              updateCustomerArgs: [
-                {
-                  ...data,
-                  photoUrl,
-                },
-              ],
-            },
+            id: data._id,
+            ...data,
+            photoUrl,
           });
 
           onSuccess(data);
@@ -78,9 +69,8 @@ export function EditCustomerPage({ id }: Props) {
       }
 
       await customers.update({
-        variables: {
-          updateCustomerArgs: [data],
-        },
+        id: data._id,
+        ...data,
       });
 
       onSuccess(data);
@@ -105,7 +95,9 @@ EditCustomerPage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const id = (
+    Array.isArray(query.id) ? query.id[0] : query.id
+  ) as Id<"customers">;
 
   if (!id) {
     return {

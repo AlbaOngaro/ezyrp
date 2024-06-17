@@ -5,11 +5,12 @@ import { Root, Trigger } from "@radix-ui/react-popover";
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../utils";
 import { useCalendarContext } from "../Calendar";
 
-import { Event } from "__generated__/graphql";
-
 import { twMerge } from "lib/utils/twMerge";
 
 import { EventPopover } from "components/organisms/calendar/components/EventPopover";
+import { Doc } from "convex/_generated/dataModel";
+
+type Event = Doc<"events">;
 
 interface Props {
   event: Event;
@@ -70,7 +71,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
                 isLongerThan24Hours,
               "py-0 justify-center": isLongerThan24Hours,
 
-              "shadow-sm": hovering === event.id,
+              "shadow-sm": hovering === event._id,
               "bg-red-50 hover:bg-red-100": event.variant === "red",
               "bg-orange-50 hover:bg-orange-100": event.variant === "orange",
               "bg-yellow-50 hover:bg-yellow-100": event.variant === "yellow",
@@ -89,7 +90,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
               "bg-rose-50 hover:bg-rose-100": event.variant === "rose",
             },
           )}
-          onMouseEnter={() => setHovering(event.id)}
+          onMouseEnter={() => setHovering(event._id)}
           onMouseLeave={() => setHovering("")}
           style={{
             gridRow,

@@ -1,17 +1,15 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_INVITES } from "lib/mutations/CREATE_INVITES";
-import { INVITES } from "lib/queries/INVITES";
+import { useQuery } from "convex-helpers/react";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export function useInvites() {
-  const { data, loading } = useQuery(INVITES);
+  const { data, status } = useQuery(api.invites.list);
 
-  const [create] = useMutation(CREATE_INVITES, {
-    refetchQueries: [INVITES],
-  });
+  const create = useMutation(api.invites.create);
 
   return {
     data,
-    loading,
+    loading: status === "pending",
     create,
   };
 }

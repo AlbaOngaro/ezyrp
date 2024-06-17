@@ -1,4 +1,6 @@
-import { Event } from "../../../__generated__/graphql";
+import { Doc } from "convex/_generated/dataModel";
+
+type Event = Doc<"events">;
 
 export type Day = {
   date: Date;

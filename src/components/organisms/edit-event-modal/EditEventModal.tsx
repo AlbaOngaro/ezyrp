@@ -7,37 +7,27 @@ import { Modal } from "../../atoms/modal/Modal";
 import { useEvents } from "../../../hooks/useEvents";
 import { Input } from "../../atoms/input/Input";
 import { Button } from "../../atoms/button/Button";
-import { Event, InputUpdateEventsArgs } from "../../../__generated__/graphql";
+import { Doc } from "convex/_generated/dataModel";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   event: Event;
 }
 
-export function EditEventModal({
-  setIsOpen,
-  event: { __typename, ...initialEvent },
-}: Props) {
-  const events = useEvents();
+type Event = Doc<"events">;
 
-  const [event, setEvent] = useState<InputUpdateEventsArgs>({
-    ...initialEvent,
-    guests: initialEvent.guests.map((guest) => guest.id),
-  });
+export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
+  const events = useEvents();
+  const [event, setEvent] = useState(initialEvent);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     try {
       await events.update({
-        variables: {
-          updateEventsInput: [
-            {
-              ...event,
-              guests: [],
-            },
-          ],
-        },
+        id: event._id,
+        ...event,
+        guests: [],
       });
     } catch (error: unknown) {
       console.error(error);

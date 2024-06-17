@@ -1,14 +1,13 @@
 import { Form } from "@radix-ui/react-form";
 import { format } from "date-fns";
-import { useLazyQuery, useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "convex/react";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 import { Select } from "components/atoms/select/Select";
 import { Button } from "components/atoms/button/Button";
-import { SETTINGS } from "lib/queries/SETTINGS";
-import { InputUpdateSettings } from "__generated__/graphql";
-import { UPDATE_SETTINGS } from "lib/mutations/UPDATE_SETTINGS";
+import { useLazyQuery } from "lib/hooks/useLazyQuery";
+import { api } from "convex/_generated/api";
 
 const HOURS = Array.from({ length: 48 }, (_, i) => {
   const hours = Math.floor(i * 0.5);
@@ -28,22 +27,29 @@ const HOURS = Array.from({ length: 48 }, (_, i) => {
 const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 export function ScheduleSettings() {
-  const [loadSettings] = useLazyQuery(SETTINGS);
-  const [updateSettings] = useMutation(UPDATE_SETTINGS, {
-    refetchQueries: [SETTINGS],
-  });
+  const [loadSettings] = useLazyQuery(api.settings.get);
+  const updateSettings = useMutation(api.settings.update);
 
   const {
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
-  } = useForm<InputUpdateSettings>({
+  } = useForm({
     defaultValues: async () => {
-      const { data } = await loadSettings();
+      const settings = await loadSettings();
+
+      if (!settings) {
+        return {
+          start: 0,
+          end: 0,
+          days: [],
+        };
+      }
+
       return {
-        start: data?.settings?.start || 0,
-        end: data?.settings?.end || 0,
-        days: data?.settings?.days || [],
+        start: settings?.start || 0,
+        end: settings?.end || 0,
+        days: settings?.days || [],
       };
     },
   });
@@ -58,11 +64,7 @@ export function ScheduleSettings() {
       <Form
         className="flex flex-col gap-4"
         onSubmit={handleSubmit(async (updateSettingsInput) => {
-          await updateSettings({
-            variables: {
-              updateSettingsInput,
-            },
-          });
+          await updateSettings(updateSettingsInput);
         }, console.error)}
       >
         <Controller

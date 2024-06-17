@@ -1,37 +1,47 @@
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { ReactElement } from "react";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { useLazyQuery } from "@apollo/client";
 
 import { useRouter } from "next/router";
-import { EventType } from "__generated__/graphql";
-
-import { EVENT_TYPE } from "lib/queries/EVENT_TYPE";
 
 import { EventTypeForm } from "components/organisms/event-type-form/EventTypeForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container/Container";
 import { useEventTypes } from "hooks/useEventTypes";
 import { Heading } from "components/atoms/heading/Heading";
+import { useLazyQuery } from "lib/hooks/useLazyQuery";
+import { api } from "convex/_generated/api";
+import { Doc, Id } from "convex/_generated/dataModel";
+
+type EventType = Doc<"eventTypes">;
 
 type Props = {
-  id: string;
+  id: Id<"eventTypes">;
 };
 
 export function EditEventTypePage({ id }: Props) {
   const router = useRouter();
   const eventTypes = useEventTypes();
-  const [loadEventType] = useLazyQuery(EVENT_TYPE);
+  const [loadEventType] = useLazyQuery(api.eventTypes.get);
 
   const { handleSubmit, ...methods } = useForm<EventType>({
     defaultValues: async () => {
-      const { data } = await loadEventType({
-        variables: {
-          id,
-        },
+      const data = await loadEventType({
+        id,
       });
 
-      return data?.eventType as EventType;
+      if (!data) {
+        return {
+          _id: "" as Id<"eventTypes">,
+          _creationTime: 0,
+          description: "",
+          name: "",
+          variant: "",
+          duration: 0,
+        };
+      }
+
+      return data;
     },
   });
 
@@ -39,14 +49,13 @@ export function EditEventTypePage({ id }: Props) {
     onSuccess,
     onError,
   ) =>
-    handleSubmit(async ({ __typename, ...updateEventTypesInput }) => {
+    handleSubmit(async ({ _id, ...updateEventTypesInput }) => {
       await eventTypes.update({
-        variables: {
-          updateEventTypesInput,
-        },
+        id: _id,
+        ...updateEventTypesInput,
       });
 
-      onSuccess({ __typename, ...updateEventTypesInput });
+      onSuccess({ _id, ...updateEventTypesInput });
 
       router.push("/schedule");
     }, onError);
@@ -69,7 +78,9 @@ EditEventTypePage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const id = (
+    Array.isArray(query.id) ? query.id[0] : query.id
+  ) as Id<"eventTypes">;
 
   if (!id) {
     return {

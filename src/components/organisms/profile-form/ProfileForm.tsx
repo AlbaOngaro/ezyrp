@@ -1,11 +1,11 @@
 import { Root as Form } from "@radix-ui/react-form";
 
 import { Controller, useFormContext } from "react-hook-form";
+import { Country, Profile } from "__generated__/graphql";
 import { Button } from "components/atoms/button/Button";
 import { Select } from "components/atoms/select/Select";
 import { Input } from "components/atoms/input/Input";
 import { useCountries } from "hooks/useCountries";
-import { Country, Profile } from "__generated__/graphql";
 import { twMerge } from "lib/utils/twMerge";
 
 interface Props {

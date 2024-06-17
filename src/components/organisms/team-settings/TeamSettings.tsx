@@ -1,8 +1,6 @@
-import { useQuery } from "@apollo/client";
 import { Root, Trigger } from "@radix-ui/react-dialog";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { format } from "date-fns";
-import { InputCreateInviteArgs } from "__generated__/graphql";
 
 import { Avatar } from "components/atoms/avatar/Avatar";
 import { Button } from "components/atoms/button/Button";
@@ -11,32 +9,24 @@ import { Heading } from "components/atoms/heading/Heading";
 import { Modal } from "components/atoms/modal/Modal";
 
 import { useInvites } from "hooks/useInvites";
-import { useUser } from "hooks/useUser";
 
-import { USERS } from "lib/queries/USERS";
 import { CreateInviteForm } from "components/organisms/create-invite-form/CreateInviteForm";
 
 export function TeamSettings() {
   const invites = useInvites();
-  const { data } = useQuery(USERS);
-  const { data: currentUser } = useUser();
 
-  const { handleSubmit, ...methods } = useForm<InputCreateInviteArgs>({
+  const { handleSubmit, ...methods } = useForm({
     defaultValues: {
       email: "",
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<InputCreateInviteArgs> = (
+  const handleSubmitWrapper: UseFormHandleSubmit<{ email: string }> = (
     onSucces,
     onError,
   ) =>
     handleSubmit(async (inputCreateInviteArgs) => {
-      await invites.create({
-        variables: {
-          createInviteArgs: [inputCreateInviteArgs],
-        },
-      });
+      await invites.create(inputCreateInviteArgs);
 
       onSucces(inputCreateInviteArgs);
     }, onError);
@@ -49,23 +39,6 @@ export function TeamSettings() {
       />
 
       <ul className="flex flex-col gap-4 divide-y divide-gray-300 w-fit">
-        {data?.users?.map((user) => (
-          <li key={user.id} className="flex flex-row items-start gap-4">
-            <Avatar
-              photoUrl={user.photoUrl}
-              seed={user.email}
-              className="w-10 h-10"
-            />
-            <span className="flex flex-col">
-              <strong>
-                {user.username}{" "}
-                {user.id === currentUser?.user.id && <small>(You)</small>}
-              </strong>
-              {user.email}
-            </span>
-          </li>
-        ))}
-
         <li className="flex flex-row items-start gap-4 pt-4">
           <Root>
             <Trigger asChild>
@@ -89,8 +62,8 @@ export function TeamSettings() {
       />
 
       <ul className="flex flex-col gap-4 divide-y divide-gray-300 w-fit">
-        {invites?.data?.invites?.map((invite) => (
-          <li key={invite.id} className="flex flex-row items-start gap-4">
+        {invites?.data?.map((invite) => (
+          <li key={invite._id} className="flex flex-row items-start gap-4">
             <Avatar seed={invite.email} className="w-10 h-10" />
             <span className="flex flex-col">
               <strong>{invite.email} </strong>

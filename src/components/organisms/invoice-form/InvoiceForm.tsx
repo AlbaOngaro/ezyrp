@@ -9,15 +9,13 @@ import { TextArea } from "components/atoms/textarea/TextArea";
 import { Input } from "components/atoms/input/Input";
 import { Button } from "components/atoms/button/Button";
 
-import { InvoiceFormValue } from "components/organisms/invoice-form/schema";
-
 import { useCustomers } from "hooks/useCustomers";
 
 export function InvoiceForm() {
   const customers = useCustomers();
 
   const { control, register, watch, formState, handleSubmit } =
-    useFormContext<InvoiceFormValue>();
+    useFormContext();
 
   return (
     <Form
@@ -32,19 +30,15 @@ export function InvoiceForm() {
             label="Customer"
             name="customer"
             value={value ? { label: value.name, value: value.id } : undefined}
-            options={(customers?.data?.customers?.results || [])?.map(
-              (customer) => ({
-                label: customer.name,
-                value: customer.id,
-              }),
-            )}
+            options={(customers?.data || [])?.map((customer) => ({
+              label: customer.name,
+              value: customer._id,
+            }))}
             onChange={(option) => {
               if (option) {
-                const customer = customers?.data?.customers?.results?.find(
-                  (c) => c.id === option.value,
+                const customer = customers?.data?.find(
+                  (c) => c._id === option.value,
                 );
-
-                debugger;
 
                 if (customer) {
                   onChange(customer);
@@ -97,12 +91,12 @@ export function InvoiceForm() {
                 value
                   ? format(new Date(value), "yyyy-MM-dd")
                   : format(
-                      addMonths(
-                        new Date(watch("emitted", new Date().toISOString())),
-                        1,
-                      ),
-                      "yyyy-MM-dd",
-                    )
+                    addMonths(
+                      new Date(watch("emitted", new Date().toISOString())),
+                      1,
+                    ),
+                    "yyyy-MM-dd",
+                  )
               }
               onChange={(due) => onChange(due.toISOString())}
               validations={{

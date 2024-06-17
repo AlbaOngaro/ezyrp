@@ -1,19 +1,8 @@
 import { ReactElement, useState } from "react";
-import { useQuery } from "@apollo/client";
 
-import { format } from "date-fns";
-import Link from "next/link";
-
-import { twMerge } from "../../../lib/utils/twMerge";
-import { STATS } from "../../../lib/queries/STATS";
-import { CUSTOMERS_WITH_LAST_INVOICE } from "../../../lib/queries/CUSTOMERS_WITH_LAST_INVOICE";
-
-import { SidebarLayout } from "../../layouts/sidebar/SidebarLayout";
-import { Badge } from "../../atoms/badge/Badge";
-import { Avatar } from "../../atoms/avatar/Avatar";
-import { Container } from "../../atoms/container/Container";
-import { CHF } from "../../../lib/formatters/chf";
-import { Card } from "../../atoms/card/Card";
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { Container } from "components/atoms/container/Container";
+import { twMerge } from "lib/utils/twMerge";
 
 const secondaryNavigation = [
   { name: "Last 7 days", value: 7 },
@@ -22,31 +11,7 @@ const secondaryNavigation = [
 ];
 
 export function HomePage() {
-  const { data: customers, loading: isCustomersLoading } = useQuery(
-    CUSTOMERS_WITH_LAST_INVOICE,
-  );
-  const {
-    data: stats,
-    loading: isStatsLoading,
-    refetch,
-  } = useQuery(STATS, {
-    variables: {
-      filters: {
-        period: 7,
-      },
-    },
-  });
-
   const [timeSpan, setTimeSpan] = useState<number>(7);
-
-  if (
-    isCustomersLoading ||
-    isStatsLoading ||
-    !customers ||
-    !customers.customers
-  ) {
-    return null;
-  }
 
   return (
     <>
@@ -80,7 +45,7 @@ export function HomePage() {
       </header>
 
       {/* Stats */}
-      {stats?.stats && (
+      {/* {stats?.stats && (
         <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
           <Container
             as="dl"
@@ -120,10 +85,10 @@ export function HomePage() {
             })}
           </Container>
         </div>
-      )}
+      )} */}
 
       {/* Recent client list*/}
-      <Container as="section">
+      {/* <Container as="section">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
             Recent customers
@@ -203,7 +168,7 @@ export function HomePage() {
             })}
           </ul>
         )}
-      </Container>
+      </Container> */}
     </>
   );
 }
