@@ -1,3 +1,0 @@
-
-# @nimblerp/surreal-trigger
-  
