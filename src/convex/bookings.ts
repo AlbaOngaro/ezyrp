@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const create = mutation({
   args: {
@@ -32,5 +32,14 @@ export const create = mutation({
       guests: guestIds,
       notes,
     });
+  },
+});
+
+export const get = query({
+  args: {
+    id: v.id("eventTypes"),
+  },
+  handler: async (ctx, { id }) => {
+    return ctx.db.get(id);
   },
 });

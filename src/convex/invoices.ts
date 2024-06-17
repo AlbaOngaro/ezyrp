@@ -1,5 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
 export const get = query({
   args: {
@@ -11,14 +12,19 @@ export const get = query({
       throw new ConvexError("Invoice not found");
     }
 
-    const items = await Promise.all(
-      invoice.items.map((id) => ctx.db.get(id)),
-    ).catch(() => []);
-    const customer = await ctx.db.get(invoice.customer).catch(() => null);
+    const items = await Promise.all(invoice.items.map((id) => ctx.db.get(id)));
+    if (!items) {
+      throw new ConvexError("Items not found");
+    }
+
+    const customer = await ctx.db.get(invoice.customer);
+    if (!customer) {
+      throw new ConvexError("Customer not found");
+    }
 
     return {
       ...invoice,
-      items,
+      items: items.filter((item) => item !== null) as Doc<"items">[],
       customer,
     };
   },
@@ -34,13 +40,15 @@ export const list = query({
     const invoices = [];
 
     for (const doc of docs) {
-      const items = await Promise.all(
-        doc.items.map((id) => ctx.db.get(id)),
-      ).catch(() => []);
-      const customer = await ctx.db.get(doc.customer).catch(() => null);
+      const items = await Promise.all(doc.items.map((id) => ctx.db.get(id)));
+      const customer = await ctx.db.get(doc.customer);
+      if (!customer) {
+        throw new ConvexError("Customer not found");
+      }
+
       invoices.push({
         ...doc,
-        items,
+        items: items.filter((item) => item !== null) as Doc<"items">[],
         customer,
       });
     }
@@ -90,14 +98,19 @@ export const update = mutation({
     ctx,
     { id, customer, description, status, items, amount, due, emitted },
   ) => {
+    const invoice = await ctx.db.get(id);
+    if (!invoice) {
+      throw new ConvexError("Invoice not found");
+    }
+
     await ctx.db.patch(id, {
-      due,
-      items,
-      amount,
-      status,
-      emitted,
-      customer,
-      description,
+      due: due || invoice.due,
+      items: items || invoice.items,
+      amount: amount || invoice.amount,
+      status: status || invoice.status,
+      emitted: emitted || invoice.emitted,
+      customer: customer || invoice.customer,
+      description: description || invoice.description,
     });
   },
 });

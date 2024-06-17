@@ -3,17 +3,11 @@ import * as Tabs from "@radix-ui/react-tabs";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
-import { AccountSettings } from "components/organisms/account-settings/AccountSettings";
 import { TeamSettings } from "components/organisms/team-settings/TeamSettings";
 import { BillingSettings } from "components/organisms/billing-settings/BillingSettings";
 import { ScheduleSettings } from "components/organisms/schedule-settings/ScheduleSettings";
 
 const nav = [
-  {
-    value: "account",
-    label: "Account",
-    content: <AccountSettings />,
-  },
   {
     value: "schedule",
     label: "Schedule",
@@ -33,7 +27,7 @@ const nav = [
 
 export function SettingsPage() {
   return (
-    <Tabs.Root defaultValue="account">
+    <Tabs.Root defaultValue="schedule">
       <Tabs.List
         asChild
         className="flex gap-x-4 overflow-x-auto py-4 px-8 border-b border-gray-200 bg-white"

@@ -25,7 +25,7 @@ const CalendarContext = createContext<{
   dispatch: Dispatch<Action>;
 }>({
   state: defaultInitialState,
-  dispatch: () => {},
+  dispatch: () => undefined,
 });
 
 export function useCalendarContext() {
@@ -183,6 +183,7 @@ export function Calendar({
               <Select
                 name="views"
                 className="min-w-[150px]"
+                // @ts-ignore
                 defaultValue={{
                   label: view,
                   value: view,

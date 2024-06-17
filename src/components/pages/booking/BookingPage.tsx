@@ -5,6 +5,8 @@ import { format } from "date-fns";
 import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@radix-ui/react-form";
 
+import { useMutation } from "convex/react";
+import { useQuery } from "convex-helpers/react";
 import { Card } from "components/atoms/card/Card";
 import { Container } from "components/atoms/container/Container";
 import { twMerge } from "lib/utils/twMerge";
@@ -16,10 +18,12 @@ import {
   Props,
   View,
 } from "components/pages/booking/types";
+import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 const BookingContext = createContext<BookingContextValue>({
   view: View.Time,
-  setView: () => {},
+  setView: () => undefined,
   today: new Date(),
 });
 
@@ -27,26 +31,23 @@ export function useBookingContext() {
   return useContext(BookingContext);
 }
 
+type BookEventFn = typeof api.bookings.create;
+
 export function BookingPage({ eventtype }: Props) {
   const today = useMemo(() => new Date(), []);
   const [view, setView] = useState(View.Time);
 
-  const [loadBooking, { data, loading, error }] = useLazyQuery(BOOKING);
-  const [bookEvent] = useMutation(BOOK_EVENT, {
-    refetchQueries: [EVENTS],
+  const { data, status, error } = useQuery(api.bookings.get, {
+    id: eventtype,
   });
 
-  const { handleSubmit, ...methods } = useForm<BookEventInput>({
-    defaultValues: async () => {
-      const { data } = await loadBooking({
-        variables: {
-          id: eventtype,
-        },
-      });
+  const bookEvent = useMutation(api.bookings.create);
 
+  const { handleSubmit, ...methods } = useForm<BookEventFn["_args"]>({
+    defaultValues: async () => {
       return {
         type: eventtype,
-        start: data?.booking?.day as string,
+        start: "",
         guests: [],
         notes: "",
       };
@@ -56,19 +57,14 @@ export function BookingPage({ eventtype }: Props) {
   const onSubmit = (e: FormEvent<HTMLFormElement>) =>
     handleSubmit(async (bookEventInput) => {
       try {
-        await bookEvent({
-          variables: {
-            bookEventInput,
-          },
-        });
-
+        await bookEvent(bookEventInput);
         setView(View.Success);
       } catch (error: unknown) {
         console.error(error);
       }
     })(e);
 
-  if (loading || methods.formState.isLoading) {
+  if (status === "pending" || methods.formState.isLoading) {
     return null;
   }
 
@@ -82,9 +78,9 @@ export function BookingPage({ eventtype }: Props) {
         <Card className="grid grid-cols-12 gap-4 w-full max-w-3xl p-0 border border-gray-100">
           {view !== View.Success && (
             <aside className="col-span-3 border-r border-gray-100 p-4 pr-0">
-              <h1 className="text-2xl font-bold">{data?.booking?.name}</h1>
+              <h1 className="text-2xl font-bold">{data?.name}</h1>
               <span className="flex gap-2 items-center">
-                <ClockIcon /> {data?.booking?.duration} minutes
+                <ClockIcon /> {data?.duration} minutes
               </span>
               {view === View.Details && (
                 <span className="flex gap-2 items-center">
@@ -131,9 +127,9 @@ export function BookingPage({ eventtype }: Props) {
 export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
-  const eventtype = Array.isArray(query.eventtype)
-    ? query.eventtype[0]
-    : query.eventtype;
+  const eventtype = (
+    Array.isArray(query.eventtype) ? query.eventtype[0] : query.eventtype
+  ) as Id<"eventTypes">;
 
   if (!eventtype) {
     return {

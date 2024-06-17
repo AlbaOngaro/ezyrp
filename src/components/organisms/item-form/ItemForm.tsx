@@ -1,16 +1,16 @@
 import { Root as Form } from "@radix-ui/react-form";
 import { useFormContext } from "react-hook-form";
-import { Item } from "__generated__/graphql";
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
 import { TextArea } from "components/atoms/textarea/TextArea";
+import { Doc } from "convex/_generated/dataModel";
 
 export function ItemForm() {
   const {
     register,
     handleSubmit,
     formState: { isSubmitted, isValid },
-  } = useFormContext<Item>();
+  } = useFormContext<Doc<"items">>();
 
   return (
     <Form

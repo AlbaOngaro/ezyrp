@@ -30,11 +30,6 @@ export function HomePage() {
                 })}
                 onClick={() => {
                   setTimeSpan(item.value);
-                  refetch({
-                    filters: {
-                      period: item.value,
-                    },
-                  });
                 }}
               >
                 {item.name}

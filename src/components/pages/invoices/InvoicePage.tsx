@@ -127,12 +127,12 @@ export function InvoicePage({ id }: Props) {
 
           <p className="mb-2 inline-flex flex-col text-gray-600 print:text-right">
             <strong className="text-gray-800">Bill to</strong>
-            {invoice.customer}
+            {invoice.customer.name}
           </p>
 
           <p className="mb-2 inline-flex flex-col text-gray-600 print:hidden">
             <strong className="text-gray-800">Sent to</strong>
-            {invoice.customer}
+            {invoice.customer.name}
           </p>
         </section>
 
@@ -144,7 +144,7 @@ export function InvoicePage({ id }: Props) {
               <strong className="text-right">Price</strong>
               <strong className="text-right">Total</strong>
             </dt>
-            {/* {invoice.items?.map((item) => (
+            {invoice.items?.map((item) => (
               <dd key={item.name} className="grid grid-cols-4 text-gray-800">
                 <span>{item.name}</span>
                 <span className="text-center">{item.quantity}</span>
@@ -155,7 +155,7 @@ export function InvoicePage({ id }: Props) {
                   {CHF.format((item.price / 100) * item.quantity)}
                 </span>
               </dd>
-            ))} */}
+            ))}
           </dl>
 
           <footer className="-ml-6 -mb-6 mt-6 w-[calc(100%_+_3rem)] p-6 rounded-b-md flex justify-between bg-gray-800 text-white">
@@ -176,7 +176,7 @@ export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
   const id = (
-    Array.isArray(query._id) ? query._id[0] : query._id
+    Array.isArray(query.id) ? query.id[0] : query.id
   ) as Id<"invoices">;
 
   if (!id) {

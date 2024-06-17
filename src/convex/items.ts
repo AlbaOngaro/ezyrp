@@ -1,11 +1,18 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 export const get = query({
   args: {
     id: v.id("items"),
   },
-  handler: async (ctx, args) => await ctx.db.get(args.id),
+  handler: async (ctx, args) => {
+    const item = await ctx.db.get(args.id);
+    if (!item) {
+      throw new ConvexError("Item not found");
+    }
+
+    return item;
+  },
 });
 
 export const list = query({

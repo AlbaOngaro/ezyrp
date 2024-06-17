@@ -2,6 +2,7 @@ import { ReactElement } from "react";
 import { useForm, FormProvider, UseFormHandleSubmit } from "react-hook-form";
 import { useRouter } from "next/router";
 
+import { FunctionReturnType } from "convex/server";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 
@@ -12,36 +13,45 @@ import { useInvoices } from "hooks/useInvoices";
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 import { api } from "convex/_generated/api";
 
-type CreateInvoiceFn = typeof api.invoices.create;
-
 export function CreateInvoicePage() {
   const router = useRouter();
   const invoices = useInvoices();
   const customers = useCustomers();
 
   const { handleSubmit, register, control, watch, ...methods } = useForm<
-    CreateInvoiceFn["_args"]
+    FunctionReturnType<typeof api.invoices.get>
   >({
     defaultValues: {
       description: "",
       status: "pending",
-      customer: customers?.data?.at(0)?._id,
+      customer: customers?.data?.at(0),
       items: [],
       due: new Date().toISOString(),
       emitted: new Date().toISOString(),
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<any> = () =>
-    handleSubmit(
+  const handleSubmitWrapper: UseFormHandleSubmit<
+    FunctionReturnType<typeof api.invoices.get>
+  > = () => {
+    return handleSubmit(
       async (data) => {
-        await invoices.create(data);
+        await invoices.create({
+          ...data,
+          amount: data.items.reduce(
+            (acc, { price, quantity }) => acc + price * quantity,
+            0,
+          ),
+          customer: data.customer?._id,
+          items: data.items.map(({ _id }) => _id),
+        });
         return router.push("/invoices");
       },
       (errors) => {
         console.error(errors);
       },
     );
+  };
 
   return (
     <Container as="section" className="py-10">

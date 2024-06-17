@@ -9,6 +9,7 @@ import { Link2Icon } from "@radix-ui/react-icons";
 
 import { useRouter } from "next/router";
 
+import { FunctionReturnType } from "convex/server";
 import { useInvoices } from "../../../hooks/useInvoices";
 
 import { Table } from "../../atoms/table/Table";
@@ -17,9 +18,10 @@ import { Badge } from "../../atoms/badge/Badge";
 import { Dialog } from "../../atoms/dialog/Dialog";
 
 import { getBadgeVariantFromStatus } from "../../../lib/utils/getBadgeVariantFromStatus";
-import { Doc } from "convex/_generated/dataModel";
+import { Id } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
 
-type Invoice = Doc<"invoices">;
+type Invoice = FunctionReturnType<typeof api.invoices.get>;
 
 export function InvoicesTable() {
   const router = useRouter();
@@ -31,7 +33,7 @@ export function InvoicesTable() {
 
   return (
     <>
-      <Table
+      <Table<Invoice>
         loading={invoices.isLoading}
         columns={[
           {
@@ -59,7 +61,7 @@ export function InvoicesTable() {
             headerName: "Customer",
             render: ({ customer }) => (
               <Link
-                href={`/customers/${customer.id}`}
+                href={`/customers/${customer._id}`}
                 className="flex items-center gap-2"
               >
                 {customer.name} <Link2Icon />
@@ -88,7 +90,7 @@ export function InvoicesTable() {
             render: (row) => (row.amount / 100).toFixed(2),
           },
         ]}
-        rows={invoices?.data?.invoices?.results || []}
+        rows={invoices?.data || []}
         withMultiSelect
         renderSelectedActions={(rows) => (
           <DialogRoot>
@@ -103,11 +105,11 @@ export function InvoicesTable() {
               title="Do you really want to delete all the selected invoices?"
               description="This action cannot be undone"
               onConfirm={() =>
-                invoices.delete({
-                  variables: {
-                    deleteInvoicesArgs: rows.map((row) => row.id),
-                  },
-                })
+                Promise.all(
+                  rows.map((row) =>
+                    invoices.delete({ id: row._id as Id<"invoices"> }),
+                  ),
+                )
               }
             />
           </DialogRoot>
@@ -117,12 +119,12 @@ export function InvoicesTable() {
           {
             type: "item",
             label: "View",
-            onClick: (row) => router.push(`/invoices/${row.id}`),
+            onClick: (row) => router.push(`/invoices/${row._id}`),
           },
           {
             type: "item",
             label: "Edit",
-            onClick: (row) => router.push(`/invoices/${row.id}/edit`),
+            onClick: (row) => router.push(`/invoices/${row._id}/edit`),
           },
           {
             type: "sub",
@@ -133,14 +135,8 @@ export function InvoicesTable() {
                 label: "Mark as paid",
                 onClick: (row) =>
                   invoices.update({
-                    variables: {
-                      updateInvoicesArgs: [
-                        {
-                          id: row.id,
-                          status: "paid",
-                        },
-                      ],
-                    },
+                    id: row._id as Id<"invoices">,
+                    status: "paid",
                   }),
               },
             ],
@@ -157,17 +153,6 @@ export function InvoicesTable() {
             },
           },
         ]}
-        withPagination
-        pagination={{
-          total: invoices?.data?.invoices?.total || 0,
-          onPageChange: ({ start, limit }) =>
-            invoices.refetch({
-              filters: {
-                start,
-                limit,
-              },
-            }),
-        }}
       />
 
       <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -177,9 +162,7 @@ export function InvoicesTable() {
           onConfirm={() => {
             if (invoice) {
               return invoices.delete({
-                variables: {
-                  deleteInvoicesArgs: [invoice.id],
-                },
+                id: invoice._id,
               });
             }
           }}

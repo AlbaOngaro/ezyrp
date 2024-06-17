@@ -1,14 +1,13 @@
 import { ReactElement } from "react";
 
 import { useRouter } from "next/router";
-import { Button } from "../../atoms/button/Button";
-import { Heading } from "../../atoms/heading/Heading";
 
-import { InvoicesTable } from "../../organisms/invoices-table/InvoicesTable";
-import { Container } from "../../atoms/container/Container";
-
-import { SidebarLayout } from "../../layouts/sidebar/SidebarLayout";
-import { Card } from "../../atoms/card/Card";
+import { Card } from "components/atoms/card/Card";
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { Container } from "components/atoms/container/Container";
+import { InvoicesTable } from "components/organisms/invoices-table/InvoicesTable";
+import { Heading } from "components/atoms/heading/Heading";
+import { Button } from "components/atoms/button/Button";
 
 export function InvoicesPage() {
   const router = useRouter();

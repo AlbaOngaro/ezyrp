@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
+import { Id } from "convex/_generated/dataModel";
 
 export type Props = {
-  eventtype: string;
+  eventtype: Id<"eventTypes">;
 };
 
 export enum View {

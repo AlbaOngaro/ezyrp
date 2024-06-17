@@ -2,6 +2,7 @@ import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import { v4 as uuid } from "uuid";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
+import { FunctionReturnType } from "convex/server";
 import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
 import { Select } from "components/atoms/select/Select";
@@ -9,13 +10,13 @@ import { Select } from "components/atoms/select/Select";
 import { CHF } from "lib/formatters/chf";
 
 import { useItems } from "hooks/useItems";
-import { Doc, Id } from "convex/_generated/dataModel";
+import { Id } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
 
 export function InvoiceItemsTable() {
   const { data: items, create } = useItems();
-  const { control, setValue, watch } = useFormContext<{
-    items: Doc<"items">[];
-  }>();
+  const { control, setValue, watch } =
+    useFormContext<FunctionReturnType<typeof api.invoices.get>>();
   const { fields, append, update, remove } = useFieldArray({
     control,
     name: "items",
