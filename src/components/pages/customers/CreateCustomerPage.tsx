@@ -2,7 +2,6 @@ import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 
 import { useRouter } from "next/router";
-import { Customer, InputCreateCustomerArgs } from "__generated__/graphql";
 
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
@@ -12,6 +11,9 @@ import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useCustomers } from "hooks/useCustomers";
 import { useFileUpload } from "hooks/useFileUpload";
+import { Doc } from "convex/_generated/dataModel";
+
+type Customer = Omit<Doc<"customers">, "_id" | "_creationTime">;
 
 export function CreateCustomerPage() {
   const router = useRouter();
@@ -34,7 +36,7 @@ export function CreateCustomerPage() {
     onSuccess,
     onError,
   ) =>
-    handleSubmit(async ({ __typename, ...data }) => {
+    handleSubmit(async (data) => {
       if (data.photoUrl && !data.photoUrl.startsWith("https")) {
         const file = await fetch(data.photoUrl)
           .then((res) => res.blob())
@@ -50,14 +52,8 @@ export function CreateCustomerPage() {
           const photoUrl = await handleFileUpload(file);
 
           await customers.create({
-            variables: {
-              createCustomerArgs: [
-                {
-                  ...data,
-                  photoUrl,
-                } as InputCreateCustomerArgs,
-              ],
-            },
+            ...data,
+            photoUrl,
           });
 
           onSuccess(data);
@@ -68,11 +64,7 @@ export function CreateCustomerPage() {
         }
       }
 
-      await customers.create({
-        variables: {
-          createCustomerArgs: [data as InputCreateCustomerArgs],
-        },
-      });
+      await customers.create(data);
 
       onSuccess(data);
 

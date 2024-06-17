@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { action, query } from "./_generated/server";
 
 interface Country {
   name: Name;
@@ -244,7 +244,7 @@ interface Flags {
   svg: string;
 }
 
-interface CoatOfArms {}
+interface CoatOfArms { }
 
 interface CapitalInfo {
   latlng: number[];
@@ -255,7 +255,7 @@ interface PostalCode {
   regex: string;
 }
 
-export const list = query({
+export const list = action({
   handler: async () => {
     return fetch("https://restcountries.com/v3.1/all")
       .then((res) => res.json())

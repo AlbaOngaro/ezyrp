@@ -4,7 +4,6 @@ import {
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
-import { Item } from "__generated__/graphql";
 import { useItems } from "hooks/useItems";
 
 import { CHF } from "lib/formatters/chf";
@@ -17,6 +16,9 @@ import { Button } from "components/atoms/button/Button";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Dialog } from "components/atoms/dialog/Dialog";
+import { Doc, Id } from "convex/_generated/dataModel";
+
+type Item = Doc<"items">;
 
 export function InventoryPage() {
   const items = useItems();
@@ -44,11 +46,11 @@ export function InventoryPage() {
         <Card>
           <Table
             loading={items.loading}
-            rows={items.data?.items?.results || []}
+            rows={items.data || []}
             columns={[
               {
                 id: "id",
-                field: "id",
+                field: "_id",
                 headerName: "ID",
               },
               {
@@ -89,26 +91,15 @@ export function InventoryPage() {
                   title="Do you really want to delete all the selected items?"
                   description="This action cannot be undone"
                   onConfirm={() =>
-                    items.delete({
-                      variables: {
-                        deleteItemsInput: rows.map((row) => row.id),
-                      },
-                    })
+                    Promise.all(
+                      rows.map((row) =>
+                        items.delete({ id: row._id as Id<"items"> }),
+                      ),
+                    )
                   }
                 />
               </DialogRoot>
             )}
-            withPagination
-            pagination={{
-              total: items.data?.items?.total || 0,
-              onPageChange: ({ start, limit }) =>
-                items.refetch({
-                  filters: {
-                    start,
-                    limit,
-                  },
-                }),
-            }}
             withContextMenu
             contextMenuItems={[
               {
@@ -119,7 +110,7 @@ export function InventoryPage() {
               {
                 type: "item",
                 label: "Edit",
-                onClick: ({ id }) => router.push(`/inventory/${id}/edit`),
+                onClick: ({ _id }) => router.push(`/inventory/${_id}/edit`),
               },
               { type: "separator" },
               {
@@ -141,9 +132,7 @@ export function InventoryPage() {
             onConfirm={() => {
               if (item) {
                 return items.delete({
-                  variables: {
-                    deleteItemsInput: [item.id],
-                  },
+                  id: item._id,
                 });
               }
             }}

@@ -7,6 +7,7 @@ import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 
 import "styles/globals.css";
+import { UserProvider } from "providers/user";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL);
 
@@ -30,7 +31,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       </Head>
 
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        {getLayout(<Component {...pageProps} />)}
+        <UserProvider>{getLayout(<Component {...pageProps} />)}</UserProvider>
       </ConvexProviderWithClerk>
     </ClerkProvider>
   );

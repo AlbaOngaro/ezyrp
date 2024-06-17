@@ -1,12 +1,14 @@
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
-import { Item } from "__generated__/graphql";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useItems } from "hooks/useItems";
+import { Doc } from "convex/_generated/dataModel";
+
+type Item = Omit<Doc<"items">, "_id" | "_creationTime">;
 
 export function CreateItemPage() {
   const items = useItems();
@@ -24,14 +26,8 @@ export function CreateItemPage() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleSubmit(async (data) => {
       await items.create({
-        variables: {
-          createItemsInput: [
-            {
-              ...data,
-              price: data.price * 100,
-            },
-          ],
-        },
+        ...data,
+        price: data.price * 100,
       });
       onSuccess(data);
 

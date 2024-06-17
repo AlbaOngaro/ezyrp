@@ -29,9 +29,19 @@ export function EditCustomerPage({ id }: Props) {
 
   const { handleSubmit, ...methods } = useForm<Customer>({
     defaultValues: async () => {
-      const customer = await getCustomer({ id });
+      try {
+        const customer = await getCustomer({
+          id,
+        });
 
-      return customer as Customer;
+        if (!customer) {
+          return undefined;
+        }
+
+        return customer;
+      } catch (error: unknown) {
+        return undefined;
+      }
     },
   });
 
