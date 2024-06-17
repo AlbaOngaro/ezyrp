@@ -153,7 +153,7 @@ export function ScheduleSettings() {
 
                       onChange([...(value || []), i]);
                     }}
-                    className="after:content-[attr(value)] after:absolute after:w-full after:h-full after:flex after:justify-center after:items-center cursor-pointer hover:[&:not(:checked)]:after:bg-orange-100 text-orange-400 checked:after:bg-orange-400 checked:after:text-white appearance-none relative w-8 h-8 flex items-center justify-center !outline-none border-l border-0 border-solid border-gray-300 [&:first-child]:border-none [&:first-child]:rounded-l-md [&:last-child]:rounded-r-md !ring-0 !shadow-none"
+                    className="after:content-[attr(value)] after:absolute after:w-full after:h-full after:flex after:justify-center after:items-center cursor-pointer hover:[&:not(:checked)]:after:bg-black hover:[&:not(:checked)]:after:text-white text-black checked:after:bg-black checked:after:text-white appearance-none relative w-8 h-8 flex items-center justify-center !outline-none border-l border-0 border-solid border-gray-300 [&:first-child]:border-none [&:first-child]:rounded-l-md [&:last-child]:rounded-r-md !ring-0 !shadow-none"
                   />
                 ))}
               </fieldset>
@@ -162,7 +162,6 @@ export function ScheduleSettings() {
         />
 
         <Button
-          size="lg"
           className="px-6 w-fit"
           disabled={!isValid}
           loading={isSubmitting}

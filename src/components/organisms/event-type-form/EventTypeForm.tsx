@@ -109,7 +109,6 @@ export function EventTypeForm({ className }: Props) {
       <Button
         loading={isSubmitting}
         disabled={!isValid}
-        size="lg"
         className="ml-auto px-6"
       >
         Save

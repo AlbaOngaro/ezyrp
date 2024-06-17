@@ -6,6 +6,7 @@ import {
   UserRound,
   CalendarDays,
   Mail,
+  Settings,
 } from "lucide-react";
 import { Button } from "components/atoms/button";
 
@@ -45,6 +46,16 @@ export function Sidebar() {
             ))}
           </nav>
         </div>
+
+        <footer className="mt-auto px-2">
+          <Link
+            href="/settings"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+          >
+            <Settings className="h-5 w-5" />
+            <span>Settings</span>
+          </Link>
+        </footer>
       </div>
     </aside>
   );

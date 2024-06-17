@@ -139,7 +139,6 @@ export function CustomerForm() {
       <Button
         disabled={!isDirty || !isValid}
         loading={isSubmitting}
-        size="lg"
         className="w-fit min-w-[100px] mt-4 ml-auto col-start-12 row-start-8"
       >
         Save

@@ -18,7 +18,7 @@ export function TimeView() {
     <Controller
       control={control}
       name="start"
-      render={({ field: { value, onChange } }) => (
+      render={({ field: { value = new Date().toISOString(), onChange } }) => (
         <>
           <h3 className="text-lg font-bold col-span-6 self-end">
             Select a Date & Time

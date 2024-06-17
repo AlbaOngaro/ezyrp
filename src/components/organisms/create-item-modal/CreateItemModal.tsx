@@ -112,11 +112,7 @@ export function CreateItemModal({ setIsOpen }: Props) {
           }
         />
 
-        <Button
-          type="submit"
-          size="lg"
-          className="w-fit min-w-[100px] mt-4 ml-auto"
-        >
+        <Button type="submit" className="w-fit min-w-[100px] mt-4 ml-auto">
           Save
         </Button>
       </Form>

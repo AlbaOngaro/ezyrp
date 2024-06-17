@@ -59,18 +59,13 @@ export function InvoicePage({ id }: Props) {
         <strong className="text-sm text-gray-800">Status</strong>
         <Badge>{invoice.status}</Badge>
 
-        <Button title="Edit" size="lg" shape="circle" className="ml-auto">
+        <Button title="Edit" shape="circle" className="ml-auto">
           <Pencil1Icon />
         </Button>
 
         <DialogRoot>
           <DialogTrigger>
-            <Button
-              title="Delete"
-              size="lg"
-              shape="circle"
-              variant="destructive"
-            >
+            <Button title="Delete" shape="circle" variant="destructive">
               <TrashIcon />
             </Button>
           </DialogTrigger>
@@ -90,7 +85,6 @@ export function InvoicePage({ id }: Props) {
 
         <Button
           title="Print"
-          size="lg"
           variant="secondary"
           shape="circle"
           onClick={() => window.print()}

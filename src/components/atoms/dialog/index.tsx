@@ -41,7 +41,7 @@ export function Dialog({
         <div className="flex justify-end gap-4">
           <AlertDialog.Cancel asChild>
             <Button
-              variant="destructive"
+              variant="secondary"
               onClick={onCancel}
               {...cancelButtonProps}
             >
@@ -50,7 +50,7 @@ export function Dialog({
           </AlertDialog.Cancel>
           <AlertDialog.Action asChild>
             <Button
-              variant="secondary"
+              variant="destructive"
               onClick={onConfirm}
               {...confirmButtonProps}
             >

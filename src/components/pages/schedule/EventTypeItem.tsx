@@ -127,7 +127,7 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
                     console.error(error);
                   }
                 }}
-                className="flex flex-row items-center w-full gap-2 underline-offset-2 text-sm text-orange-400 hover:underline"
+                className="flex flex-row items-center w-full gap-2 underline-offset-2 text-secondary-foreground text-sm hover:underline"
               >
                 <CopyIcon /> Copy link
               </button>

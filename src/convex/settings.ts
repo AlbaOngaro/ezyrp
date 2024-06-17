@@ -59,7 +59,17 @@ export const update = mutation({
       .unique();
 
     if (!settings) {
-      throw new ConvexError("Settings not found!");
+      await ctx.db.insert("settings", {
+        user_id: user._id,
+        start,
+        end,
+        days,
+      });
+
+      return await ctx.db
+        .query("settings")
+        .withIndex("by_user", (q) => q.eq("user_id", user._id))
+        .unique();
     }
 
     await ctx.db.patch(settings._id, {
@@ -67,5 +77,10 @@ export const update = mutation({
       end,
       days,
     });
+
+    return await ctx.db
+      .query("settings")
+      .withIndex("by_user", (q) => q.eq("user_id", user._id))
+      .unique();
   },
 });

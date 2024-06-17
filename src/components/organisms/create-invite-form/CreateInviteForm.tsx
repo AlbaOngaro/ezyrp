@@ -23,7 +23,6 @@ export function CreateInviteForm() {
       <Button
         disabled={!isValid}
         loading={isSubmitting}
-        size="lg"
         className="w-fit ml-auto"
       >
         Invite

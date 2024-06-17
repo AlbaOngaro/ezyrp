@@ -29,7 +29,7 @@ export function EventTypesContents() {
         />
 
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Button size="lg" onClick={() => router.push("/event-types/create")}>
+          <Button onClick={() => router.push("/event-types/create")}>
             Add event type
           </Button>
         </div>

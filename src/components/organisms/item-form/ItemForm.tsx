@@ -57,7 +57,6 @@ export function ItemForm() {
         loading={isSubmitted}
         disabled={!isValid}
         type="submit"
-        size="lg"
         className="w-fit min-w-[100px] mt-4 ml-auto"
       >
         Save

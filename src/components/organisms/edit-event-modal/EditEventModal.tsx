@@ -100,7 +100,7 @@ export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
           />
         </div>
 
-        <Button className="w-fit ml-auto" size="lg" type="submit">
+        <Button className="w-fit ml-auto" type="submit">
           Save
         </Button>
       </Form>
