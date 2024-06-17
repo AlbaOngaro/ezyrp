@@ -10,11 +10,11 @@ import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 import { useItems } from "hooks/useItems";
-import { Doc, Id } from "convex/_generated/dataModel";
+import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
 
-type Item = Doc<"items">;
+type UpdateItemFn = typeof api.items.update;
 
 type Props = {
   id: Id<"items">;
@@ -25,45 +25,33 @@ export function EditItemPage({ id }: Props) {
   const router = useRouter();
   const [getItem] = useLazyQuery(api.items.get);
 
-  const { handleSubmit, ...methods } = useForm<Item>({
+  const { handleSubmit, ...methods } = useForm<UpdateItemFn["_args"]>({
     defaultValues: async () => {
       const item = await getItem({
         id,
       });
 
       if (!item) {
-        return {
-          _id: "" as Id<"items">,
-          _creationTime: 0,
-          name: "",
-          description: "",
-          price: 0,
-          onetime: false,
-          quantity: 0,
-        };
+        throw new Error("Item not found");
       }
 
+      const { _id, _creationTime, price, ...rest } = item;
+
       return {
-        ...item,
-        price: item.price / 100,
+        ...rest,
+        id: _id,
+        price: price / 100,
       };
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<Item> = (onSuccess, onError) =>
-    handleSubmit(async ({ _id, _creationTime, ...data }) => {
-      await items.update({
-        id: _id,
-        ...data,
-        price: data.price * 100,
-      });
-
-      onSuccess({
-        _id,
-        _creationTime,
-        ...data,
-      });
-
+  const handleSubmitWrapper: UseFormHandleSubmit<UpdateItemFn["_args"]> = (
+    onSuccess,
+    onError,
+  ) =>
+    handleSubmit(async (data) => {
+      await items.update(data);
+      onSuccess(data);
       return router.push("/inventory");
     }, onError);
 

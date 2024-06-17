@@ -6,8 +6,6 @@ import { Button } from "components/atoms/button/Button";
 import { Input } from "components/atoms/input/Input";
 import { Select } from "components/atoms/select/Select";
 
-import { isSavedItem } from "components/pages/invoices/CreateInvoicePage";
-
 import { CHF } from "lib/formatters/chf";
 
 import { useItems } from "hooks/useItems";
@@ -97,7 +95,6 @@ export function InvoiceItemsTable() {
               className="relative [&>input]:pr-10 after:absolute after:content-['CHF'] after:text-xs after:text-gray-500 after:-translate-y-[50%] after:top-[50%] after:right-2"
               name="price"
               type="number"
-              disabled={isSavedItem(item._id)}
               min={1}
               step={0.05}
               value={item.price / 100}

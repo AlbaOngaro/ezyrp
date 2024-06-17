@@ -6,14 +6,14 @@ import { Heading } from "components/atoms/heading/Heading";
 import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useItems } from "hooks/useItems";
-import { Doc } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
 
-type Item = Omit<Doc<"items">, "_id" | "_creationTime">;
+type CreateItemFn = typeof api.items.create;
 
 export function CreateItemPage() {
   const items = useItems();
   const router = useRouter();
-  const { handleSubmit, ...methods } = useForm<Item>({
+  const { handleSubmit, ...methods } = useForm<CreateItemFn["_args"]>({
     defaultValues: {
       name: "",
       description: "",
@@ -22,8 +22,10 @@ export function CreateItemPage() {
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<Item> = (onSuccess, onError) =>
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSubmitWrapper: UseFormHandleSubmit<CreateItemFn["_args"]> = (
+    onSuccess,
+    onError,
+  ) =>
     handleSubmit(async (data) => {
       await items.create({
         ...data,

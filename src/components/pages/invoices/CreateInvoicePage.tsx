@@ -11,13 +11,9 @@ import { useCustomers } from "hooks/useCustomers";
 import { useInvoices } from "hooks/useInvoices";
 import { useItems } from "hooks/useItems";
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
-import { Doc } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
 
-type Item = Doc<"items">;
-
-export function isSavedItem(id: string): boolean {
-  return /item\:.{20}/.test(id);
-}
+type CreateInvoiceFn = typeof api.invoices.create;
 
 export function CreateInvoicePage() {
   const items = useItems();
@@ -25,12 +21,13 @@ export function CreateInvoicePage() {
   const invoices = useInvoices();
   const customers = useCustomers();
 
-  const { handleSubmit, register, control, watch, ...methods } = useForm({
+  const { handleSubmit, register, control, watch, ...methods } = useForm<
+    CreateInvoiceFn["_args"]
+  >({
     defaultValues: {
       description: "",
       status: "pending",
-      // @ts-ignore
-      customer: customers?.data?.customers?.results?.at(0),
+      customer: customers?.data?.at(0)?._id,
       items: [],
       due: new Date().toISOString(),
       emitted: new Date().toISOString(),

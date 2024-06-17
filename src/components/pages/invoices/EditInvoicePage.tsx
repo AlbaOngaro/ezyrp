@@ -9,11 +9,11 @@ import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 import { Heading } from "components/atoms/heading/Heading";
 import { Container } from "components/atoms/container/Container";
 
-import { Doc, Id } from "convex/_generated/dataModel";
+import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
 
-type Invoice = Doc<"invoices">;
+type UpdateInvoiceFn = typeof api.invoices.update;
 
 type Props = {
   id: Id<"invoices">;
@@ -22,22 +22,30 @@ type Props = {
 export function EditInvoicePage({ id }: Props) {
   const [getInvoice] = useLazyQuery(api.invoices.get);
 
-  const { handleSubmit, reset, ...methods } = useForm({
-    defaultValues: async () => {
-      const invoice = await getInvoice({
-        id,
-      });
+  const { handleSubmit, reset, ...methods } = useForm<UpdateInvoiceFn["_args"]>(
+    {
+      defaultValues: async () => {
+        const invoice = await getInvoice({
+          id,
+        });
 
-      if (!invoice) {
-        return undefined;
-      }
+        if (!invoice) {
+          throw new Error("Invoice not found");
+        }
 
-      return invoice;
+        const { _id, _creationTime, ...rest } = invoice;
+
+        return {
+          id: _id,
+          ...rest,
+        };
+      },
     },
-  });
+  );
 
-  const handleSubmitWrapper: UseFormHandleSubmit<Invoice> = () =>
-    handleSubmit(console.debug, console.error);
+  const handleSubmitWrapper: UseFormHandleSubmit<
+    UpdateInvoiceFn["_args"]
+  > = () => handleSubmit(console.debug, console.error);
 
   return (
     <Container as="section" className="py-10">

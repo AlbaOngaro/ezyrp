@@ -11,9 +11,9 @@ import { useEventTypes } from "hooks/useEventTypes";
 import { Heading } from "components/atoms/heading/Heading";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
-import { Doc, Id } from "convex/_generated/dataModel";
+import { Id } from "convex/_generated/dataModel";
 
-type EventType = Doc<"eventTypes">;
+type UpdateEventTypeFn = typeof api.eventTypes.update;
 
 type Props = {
   id: Id<"eventTypes">;
@@ -24,39 +24,32 @@ export function EditEventTypePage({ id }: Props) {
   const eventTypes = useEventTypes();
   const [loadEventType] = useLazyQuery(api.eventTypes.get);
 
-  const { handleSubmit, ...methods } = useForm<EventType>({
+  const { handleSubmit, ...methods } = useForm<UpdateEventTypeFn["_args"]>({
     defaultValues: async () => {
       const data = await loadEventType({
         id,
       });
 
       if (!data) {
-        return {
-          _id: "" as Id<"eventTypes">,
-          _creationTime: 0,
-          description: "",
-          name: "",
-          variant: "",
-          duration: 0,
-        };
+        throw new Error("Event type not found");
       }
 
-      return data;
+      const { _id, _creationTime, ...rest } = data;
+
+      return {
+        id: _id,
+        ...rest,
+      };
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<EventType> = (
+  const handleSubmitWrapper: UseFormHandleSubmit<UpdateEventTypeFn["_args"]> = (
     onSuccess,
     onError,
   ) =>
-    handleSubmit(async ({ _id, ...updateEventTypesInput }) => {
-      await eventTypes.update({
-        id: _id,
-        ...updateEventTypesInput,
-      });
-
-      onSuccess({ _id, ...updateEventTypesInput });
-
+    handleSubmit(async (data) => {
+      await eventTypes.update(data);
+      onSuccess(data);
       router.push("/schedule");
     }, onError);
 

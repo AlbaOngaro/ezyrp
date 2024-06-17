@@ -1,35 +1,33 @@
 import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { EventType } from "__generated__/graphql";
-import { variants } from "server/schema/event";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container/Container";
 import { Heading } from "components/atoms/heading/Heading";
 import { EventTypeForm } from "components/organisms/event-type-form/EventTypeForm";
 import { useEventTypes } from "hooks/useEventTypes";
+import { api } from "convex/_generated/api";
+import { VARIANTS } from "components/organisms/event-type-form/constants";
+
+type CreateEventTypeFn = typeof api.eventTypes.create;
 
 export function CreateEventTypePage() {
   const router = useRouter();
   const eventTypes = useEventTypes();
 
-  const { handleSubmit, ...methods } = useForm<EventType>({
+  const { handleSubmit, ...methods } = useForm<CreateEventTypeFn["_args"]>({
     defaultValues: {
-      variant: variants[0],
+      variant: VARIANTS[0],
       name: "",
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<EventType> = (
+  const handleSubmitWrapper: UseFormHandleSubmit<CreateEventTypeFn["_args"]> = (
     onSuccess,
     onError,
   ) =>
     handleSubmit(async (data) => {
-      await eventTypes.create({
-        variables: {
-          createEventTypesInput: [data],
-        },
-      });
+      await eventTypes.create(data);
 
       onSuccess(data);
 
