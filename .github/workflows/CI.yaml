@@ -13,9 +13,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: "bun"
-          cache-dependency-path: bun.lockb
       - run: bun install
       - run: bun run type-check && bun run lint
