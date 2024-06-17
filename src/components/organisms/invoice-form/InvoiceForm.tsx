@@ -25,28 +25,30 @@ export function InvoiceForm() {
       <Controller
         control={control}
         name="customer"
-        render={({ field: { onChange, value } }) => (
-          <Select
-            label="Customer"
-            name="customer"
-            value={value ? { label: value.name, value: value.id } : undefined}
-            options={(customers?.data || [])?.map((customer) => ({
-              label: customer.name,
-              value: customer._id,
-            }))}
-            onChange={(option) => {
-              if (option) {
-                const customer = customers?.data?.find(
-                  (c) => c._id === option.value,
-                );
+        render={({ field: { onChange, value } }) => {
+          const customer = customers?.data?.find((c) => c._id === value);
 
-                if (customer) {
-                  onChange(customer);
-                }
+          return (
+            <Select
+              label="Customer"
+              name="customer"
+              value={
+                customer
+                  ? { label: customer.name, value: customer._id }
+                  : undefined
               }
-            }}
-          />
-        )}
+              options={(customers?.data || [])?.map((customer) => ({
+                label: customer.name,
+                value: customer._id,
+              }))}
+              onChange={(option) => {
+                if (option) {
+                  onChange(option.value);
+                }
+              }}
+            />
+          );
+        }}
       />
 
       <TextArea label="Project Description" {...register("description")} />

@@ -9,7 +9,11 @@ export const get = query({
 });
 
 export const list = query({
-  handler: async (ctx) => await ctx.db.query("items").collect(),
+  handler: async (ctx) =>
+    await ctx.db
+      .query("items")
+      .filter((q) => q.eq(q.field("onetime"), false))
+      .collect(),
 });
 
 export const create = mutation({
