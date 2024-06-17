@@ -11,16 +11,16 @@ import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useCustomers } from "hooks/useCustomers";
 import { useFileUpload } from "hooks/useFileUpload";
-import { Doc } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
 
-type Customer = Omit<Doc<"customers">, "_id" | "_creationTime">;
+type CreateCustomerFn = typeof api.customers.create;
 
 export function CreateCustomerPage() {
   const router = useRouter();
   const customers = useCustomers();
   const handleFileUpload = useFileUpload();
 
-  const { handleSubmit, ...methods } = useForm<Customer>({
+  const { handleSubmit, ...methods } = useForm<CreateCustomerFn["_args"]>({
     defaultValues: {
       email: "",
       name: "",
@@ -32,7 +32,7 @@ export function CreateCustomerPage() {
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<Customer> = (
+  const handleSubmitWrapper: UseFormHandleSubmit<CreateCustomerFn["_args"]> = (
     onSuccess,
     onError,
   ) =>

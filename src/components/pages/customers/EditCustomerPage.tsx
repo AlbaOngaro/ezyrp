@@ -11,11 +11,11 @@ import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
 
 import { useCustomers } from "hooks/useCustomers";
 import { useFileUpload } from "hooks/useFileUpload";
-import { Doc, Id } from "convex/_generated/dataModel";
+import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
 
-type Customer = Doc<"customers">;
+type UpdateCustomerFn = typeof api.customers.update;
 
 type Props = {
   id: Id<"customers">;
@@ -27,35 +27,36 @@ export function EditCustomerPage({ id }: Props) {
   const [getCustomer] = useLazyQuery(api.customers.get);
   const handleFileUpload = useFileUpload();
 
-  const { handleSubmit, ...methods } = useForm<Customer>({
+  const { handleSubmit, ...methods } = useForm<UpdateCustomerFn["_args"]>({
     defaultValues: async () => {
-      try {
-        const customer = await getCustomer({
-          id,
-        });
+      const customer = await getCustomer({
+        id,
+      });
 
-        if (!customer) {
-          return undefined;
-        }
-
-        return customer;
-      } catch (error: unknown) {
-        return undefined;
+      if (!customer) {
+        throw new Error("Customer not found!");
       }
+
+      const { _id, _creationTime, ...rest } = customer;
+
+      return {
+        id: _id,
+        ...rest,
+      };
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<Customer> = (
+  const handleSubmitWrapper: UseFormHandleSubmit<UpdateCustomerFn["_args"]> = (
     onSuccess,
     onError,
   ) =>
     handleSubmit(async (data) => {
-      if (data.photoUrl) {
+      if (data.photoUrl && data.name) {
         const file = await fetch(data.photoUrl)
           .then((res) => res.blob())
           .then(
             (blob) =>
-              new File([blob], data.name, {
+              new File([blob], data.name as string, {
                 type: blob.type,
                 lastModified: new Date().getTime(),
               }),
@@ -65,7 +66,6 @@ export function EditCustomerPage({ id }: Props) {
           const photoUrl = await handleFileUpload(file);
 
           await customers.update({
-            id: data._id,
             ...data,
             photoUrl,
           });
@@ -78,10 +78,7 @@ export function EditCustomerPage({ id }: Props) {
         }
       }
 
-      await customers.update({
-        id: data._id,
-        ...data,
-      });
+      await customers.update(data);
 
       onSuccess(data);
 
