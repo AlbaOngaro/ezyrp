@@ -29,7 +29,6 @@ export function Body() {
             className="flex flex-col items-center pb-1.5 pt-3"
           >
             <span>W</span>
-            {/* Default: "text-gray-900", Selected: "bg-gray-900 text-white", Today (Not Selected): "text-orange-500", Today (Selected): "bg-orange-500 text-white" */}
             <span className="mt-3 flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold text-gray-900">
               19
             </span>

@@ -50,7 +50,7 @@ export function Body() {
               <time
                 dateTime={day.date.toISOString()}
                 className={cn({
-                  "flex h-6 w-6 items-center justify-center rounded-full bg-orange-500 font-semibold text-white":
+                  "flex h-6 w-6 items-center justify-center rounded-full bg-black font-semibold text-white":
                     day.isToday,
                 })}
               >
@@ -106,7 +106,7 @@ export function Body() {
                 className={cn(
                   day.isSelected &&
                     "flex h-6 w-6 items-center justify-center rounded-full",
-                  day.isSelected && day.isToday && "bg-orange-500",
+                  day.isSelected && day.isToday && "bg-black",
                   day.isSelected && !day.isToday && "bg-gray-900",
                   "ml-auto",
                 )}

@@ -2,6 +2,7 @@ import * as Form from "@radix-ui/react-form";
 
 import { forwardRef } from "react";
 import { ImageIcon } from "@radix-ui/react-icons";
+import { Card } from "../card";
 import { DefaultInputProps } from "./types";
 import { cn } from "lib/utils/cn";
 
@@ -49,9 +50,9 @@ export const FilePickerInput = forwardRef<HTMLInputElement, DefaultInputProps>(
               />
             </picture>
           ) : (
-            <article className="w-[193px] cursor-pointer bg-orange-300 text-white aspect-[1/1] flex flex-col justify-center items-center gap-2 text-sm font-semibold leading-[150%] text-center transition-colors duration-300 rounded-xl hover:bg-orange-400">
+            <Card className="w-[193px] cursor-pointer aspect-[1/1] flex flex-col justify-center items-center gap-2 text-sm font-semibold leading-[150%] text-center transition-colors duration-300 rounded-xl">
               <ImageIcon /> + Upload Image
-            </article>
+            </Card>
           )}
 
           <Form.Control asChild>

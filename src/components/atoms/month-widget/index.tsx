@@ -156,7 +156,7 @@ export function MonthWidget({
               dateTime={day.date.toISOString()}
               className={cn(
                 {
-                  "bg-orange-500 text-white":
+                  "bg-black text-white":
                     typeof showSelected === "function"
                       ? showSelected(day.date) && isToday(day.date)
                       : false,

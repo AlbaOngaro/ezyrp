@@ -30,7 +30,7 @@ export function SchedulePage() {
           {nav.map((item) => (
             <Tabs.Trigger
               key={item.value}
-              className="data-[state='active']:text-orange-400 font-medium"
+              className="text-muted-foreground hover:text-primary data-[state='active']:text-primary font-medium"
               value={item.value}
             >
               {item.label}
