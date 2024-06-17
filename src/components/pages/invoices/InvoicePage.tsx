@@ -68,7 +68,12 @@ export function InvoicePage({ id }: Props) {
 
         <DialogRoot>
           <DialogTrigger>
-            <Button title="Delete" size="lg" shape="circle" variant="danger">
+            <Button
+              title="Delete"
+              size="lg"
+              shape="circle"
+              variant="destructive"
+            >
               <TrashIcon />
             </Button>
           </DialogTrigger>
@@ -89,7 +94,7 @@ export function InvoicePage({ id }: Props) {
         <Button
           title="Print"
           size="lg"
-          variant="tertiary"
+          variant="secondary"
           shape="circle"
           onClick={() => window.print()}
         >

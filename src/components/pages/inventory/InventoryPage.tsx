@@ -81,7 +81,7 @@ export function InventoryPage() {
             renderSelectedActions={(rows) => (
               <DialogRoot>
                 <DialogTrigger asChild>
-                  <Button variant="danger" size="sm">
+                  <Button variant="destructive" size="sm">
                     Delete all
                   </Button>
                 </DialogTrigger>

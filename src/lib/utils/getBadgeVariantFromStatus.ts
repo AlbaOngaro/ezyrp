@@ -1,4 +1,4 @@
-import { Variant } from "../../components/atoms/badge/Badge";
+import { Variant } from "components/atoms/badge";
 import { Doc } from "convex/_generated/dataModel";
 
 type Invoice = Doc<"invoices">;

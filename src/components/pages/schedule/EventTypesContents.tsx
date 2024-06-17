@@ -38,7 +38,7 @@ export function EventTypesContents() {
         {selected.length > 0 && (
           <DialogRoot>
             <DialogTrigger asChild>
-              <Button variant="danger" size="sm">
+              <Button variant="destructive" size="sm">
                 Delete all
               </Button>
             </DialogTrigger>

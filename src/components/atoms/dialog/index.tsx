@@ -40,7 +40,11 @@ export function Dialog({
         )}
         <div className="flex justify-end gap-4">
           <AlertDialog.Cancel asChild>
-            <Button variant="danger" onClick={onCancel} {...cancelButtonProps}>
+            <Button
+              variant="destructive"
+              onClick={onCancel}
+              {...cancelButtonProps}
+            >
               {cancelText}
             </Button>
           </AlertDialog.Cancel>

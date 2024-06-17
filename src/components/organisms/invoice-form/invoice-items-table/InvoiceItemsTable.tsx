@@ -107,8 +107,8 @@ export function InvoiceItemsTable() {
                   item.onetime
                     ? undefined
                     : {
-                      rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
-                    }
+                        rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
+                      }
                 }
               />
 
@@ -117,7 +117,7 @@ export function InvoiceItemsTable() {
               </span>
 
               <Button
-                variant="danger"
+                variant="destructive"
                 className="w-6 h-6 p-1.5 rounded-full flex justify-center items-center justify-self-end"
                 onClick={() => {
                   remove(i);
@@ -131,8 +131,8 @@ export function InvoiceItemsTable() {
       </div>
 
       <Button
-        variant="tertiary"
-        size="xl"
+        variant="secondary"
+        size="lg"
         className="w-full mt-4 flex justify-center"
         onClick={(e) => {
           e.preventDefault();
