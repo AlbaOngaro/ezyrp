@@ -24,7 +24,7 @@ export default defineSchema({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
-  }),
+  }).index("by_email", ["email"]),
   items: defineTable({
     name: v.string(),
     description: v.string(),
@@ -54,16 +54,5 @@ export default defineSchema({
     notes: v.optional(v.string()),
     variant: v.string(),
     guests: v.array(v.id("customers")),
-  }),
-  bookings: defineTable({
-    type: v.id("eventTypes"),
-    start: v.string(),
-    guests: v.array(
-      v.object({
-        name: v.string(),
-        email: v.string(),
-      }),
-    ),
-    notes: v.optional(v.string()),
   }),
 });

@@ -1,5 +1,53 @@
 import { v } from "convex/values";
+import { GenericMutationCtx } from "convex/server";
 import { mutation, query } from "./_generated/server";
+import { DataModel } from "./_generated/dataModel";
+
+type UpsertArgs = {
+  name: string;
+  email: string;
+  address?: string;
+  city?: string;
+  code?: string;
+  country?: string;
+  photoUrl?: string;
+};
+
+export const upsert = async (
+  ctx: GenericMutationCtx<DataModel>,
+  { email, name, address, city, code, country, photoUrl }: UpsertArgs,
+) => {
+  const customer = await ctx.db
+    .query("customers")
+    .withIndex("by_email", (q) => q.eq("email", email))
+    .unique();
+
+  if (!customer) {
+    const id = await ctx.db.insert("customers", {
+      name,
+      email,
+      address,
+      city,
+      code,
+      country,
+      photoUrl,
+    });
+
+    return await ctx.db.get(id);
+  }
+
+  await ctx.db.patch(customer._id, {
+    name: name || customer.name,
+    email: email || customer.email,
+    address: address || customer.address,
+    city: city || customer.city,
+    code: code || customer.code,
+    country: country || customer.country,
+    photoUrl: photoUrl || customer.photoUrl,
+  });
+
+  return await ctx.db.get(customer._id);
+};
 
 export const get = query({
   args: {
