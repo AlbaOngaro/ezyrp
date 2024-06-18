@@ -1,0 +1,19 @@
+import { useQuery } from "convex-helpers/react";
+import { useMutation } from "convex/react";
+import { api } from "convex/_generated/api";
+
+export function useInvoices() {
+  const { data, error, status } = useQuery(api.invoices.list);
+  const create = useMutation(api.invoices.create);
+  const update = useMutation(api.invoices.update);
+  const remove = useMutation(api.invoices.remove);
+
+  return {
+    data,
+    error,
+    isLoading: status === "pending",
+    create,
+    update,
+    delete: remove,
+  };
+}

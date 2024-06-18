@@ -1,7 +1,0 @@
-{
-  "plugins": ["prettier", "@typescript-eslint", "import"],
-  "parser": "@typescript-eslint/parser",
-  "rules": {
-    "prettier/prettier": "error"
-  }
-}

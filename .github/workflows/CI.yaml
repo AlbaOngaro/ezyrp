@@ -12,10 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: "yarn"
-          cache-dependency-path: yarn.lock
-      - run: yarn install
-      - run: yarn type-check && yarn lint
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun run type-check && bun run lint
