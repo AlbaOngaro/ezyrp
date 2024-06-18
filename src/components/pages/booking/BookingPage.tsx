@@ -47,7 +47,7 @@ export function BookingPage({ eventtype }: Props) {
     defaultValues: async () => {
       return {
         type: eventtype,
-        start: new Date().toISOString(),
+        start: new Date().getTime(),
         guests: [],
         notes: "",
       };
