@@ -20,11 +20,10 @@ import type * as countries from "../countries.js";
 import type * as customers from "../customers.js";
 import type * as eventTypes from "../eventTypes.js";
 import type * as events from "../events.js";
-import type * as invites from "../invites.js";
 import type * as invoices from "../invoices.js";
 import type * as items from "../items.js";
 import type * as settings from "../settings.js";
-import type * as users from "../users.js";
+import type * as utils from "../utils.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -41,11 +40,10 @@ declare const fullApi: ApiFromModules<{
   customers: typeof customers;
   eventTypes: typeof eventTypes;
   events: typeof events;
-  invites: typeof invites;
   invoices: typeof invoices;
   items: typeof items;
   settings: typeof settings;
-  users: typeof users;
+  utils: typeof utils;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

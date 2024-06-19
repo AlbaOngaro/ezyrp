@@ -2,21 +2,14 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  users: defineTable({
-    name: v.string(),
-    tokenIdentifier: v.string(),
-  }).index("by_token", ["tokenIdentifier"]),
   settings: defineTable({
-    user_id: v.id("users"),
+    user_id: v.string(),
     start: v.number(),
     end: v.number(),
     days: v.array(v.number()),
   }).index("by_user", ["user_id"]),
-  invites: defineTable({
-    email: v.string(),
-    sent_at: v.optional(v.string()),
-  }),
   customers: defineTable({
+    workspace: v.string(),
     email: v.string(),
     name: v.string(),
     address: v.optional(v.string()),
@@ -24,15 +17,19 @@ export default defineSchema({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
-  }).index("by_email", ["email"]),
+  })
+    .index("by_email", ["email"])
+    .index("by_workspace", ["workspace"]),
   items: defineTable({
+    workspace: v.string(),
     name: v.string(),
     description: v.string(),
     price: v.number(),
     quantity: v.number(),
     onetime: v.boolean(),
-  }),
+  }).index("by_workspace", ["workspace"]),
   invoices: defineTable({
+    workspace: v.string(),
     customer: v.id("customers"),
     description: v.string(),
     status: v.string(),
@@ -40,19 +37,21 @@ export default defineSchema({
     amount: v.number(),
     due: v.string(),
     emitted: v.string(),
-  }),
+  }).index("by_workspace", ["workspace"]),
   eventTypes: defineTable({
+    workspace: v.string(),
     name: v.string(),
     variant: v.string(),
     description: v.optional(v.string()),
     duration: v.number(),
-  }),
+  }).index("by_workspace", ["workspace"]),
   events: defineTable({
+    workspace: v.string(),
     end: v.string(),
     start: v.string(),
     title: v.string(),
     notes: v.optional(v.string()),
     variant: v.string(),
     guests: v.array(v.id("customers")),
-  }),
+  }).index("by_workspace", ["workspace"]),
 });

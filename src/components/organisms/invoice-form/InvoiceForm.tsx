@@ -2,7 +2,7 @@ import { Form } from "@radix-ui/react-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { addMonths, format } from "date-fns";
 
-import { InvoiceItemsTable } from "./invoice-items-table/InvoiceItemsTable";
+import { InvoiceItemsTable } from "./invoice-items-table";
 
 import { Select } from "components/atoms/select";
 import { TextArea } from "components/atoms/textarea";

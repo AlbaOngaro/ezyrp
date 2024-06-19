@@ -2,6 +2,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
+import { Loader } from "./loader";
 import { cn } from "lib/utils/cn";
 
 const buttonVariants = cva(
@@ -64,10 +65,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
       >
-        {children}{" "}
-        {loading && (
-          <img className="w-4 h-4" src="/images/loader.svg" alt="loader" />
-        )}
+        {children} {loading && <Loader className="ml-2 w-4 h-4" />}
       </Comp>
     );
   },
