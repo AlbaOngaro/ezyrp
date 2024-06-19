@@ -71,6 +71,11 @@ export function CustomersTable() {
         contextMenuItems={[
           {
             type: "item",
+            label: "View",
+            onClick: (row) => router.push(`/customers/${row._id}`),
+          },
+          {
+            type: "item",
             label: "Edit",
             onClick: (row) => router.push(`/customers/${row._id}/edit`),
           },

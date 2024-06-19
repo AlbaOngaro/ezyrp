@@ -1,4 +1,4 @@
-import { useQuery } from "convex-helpers/react";
+import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 
 export function useSettings() {

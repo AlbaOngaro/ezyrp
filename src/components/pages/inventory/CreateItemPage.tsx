@@ -2,11 +2,11 @@ import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { Container } from "components/atoms/container";
-import { Heading } from "components/atoms/heading";
 import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useItems } from "hooks/useItems";
 import { api } from "convex/_generated/api";
+import { Breadcrumb } from "components/atoms/breadcrumb";
 
 type CreateItemFn = typeof api.items.create;
 
@@ -38,7 +38,8 @@ export function CreateItemPage() {
 
   return (
     <Container as="section" className="py-10">
-      <Heading title="Create item" />
+      <Breadcrumb className="mb-8" />
+
       <FormProvider {...methods} handleSubmit={handleSubmitWrapper}>
         <ItemForm />
       </FormProvider>

@@ -1,6 +1,6 @@
-import { useQuery } from "convex-helpers/react";
 import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
+import { useQuery } from "lib/hooks/useQuery";
 
 export function useItems() {
   const { data, error, status } = useQuery(api.items.list);

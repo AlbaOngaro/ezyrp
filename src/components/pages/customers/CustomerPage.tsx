@@ -1,23 +1,29 @@
 import { ReactElement } from "react";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { FormProvider, useForm } from "react-hook-form";
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+
 import { Container } from "components/atoms/container";
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+
+import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
+
 import { Id } from "convex/_generated/dataModel";
-import { api } from "convex/_generated/api";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
-import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
+import { api } from "convex/_generated/api";
 import { Breadcrumb } from "components/atoms/breadcrumb";
 
 type Props = {
-  id: Id<"invoices">;
+  id: Id<"customers">;
 };
 
-export function InvoicePage({ id }: Props) {
-  const [loadInvoice] = useLazyQuery(api.invoices.get);
+export function CustomerPage({ id }: Props) {
+  const [getCustomer] = useLazyQuery(api.customers.get);
 
   const methods = useForm({
-    defaultValues: async () => loadInvoice({ id }),
+    defaultValues: async () =>
+      getCustomer({
+        id,
+      }),
   });
 
   return (
@@ -25,16 +31,22 @@ export function InvoicePage({ id }: Props) {
       <Breadcrumb className="mb-8" />
 
       <FormProvider {...methods}>
-        <InvoiceForm disabled />
+        <CustomerForm disabled />
       </FormProvider>
     </Container>
   );
 }
 
+CustomerPage.getLayout = function getLayout(page: ReactElement) {
+  return <SidebarLayout>{page}</SidebarLayout>;
+};
+
 export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const id = (
+    Array.isArray(query.id) ? query.id[0] : query.id
+  ) as Id<"customers">;
 
   if (!id) {
     return {
@@ -44,11 +56,7 @@ export async function getServerSideProps({
 
   return {
     props: {
-      id: id as Id<"invoices">,
+      id,
     },
   };
 }
-
-InvoicePage.getLayout = function getLayout(page: ReactElement) {
-  return <SidebarLayout>{page}</SidebarLayout>;
-};

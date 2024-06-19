@@ -105,7 +105,7 @@ export function InventoryPage() {
               {
                 type: "item",
                 label: "View",
-                onClick: console.debug,
+                onClick: ({ _id }) => router.push(`/inventory/${_id}`),
               },
               {
                 type: "item",

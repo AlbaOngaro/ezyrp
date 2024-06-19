@@ -9,6 +9,7 @@ import { ConvexProviderWithClerk } from "convex/react-clerk";
 import "styles/globals.css";
 import { UserProvider } from "providers/user";
 import { OrganisationProvider } from "providers/organisation";
+import { ConvexCacheProvider } from "providers/convex-cache";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL);
 
@@ -32,11 +33,13 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       </Head>
 
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <UserProvider>
-          <OrganisationProvider>
-            {getLayout(<Component {...pageProps} />)}
-          </OrganisationProvider>
-        </UserProvider>
+        <ConvexCacheProvider>
+          <UserProvider>
+            <OrganisationProvider>
+              {getLayout(<Component {...pageProps} />)}
+            </OrganisationProvider>
+          </UserProvider>
+        </ConvexCacheProvider>
       </ConvexProviderWithClerk>
     </ClerkProvider>
   );

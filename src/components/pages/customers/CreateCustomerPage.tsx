@@ -4,7 +4,6 @@ import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
 import { Container } from "components/atoms/container";
-import { Heading } from "components/atoms/heading";
 
 import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
 
@@ -12,6 +11,7 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { useCustomers } from "hooks/useCustomers";
 import { useFileUpload } from "hooks/useFileUpload";
 import { api } from "convex/_generated/api";
+import { Breadcrumb } from "components/atoms/breadcrumb";
 
 type CreateCustomerFn = typeof api.customers.create;
 
@@ -73,7 +73,7 @@ export function CreateCustomerPage() {
 
   return (
     <Container as="section" className="py-10">
-      <Heading title="Create new customer" />
+      <Breadcrumb className="mb-8" />
 
       <FormProvider {...methods} handleSubmit={handleSubmitWrapper}>
         <CustomerForm />

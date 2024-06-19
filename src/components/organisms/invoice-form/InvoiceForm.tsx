@@ -11,7 +11,11 @@ import { Button } from "components/atoms/button";
 
 import { useCustomers } from "hooks/useCustomers";
 
-export function InvoiceForm() {
+type Props = {
+  disabled?: boolean;
+};
+
+export function InvoiceForm({ disabled }: Props) {
   const customers = useCustomers();
 
   const { control, register, watch, formState, handleSubmit } =
@@ -28,7 +32,8 @@ export function InvoiceForm() {
         render={({ field: { onChange, value } }) => (
           <Select
             label="Customer"
-            name="customer"
+            name="custsomer"
+            isDisabled={disabled}
             value={value}
             getOptionLabel={(option) => option.name}
             getOptionValue={(option) => option.id}
@@ -42,7 +47,11 @@ export function InvoiceForm() {
         )}
       />
 
-      <TextArea label="Project Description" {...register("description")} />
+      <TextArea
+        disabled={disabled}
+        label="Project Description"
+        {...register("description")}
+      />
 
       <div className="flex flex-row w-full gap-2">
         <Controller
@@ -52,6 +61,7 @@ export function InvoiceForm() {
             field: { value = new Date().toISOString(), onChange },
           }) => (
             <Input
+              disabled={disabled}
               className="w-full"
               label="Due Date"
               name="emitted"
@@ -68,6 +78,7 @@ export function InvoiceForm() {
           name="due"
           render={({ field: { value, onChange } }) => (
             <Input
+              disabled={disabled}
               className="w-full"
               label="Due Date"
               name="due"
@@ -100,15 +111,17 @@ export function InvoiceForm() {
         />
       </div>
 
-      <InvoiceItemsTable />
+      <InvoiceItemsTable disabled={disabled} />
 
-      <Button
-        loading={formState.isSubmitting}
-        disabled={!formState.isValid}
-        className="ml-auto px-6"
-      >
-        Save
-      </Button>
+      {!disabled && (
+        <Button
+          loading={formState.isSubmitting}
+          disabled={!formState.isValid}
+          className="ml-auto px-6"
+        >
+          Save
+        </Button>
+      )}
     </Form>
   );
 }

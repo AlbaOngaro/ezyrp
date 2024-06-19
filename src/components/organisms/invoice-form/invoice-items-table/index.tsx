@@ -12,8 +12,13 @@ import { CHF } from "lib/formatters/chf";
 import { useItems } from "hooks/useItems";
 import { Id } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
+import { cn } from "lib/utils/cn";
 
-export function InvoiceItemsTable() {
+type Props = {
+  disabled?: boolean;
+};
+
+export function InvoiceItemsTable({ disabled }: Props) {
   const { data: items, create } = useItems();
   const { control, setValue, watch } =
     useFormContext<FunctionReturnType<typeof api.invoices.get>>();
@@ -31,7 +36,12 @@ export function InvoiceItemsTable() {
 
   return (
     <div>
-      <header className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 mb-2">
+      <header
+        className={cn("grid gap-4 mb-2", {
+          "grid-cols-[repeat(4,minmax(0,1fr)),2rem]": !disabled,
+          "grid-cols-[repeat(4,minmax(0,1fr))]": disabled,
+        })}
+      >
         <h6 className="text-sm font-bold text-gray-800">Name</h6>
         <h6 className="text-sm font-bold text-gray-800 text-left">Price</h6>
         <h6 className="text-sm font-bold text-gray-800 text-left">Qty</h6>
@@ -43,9 +53,13 @@ export function InvoiceItemsTable() {
           return (
             <div
               key={item.key}
-              className="grid grid-cols-[repeat(4,minmax(0,1fr)),2rem] gap-4 items-start"
+              className={cn("grid gap-4 items-start", {
+                "grid-cols-[repeat(4,minmax(0,1fr)),2rem]": !disabled,
+                "grid-cols-[repeat(4,minmax(0,1fr))]": disabled,
+              })}
             >
               <Select
+                isDisabled={disabled}
                 isCreatable
                 name="name"
                 value={item}
@@ -86,7 +100,7 @@ export function InvoiceItemsTable() {
                 min={1}
                 step={0.05}
                 value={item.price / 100}
-                disabled={!item.onetime}
+                disabled={!item.onetime || disabled}
                 onChange={(e) => {
                   const price = Number(e.target.value) * 100;
                   setValue(`items.${i}.price` as const, price);
@@ -98,6 +112,7 @@ export function InvoiceItemsTable() {
                 type="number"
                 value={item.quantity}
                 min={1}
+                disabled={disabled}
                 max={item.onetime ? undefined : item.quantity}
                 onChange={(e) => {
                   const quantity = Number(e.target.value);
@@ -116,40 +131,44 @@ export function InvoiceItemsTable() {
                 {CHF.format((item.quantity * item.price) / 100)}
               </span>
 
-              <Button
-                variant="destructive"
-                className="w-6 h-6 p-1.5 rounded-full flex justify-center items-center justify-self-end"
-                onClick={() => {
-                  remove(i);
-                }}
-              >
-                <MinusIcon />
-              </Button>
+              {!disabled && (
+                <Button
+                  variant="destructive"
+                  className="w-6 h-6 p-1.5 rounded-full flex justify-center items-center justify-self-end"
+                  onClick={() => {
+                    remove(i);
+                  }}
+                >
+                  <MinusIcon />
+                </Button>
+              )}
             </div>
           );
         })}
       </div>
 
-      <Button
-        variant="secondary"
-        className="w-full mt-4 flex justify-center"
-        onClick={(e) => {
-          e.preventDefault();
+      {!disabled && (
+        <Button
+          variant="secondary"
+          className="w-full mt-4 flex justify-center"
+          onClick={(e) => {
+            e.preventDefault();
 
-          append({
-            workspace: "",
-            _id: uuid() as Id<"items">,
-            _creationTime: 0,
-            name: "",
-            price: 0,
-            quantity: 1,
-            description: "",
-            onetime: false,
-          });
-        }}
-      >
-        <PlusIcon />
-      </Button>
+            append({
+              workspace: "",
+              _id: uuid() as Id<"items">,
+              _creationTime: 0,
+              name: "",
+              price: 0,
+              quantity: 1,
+              description: "",
+              onetime: false,
+            });
+          }}
+        >
+          <PlusIcon />
+        </Button>
+      )}
     </div>
   );
 }
