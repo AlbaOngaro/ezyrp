@@ -1,5 +1,5 @@
-import { useQuery } from "convex-helpers/react";
 import { useMutation } from "convex/react";
+import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 
 export function useEvents() {

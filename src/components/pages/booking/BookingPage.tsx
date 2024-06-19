@@ -6,7 +6,6 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@radix-ui/react-form";
 
 import { useMutation } from "convex/react";
-import { useQuery } from "convex-helpers/react";
 import { cn } from "lib/utils/cn";
 import { Container } from "components/atoms/container";
 import { Card } from "components/atoms/card";
@@ -20,6 +19,7 @@ import {
 } from "components/pages/booking/types";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
+import { useQuery } from "lib/hooks/useQuery";
 
 const BookingContext = createContext<BookingContextValue>({
   view: View.Time,

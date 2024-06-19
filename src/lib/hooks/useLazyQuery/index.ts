@@ -1,8 +1,8 @@
-import { useQuery } from "convex-helpers/react";
 import { FunctionReference, FunctionReturnType } from "convex/server";
 import { useEffect, useRef, useState } from "react";
 
 import { Args, ReturnTuple } from "./types";
+import { useQuery } from "lib/hooks/useQuery";
 
 type PromiseResolve<Query extends FunctionReference<"query">> = (
   value: FunctionReturnType<Query>,
@@ -26,7 +26,7 @@ export function useLazyQuery<Query extends FunctionReference<"query">>(
         promiseResolve?.current?.call(undefined, data);
         break;
       case "error":
-        promiseReject?.current?.call(undefined, error);
+        promiseReject?.current?.call(undefined, error as Error);
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

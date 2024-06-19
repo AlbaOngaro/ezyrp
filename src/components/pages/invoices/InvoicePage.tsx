@@ -15,7 +15,6 @@ import {
 import { useRouter } from "next/router";
 
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { useQuery } from "convex-helpers/react";
 import { Container } from "components/atoms/container";
 import { useInvoices } from "hooks/useInvoices";
 import { CHF } from "lib/formatters/chf";
@@ -27,6 +26,7 @@ import { Card } from "components/atoms/card";
 import { Dialog } from "components/atoms/dialog";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
+import { useQuery } from "lib/hooks/useQuery";
 
 type Props = {
   id: Id<"invoices">;

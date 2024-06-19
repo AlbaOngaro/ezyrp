@@ -13,7 +13,7 @@ export const get = query({
     const invoice = await ctx.db
       .query("invoices")
       .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq("_id", id as string))
+      .filter((q) => q.eq(q.field("_id"), id))
       .unique();
 
     if (!invoice) {
