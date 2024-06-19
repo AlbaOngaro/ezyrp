@@ -59,7 +59,12 @@ export function Sidebar() {
         <footer className="mt-auto px-2">
           <Link
             href="/settings"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+              {
+                "text-primary": router.asPath === "/settings",
+              },
+            )}
           >
             <Settings className="h-5 w-5" />
             <span>Settings</span>

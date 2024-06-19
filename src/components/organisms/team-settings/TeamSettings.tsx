@@ -1,31 +1,66 @@
 import { Root, Trigger } from "@radix-ui/react-dialog";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
-import { format } from "date-fns";
+import { useOrganization } from "@clerk/clerk-react";
 
+import { useState } from "react";
+import { InvitationItem } from "./InvitationItem";
+import { InviteMemberFormValue } from "./types";
 import { Container } from "components/atoms/container";
-import { Avatar } from "components/atoms/avatar";
 import { Button } from "components/atoms/button";
 import { Heading } from "components/atoms/heading";
 import { Modal } from "components/atoms/modal";
 
 import { CreateInviteForm } from "components/organisms/create-invite-form/CreateInviteForm";
+import { Loader } from "components/atoms/loader";
 
 export function TeamSettings() {
-  const invites = [];
-
-  const { handleSubmit, ...methods } = useForm({
-    defaultValues: {
-      email: "",
+  const [isInviteMemberOpen, setIsInviteMemberOpen] = useState(false);
+  const { isLoaded, organization, invitations } = useOrganization({
+    invitations: {
+      pageSize: 5,
+      keepPreviousData: true,
     },
   });
 
-  const handleSubmitWrapper: UseFormHandleSubmit<{ email: string }> = (
+  const { handleSubmit, ...methods } = useForm<InviteMemberFormValue>({
+    defaultValues: {
+      email: "",
+      role: "",
+    },
+  });
+
+  const handleSubmitWrapper: UseFormHandleSubmit<InviteMemberFormValue> = (
     onSucces,
     onError,
   ) =>
-    handleSubmit(async (inputCreateInviteArgs) => {
-      onSucces(inputCreateInviteArgs);
+    handleSubmit(async ({ email, role }) => {
+      if (!!organization) {
+        try {
+          await organization.inviteMember({
+            emailAddress: email,
+            role,
+          });
+
+          onSucces({ email, role });
+
+          if (!!invitations && typeof invitations.revalidate === "function") {
+            await invitations.revalidate();
+          }
+        } catch (error) {
+          return;
+        } finally {
+          setIsInviteMemberOpen(false);
+        }
+      }
     }, onError);
+
+  if (!isLoaded || !organization) {
+    return (
+      <main className="h-screen w-screen flex justify-center items-center">
+        <Loader />
+      </main>
+    );
+  }
 
   return (
     <Container className="grid grid-cols-[1fr_2fr] py-12 gap-x-4 max-w-none max-h-[calc(100vh_-_122px)] overflow-y-scroll">
@@ -36,9 +71,11 @@ export function TeamSettings() {
 
       <ul className="flex flex-col gap-4 divide-y divide-gray-300 w-fit">
         <li className="flex flex-row items-start gap-4 pt-4">
-          <Root>
+          <Root open={isInviteMemberOpen}>
             <Trigger asChild>
-              <Button>Invite team member</Button>
+              <Button onClick={() => setIsInviteMemberOpen(true)}>
+                Invite team member
+              </Button>
             </Trigger>
 
             <Modal>
@@ -57,18 +94,13 @@ export function TeamSettings() {
         description="A list of all the team members who have been invited to your workspace"
       />
 
-      <ul className="flex flex-col gap-4 divide-y divide-gray-300 w-fit">
-        {invites?.data?.map((invite) => (
-          <li key={invite._id} className="flex flex-row items-start gap-4">
-            <Avatar seed={invite.email} className="w-10 h-10" />
-            <span className="flex flex-col">
-              <strong>{invite.email} </strong>
-              {format(
-                invite.sent_at ? new Date(invite.sent_at) : new Date(),
-                "dd/MM/yyyy HH:mm",
-              )}
-            </span>
-          </li>
+      <ul className="flex flex-col divide-y divide-gray-300 w-fit">
+        {invitations?.data?.map((invite) => (
+          <InvitationItem
+            key={invite.id}
+            invite={invite}
+            revalidate={invitations.revalidate}
+          />
         ))}
       </ul>
     </Container>

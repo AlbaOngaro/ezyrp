@@ -137,6 +137,7 @@ export function InvoiceItemsTable() {
           e.preventDefault();
 
           append({
+            workspace: "",
             _id: uuid() as Id<"items">,
             _creationTime: 0,
             name: "",
