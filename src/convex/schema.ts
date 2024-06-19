@@ -52,4 +52,9 @@ export default defineSchema({
     variant: v.string(),
     guests: v.array(v.id("customers")),
   }).index("by_workspace", ["workspace"]),
+  emails: defineTable({
+    workspace: v.string(),
+    title: v.string(),
+    template: v.string(),
+  }).index("by_workspace", ["workspace"]),
 });

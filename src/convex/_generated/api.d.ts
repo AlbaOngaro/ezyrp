@@ -18,6 +18,7 @@ import type * as bookings from "../bookings.js";
 import type * as cloudinary from "../cloudinary.js";
 import type * as countries from "../countries.js";
 import type * as customers from "../customers.js";
+import type * as emails from "../emails.js";
 import type * as eventTypes from "../eventTypes.js";
 import type * as events from "../events.js";
 import type * as invoices from "../invoices.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   cloudinary: typeof cloudinary;
   countries: typeof countries;
   customers: typeof customers;
+  emails: typeof emails;
   eventTypes: typeof eventTypes;
   events: typeof events;
   invoices: typeof invoices;
