@@ -1,12 +1,20 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getAuthData } from "./utils";
 
 export const get = query({
   args: {
     id: v.id("items"),
   },
-  handler: async (ctx, args) => {
-    const item = await ctx.db.get(args.id);
+  handler: async (ctx, { id }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const item = await ctx.db
+      .query("items")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => q.eq("_id", id as string))
+      .unique();
+
     if (!item) {
       throw new ConvexError("Item not found");
     }
@@ -16,7 +24,14 @@ export const get = query({
 });
 
 export const list = query({
-  handler: async (ctx) => await ctx.db.query("items").collect(),
+  handler: async (ctx) => {
+    const { workspace } = await getAuthData(ctx);
+
+    return await ctx.db
+      .query("items")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .collect();
+  },
 });
 
 export const create = mutation({
@@ -31,7 +46,10 @@ export const create = mutation({
     ctx,
     { name, description, price, quantity, onetime = false },
   ) => {
+    const { workspace } = await getAuthData(ctx);
+
     const id = await ctx.db.insert("items", {
+      workspace,
       name,
       price,
       onetime,
@@ -56,12 +74,25 @@ export const update = mutation({
     ctx,
     { id, name, description, price, quantity, onetime = false },
   ) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const item = await ctx.db
+      .query("items")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => q.eq("_id", id as string))
+      .unique();
+
+    if (!item) {
+      throw new ConvexError("Item not found");
+    }
+
     await ctx.db.patch(id, {
-      name,
-      price,
-      onetime,
-      quantity,
-      description,
+      workspace,
+      name: name || item.name,
+      price: price || item.price,
+      onetime: onetime || item.onetime,
+      quantity: quantity || item.quantity,
+      description: description || item.description,
     });
   },
 });
@@ -71,6 +102,18 @@ export const remove = mutation({
     id: v.id("items"),
   },
   handler: async (ctx, { id }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const item = await ctx.db
+      .query("items")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => q.eq("_id", id as string))
+      .unique();
+
+    if (!item) {
+      throw new ConvexError("Item not found in this workspace");
+    }
+
     await ctx.db.delete(id);
   },
 });

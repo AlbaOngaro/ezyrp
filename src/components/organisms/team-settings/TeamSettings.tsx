@@ -8,12 +8,10 @@ import { Button } from "components/atoms/button";
 import { Heading } from "components/atoms/heading";
 import { Modal } from "components/atoms/modal";
 
-import { useInvites } from "hooks/useInvites";
-
 import { CreateInviteForm } from "components/organisms/create-invite-form/CreateInviteForm";
 
 export function TeamSettings() {
-  const invites = useInvites();
+  const invites = [];
 
   const { handleSubmit, ...methods } = useForm({
     defaultValues: {
@@ -26,8 +24,6 @@ export function TeamSettings() {
     onError,
   ) =>
     handleSubmit(async (inputCreateInviteArgs) => {
-      await invites.create(inputCreateInviteArgs);
-
       onSucces(inputCreateInviteArgs);
     }, onError);
 

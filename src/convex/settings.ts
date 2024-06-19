@@ -10,20 +10,9 @@ export const get = query({
       );
     }
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_token", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier),
-      )
-      .unique();
-
-    if (user === null) {
-      throw new ConvexError("User not found!");
-    }
-
     return await ctx.db
       .query("settings")
-      .withIndex("by_user", (q) => q.eq("user_id", user._id))
+      .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
       .unique();
   },
 });
@@ -42,25 +31,14 @@ export const update = mutation({
       );
     }
 
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_token", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier),
-      )
-      .unique();
-
-    if (user === null) {
-      throw new ConvexError("User not found!");
-    }
-
     const settings = await ctx.db
       .query("settings")
-      .withIndex("by_user", (q) => q.eq("user_id", user._id))
+      .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
       .unique();
 
     if (!settings) {
       await ctx.db.insert("settings", {
-        user_id: user._id,
+        user_id: identity.tokenIdentifier,
         start,
         end,
         days,
@@ -68,7 +46,7 @@ export const update = mutation({
 
       return await ctx.db
         .query("settings")
-        .withIndex("by_user", (q) => q.eq("user_id", user._id))
+        .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
         .unique();
     }
 
@@ -80,7 +58,7 @@ export const update = mutation({
 
     return await ctx.db
       .query("settings")
-      .withIndex("by_user", (q) => q.eq("user_id", user._id))
+      .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
       .unique();
   },
 });

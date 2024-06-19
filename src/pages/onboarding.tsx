@@ -1,78 +1,66 @@
-import Image from "next/image";
-import Link from "next/link";
-
+import { useOrganizationList } from "@clerk/clerk-react";
 import { Form } from "@radix-ui/react-form";
+import { FormEventHandler, useState } from "react";
+import { useRouter } from "next/router";
 import { Button } from "components/atoms/button";
+import { Card, CardContent, CardHeader } from "components/atoms/card";
 import { Input } from "components/atoms/input";
+import { H3, Paragraph } from "components/atoms/typography";
 
 export default function OnboardingPage() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { createOrganization, setActive } = useOrganizationList();
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    if (typeof createOrganization === "function") {
+      try {
+        setIsLoading(true);
+        const { id } = await createOrganization({ name });
+        await setActive({
+          organization: id,
+        });
+
+        return router.push("/");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    setName("");
+  };
+
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
-            <p className="text-balance text-muted-foreground">
-              Enter your email below to login to your account
-            </p>
-          </div>
-          <Form className="grid gap-4">
-            <div className="grid gap-2">
-              <Input
-                label="Email"
-                name="email"
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                validations={{
-                  valueMissing: "Thiy field is required",
-                  typeMismatch: "Please enter a valid email address",
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Link
-                  href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-              <Input
-                label="Password"
-                name="password"
-                id="password"
-                type="password"
-                validations={{
-                  valueMissing: "Thiy field is required",
-                }}
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
-            <Button variant="outline" className="w-full">
-              Login with Google
+    <main className="w-screen h-screen flex justify-center items-center">
+      <Card className="w-1/3">
+        <CardHeader>
+          <H3>Workspace</H3>
+        </CardHeader>
+        <CardContent>
+          <Paragraph>
+            Pick a workspace name. This should match the name of your
+            organization or team. You can change it later.
+          </Paragraph>
+
+          <Form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
+            <Input
+              value={name}
+              name="workspace"
+              placeholder="Acme"
+              onChange={(e) => setName(e.target.value)}
+              validations={{
+                valueMissing: "Please enter a workspace name",
+              }}
+            />
+            <Button disabled={!name} loading={isLoading} type="submit">
+              Create Workspace
             </Button>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="#" className="underline">
-              Sign up
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="hidden lg:block h-screen bg-slate-50 p-12">
-        <Image
-          src="/images/undraw_schedule_meeting_52nu.svg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-contain  dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </main>
   );
 }

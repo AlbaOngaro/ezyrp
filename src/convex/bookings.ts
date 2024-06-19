@@ -36,6 +36,7 @@ export const create = mutation({
     }
 
     await ctx.db.insert("events", {
+      workspace: eventtype.workspace,
       variant: eventtype.variant,
       end: addMinutes(new Date(args.start), eventtype.duration).toISOString(),
       title: eventtype.name,

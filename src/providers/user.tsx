@@ -1,9 +1,9 @@
 import { PropsWithChildren } from "react";
-import { useStoreUserEffect } from "hooks/useStoreUserEffect";
+import { useConvexAuth } from "convex/react";
 import { Loader } from "components/atoms/loader";
 
 export function UserProvider({ children }: PropsWithChildren) {
-  const { isLoading } = useStoreUserEffect();
+  const { isLoading } = useConvexAuth();
 
   if (isLoading) {
     return (

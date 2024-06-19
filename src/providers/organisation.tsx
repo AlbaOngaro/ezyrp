@@ -16,7 +16,9 @@ export function OrganisationProvider({ children }: PropsWithChildren) {
     if (!isLoaded || !!orgId) return;
 
     if (userMemberships.count === 0) {
-      router.push("/onboarding");
+      if (!router.asPath.includes("onboarding")) {
+        router.push("/onboarding");
+      }
       return;
     }
 
