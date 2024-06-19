@@ -42,7 +42,13 @@ export function Dialog({
           <AlertDialog.Cancel asChild>
             <Button
               variant="secondary"
-              onClick={onCancel}
+              onClick={() => {
+                setTimeout(() => (document.body.style.pointerEvents = ""), 0);
+
+                if (typeof onCancel === "function") {
+                  onCancel();
+                }
+              }}
               {...cancelButtonProps}
             >
               {cancelText}
@@ -51,7 +57,13 @@ export function Dialog({
           <AlertDialog.Action asChild>
             <Button
               variant="destructive"
-              onClick={onConfirm}
+              onClick={() => {
+                setTimeout(() => (document.body.style.pointerEvents = ""), 0);
+
+                if (typeof onConfirm === "function") {
+                  onConfirm();
+                }
+              }}
               {...confirmButtonProps}
             >
               {confirmText}

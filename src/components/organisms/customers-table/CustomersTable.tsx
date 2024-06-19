@@ -56,7 +56,7 @@ export function CustomersTable() {
             <Dialog
               overlayClassname="!ml-0"
               title="Do you really want to delete all the selected customers?"
-              description="This action cannot be undone"
+              description="This action cannot be undone. All invoices linked to this customer will also be deleted."
               onConfirm={() =>
                 Promise.all(
                   rows.map((row) =>

@@ -174,5 +174,15 @@ export const remove = mutation({
     }
 
     await ctx.db.delete(id);
+
+    const invoices = await ctx.db
+      .query("invoices")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => q.eq(q.field("customer"), id))
+      .collect();
+
+    for (const invoice of invoices) {
+      await ctx.db.delete(invoice._id);
+    }
   },
 });
