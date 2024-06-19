@@ -9,7 +9,11 @@ import { Doc } from "convex/_generated/dataModel";
 
 type Customer = Doc<"customers">;
 
-export function CustomerForm() {
+type Props = {
+  disabled?: boolean;
+};
+
+export function CustomerForm({ disabled }: Props) {
   const { data } = useCountries();
 
   const {
@@ -29,6 +33,7 @@ export function CustomerForm() {
         name="photoUrl"
         render={({ field: { value, onChange } }) => (
           <Input
+            disabled={disabled}
             label="Profile picture"
             className="col-span-3"
             type="file"
@@ -63,6 +68,7 @@ export function CustomerForm() {
       />
 
       <Input
+        disabled={disabled}
         className="col-span-6 row-start-2"
         label="Name"
         placeholder="Jane Doe"
@@ -76,6 +82,7 @@ export function CustomerForm() {
       />
 
       <Input
+        disabled={disabled}
         className="col-span-6 row-start-3"
         label="Email"
         placeholder="jane.doe@example.com"
@@ -87,6 +94,7 @@ export function CustomerForm() {
       />
 
       <Input
+        disabled={disabled}
         label="Address"
         className="col-span-12"
         validations={{
@@ -96,6 +104,7 @@ export function CustomerForm() {
       />
 
       <Input
+        disabled={disabled}
         className="col-span-4"
         label="Code"
         validations={{
@@ -106,6 +115,7 @@ export function CustomerForm() {
         })}
       />
       <Input
+        disabled={disabled}
         className="col-span-4"
         label="City"
         validations={{
@@ -123,6 +133,7 @@ export function CustomerForm() {
         }}
         render={({ field: { value = "", onChange } }) => (
           <Select
+            isDisabled={disabled}
             className="col-span-4"
             name="country"
             label="Country"
@@ -136,13 +147,15 @@ export function CustomerForm() {
         )}
       />
 
-      <Button
-        disabled={!isDirty || !isValid}
-        loading={isSubmitting}
-        className="w-fit min-w-[100px] mt-4 ml-auto col-start-12 row-start-8"
-      >
-        Save
-      </Button>
+      {!disabled && (
+        <Button
+          disabled={!isDirty || !isValid}
+          loading={isSubmitting}
+          className="w-fit min-w-[100px] mt-4 ml-auto col-start-12 row-start-8"
+        >
+          Save
+        </Button>
+      )}
     </Form>
   );
 }

@@ -7,6 +7,7 @@ import { Id } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
+import { Breadcrumb } from "components/atoms/breadcrumb";
 
 type Props = {
   id: Id<"invoices">;
@@ -21,6 +22,8 @@ export function InvoicePage({ id }: Props) {
 
   return (
     <Container as="section" className="py-10">
+      <Breadcrumb className="mb-8" />
+
       <FormProvider {...methods}>
         <InvoiceForm disabled />
       </FormProvider>

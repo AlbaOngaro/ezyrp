@@ -29,7 +29,7 @@ export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
                 <RUIContextMenu.Item
                   key={i}
                   onClick={item.onClick}
-                  className="text-sm flex flex-row justify-between px-4 py-1 text-gray-800 focus-visible:outline-none hover:bg-gray-100 data-[disabled]:text-gray-400 data-[disabled]:bg-gray-50 data-[disabled]:hover:bg-gray-50"
+                  className="text-sm flex flex-row justify-between px-4 py-1 text-gray-800 focus-visible:outline-none hover:bg-gray-100 hover:cursor-pointer data-[disabled]:text-gray-400 data-[disabled]:bg-gray-50 data-[disabled]:hover:bg-gray-50"
                 >
                   {item.label}
                 </RUIContextMenu.Item>

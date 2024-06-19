@@ -9,12 +9,11 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 
-import { Heading } from "components/atoms/heading";
-
 import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
 import { useInvoices } from "hooks/useInvoices";
+import { Breadcrumb } from "components/atoms/breadcrumb";
 
 type Props = {
   id: Id<"invoices">;
@@ -65,7 +64,7 @@ export function EditInvoicePage({ id }: Props) {
 
   return (
     <Container as="section" className="py-10">
-      <Heading title="Editing invoice" description=" " />
+      <Breadcrumb className="mb-8" />
 
       <FormProvider
         {...methods}

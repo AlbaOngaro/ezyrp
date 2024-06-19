@@ -1,24 +1,29 @@
 import { ReactElement } from "react";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { FormProvider, useForm } from "react-hook-form";
-import React from "react";
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+
 import { Container } from "components/atoms/container";
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+
+import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
+
 import { Id } from "convex/_generated/dataModel";
-import { api } from "convex/_generated/api";
-import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
+import { api } from "convex/_generated/api";
 import { Breadcrumb } from "components/atoms/breadcrumb";
 
 type Props = {
-  id: Id<"items">;
+  id: Id<"customers">;
 };
 
-export function ItemPage({ id }: Props) {
-  const [loadItem] = useLazyQuery(api.items.get);
+export function CustomerPage({ id }: Props) {
+  const [getCustomer] = useLazyQuery(api.customers.get);
 
   const methods = useForm({
-    defaultValues: async () => loadItem({ id }),
+    defaultValues: async () =>
+      getCustomer({
+        id,
+      }),
   });
 
   return (
@@ -26,16 +31,22 @@ export function ItemPage({ id }: Props) {
       <Breadcrumb className="mb-8" />
 
       <FormProvider {...methods}>
-        <ItemForm disabled />
+        <CustomerForm disabled />
       </FormProvider>
     </Container>
   );
 }
 
+CustomerPage.getLayout = function getLayout(page: ReactElement) {
+  return <SidebarLayout>{page}</SidebarLayout>;
+};
+
 export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
-  const id = Array.isArray(query.id) ? query.id[0] : query.id;
+  const id = (
+    Array.isArray(query.id) ? query.id[0] : query.id
+  ) as Id<"customers">;
 
   if (!id) {
     return {
@@ -45,11 +56,7 @@ export async function getServerSideProps({
 
   return {
     props: {
-      id: id as Id<"items">,
+      id,
     },
   };
 }
-
-ItemPage.getLayout = function getLayout(page: ReactElement) {
-  return <SidebarLayout>{page}</SidebarLayout>;
-};

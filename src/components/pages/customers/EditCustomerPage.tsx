@@ -4,7 +4,6 @@ import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
 import { Container } from "components/atoms/container";
-import { Heading } from "components/atoms/heading";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
@@ -14,6 +13,7 @@ import { useFileUpload } from "hooks/useFileUpload";
 import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
+import { Breadcrumb } from "components/atoms/breadcrumb";
 
 type UpdateCustomerFn = typeof api.customers.update;
 
@@ -86,8 +86,9 @@ export function EditCustomerPage({ id }: Props) {
     }, onError);
 
   return (
-    <Container>
-      <Heading title="Edit customer" />
+    <Container as="section" className="py-10">
+      <Breadcrumb className="mb-8" />
+
       <FormProvider {...methods} handleSubmit={handleSubmitWrapper}>
         <CustomerForm />
       </FormProvider>

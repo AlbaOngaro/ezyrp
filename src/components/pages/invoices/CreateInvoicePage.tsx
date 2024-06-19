@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 
 import { FunctionReturnType } from "convex/server";
 import { Container } from "components/atoms/container";
-import { Heading } from "components/atoms/heading";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
@@ -12,6 +11,7 @@ import { useCustomers } from "hooks/useCustomers";
 import { useInvoices } from "hooks/useInvoices";
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 import { api } from "convex/_generated/api";
+import { Breadcrumb } from "components/atoms/breadcrumb";
 
 export function CreateInvoicePage() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export function CreateInvoicePage() {
 
   return (
     <Container as="section" className="py-10">
-      <Heading title="Create new invoice" description=" " />
+      <Breadcrumb className="mb-8" />
 
       <FormProvider
         {...methods}
