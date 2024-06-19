@@ -3,12 +3,13 @@ import { FunctionReference, getFunctionName } from "convex/server";
 
 import { convexToJson } from "convex/values";
 import { useContext } from "react";
+import { ReturnType } from "./types";
 import { ConvexCacheContext } from "providers/convex-cache";
 
 export function useQuery<Query extends FunctionReference<"query">>(
   query: Query,
   args?: OptionalRestArgsOrSkip<Query>[0],
-) {
+): ReturnType<Query> {
   const { cache } = useContext(ConvexCacheContext);
 
   const key = `${getFunctionName(query)}:${JSON.stringify(args || {})}`;

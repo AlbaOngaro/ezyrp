@@ -5,7 +5,11 @@ import { Input } from "components/atoms/input";
 import { TextArea } from "components/atoms/textarea";
 import { Doc } from "convex/_generated/dataModel";
 
-export function ItemForm() {
+type Props = {
+  disabled?: boolean;
+};
+
+export function ItemForm({ disabled }: Props) {
   const {
     register,
     handleSubmit,
@@ -26,9 +30,14 @@ export function ItemForm() {
         validations={{
           valueMissing: "This field is required",
         }}
+        disabled={disabled}
       />
 
-      <TextArea label="Description" {...register("description")} />
+      <TextArea
+        label="Description"
+        disabled={disabled}
+        {...register("description")}
+      />
 
       <div className="flex flex-row gap-4 w-full">
         <Input
@@ -36,6 +45,7 @@ export function ItemForm() {
           label="Price (CHF)"
           type="number"
           step={0.05}
+          disabled={disabled}
           {...register("price", {
             valueAsNumber: true,
             required: true,
@@ -46,6 +56,7 @@ export function ItemForm() {
           className="w-full"
           label="Quantity (Stock)"
           type="number"
+          disabled={disabled}
           {...register("quantity", {
             valueAsNumber: true,
             required: true,
@@ -53,14 +64,16 @@ export function ItemForm() {
         />
       </div>
 
-      <Button
-        loading={isSubmitted}
-        disabled={!isValid}
-        type="submit"
-        className="w-fit min-w-[100px] mt-4 ml-auto"
-      >
-        Save
-      </Button>
+      {!disabled && (
+        <Button
+          loading={isSubmitted}
+          disabled={!isValid}
+          type="submit"
+          className="w-fit min-w-[100px] mt-4 ml-auto"
+        >
+          Save
+        </Button>
+      )}
     </Form>
   );
 }

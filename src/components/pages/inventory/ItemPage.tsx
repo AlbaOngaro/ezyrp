@@ -5,24 +5,24 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Id } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
+import { ItemForm } from "components/organisms/item-form/ItemForm";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
-import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 
 type Props = {
-  id: Id<"invoices">;
+  id: Id<"items">;
 };
 
-export function InvoicePage({ id }: Props) {
-  const [loadInvoice] = useLazyQuery(api.invoices.get);
+export function ItemPage({ id }: Props) {
+  const [loadItem] = useLazyQuery(api.items.get);
 
   const methods = useForm({
-    defaultValues: async () => loadInvoice({ id }),
+    defaultValues: async () => loadItem({ id }),
   });
 
   return (
     <Container as="section" className="py-10">
       <FormProvider {...methods}>
-        <InvoiceForm disabled />
+        <ItemForm disabled />
       </FormProvider>
     </Container>
   );
@@ -41,11 +41,11 @@ export async function getServerSideProps({
 
   return {
     props: {
-      id: id as Id<"invoices">,
+      id: id as Id<"items">,
     },
   };
 }
 
-InvoicePage.getLayout = function getLayout(page: ReactElement) {
+ItemPage.getLayout = function getLayout(page: ReactElement) {
   return <SidebarLayout>{page}</SidebarLayout>;
 };

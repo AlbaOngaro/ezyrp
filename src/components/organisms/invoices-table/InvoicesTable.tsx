@@ -25,10 +25,8 @@ type Invoice = FunctionReturnType<typeof api.invoices.get>;
 export function InvoicesTable() {
   const router = useRouter();
   const invoices = useInvoices();
-
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
 
   return (
     <>
