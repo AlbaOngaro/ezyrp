@@ -35,7 +35,13 @@ export function EditItemPage({ id }: Props) {
         throw new Error("Item not found");
       }
 
-      const { _id, _creationTime, price, ...rest } = item;
+      const {
+        _id,
+        _creationTime,
+        workspace: _workspace,
+        price,
+        ...rest
+      } = item;
 
       return {
         ...rest,

@@ -44,7 +44,14 @@ export function EditInvoicePage({ id }: Props) {
     FunctionReturnType<typeof api.invoices.get>
   > = () => {
     return handleSubmit(
-      async ({ _id, _creationTime, customer, items, ...data }) => {
+      async ({
+        _id,
+        _creationTime,
+        workspace: _workspace,
+        customer,
+        items,
+        ...data
+      }) => {
         await invoices.update({
           ...data,
           id: _id,

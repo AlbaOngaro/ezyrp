@@ -37,7 +37,7 @@ export function EditCustomerPage({ id }: Props) {
         throw new Error("Customer not found!");
       }
 
-      const { _id, _creationTime, ...rest } = customer;
+      const { _id, _creationTime, workspace: _workspace, ...rest } = customer;
 
       return {
         id: _id,

@@ -68,7 +68,7 @@ export const update = mutation({
     const eventType = await ctx.db
       .query("eventTypes")
       .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq("_id", id as string))
+      .filter((q) => q.eq(q.field("_id"), id as string))
       .unique();
 
     if (!eventType) {
@@ -95,7 +95,7 @@ export const remove = mutation({
     const eventType = await ctx.db
       .query("eventTypes")
       .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq("_id", id as string))
+      .filter((q) => q.eq(q.field("_id"), id as string))
       .unique();
 
     if (!eventType) {
