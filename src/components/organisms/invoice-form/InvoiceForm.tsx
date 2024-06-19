@@ -2,7 +2,7 @@ import { Form } from "@radix-ui/react-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { addMonths, format } from "date-fns";
 
-import { InvoiceItemsTable } from "./invoice-items-table/InvoiceItemsTable";
+import { InvoiceItemsTable } from "./invoice-items-table";
 
 import { Select } from "components/atoms/select";
 import { TextArea } from "components/atoms/textarea";
@@ -84,12 +84,12 @@ export function InvoiceForm() {
                 value
                   ? format(new Date(value), "yyyy-MM-dd")
                   : format(
-                      addMonths(
-                        new Date(watch("emitted", new Date().toISOString())),
-                        1,
-                      ),
-                      "yyyy-MM-dd",
-                    )
+                    addMonths(
+                      new Date(watch("emitted", new Date().toISOString())),
+                      1,
+                    ),
+                    "yyyy-MM-dd",
+                  )
               }
               onChange={(due) => onChange(due.toISOString())}
               validations={{
