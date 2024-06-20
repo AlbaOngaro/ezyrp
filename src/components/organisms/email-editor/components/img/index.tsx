@@ -5,7 +5,7 @@ type RootProps = React.ComponentPropsWithoutRef<"img">;
 export type ImgProps = RootProps;
 
 export const Img = forwardRef<HTMLImageElement, ImgProps>(function Img(
-  { alt, src, width, height, style, ...props },
+  { alt, src, width, height, style, children, ...props },
   ref,
 ) {
   return (

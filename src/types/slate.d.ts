@@ -28,14 +28,18 @@ type HeadingElement = {
 
 type HrElement = {
   type: "hr";
+  children: [{ text: "" }];
 };
 
 type ImgElement = {
   type: "img";
+  src: string;
+  children: [{ text: "" }];
 };
 
 type LinkElement = {
   type: "link";
+  url: string;
   children: CustomText[];
 };
 

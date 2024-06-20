@@ -15,9 +15,13 @@ import {
   Section,
 } from "./components";
 import { initialValue } from "./constants";
+import { withImages } from "./plugins/withImages";
+import { withHr } from "./plugins/withHr";
 
 export function EmailEditor() {
-  const [editor] = useState(() => withReact(createEditor()));
+  const [editor] = useState(() =>
+    withHr(withImages(withReact(createEditor()))),
+  );
 
   const renderElement = useCallback(
     ({ attributes, element, children }: RenderElementProps) => {
@@ -48,15 +52,17 @@ export function EmailEditor() {
           );
         case "hr":
           return (
-            <Hr {...attributes} {...element}>
+            <div {...attributes}>
+              <Hr />
               {children}
-            </Hr>
+            </div>
           );
         case "img":
           return (
-            <Img {...attributes} {...element}>
+            <div {...attributes}>
+              <Img src={element.src} />
               {children}
-            </Img>
+            </div>
           );
         case "link":
           return (
@@ -89,7 +95,10 @@ export function EmailEditor() {
 
   return (
     <Slate editor={editor} initialValue={initialValue}>
-      <Editable renderElement={renderElement} />
+      <Editable
+        className="focus-within:outline-none"
+        renderElement={renderElement}
+      />
     </Slate>
   );
 }
