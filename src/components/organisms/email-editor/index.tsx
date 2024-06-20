@@ -3,16 +3,21 @@ import { createEditor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { debounce } from "lodash";
 
-import { initialValue } from "./constants";
+import { useRenderElement } from "./hooks/useRenderElement";
+
 import { withImages } from "./plugins/withImages";
 import { withHr } from "./plugins/withHr";
-import { useRenderElement } from "./hooks/useRenderElement";
+import { withIds } from "./plugins/withIds";
+
+import { initialValue } from "./constants";
+import { useOnKeyDown } from "./hooks/useOnKeyDown";
 
 export function EmailEditor() {
   const [editor] = useState(() =>
-    withHr(withImages(withReact(createEditor()))),
+    withHr(withImages(withIds(withReact(createEditor())))),
   );
 
+  const onKeyDown = useOnKeyDown(editor);
   const renderElement = useRenderElement();
 
   return (
@@ -24,6 +29,7 @@ export function EmailEditor() {
       <Editable
         className="focus-within:outline-none"
         renderElement={renderElement}
+        onKeyDown={onKeyDown}
       />
     </Slate>
   );
