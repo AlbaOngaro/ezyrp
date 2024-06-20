@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { RenderElementProps } from "slate-react";
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 import { HrElement } from "types/slate";
 
 import { mergeRefs } from "lib/utils/mergeRefs";
@@ -17,7 +17,7 @@ export const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
   },
   ref,
 ) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform } = useSortable({
     id,
   });
 

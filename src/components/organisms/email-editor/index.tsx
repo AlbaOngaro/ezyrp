@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createEditor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { DndContext } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
 import { initialValue } from "./constants";
 import { withImages } from "./plugins/withImages";
@@ -21,16 +22,10 @@ export function EmailEditor() {
       initialValue={initialValue}
       onChange={(value) => console.log("onChange", value)}
     >
-      <DndContext
-        onDragEnd={(event) => {
-          console.debug("onDragEnd", event);
-        }}
-      >
-        <Editable
-          className="focus-within:outline-none"
-          renderElement={renderElement}
-        />
-      </DndContext>
+      <Editable
+        className="focus-within:outline-none"
+        renderElement={renderElement}
+      />
     </Slate>
   );
 }

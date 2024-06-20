@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { RenderElementProps } from "slate-react";
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ParagraphElement } from "types/slate";
@@ -17,7 +17,7 @@ export const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   },
   ref,
 ) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform } = useSortable({
     id,
   });
 
