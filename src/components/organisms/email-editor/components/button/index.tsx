@@ -1,43 +1,64 @@
 import React, { forwardRef } from "react";
+import { RenderElementProps } from "slate-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 import { parsePadding, pxToPt } from "./utils";
 
-export type ButtonProps = React.ComponentPropsWithoutRef<"a">;
+import { mergeRefs } from "lib/utils/mergeRefs";
+import { ButtonElement } from "types/slate";
 
-export const Button = forwardRef<HTMLAnchorElement, ButtonProps>(
-  function Button({ children, style, target = "_blank", ...props }, ref) {
-    const { pt, pr, pb, pl } = parsePadding({
-      padding: style?.padding,
-      paddingLeft: style?.paddingLeft,
-      paddingRight: style?.paddingRight,
-      paddingTop: style?.paddingTop,
-      paddingBottom: style?.paddingBottom,
-    });
+interface Props extends RenderElementProps {
+  element: ButtonElement;
+}
 
-    const y = pt + pb;
-    const textRaise = pxToPt(y);
-
-    return (
-      <a
-        {...props}
-        style={buttonStyle({ ...style, pt, pr, pb, pl })}
-        target={target}
-        ref={ref}
-      >
-        <span
-          dangerouslySetInnerHTML={{
-            __html: `<!--[if mso]><i style="letter-spacing: ${pl}px;mso-font-width:-100%;mso-text-raise:${textRaise}" hidden>&nbsp;</i><![endif]-->`,
-          }}
-        />
-        <span style={buttonTextStyle(pb)}>{children}</span>
-        <span
-          dangerouslySetInnerHTML={{
-            __html: `<!--[if mso]><i style="letter-spacing: ${pr}px;mso-font-width:-100%" hidden>&nbsp;</i><![endif]-->`,
-          }}
-        />
-      </a>
-    );
+export const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
+  {
+    children,
+    attributes: { ref: slateRef, ...slateAttributes },
+    element: { style, href, target = "_blank" },
   },
-);
+  ref,
+) {
+  const { pt, pr, pb, pl } = parsePadding({
+    padding: style?.padding,
+    paddingLeft: style?.paddingLeft,
+    paddingRight: style?.paddingRight,
+    paddingTop: style?.paddingTop,
+    paddingBottom: style?.paddingBottom,
+  });
+
+  const y = pt + pb;
+  const textRaise = pxToPt(y);
+
+  return (
+    <a
+      href={href}
+      style={buttonStyle({
+        ...(style || {}),
+        pt,
+        pr,
+        pb,
+        pl,
+      })}
+      target={target}
+      ref={mergeRefs(ref, slateRef)}
+      {...slateAttributes}
+    >
+      <span
+        dangerouslySetInnerHTML={{
+          __html: `<!--[if mso]><i style="letter-spacing: ${pl}px;mso-font-width:-100%;mso-text-raise:${textRaise}" hidden>&nbsp;</i><![endif]-->`,
+        }}
+      />
+      <span style={buttonTextStyle(pb)}>{children}</span>
+      <span
+        dangerouslySetInnerHTML={{
+          __html: `<!--[if mso]><i style="letter-spacing: ${pr}px;mso-font-width:-100%" hidden>&nbsp;</i><![endif]-->`,
+        }}
+      />
+    </a>
+  );
+});
 
 const buttonStyle = (
   style?: React.CSSProperties & {

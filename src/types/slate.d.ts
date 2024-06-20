@@ -2,68 +2,65 @@ import { CSSProperties } from "react";
 import { BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
 
-type ParagraphElement = {
+interface BaseElement {
+  id: string;
+  type: string;
+  style?: CSSProperties;
+}
+
+interface ParagraphElement extends BaseElement {
   type: "paragraph";
   children: CustomText[];
-  style?: CSSProperties;
-};
+}
 
-type ButtonElement = {
+interface ButtonElement extends BaseElement {
   type: "button";
   href: string;
+  target?: "_blank" | "_self";
   children: CustomText[];
-  style?: CSSProperties;
-};
+}
 
-type ColumnElement = {
+interface ColumnElement extends BaseElement {
   type: "column";
   children: (CustomElement | CustomText)[];
-  style?: CSSProperties;
-};
+}
 
-type ContainerElement = {
+interface ContainerElement extends BaseElement {
   type: "container";
-  children: (CustomElement | CustomText)[];
-  style?: CSSProperties;
-};
+  children: CustomElement[];
+}
 
-type HeadingElement = {
+interface HeadingElement extends BaseElement {
   type: "heading";
   children: CustomText[];
-  style?: CSSProperties;
-};
+}
 
-type HrElement = {
+interface HrElement extends BaseElement {
   type: "hr";
   children: [{ text: "" }];
-  style?: CSSProperties;
-};
+}
 
-type ImgElement = {
+interface ImgElement extends BaseElement {
   type: "img";
   src: string;
   children: [{ text: "" }];
-  style?: CSSProperties;
-};
+}
 
-type LinkElement = {
+interface LinkElement extends BaseElement {
   type: "link";
   url: string;
   children: CustomText[];
-  style?: CSSProperties;
-};
+}
 
-type RowElement = {
+interface RowElement extends BaseElement {
   type: "row";
   children: (CustomElement | CustomText)[];
-  style?: CSSProperties;
-};
+}
 
-type SectionElement = {
+interface SectionElement extends BaseElement {
   type: "section";
   children: (CustomElement | CustomText)[];
-  style?: CSSProperties;
-};
+}
 
 type CustomElement =
   | ParagraphElement
