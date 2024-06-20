@@ -2,23 +2,51 @@ import React, { useCallback, useState } from "react";
 import { createEditor } from "slate";
 import { Slate, Editable, withReact, RenderElementProps } from "slate-react";
 
+import { Html, Text, Button } from "./components";
+
 const initialValue = [
   {
-    type: "paragraph" as const,
-    children: [{ text: "A line of text in a paragraph." }],
+    type: "html" as const,
+    children: [
+      {
+        type: "paragraph" as const,
+        children: [{ text: "Hello World" }],
+      },
+    ],
   },
 ];
 
-const CodeElement = (props: RenderElementProps) => {
+const HtmlElement = ({
+  attributes: { ref, ...attributes },
+  children,
+}: RenderElementProps) => {
   return (
-    <pre {...props.attributes}>
-      <code>{props.children}</code>
-    </pre>
+    <Html ref={ref} {...attributes}>
+      {children}
+    </Html>
   );
 };
 
-const DefaultElement = (props: RenderElementProps) => {
-  return <p {...props.attributes}>{props.children}</p>;
+const ButtonElement = ({
+  attributes: { ref, ...attributes },
+  children,
+}: RenderElementProps) => {
+  return (
+    <Button ref={ref} {...attributes}>
+      {children}
+    </Button>
+  );
+};
+
+const DefaultElement = ({
+  children,
+  attributes: { ref, ...attributes },
+}: RenderElementProps) => {
+  return (
+    <Text ref={ref} {...attributes}>
+      {children}
+    </Text>
+  );
 };
 
 export function EmailEditor() {
@@ -26,8 +54,10 @@ export function EmailEditor() {
 
   const renderElement = useCallback((props: RenderElementProps) => {
     switch (props.element.type) {
-      case "code":
-        return <CodeElement {...props} />;
+      case "html":
+        return <HtmlElement {...props} />;
+      case "button":
+        return <ButtonElement {...props} />;
       default:
         return <DefaultElement {...props} />;
     }
