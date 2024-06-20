@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { RenderElementProps } from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
 import { withDndHandlers } from "../../hocs/withDndHandlers";
 import { mergeRefs } from "lib/utils/mergeRefs";
@@ -18,6 +18,22 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   },
   ref,
 ) {
+  const editor = useSlateStatic();
+
+  if (ReactEditor.isReadOnly(editor)) {
+    <p
+      style={{
+        fontSize: "14px",
+        lineHeight: "24px",
+        margin: "16px 0",
+        cursor: "text",
+        ...(style || {}),
+      }}
+    >
+      {children}
+    </p>;
+  }
+
   return (
     <p
       style={{

@@ -25,11 +25,6 @@ interface ColumnElement extends BaseElement {
   children: CustomElement[];
 }
 
-interface ContainerElement extends BaseElement {
-  type: "container";
-  children: CustomElement[];
-}
-
 interface HeadingElement extends BaseElement {
   type: "heading";
   children: CustomText[];
@@ -62,7 +57,6 @@ type CustomElement =
   | ParagraphElement
   | ButtonElement
   | ColumnElement
-  | ContainerElement
   | HeadingElement
   | HrElement
   | ImgElement

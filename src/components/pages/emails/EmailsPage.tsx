@@ -9,6 +9,7 @@ import { Table } from "components/atoms/table";
 import { api } from "convex/_generated/api";
 import { Card } from "components/atoms/card";
 import { useQuery } from "lib/hooks/useQuery";
+import { Doc } from "convex/_generated/dataModel";
 
 export function EmailsPage() {
   const router = useRouter();
@@ -45,13 +46,39 @@ export function EmailsPage() {
       </Container>
       <Container as="section">
         <Card>
-          <Table
+          <Table<Omit<Doc<"emails">, "body">>
             rows={emails}
             columns={[
               {
                 id: "id",
                 field: "_id",
                 headerName: "ID",
+              },
+              {
+                id: "title",
+                field: "title",
+                headerName: "Title",
+              },
+            ]}
+            withContextMenu
+            contextMenuItems={[
+              {
+                type: "item",
+                label: "View",
+                onClick: (row) => router.push(`/emails/${row._id}`),
+              },
+              {
+                type: "item",
+                label: "Edit",
+                onClick: (row) => router.push(`/emails/${row._id}/edit`),
+              },
+              {
+                type: "separator",
+              },
+              {
+                type: "item",
+                label: "Delete",
+                onClick: console.debug,
               },
             ]}
           />

@@ -1,25 +1,25 @@
 import React, { useState } from "react";
-import { Descendant, createEditor } from "slate";
+import { createEditor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
-import { debounce } from "lodash";
 
-import { useMutation } from "convex/react";
+import { Slot } from "@radix-ui/react-slot";
 import { useRenderElement } from "./hooks/useRenderElement";
 
 import { withImages } from "./plugins/withImages";
 import { withHr } from "./plugins/withHr";
 import { withIds } from "./plugins/withIds";
 
-import { initialValue } from "./constants";
 import { useOnKeyDown } from "./hooks/useOnKeyDown";
 import { useOnValueChange } from "./hooks/useOnValueChange";
+import { Container } from "./components";
 import { Doc } from "convex/_generated/dataModel";
 
 type Props = {
   email: Doc<"emails">;
+  readOnly?: boolean;
 };
 
-export function EmailEditor({ email }: Props) {
+export function EmailEditor({ email, readOnly = false }: Props) {
   const [editor] = useState(() =>
     withHr(withImages(withIds(withReact(createEditor())))),
   );
@@ -38,6 +38,8 @@ export function EmailEditor({ email }: Props) {
         className="focus-within:outline-none"
         renderElement={renderElement}
         onKeyDown={onKeyDown}
+        readOnly={readOnly}
+        as={Container}
       />
     </Slate>
   );

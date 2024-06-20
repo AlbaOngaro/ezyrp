@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { RenderElementProps } from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
 import { withDndHandlers } from "../../hocs/withDndHandlers";
 import { mergeRefs } from "lib/utils/mergeRefs";
@@ -18,6 +18,24 @@ const Img = forwardRef<HTMLImageElement, Props>(function Img(
   },
   ref,
 ) {
+  const editor = useSlateStatic();
+
+  if (ReactEditor.isReadOnly(editor)) {
+    return (
+      <img
+        alt={alt}
+        src={src}
+        style={{
+          display: "block",
+          outline: "none",
+          border: "none",
+          textDecoration: "none",
+          ...(style || {}),
+        }}
+      />
+    );
+  }
+
   return (
     <div
       contentEditable={false}

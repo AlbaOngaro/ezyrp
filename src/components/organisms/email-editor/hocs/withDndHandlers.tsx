@@ -11,6 +11,8 @@ export function withDndHandlers<
   E extends HTMLElement,
 >(Component: ForwardRefExoticComponent<P & RefAttributes<E>>) {
   return function WithDndHandlersWrapper(props: P) {
+    const { editor, v } = useSlateWithV();
+
     const {
       attributes,
       listeners,
@@ -19,8 +21,10 @@ export function withDndHandlers<
       setActivatorNodeRef,
     } = useSortable({
       id: props.element.id,
+      disabled: ReactEditor.isReadOnly(editor),
+      data: props.element,
     });
-    const { editor, v } = useSlateWithV();
+
     const path = useMemo(() => {
       return ReactEditor.findPath(editor, props.element);
       // passing v to the deps array to force useMemo to recompute the path
@@ -38,6 +42,10 @@ export function withDndHandlers<
 
       return false;
     }, [editor.selection, path]);
+
+    if (ReactEditor.isReadOnly(editor)) {
+      return <Component {...props} />;
+    }
 
     return (
       <div

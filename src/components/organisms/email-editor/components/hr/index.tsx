@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { RenderElementProps } from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { withDndHandlers } from "../../hocs/withDndHandlers";
 import { HrElement } from "types/slate";
 
@@ -18,6 +18,21 @@ const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
   },
   ref,
 ) {
+  const editor = useSlateStatic();
+
+  if (ReactEditor.isReadOnly(editor)) {
+    return (
+      <hr
+        style={{
+          width: "100%",
+          border: "none",
+          borderTop: "1px solid #eaeaea",
+          ...style,
+        }}
+      />
+    );
+  }
+
   return (
     <div
       contentEditable={false}
