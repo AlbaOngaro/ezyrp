@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { RenderElementProps } from "slate-react";
-import { useSortable } from "@dnd-kit/sortable";
 
+import { withDndHandlers } from "../../hocs/withDndHandlers";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ImgElement } from "types/slate";
 
@@ -9,30 +9,21 @@ interface Props extends RenderElementProps {
   element: ImgElement;
 }
 
-export const Img = forwardRef<HTMLImageElement, Props>(function Img(
+const Img = forwardRef<HTMLImageElement, Props>(function Img(
   {
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { id, src, alt, style },
+    element: { src, alt, style },
     children,
+    ...rest
   },
   ref,
 ) {
-  const { attributes, listeners, setNodeRef, transform } = useSortable({
-    id,
-  });
-
   return (
     <div
       contentEditable={false}
-      style={{
-        transform: transform
-          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-          : "unset",
-      }}
-      ref={mergeRefs(ref, slateRef, setNodeRef)}
-      {...listeners}
-      {...attributes}
+      ref={mergeRefs(ref, slateRef)}
       {...slateAttributes}
+      {...rest}
     >
       <img
         alt={alt}
@@ -49,3 +40,7 @@ export const Img = forwardRef<HTMLImageElement, Props>(function Img(
     </div>
   );
 });
+
+const EnhancedImg = withDndHandlers(Img);
+
+export { EnhancedImg as Img };

@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { RenderElementProps } from "slate-react";
-import { useSortable } from "@dnd-kit/sortable";
+import { withDndHandlers } from "../../hocs/withDndHandlers";
 import { HrElement } from "types/slate";
 
 import { mergeRefs } from "lib/utils/mergeRefs";
@@ -9,30 +9,21 @@ interface Props extends RenderElementProps {
   element: HrElement;
 }
 
-export const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
+const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
   {
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { id, style },
+    element: { style },
     children,
+    ...rest
   },
   ref,
 ) {
-  const { attributes, listeners, setNodeRef, transform } = useSortable({
-    id,
-  });
-
   return (
     <div
       contentEditable={false}
-      style={{
-        transform: transform
-          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-          : "unset",
-      }}
-      ref={mergeRefs(ref, slateRef, setNodeRef)}
-      {...listeners}
-      {...attributes}
+      ref={mergeRefs(ref, slateRef)}
       {...slateAttributes}
+      {...rest}
     >
       <hr
         style={{
@@ -46,3 +37,7 @@ export const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
     </div>
   );
 });
+
+const EnhancedHr = withDndHandlers(Hr);
+
+export { EnhancedHr as Hr };
