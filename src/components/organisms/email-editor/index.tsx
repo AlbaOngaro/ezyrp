@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { createEditor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
-import { DndContext } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import { debounce } from "lodash";
 
 import { initialValue } from "./constants";
 import { withImages } from "./plugins/withImages";
@@ -20,7 +19,7 @@ export function EmailEditor() {
     <Slate
       editor={editor}
       initialValue={initialValue}
-      onChange={(value) => console.log("onChange", value)}
+      onValueChange={debounce((value) => console.log("onChange", value), 150)}
     >
       <Editable
         className="focus-within:outline-none"

@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { RenderElementProps } from "slate-react";
-import { useSortable } from "@dnd-kit/sortable";
 
+import { withDndHandlers } from "../../hocs/withDndHandlers";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ParagraphElement } from "types/slate";
 
@@ -9,35 +9,33 @@ interface Props extends RenderElementProps {
   element: ParagraphElement;
 }
 
-export const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
+const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   {
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { style, id },
+    element: { style },
     children,
+    ...rest
   },
   ref,
 ) {
-  const { attributes, listeners, setNodeRef, transform } = useSortable({
-    id,
-  });
-
   return (
     <p
       style={{
         fontSize: "14px",
         lineHeight: "24px",
         margin: "16px 0",
+        cursor: "text",
         ...(style || {}),
-        transform: transform
-          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-          : "unset",
       }}
-      ref={mergeRefs(ref, slateRef, setNodeRef)}
+      ref={mergeRefs(ref, slateRef)}
       {...slateAttributes}
-      {...attributes}
-      {...listeners}
+      {...rest}
     >
       {children}
     </p>
   );
 });
+
+const EnhancedText = withDndHandlers(Text);
+
+export { EnhancedText as Text };

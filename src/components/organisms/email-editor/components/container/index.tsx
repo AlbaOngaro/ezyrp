@@ -3,7 +3,7 @@ import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 
-import { Transforms } from "slate";
+import { Editor, Transforms } from "slate";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ContainerElement } from "types/slate";
 
