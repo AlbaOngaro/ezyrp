@@ -1,20 +1,66 @@
 import { BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
 
-type HtmlElement = {
-  type: "html";
-  children: (Exclude<CustomElement, HtmlElement> | CustomText)[];
-};
 type ParagraphElement = {
   type: "paragraph";
-  children: (Exclude<CustomElement, HtmlElement> | CustomText)[];
+  children: CustomText[];
 };
+
 type ButtonElement = {
   type: "button";
   children: CustomText[];
 };
 
-type CustomElement = HtmlElement | ParagraphElement | ButtonElement;
+type ColumnElement = {
+  type: "column";
+  children: (CustomElement | CustomText)[];
+};
+
+type ContainerElement = {
+  type: "container";
+  children: (CustomElement | CustomText)[];
+};
+
+type HeadingElement = {
+  type: "heading";
+  children: CustomText[];
+};
+
+type HrElement = {
+  type: "hr";
+};
+
+type ImgElement = {
+  type: "img";
+};
+
+type LinkElement = {
+  type: "link";
+  children: CustomText[];
+};
+
+type RowElement = {
+  type: "row";
+  children: (CustomElement | CustomText)[];
+};
+
+type SectionElement = {
+  type: "section";
+  children: (CustomElement | CustomText)[];
+};
+
+type CustomElement =
+  | ParagraphElement
+  | ButtonElement
+  | ColumnElement
+  | ContainerElement
+  | HeadingElement
+  | HrElement
+  | ImgElement
+  | LinkElement
+  | RowElement
+  | SectionElement;
+
 type CustomText = { text: string };
 
 declare module "slate" {
