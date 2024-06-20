@@ -3,6 +3,10 @@ import { Descendant } from "slate";
 export const initialValue: Descendant[] = [
   {
     type: "container",
+    style: {
+      margin: "0 auto",
+      padding: "20px 0 48px",
+    },
     children: [
       {
         type: "img",
@@ -11,10 +15,18 @@ export const initialValue: Descendant[] = [
       },
       {
         type: "paragraph",
+        style: {
+          fontSize: "16px",
+          lineHeight: "26px",
+        },
         children: [{ text: "Hi There!" }],
       },
       {
         type: "paragraph",
+        style: {
+          fontSize: "16px",
+          lineHeight: "26px",
+        },
         children: [
           {
             text: "Welcome to Koala, the sales intelligence platform that helps you uncover qualified leads and close deals faster.",
@@ -23,15 +35,33 @@ export const initialValue: Descendant[] = [
       },
       {
         type: "section",
+        style: {
+          textAlign: "center",
+        },
         children: [
           {
             type: "button",
+            href: "https://getkoala.com",
+            style: {
+              backgroundColor: "#5F51E8",
+              borderRadius: "3px",
+              color: "#fff",
+              fontSize: "16px",
+              textDecoration: "none",
+              textAlign: "center",
+              display: "block",
+              padding: "12px",
+            },
             children: [{ text: "Get Started" }],
           },
         ],
       },
       {
         type: "paragraph",
+        style: {
+          fontSize: "16px",
+          lineHeight: "26px",
+        },
         children: [
           { text: "Best," },
           { text: "\n" },
@@ -40,10 +70,18 @@ export const initialValue: Descendant[] = [
       },
       {
         type: "hr",
+        style: {
+          borderColor: "#cccccc",
+          margin: "20px 0",
+        },
         children: [{ text: "" }],
       },
       {
         type: "paragraph",
+        style: {
+          color: "#8898aa",
+          fontSize: "12px",
+        },
         children: [
           { text: "470 Noor Ave STE B #1148, South San Francisco, CA 94080" },
         ],
