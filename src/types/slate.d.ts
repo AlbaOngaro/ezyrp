@@ -22,7 +22,7 @@ interface ButtonElement extends BaseElement {
 
 interface ColumnElement extends BaseElement {
   type: "column";
-  children: (CustomElement | CustomText)[];
+  children: CustomElement[];
 }
 
 interface ContainerElement extends BaseElement {
@@ -43,6 +43,7 @@ interface HrElement extends BaseElement {
 interface ImgElement extends BaseElement {
   type: "img";
   src: string;
+  alt?: string;
   children: [{ text: "" }];
 }
 
@@ -54,12 +55,7 @@ interface LinkElement extends BaseElement {
 
 interface RowElement extends BaseElement {
   type: "row";
-  children: (CustomElement | CustomText)[];
-}
-
-interface SectionElement extends BaseElement {
-  type: "section";
-  children: (CustomElement | CustomText)[];
+  children: CustomElement[];
 }
 
 type CustomElement =
@@ -71,8 +67,7 @@ type CustomElement =
   | HrElement
   | ImgElement
   | LinkElement
-  | RowElement
-  | SectionElement;
+  | RowElement;
 
 type CustomText = { text: string };
 

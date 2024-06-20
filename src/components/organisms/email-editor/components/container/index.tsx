@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 import { RenderElementProps } from "slate-react";
+import { useDroppable } from "@dnd-kit/core";
 
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ContainerElement } from "types/slate";
@@ -9,9 +10,13 @@ interface Props extends RenderElementProps {
 }
 
 export const Container = forwardRef<HTMLTableElement, Props>(function Container(
-  { children, element: { style }, attributes },
+  { children, element: { style, id }, attributes },
   ref,
 ) {
+  const { isOver, setNodeRef } = useDroppable({
+    id,
+  });
+
   return (
     <table
       {...attributes}
@@ -24,8 +29,9 @@ export const Container = forwardRef<HTMLTableElement, Props>(function Container(
       style={{
         maxWidth: "37.5em",
         ...(style || {}),
+        color: isOver ? "green" : undefined,
       }}
-      ref={mergeRefs(ref, attributes.ref)}
+      ref={mergeRefs(ref, attributes.ref, setNodeRef)}
     >
       <tbody>
         <tr style={{ width: "100%" }}>

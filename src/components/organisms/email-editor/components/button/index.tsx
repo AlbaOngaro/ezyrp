@@ -1,7 +1,6 @@
 import React, { forwardRef } from "react";
 import { RenderElementProps } from "slate-react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useDraggable } from "@dnd-kit/core";
 
 import { parsePadding, pxToPt } from "./utils";
 
@@ -16,10 +15,14 @@ export const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
   {
     children,
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { style, href, target = "_blank" },
+    element: { style, id, href, target = "_blank" },
   },
   ref,
 ) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id,
+  });
+
   const { pt, pr, pb, pl } = parsePadding({
     padding: style?.padding,
     paddingLeft: style?.paddingLeft,
@@ -40,10 +43,15 @@ export const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
         pr,
         pb,
         pl,
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : "unset",
       })}
       target={target}
-      ref={mergeRefs(ref, slateRef)}
+      ref={mergeRefs(ref, slateRef, setNodeRef)}
       {...slateAttributes}
+      {...attributes}
+      {...listeners}
     >
       <span
         dangerouslySetInnerHTML={{

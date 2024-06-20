@@ -11,7 +11,6 @@ import {
   Img,
   Link,
   Row,
-  Section,
 } from "../components";
 
 export function useRenderElement() {
@@ -44,17 +43,15 @@ export function useRenderElement() {
           );
         case "hr":
           return (
-            <div {...attributes}>
-              <Hr />
+            <Hr attributes={attributes} element={element}>
               {children}
-            </div>
+            </Hr>
           );
         case "img":
           return (
-            <div {...attributes}>
-              <Img src={element.src} />
+            <Img attributes={attributes} element={element}>
               {children}
-            </div>
+            </Img>
           );
         case "link":
           return (
@@ -68,15 +65,9 @@ export function useRenderElement() {
               {children}
             </Row>
           );
-        case "section":
-          return (
-            <Section {...attributes} {...element}>
-              {children}
-            </Section>
-          );
         default:
           return (
-            <Text {...attributes} {...element}>
+            <Text attributes={attributes} element={element}>
               {children}
             </Text>
           );

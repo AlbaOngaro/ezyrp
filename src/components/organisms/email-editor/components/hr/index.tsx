@@ -1,23 +1,48 @@
 import React, { forwardRef } from "react";
+import { RenderElementProps } from "slate-react";
+import { useDraggable } from "@dnd-kit/core";
+import { HrElement } from "types/slate";
 
-type RootProps = React.ComponentPropsWithoutRef<"hr">;
+import { mergeRefs } from "lib/utils/mergeRefs";
 
-export type HrProps = RootProps;
+interface Props extends RenderElementProps {
+  element: HrElement;
+}
 
-export const Hr = forwardRef<HTMLHRElement, HrProps>(function Hr(
-  { style, ...props },
+export const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
+  {
+    attributes: { ref: slateRef, ...slateAttributes },
+    element: { id, style },
+    children,
+  },
   ref,
 ) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id,
+  });
+
   return (
-    <hr
-      {...props}
+    <div
+      contentEditable={false}
       style={{
-        width: "100%",
-        border: "none",
-        borderTop: "1px solid #eaeaea",
-        ...style,
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : "unset",
       }}
-      ref={ref}
-    />
+      ref={mergeRefs(ref, slateRef, setNodeRef)}
+      {...listeners}
+      {...attributes}
+      {...slateAttributes}
+    >
+      <hr
+        style={{
+          width: "100%",
+          border: "none",
+          borderTop: "1px solid #eaeaea",
+          ...style,
+        }}
+      />
+      {children}
+    </div>
   );
 });

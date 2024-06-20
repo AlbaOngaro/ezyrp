@@ -1,28 +1,51 @@
 import React, { forwardRef } from "react";
+import { RenderElementProps } from "slate-react";
+import { useDraggable } from "@dnd-kit/core";
 
-type RootProps = React.ComponentPropsWithoutRef<"img">;
+import { mergeRefs } from "lib/utils/mergeRefs";
+import { ImgElement } from "types/slate";
 
-export type ImgProps = RootProps;
+interface Props extends RenderElementProps {
+  element: ImgElement;
+}
 
-export const Img = forwardRef<HTMLImageElement, ImgProps>(function Img(
-  { alt, src, width, height, style, children, ...props },
+export const Img = forwardRef<HTMLImageElement, Props>(function Img(
+  {
+    attributes: { ref: slateRef, ...slateAttributes },
+    element: { id, src, alt, style },
+    children,
+  },
   ref,
 ) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id,
+  });
+
   return (
-    <img
-      {...props}
-      alt={alt}
-      height={height}
-      src={src}
+    <div
+      contentEditable={false}
       style={{
-        display: "block",
-        outline: "none",
-        border: "none",
-        textDecoration: "none",
-        ...style,
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : "unset",
       }}
-      width={width}
-      ref={ref}
-    />
+      ref={mergeRefs(ref, slateRef, setNodeRef)}
+      {...listeners}
+      {...attributes}
+      {...slateAttributes}
+    >
+      <img
+        alt={alt}
+        src={src}
+        style={{
+          display: "block",
+          outline: "none",
+          border: "none",
+          textDecoration: "none",
+          ...(style || {}),
+        }}
+      />
+      {children}
+    </div>
   );
 });

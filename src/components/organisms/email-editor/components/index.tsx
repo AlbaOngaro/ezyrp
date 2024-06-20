@@ -9,5 +9,4 @@ export * from "./html";
 export * from "./img";
 export * from "./link";
 export * from "./row";
-export * from "./section";
 export * from "./text";
