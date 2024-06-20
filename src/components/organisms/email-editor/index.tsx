@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { createEditor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 
-import { Slot } from "@radix-ui/react-slot";
 import { useRenderElement } from "./hooks/useRenderElement";
 
 import { withImages } from "./plugins/withImages";

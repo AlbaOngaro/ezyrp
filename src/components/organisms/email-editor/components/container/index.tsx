@@ -34,6 +34,7 @@ export const Container = forwardRef<HTMLTableElement, EditableProps>(
     );
 
     return (
+      // @ts-ignore
       <table
         align="center"
         width="100%"

@@ -45,7 +45,7 @@ const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
   {
     children,
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { style, id, href, target = "_blank" },
+    element: { style, href, target = "_blank" },
     ...rest
   },
   ref,

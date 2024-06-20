@@ -5,7 +5,6 @@ import {
   Text,
   Button,
   Column,
-  Container,
   Heading,
   Hr,
   Img,
@@ -28,12 +27,6 @@ export function useRenderElement() {
             <Column {...attributes} {...element}>
               {children}
             </Column>
-          );
-        case "container":
-          return (
-            <Container attributes={attributes} element={element}>
-              {children}
-            </Container>
           );
         case "heading":
           return (
