@@ -1,14 +1,9 @@
 import { Move, Trash } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes, useMemo } from "react";
-import {
-  ReactEditor,
-  RenderElementProps,
-  useSlate,
-  useSlateWithV,
-} from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateWithV } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 
-import { Path } from "slate";
+import { Path, Transforms } from "slate";
 import { Button } from "components/atoms/button";
 
 export function withDndHandlers<
@@ -69,7 +64,12 @@ export function withDndHandlers<
               <Move className="w-4 h-4" />
             </Button>
 
-            <Button size="icon" variant="destructive" className="w-6 h-6">
+            <Button
+              onClick={() => Transforms.removeNodes(editor, { at: path })}
+              size="icon"
+              variant="destructive"
+              className="w-6 h-6"
+            >
               <Trash className="w-4 h-4" />
             </Button>
           </div>
