@@ -10,7 +10,7 @@ type Props = {
   src: string;
 };
 
-export function DraggableImg({ src, editor }: Props) {
+export function DraggableImg({ editor }: Props) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: "img",
     disabled: ReactEditor.isReadOnly(editor),
@@ -34,6 +34,7 @@ export function DraggableImg({ src, editor }: Props) {
       {...listeners}
       {...attributes}
     >
+      {/* eslint-disable-next-line */}
       <Image className="w-12 h-12" />
     </Card>
   );
