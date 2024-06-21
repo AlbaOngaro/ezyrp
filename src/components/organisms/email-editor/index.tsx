@@ -35,7 +35,7 @@ export function EmailEditor({ email, readOnly = false }: Props) {
   });
 
   return (
-    <div className="grid grid-cols-[1fr,300px] items-start h-full">
+    <div className="grid grid-cols-[1fr,350px] items-start h-full">
       <DndContext onDragEnd={onDragEnd}>
         <Slate
           editor={editor}

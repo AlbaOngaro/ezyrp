@@ -9,7 +9,7 @@ type Props = {
 
 export function Sidebar({ editor }: Props) {
   return (
-    <aside className="border-l h-full p-4">
+    <aside className="border-l h-full pl-8">
       <H4 className="mb-4">Components</H4>
 
       <ul className="flex flex-col gap-2">

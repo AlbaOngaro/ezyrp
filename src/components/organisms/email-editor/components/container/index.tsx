@@ -5,13 +5,12 @@ import { SortableContext } from "@dnd-kit/sortable";
 
 import { Transforms, Element, Text } from "slate";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { mergeRefs } from "lib/utils/mergeRefs";
 
 export const Container = forwardRef<HTMLTableElement, EditableProps>(
   function Container({ children, style, ...rest }, ref) {
     const editor = useSlateStatic();
-    const { isOver, setNodeRef } = useDroppable({
-      id: "droppable",
+    const { setNodeRef } = useDroppable({
+      id: "editor",
     });
 
     const items = editor.children.filter(
@@ -55,12 +54,7 @@ export const Container = forwardRef<HTMLTableElement, EditableProps>(
       >
         <tbody>
           <tr style={{ width: "100%" }}>
-            <td
-              ref={setNodeRef}
-              style={{
-                color: isOver ? "green" : undefined,
-              }}
-            >
+            <td ref={setNodeRef}>
               <DndContext onDragEnd={onDragEnd}>
                 <SortableContext items={items}>{children}</SortableContext>
               </DndContext>

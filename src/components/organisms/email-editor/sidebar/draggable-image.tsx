@@ -1,7 +1,9 @@
 import { Editor } from "slate";
 import { ReactEditor } from "slate-react";
 import { useDraggable } from "@dnd-kit/core";
+import { Image } from "lucide-react";
 import { ImgElement } from "types/slate";
+import { Card } from "components/atoms/card";
 
 type Props = {
   editor: Editor;
@@ -21,10 +23,9 @@ export function DraggableImg({ src, editor }: Props) {
   });
 
   return (
-    <img
+    <Card
+      className="p-2 aspect-square w-full max-w-[12rem] flex justify-center items-center"
       ref={setNodeRef}
-      src={src}
-      alt=""
       style={{
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
@@ -32,6 +33,8 @@ export function DraggableImg({ src, editor }: Props) {
       }}
       {...listeners}
       {...attributes}
-    />
+    >
+      <Image className="w-12 h-12" />
+    </Card>
   );
 }

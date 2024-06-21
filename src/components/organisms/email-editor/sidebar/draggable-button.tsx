@@ -3,6 +3,7 @@ import { ReactEditor } from "slate-react";
 import { useDraggable } from "@dnd-kit/core";
 import { PropsWithChildren } from "react";
 import { ButtonElement } from "types/slate";
+import { Card } from "components/atoms/card";
 
 type Props = PropsWithChildren<{
   editor: Editor;
@@ -31,18 +32,10 @@ export function DraggableButton({ children, editor }: Props) {
   });
 
   return (
-    <button
+    <Card
+      className="p-2 aspect-square w-full max-w-[12rem] flex justify-center items-center"
       ref={setNodeRef}
       style={{
-        width: "100%",
-        backgroundColor: "#5F51E8",
-        borderRadius: "3px",
-        color: "#fff",
-        fontSize: "16px",
-        textDecoration: "none",
-        textAlign: "center",
-        display: "block",
-        padding: "12px",
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
           : "unset",
@@ -50,7 +43,10 @@ export function DraggableButton({ children, editor }: Props) {
       {...listeners}
       {...attributes}
     >
-      {children}
-    </button>
+      <button
+        disabled
+        className="border-4 border-black rounded-sm py-4 px-12 pointer-events-none"
+      />
+    </Card>
   );
 }

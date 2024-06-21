@@ -21,7 +21,11 @@ function insertNewElement(editor: Editor, [node, at]: NodeEntry) {
 }
 
 export function useOnDragEnd(editor: Editor) {
-  return ({ active }: DragEndEvent) => {
+  return ({ active, over }: DragEndEvent) => {
+    if (!over) {
+      return;
+    }
+
     const x = active.rect.current.translated?.left;
     const y = active.rect.current.translated?.top;
 
