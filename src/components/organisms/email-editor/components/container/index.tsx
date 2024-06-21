@@ -1,14 +1,18 @@
 import React, { forwardRef, useCallback } from "react";
 import { useSlateStatic } from "slate-react";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, useDroppable } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 
 import { Transforms, Element, Text } from "slate";
 import { EditableProps } from "slate-react/dist/components/editable";
+import { mergeRefs } from "lib/utils/mergeRefs";
 
 export const Container = forwardRef<HTMLTableElement, EditableProps>(
   function Container({ children, style, ...rest }, ref) {
     const editor = useSlateStatic();
+    const { isOver, setNodeRef } = useDroppable({
+      id: "droppable",
+    });
 
     const items = editor.children.filter(
       (child) => !Text.isText(child),
@@ -51,7 +55,12 @@ export const Container = forwardRef<HTMLTableElement, EditableProps>(
       >
         <tbody>
           <tr style={{ width: "100%" }}>
-            <td>
+            <td
+              ref={setNodeRef}
+              style={{
+                color: isOver ? "green" : undefined,
+              }}
+            >
               <DndContext onDragEnd={onDragEnd}>
                 <SortableContext items={items}>{children}</SortableContext>
               </DndContext>
