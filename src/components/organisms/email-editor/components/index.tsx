@@ -1,7 +1,6 @@
 export * from "./body";
 export * from "./button";
 export * from "./column";
-export * from "./container";
 export * from "./head";
 export * from "./heading";
 export * from "./hr";

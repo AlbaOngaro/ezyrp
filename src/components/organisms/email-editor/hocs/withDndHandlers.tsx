@@ -2,6 +2,7 @@ import { Move, Trash } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes, useMemo } from "react";
 import { ReactEditor, RenderElementProps, useSlateWithV } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
+import { validate } from "uuid";
 
 import { Path, Transforms } from "slate";
 import { Button } from "components/atoms/button";
@@ -45,6 +46,10 @@ export function withDndHandlers<
 
     if (ReactEditor.isReadOnly(editor)) {
       return <Component {...props} />;
+    }
+
+    if (!validate(props.element.id)) {
+      return <span />;
     }
 
     return (

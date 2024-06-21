@@ -1,4 +1,5 @@
 import { Editor, Element, Transforms } from "slate";
+import { validate, v4 as uuid } from "uuid";
 
 export function withIds(editor: Editor) {
   const { normalizeNode } = editor;
@@ -6,14 +7,14 @@ export function withIds(editor: Editor) {
   editor.normalizeNode = (entry) => {
     const [node, path] = entry;
 
-    if (Element.isElement(node) && !node.id) {
-      console.log("Adding id to node", node, path);
-      Transforms.setNodes(
-        editor,
-        { id: Math.random().toString(36).substr(2, 9) },
-        { at: path },
-      );
-      return;
+    if (Element.isElement(node)) {
+      const { skipUpdate = false } = node;
+
+      if ((!node.id || !validate(node.id)) && !skipUpdate) {
+        console.log("Adding uuid to node", node, path);
+        Transforms.setNodes(editor, { id: uuid() }, { at: path });
+        return;
+      }
     }
 
     normalizeNode(entry);

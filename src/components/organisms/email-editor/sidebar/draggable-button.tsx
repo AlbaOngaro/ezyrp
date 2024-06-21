@@ -9,12 +9,12 @@ type Props = PropsWithChildren<{
   editor: Editor;
 }>;
 
-export function DraggableButton({ children, editor }: Props) {
+export function DraggableButton({ editor }: Props) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: "button",
+    id: "draggable-button",
     disabled: ReactEditor.isReadOnly(editor),
     data: {
-      id: Math.random().toString(36).substr(2, 9),
+      id: "draggable-button",
       type: "button",
       href: "",
       style: {

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { createEditor } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
-import { DndContext } from "@dnd-kit/core";
+import { Slate, Editable as SlateEditable, withReact } from "slate-react";
 
 import { useRenderElement } from "./hooks/useRenderElement";
 
@@ -11,9 +10,7 @@ import { withIds } from "./plugins/withIds";
 
 import { useOnKeyDown } from "./hooks/useOnKeyDown";
 import { useOnValueChange } from "./hooks/useOnValueChange";
-import { Container } from "./components";
-import { useOnDragEnd } from "./hooks/useOnDragEnd";
-import { Sidebar } from "./sidebar";
+import { Editable } from "./editable";
 import { Doc } from "convex/_generated/dataModel";
 
 type Props = {
@@ -27,7 +24,6 @@ export function EmailEditor({ email, readOnly = false }: Props) {
   );
 
   const onKeyDown = useOnKeyDown(editor);
-  const onDragEnd = useOnDragEnd(editor);
   const renderElement = useRenderElement();
   const onValueChange = useOnValueChange(email._id, {
     // TODO: set autoSave to true again
@@ -36,23 +32,21 @@ export function EmailEditor({ email, readOnly = false }: Props) {
 
   return (
     <div className="grid grid-cols-[1fr,350px] items-start h-full">
-      <DndContext onDragEnd={onDragEnd}>
-        <Slate
-          editor={editor}
-          initialValue={email.body}
-          onValueChange={onValueChange}
-        >
-          <Editable
-            className="focus-within:outline-none"
-            renderElement={renderElement}
-            onKeyDown={onKeyDown}
-            readOnly={readOnly}
-            as={Container}
-          />
-        </Slate>
+      <Slate
+        editor={editor}
+        initialValue={email.body}
+        onValueChange={onValueChange}
+      >
+        <SlateEditable
+          className="focus-within:outline-none"
+          renderElement={renderElement}
+          onKeyDown={onKeyDown}
+          readOnly={readOnly}
+          as={Editable}
+        />
+      </Slate>
 
-        <Sidebar editor={editor} />
-      </DndContext>
+      <aside id="sidebar" className="border-l h-full pl-8" />
     </div>
   );
 }

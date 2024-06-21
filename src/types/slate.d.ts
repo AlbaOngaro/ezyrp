@@ -6,6 +6,7 @@ interface BaseElement {
   id: string;
   type: string;
   style?: CSSProperties;
+  skipUpdate?: boolean;
 }
 
 interface ParagraphElement extends BaseElement {
