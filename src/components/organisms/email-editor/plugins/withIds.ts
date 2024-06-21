@@ -7,7 +7,7 @@ export function withIds(editor: Editor) {
     const [node, path] = entry;
 
     if (Element.isElement(node) && !node.id) {
-      console.log("Adding id to node", node);
+      console.log("Adding id to node", node, path);
       Transforms.setNodes(
         editor,
         { id: Math.random().toString(36).substr(2, 9) },

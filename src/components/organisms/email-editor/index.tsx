@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import { Editor, createEditor } from "slate";
-import {
-  Slate,
-  Editable,
-  withReact,
-  useSlateStatic,
-  ReactEditor,
-} from "slate-react";
+import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { useDraggable, DndContext } from "@dnd-kit/core";
 
 import { useRenderElement } from "./hooks/useRenderElement";
@@ -39,10 +33,10 @@ function Button({
     id: "button",
     disabled: ReactEditor.isReadOnly(editor),
     data: {
-      id: "",
+      id: Math.random().toString(36).substr(2, 9),
       type: "button",
       href: "",
-      children: [],
+      children: [{ text: "Button" }],
     } satisfies ButtonElement,
   });
 
@@ -70,7 +64,10 @@ export function EmailEditor({ email, readOnly = false }: Props) {
   const onKeyDown = useOnKeyDown(editor);
   const onDragEnd = useOnDragEnd(editor);
   const renderElement = useRenderElement();
-  const onValueChange = useOnValueChange(email._id);
+  const onValueChange = useOnValueChange(email._id, {
+    // TODO: set autoSave to true again
+    autoSave: false,
+  });
 
   return (
     <div className="grid grid-cols-[1fr,300px] items-start h-full">

@@ -1,61 +1,71 @@
-import { Editor, Text, Element } from "slate";
+import {
+  Editor,
+  Text,
+  Element,
+  NodeEntry,
+  Transforms,
+  Path,
+  Node,
+} from "slate";
 import { ReactEditor } from "slate-react";
 import { DragEndEvent } from "@dnd-kit/core";
-import { useCallback } from "react";
+
+function insertNewElement(editor: Editor, [node, at]: NodeEntry) {
+  try {
+    Transforms.insertNodes(editor, node, {
+      at: Path.next(at),
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export function useOnDragEnd(editor: Editor) {
-  return useCallback(
-    ({ active }: DragEndEvent) => {
-      const x = active.rect.current.translated?.left;
-      const y = active.rect.current.translated?.top;
+  return ({ active }: DragEndEvent) => {
+    const x = active.rect.current.translated?.left;
+    const y = active.rect.current.translated?.top;
 
-      setTimeout(() => {
+    setTimeout(() => {
+      try {
+        if (!x || !y || !Node.isNode(active.data.current)) {
+          return;
+        }
+
+        const el = window.document.elementFromPoint(x, y);
+        if (!el) {
+          return;
+        }
+
         try {
-          if (!x || !y) {
+          const node = ReactEditor.toSlateNode(editor, el);
+          if (!node) {
             return;
           }
 
-          const el = window.document.elementFromPoint(x, y);
-          if (!el) {
+          const path = ReactEditor.findPath(editor, node);
+          if (!path) {
             return;
           }
 
-          try {
-            const node = ReactEditor.toSlateNode(editor, el);
-            if (!node) {
+          if (Text.isText(node)) {
+            const entry = Editor.above(editor, {
+              at: path,
+              match: (n) => !Editor.isEditor(n) && Element.isElement(n),
+            });
+            if (!entry) {
               return;
             }
 
-            const path = ReactEditor.findPath(editor, node);
-            if (!path) {
-              return;
-            }
-
-            if (Text.isText(node)) {
-              const entry = Editor.above(editor, {
-                at: path,
-                match: (n) =>
-                  !Editor.isEditor(n) &&
-                  Element.isElement(n) &&
-                  Element.isElementType(n, "paragraph"),
-              });
-              if (!entry) {
-                return;
-              }
-
-              console.log([entry[0], [0, ...entry[1]]]);
-              return;
-            }
-
-            console.log([node, [0, ...path]]);
-          } catch (error) {
-            console.error(error);
+            return insertNewElement(editor, [active.data.current, entry[1]]);
           }
+
+          return insertNewElement(editor, [active.data.current, path]);
         } catch (error) {
           console.error(error);
         }
-      }, 0);
-    },
-    [editor],
-  );
+      } catch (error) {
+        console.error(error);
+      }
+    }, 0);
+  };
 }
