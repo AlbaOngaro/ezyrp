@@ -3,11 +3,11 @@ import { DragEndEvent } from "@dnd-kit/core";
 import { useSlateStatic } from "slate-react";
 import { Transforms, Element } from "slate";
 import { validate } from "uuid";
-import { useGetItems } from "./useGetItems";
+import { useGetSortableItems } from "./useGetSortableItems";
 
 export function useOnDragEnd() {
-  const items = useGetItems();
   const editor = useSlateStatic();
+  const items = useGetSortableItems();
 
   return useCallback(
     ({ active, over }: DragEndEvent) => {

@@ -4,11 +4,11 @@ import { get } from "lodash";
 import { ReactEditor, useSlateStatic } from "slate-react";
 import { Transforms, Node } from "slate";
 
-import { useGetItems } from "./useGetItems";
+import { useGetSortableItems } from "./useGetSortableItems";
 
 export function useOnDragOver() {
-  const items = useGetItems();
   const editor = useSlateStatic();
+  const items = useGetSortableItems();
 
   return useDebouncedCallback(({ over, active, collisions }: DragOverEvent) => {
     if (over && !items.some((item) => item.id === active.id)) {

@@ -8,7 +8,7 @@ import {
 import { EditableProps } from "slate-react/dist/components/editable";
 import { Sidebar } from "../sidebar";
 import { useOnDragEnd } from "./hooks/useOnDragEnd";
-import { useGetItems } from "./hooks/useGetItems";
+import { useGetSortableItems } from "./hooks/useGetSortableItems";
 import { useGetSidebarContainer } from "./hooks/useGetSidebarContainer";
 import { useOnDragOver } from "./hooks/useOnDragOver";
 import { Loader } from "components/atoms/loader";
@@ -21,9 +21,9 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
       id: "editor",
     });
 
-    const items = useGetItems();
     const onDragEnd = useOnDragEnd();
     const onDragOver = useOnDragOver();
+    const items = useGetSortableItems();
     const container = useGetSidebarContainer();
 
     return (
