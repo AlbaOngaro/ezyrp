@@ -11,7 +11,6 @@ export function withIds(editor: Editor) {
       const { skipUpdate = false } = node;
 
       if ((!node.id || !validate(node.id)) && !skipUpdate) {
-        console.log("Adding uuid to node", node, path);
         Transforms.setNodes(editor, { id: uuid() }, { at: path });
         return;
       }

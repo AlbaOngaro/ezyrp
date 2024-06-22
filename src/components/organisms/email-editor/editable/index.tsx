@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import { DndContext, useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -15,6 +15,8 @@ import { Loader } from "components/atoms/loader";
 
 export const Editable = forwardRef<HTMLTableElement, EditableProps>(
   function Editable({ children, style, ...rest }, ref) {
+    const key = useRef(0);
+
     const { setNodeRef } = useDroppable({
       id: "editor",
     });
@@ -43,13 +45,23 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
         <tbody>
           <tr style={{ width: "100%" }}>
             <td ref={setNodeRef}>
-              <DndContext onDragEnd={onDragEnd} onDragOver={onDragOver}>
+              <DndContext
+                onDragEnd={(e) => {
+                  key.current = key.current + 1;
+                  onDragEnd(e);
+                }}
+                onDragOver={onDragOver}
+              >
                 <SortableContext
                   items={items}
                   strategy={verticalListSortingStrategy}
                 >
                   {children}
-                  {container ? <Sidebar container={container} /> : <Loader />}
+                  {container ? (
+                    <Sidebar key={key.current} container={container} />
+                  ) : (
+                    <Loader />
+                  )}
                 </SortableContext>
               </DndContext>
             </td>

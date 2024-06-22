@@ -26,7 +26,6 @@ export function EmailEditor({ email, readOnly = false }: Props) {
   const onKeyDown = useOnKeyDown(editor);
   const renderElement = useRenderElement();
   const onValueChange = useOnValueChange(email._id, {
-    // TODO: set autoSave to true again
     autoSave: false,
   });
 

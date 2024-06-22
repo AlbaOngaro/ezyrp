@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import { DragEndEvent } from "@dnd-kit/core";
 import { useSlateStatic } from "slate-react";
-import { Transforms } from "slate";
+import { Transforms, Element } from "slate";
+import { validate } from "uuid";
 import { useGetItems } from "./useGetItems";
 
 export function useOnDragEnd() {
@@ -10,7 +11,15 @@ export function useOnDragEnd() {
 
   return useCallback(
     ({ active, over }: DragEndEvent) => {
-      if (over && active.id !== over.id) {
+      if (!over) {
+        Transforms.removeNodes(editor, {
+          at: [],
+          match: (n) => Element.isElement(n) && !validate(n.id),
+        });
+        return;
+      }
+
+      if (active.id !== over.id) {
         try {
           const oldIndex = items.findIndex((item) => item.id === active.id);
           const newIndex = items.findIndex((item) => item.id === over.id);

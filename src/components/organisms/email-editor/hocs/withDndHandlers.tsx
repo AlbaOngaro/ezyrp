@@ -3,8 +3,9 @@ import { ForwardRefExoticComponent, RefAttributes, useMemo } from "react";
 import { ReactEditor, RenderElementProps, useSlateWithV } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
-
 import { Path, Transforms } from "slate";
+
+import { Preview } from "./preview";
 import { Button } from "components/atoms/button";
 
 export function withDndHandlers<
@@ -15,6 +16,8 @@ export function withDndHandlers<
     const { editor, v } = useSlateWithV();
 
     const {
+      over,
+      active,
       attributes,
       listeners,
       setNodeRef,
@@ -49,7 +52,11 @@ export function withDndHandlers<
     }
 
     if (!validate(props.element.id)) {
-      return <span />;
+      return (
+        <Preview active={active}>
+          <Component {...props} />
+        </Preview>
+      );
     }
 
     return (
@@ -82,6 +89,7 @@ export function withDndHandlers<
               size="icon"
               variant="destructive"
               className="w-6 h-6"
+              disabled={editor.children.length === 1 && Path.equals(path, [0])}
             >
               <Trash className="w-4 h-4" />
             </Button>
