@@ -5,7 +5,6 @@ import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
 import { Path, Transforms } from "slate";
 
-import { Preview } from "./preview";
 import { Button } from "components/atoms/button";
 
 export function withDndHandlers<
@@ -16,8 +15,6 @@ export function withDndHandlers<
     const { editor, v } = useSlateWithV();
 
     const {
-      over,
-      active,
       attributes,
       listeners,
       setNodeRef,
@@ -53,9 +50,19 @@ export function withDndHandlers<
 
     if (!validate(props.element.id)) {
       return (
-        <Preview active={active}>
-          <Component {...props} />
-        </Preview>
+        <div
+          className="relative"
+          style={{
+            opacity: "0.5",
+            cursor: "default",
+            transform: transform
+              ? `translate3d(0, ${transform.y}px, 0)`
+              : "unset",
+          }}
+          {...attributes}
+        >
+          <Component {...props} ref={setNodeRef} />
+        </div>
       );
     }
 

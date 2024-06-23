@@ -11,15 +11,7 @@ export function useOnDragEnd() {
 
   return useCallback(
     ({ active, over }: DragEndEvent) => {
-      if (!over) {
-        Transforms.removeNodes(editor, {
-          at: [],
-          match: (n) => Element.isElement(n) && !validate(n.id),
-        });
-        return;
-      }
-
-      if (active.id !== over.id) {
+      if (active && over) {
         try {
           const oldIndex = items.findIndex((item) => item.id === active.id);
           const newIndex = items.findIndex((item) => item.id === over.id);
@@ -37,10 +29,17 @@ export function useOnDragEnd() {
             { skipUpdate: false },
             { at: [newIndex] },
           );
+
+          return;
         } catch (err) {
           console.error(err);
         }
       }
+
+      Transforms.removeNodes(editor, {
+        at: [],
+        match: (n) => Element.isElement(n) && !validate(n.id),
+      });
     },
     [editor, items],
   );

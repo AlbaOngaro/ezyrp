@@ -1,5 +1,12 @@
 import React, { forwardRef, useRef } from "react";
-import { DndContext, useDroppable } from "@dnd-kit/core";
+import {
+  DndContext,
+  useDroppable,
+  useSensors,
+  useSensor,
+  MouseSensor,
+  KeyboardSensor,
+} from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -26,6 +33,10 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
     const items = useGetSortableItems();
     const container = useGetSidebarContainer();
 
+    const mouseSensor = useSensor(MouseSensor);
+    const keyboardSensor = useSensor(KeyboardSensor);
+    const sensors = useSensors(mouseSensor, keyboardSensor);
+
     return (
       // @ts-ignore
       <table
@@ -51,6 +62,7 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
                   onDragEnd(e);
                 }}
                 onDragOver={onDragOver}
+                sensors={sensors}
               >
                 <SortableContext
                   items={items}

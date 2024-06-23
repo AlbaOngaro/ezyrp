@@ -38,9 +38,9 @@ export function EditEmailPage({ id }: Props) {
   );
 }
 
-EditEmailPage.getLayout = function getLayout(page: ReactElement) {
-  return <SidebarLayout>{page}</SidebarLayout>;
-};
+// EditEmailPage.getLayout = function getLayout(page: ReactElement) {
+//   return <SidebarLayout>{page}</SidebarLayout>;
+// };
 
 export async function getServerSideProps({
   query,
