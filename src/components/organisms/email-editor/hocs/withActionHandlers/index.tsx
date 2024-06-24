@@ -23,7 +23,7 @@ import {
   PopoverTrigger,
 } from "components/atoms/popover";
 
-export function withDndHandlers<
+export function withActionHandlers<
   P extends RenderElementProps,
   E extends HTMLElement,
 >(

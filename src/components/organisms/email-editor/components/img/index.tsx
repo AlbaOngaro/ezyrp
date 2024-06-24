@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
-import { withDndHandlers } from "../../hocs/withDndHandlers";
+import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ImgElement } from "types/slate";
 
@@ -59,6 +59,6 @@ const Img = forwardRef<HTMLImageElement, Props>(function Img(
   );
 });
 
-const EnhancedImg = withDndHandlers(Img);
+const EnhancedImg = withActionHandlers(Img);
 
 export { EnhancedImg as Img };

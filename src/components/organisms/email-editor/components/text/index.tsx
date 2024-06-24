@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
-import { withDndHandlers } from "../../hocs/withDndHandlers";
+import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ParagraphElement } from "types/slate";
 
@@ -52,7 +52,7 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   );
 });
 
-const EnhancedText = withDndHandlers(Text, {
+const EnhancedText = withActionHandlers(Text, {
   editableFields: {
     fontSize: {
       label: "Font size",

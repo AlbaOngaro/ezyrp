@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
-import { withDndHandlers } from "../../hocs/withDndHandlers";
+import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { parsePadding, pxToPt } from "./utils";
 
 import { mergeRefs } from "lib/utils/mergeRefs";
@@ -120,7 +120,7 @@ const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
   );
 });
 
-const EnhancedButton = withDndHandlers(Button, {
+const EnhancedButton = withActionHandlers(Button, {
   editableFields: {
     padding: {
       label: "Padding",

@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
-import { withDndHandlers } from "../../hocs/withDndHandlers";
+import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { HrElement } from "types/slate";
 
 import { mergeRefs } from "lib/utils/mergeRefs";
@@ -53,6 +53,6 @@ const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
   );
 });
 
-const EnhancedHr = withDndHandlers(Hr);
+const EnhancedHr = withActionHandlers(Hr);
 
 export { EnhancedHr as Hr };
