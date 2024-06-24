@@ -1,5 +1,3 @@
-import { Editor } from "slate";
-import { ReactEditor } from "slate-react";
 import { useDraggable } from "@dnd-kit/core";
 import { Transform, usePrevious } from "@dnd-kit/utilities";
 import { PropsWithChildren, useRef } from "react";
@@ -7,22 +5,22 @@ import { PropsWithChildren, useRef } from "react";
 import { useGetSortableItems } from "../editable/hooks/useGetSortableItems";
 
 import { ButtonElement } from "types/slate";
-import { mergeRefs } from "lib/utils/mergeRefs";
 
 type Props = PropsWithChildren<{
-  editor: Editor;
+  disabled?: boolean;
 }>;
 
-export function DraggableButton({ editor, children }: Props) {
+const DRAGGABLE_BUTTON_ID = "draggable-button";
+
+export function DraggableButton({ disabled, children }: Props) {
   const items = useGetSortableItems();
   const elTransform = useRef<Transform | null>(null);
-  const element = useRef<HTMLButtonElement | null>(null);
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform } =
     useDraggable({
-      id: "draggable-button",
-      disabled: ReactEditor.isReadOnly(editor),
+      id: DRAGGABLE_BUTTON_ID,
+      disabled,
       data: {
-        id: "draggable-button",
+        id: DRAGGABLE_BUTTON_ID,
         type: "button",
         href: "",
         style: {
@@ -41,7 +39,7 @@ export function DraggableButton({ editor, children }: Props) {
 
   const prevTransform = usePrevious(transform);
 
-  if (items.some((item) => item.id === "draggable-button")) {
+  if (items.some((item) => item.id === DRAGGABLE_BUTTON_ID)) {
     if (!elTransform.current) {
       elTransform.current = transform;
     }
@@ -89,7 +87,7 @@ export function DraggableButton({ editor, children }: Props) {
 
   return (
     <button
-      ref={mergeRefs(setNodeRef, element)}
+      ref={setNodeRef}
       style={{
         width: "100%",
         backgroundColor: "#5F51E8",

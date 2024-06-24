@@ -39,6 +39,7 @@ export function useOnDragOver() {
       }
 
       if (Node.isNode(active.data.current)) {
+        console.log("Insering nodes...");
         Transforms.insertNodes(
           editor,
           {

@@ -1,5 +1,5 @@
 import * as Portal from "@radix-ui/react-portal";
-import { useSlateStatic } from "slate-react";
+import { ReactEditor, useSlateStatic } from "slate-react";
 import { Fragment } from "react";
 import { DraggableButton } from "./draggable-button";
 import { DraggableImg } from "./draggable-image";
@@ -12,6 +12,8 @@ type Props = {
 export function Sidebar({ container }: Props) {
   const editor = useSlateStatic();
 
+  const disabled = ReactEditor.isReadOnly(editor);
+
   return (
     <Portal.Root asChild container={container}>
       <Fragment>
@@ -19,12 +21,12 @@ export function Sidebar({ container }: Props) {
 
         <ul className="flex flex-col gap-2">
           <li>
-            <DraggableButton editor={editor}>Button</DraggableButton>
+            <DraggableButton disabled={disabled}>Button</DraggableButton>
           </li>
           <li>
             <DraggableImg
               src="/images/undraw_images_re_0kll.svg"
-              editor={editor}
+              disabled={disabled}
             />
           </li>
         </ul>
