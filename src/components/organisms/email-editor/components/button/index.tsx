@@ -125,18 +125,27 @@ const EnhancedButton = withDndHandlers(Button, {
     padding: {
       label: "Padding",
       type: "number",
+      defaultValue: 12,
     },
     borderRadius: {
       label: "Border Radius",
       type: "number",
+      defaultValue: 4,
     },
     fontSize: {
       label: "Font Size",
       type: "number",
+      defaultValue: 16,
     },
     backgroundColor: {
       label: "Background Color",
       type: "color",
+      defaultValue: "#000000",
+    },
+    color: {
+      label: "Color",
+      type: "color",
+      defaultValue: "#fff",
     },
   },
 });

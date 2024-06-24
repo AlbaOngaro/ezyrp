@@ -52,6 +52,29 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   );
 });
 
-const EnhancedText = withDndHandlers(Text);
+const EnhancedText = withDndHandlers(Text, {
+  editableFields: {
+    fontSize: {
+      label: "Font size",
+      type: "number",
+      defaultValue: 14,
+    },
+    color: {
+      label: "Color",
+      type: "color",
+      defaultValue: "#000",
+    },
+    fontWeight: {
+      label: "Font weight",
+      type: "select",
+      defaultValue: { value: "normal", label: "Normal" },
+      options: [
+        { value: "normal", label: "Normal" },
+        { value: "lighter", label: "Light" },
+        { value: "bold", label: "Bold" },
+      ],
+    },
+  },
+});
 
 export { EnhancedText as Text };

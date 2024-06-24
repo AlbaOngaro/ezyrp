@@ -3,9 +3,15 @@ import { useSlateStatic } from "slate-react";
 import { Transforms } from "slate";
 import { CSSProperties } from "react";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
-import { EditableFields } from "./types";
+import {
+  EditableFields,
+  isEditableColorField,
+  isEditableNumberField,
+  isEditableSelectField,
+} from "./types";
 import { CustomElement } from "types/slate";
 import { Input } from "components/atoms/input";
+import { Select } from "components/atoms/select";
 
 type Props = {
   element: CustomElement;
@@ -40,24 +46,26 @@ export function PropertiesForm({ editableFields, element }: Props) {
 
   return (
     <>
-      {Object.entries(editableFields).map(([field, { label, type }]) => {
-        if (type === "number") {
+      {Object.entries(editableFields).map(([key, field]) => {
+        if (isEditableNumberField(field)) {
+          const { label, unit = "px", defaultValue } = field;
           return (
-            <div className="grid gap-2" key={field}>
+            <div className="grid gap-2" key={key}>
               <div className="grid grid-cols-3 items-center gap-4">
                 <label className="text-sm font-semibold self-start">
                   {label}
                 </label>
                 <Input
-                  name={field}
+                  name={key}
                   type="number"
+                  defaultValue={defaultValue}
                   value={getValueWithoutUnit(
-                    get(element, `style.${field}`, 0).toString(),
+                    get(element, `style.${key}`, 0).toString(),
                   )}
                   onChange={(e) =>
                     onChange(
-                      field as keyof CSSProperties,
-                      `${e.target.value}px`,
+                      key as keyof CSSProperties,
+                      `${e.target.value}${unit}`,
                     )
                   }
                   className="col-span-2 relative [&>input]:pr-8 after:absolute after:content-['px'] after:text-xs after:text-gray-500 after:-translate-y-[50%] after:top-[50%] after:right-2"
@@ -67,22 +75,56 @@ export function PropertiesForm({ editableFields, element }: Props) {
           );
         }
 
-        return (
-          <div className="grid gap-2" key={field}>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <label className="text-sm font-semibold">{label}</label>
-              <Input
-                name={field}
-                value={get(element, `style.${field}`)}
-                onChange={(color: string) =>
-                  onChange(field as keyof CSSProperties, color)
-                }
-                className="col-span-2"
-                type="color"
-              />
+        if (isEditableColorField(field)) {
+          const { label, defaultValue } = field;
+          return (
+            <div className="grid gap-2" key={key}>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <label className="text-sm font-semibold">{label}</label>
+                <Input
+                  name={key}
+                  defaultValue={defaultValue}
+                  value={get(element, `style.${key}`)}
+                  onChange={(color: string) =>
+                    onChange(key as keyof CSSProperties, color)
+                  }
+                  className="col-span-2"
+                  type="color"
+                />
+              </div>
             </div>
-          </div>
-        );
+          );
+        }
+
+        if (isEditableSelectField(field)) {
+          const { label, options, defaultValue } = field;
+
+          const value = options.find(
+            (option) => option.value === get(element, `style.${key}`),
+          );
+
+          return (
+            <div className="grid gap-2" key={key}>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <label className="text-sm font-semibold">{label}</label>
+
+                <Select
+                  className="col-span-2"
+                  key={key}
+                  name={key}
+                  options={options}
+                  value={value}
+                  defaultValue={defaultValue}
+                  onChange={(option) => {
+                    onChange(key as keyof CSSProperties, option?.value);
+                  }}
+                />
+              </div>
+            </div>
+          );
+        }
+
+        return null;
       })}
     </>
   );
