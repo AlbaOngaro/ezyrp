@@ -4,8 +4,13 @@ import { ReactEditor, RenderElementProps, useSlateWithV } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
 import { Path, Transforms } from "slate";
+import {
+  Root as DialogRoot,
+  Trigger as DialogTrigger,
+} from "@radix-ui/react-alert-dialog";
 
 import { Button } from "components/atoms/button";
+import { Dialog } from "components/atoms/dialog";
 
 export function withDndHandlers<
   P extends RenderElementProps,
@@ -91,15 +96,26 @@ export function withDndHandlers<
               <Move className="w-4 h-4" />
             </Button>
 
-            <Button
-              onClick={() => Transforms.removeNodes(editor, { at: path })}
-              size="icon"
-              variant="destructive"
-              className="w-6 h-6"
-              disabled={editor.children.length === 1 && Path.equals(path, [0])}
-            >
-              <Trash className="w-4 h-4" />
-            </Button>
+            <DialogRoot>
+              <DialogTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  className="w-6 h-6"
+                  disabled={
+                    editor.children.length === 1 && Path.equals(path, [0])
+                  }
+                >
+                  <Trash className="w-4 h-4" />
+                </Button>
+              </DialogTrigger>
+
+              <Dialog
+                overlayClassname="!ml-0"
+                title="Do you really want to remove this item?"
+                onConfirm={() => Transforms.removeNodes(editor, { at: path })}
+              />
+            </DialogRoot>
           </div>
         )}
       </div>
