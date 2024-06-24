@@ -1,4 +1,6 @@
+import { SeparatorHorizontal } from "lucide-react";
 import { DraggableWrapper } from "./draggable-wrapper";
+import { Card } from "components/atoms/card";
 import { HrElement } from "types/slate";
 
 type Props = {
@@ -16,15 +18,18 @@ export function DraggableSeparator({ disabled }: Props) {
   return (
     <DraggableWrapper id={DRAGGABLE_HR_ID} disabled={disabled} data={DATA}>
       {({ ref, transform, listeners, attributes }) => (
-        <hr
-          className="p-2 aspect-square w-full max-w-[12rem] flex justify-center items-center"
+        <Card
+          className="p-2 aspect-square w-full max-w-[12rem] flex flex-col justify-center items-center"
           ref={ref}
           style={{
             transform,
           }}
           {...listeners}
           {...attributes}
-        />
+        >
+          <SeparatorHorizontal className="w-12 h-12" />
+          Divider
+        </Card>
       )}
     </DraggableWrapper>
   );

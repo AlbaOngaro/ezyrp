@@ -3,12 +3,14 @@ import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { withToolbar } from "../../hocs/withToolbar";
+import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { parsePadding, pxToPt } from "./utils";
 import { buttonStyle, buttonTextStyle } from "./styles";
 
 import { renderToolbar } from "./toolbar";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ButtonElement } from "types/slate";
+import { cn } from "lib/utils/cn";
 
 interface Props extends RenderElementProps {
   element: ButtonElement;
@@ -17,13 +19,16 @@ interface Props extends RenderElementProps {
 const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
   {
     children,
+    element,
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { style, href, target = "_blank" },
     ...rest
   },
   ref,
 ) {
   const editor = useSlateStatic();
+  const isSelected = useGetIsSelected(element);
+
+  const { style, href, target = "_blank" } = element;
   const { pt, pr, pb, pl } = parsePadding({
     padding: style?.padding,
     paddingLeft: style?.paddingLeft,
@@ -75,6 +80,10 @@ const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
       })}
       target={target}
       ref={mergeRefs(ref, slateRef)}
+      className={cn("py-4", {
+        "outline outline-offset-2 outline-blue-500 outline-2 rounded-[1px]":
+          isSelected,
+      })}
       {...slateAttributes}
       {...rest}
     >

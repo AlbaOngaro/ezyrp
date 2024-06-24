@@ -1,9 +1,11 @@
 import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
+import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { HrElement } from "types/slate";
 
 import { mergeRefs } from "lib/utils/mergeRefs";
+import { cn } from "lib/utils/cn";
 
 interface Props extends RenderElementProps {
   element: HrElement;
@@ -11,14 +13,16 @@ interface Props extends RenderElementProps {
 
 const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
   {
+    element,
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { style },
     children,
     ...rest
   },
   ref,
 ) {
+  const { style } = element;
   const editor = useSlateStatic();
+  const isSelected = useGetIsSelected(element);
 
   if (ReactEditor.isReadOnly(editor)) {
     return (
@@ -35,6 +39,10 @@ const Hr = forwardRef<HTMLHRElement, Props>(function Hr(
 
   return (
     <div
+      className={cn("py-4", {
+        "outline outline-offset-2 outline-blue-500 outline-2 rounded-[1px]":
+          isSelected,
+      })}
       contentEditable={false}
       ref={mergeRefs(ref, slateRef)}
       {...slateAttributes}

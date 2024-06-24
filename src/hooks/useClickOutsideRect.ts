@@ -2,7 +2,7 @@ import { RefObject, useEffect } from "react";
 
 export function useClickOutsideRect(
   element: RefObject<HTMLElement>,
-  callback: () => void,
+  callback: (event: MouseEvent) => void,
   { tolerance = 0 }: { tolerance?: number },
 ) {
   useEffect(() => {
@@ -19,7 +19,7 @@ export function useClickOutsideRect(
         event.clientX - tolerance > rect.x + rect.width;
 
       if (isOutsideX || isOutsideY) {
-        callback();
+        callback(event);
       }
     }
 

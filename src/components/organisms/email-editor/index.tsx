@@ -29,12 +29,7 @@ function ViewMode({
   const renderElement = useRenderElement();
   return (
     <Slate editor={editor} initialValue={initialValue}>
-      <SlateEditable
-        className="focus-within:outline-none"
-        renderElement={renderElement}
-        as={Editable}
-        readOnly
-      />
+      <SlateEditable renderElement={renderElement} as={Editable} readOnly />
     </Slate>
   );
 }

@@ -1,7 +1,9 @@
 import { PropsWithChildren } from "react";
 
+import { RectangleHorizontal } from "lucide-react";
 import { DraggableWrapper } from "./draggable-wrapper";
 import { ButtonElement } from "types/slate";
+import { Card } from "components/atoms/card";
 
 type Props = PropsWithChildren<{
   disabled?: boolean;
@@ -25,23 +27,22 @@ const DATA = {
   children: [{ text: "Button" }],
 } satisfies ButtonElement;
 
-export function DraggableButton({ disabled, children }: Props) {
+export function DraggableButton({ disabled }: Props) {
   return (
     <DraggableWrapper id={DRAGGABLE_BUTTON_ID} disabled={disabled} data={DATA}>
       {({ transform, attributes, listeners, ref }) => (
-        <button
+        <Card
+          className="p-2 aspect-square w-full max-w-[12rem] flex flex-col justify-center items-center"
           ref={ref}
           style={{
-            ...DATA.style,
-            width: "100%",
-            zIndex: 1000,
             transform,
           }}
           {...listeners}
           {...attributes}
         >
-          {children}
-        </button>
+          <RectangleHorizontal className="w-12 h-12" />
+          Button
+        </Card>
       )}
     </DraggableWrapper>
   );

@@ -142,7 +142,7 @@ export function withActionHandlers<
                   <Button
                     size="icon"
                     variant="destructive"
-                    className="w-6 h-6"
+                    className="w-6 h-6 z-10"
                     disabled={
                       editor.children.length === 1 && Path.equals(path, [0])
                     }

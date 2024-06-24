@@ -3,9 +3,11 @@ import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { withToolbar } from "../../hocs/withToolbar";
+import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { renderToolbar } from "./toolbar";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ParagraphElement } from "types/slate";
+import { cn } from "lib/utils/cn";
 
 interface Props extends RenderElementProps {
   element: ParagraphElement;
@@ -13,14 +15,17 @@ interface Props extends RenderElementProps {
 
 const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   {
+    element,
     attributes: { ref: slateRef, ...slateAttributes },
-    element: { style },
     children,
     ...rest
   },
   ref,
 ) {
+  const { style } = element;
+
   const editor = useSlateStatic();
+  const isSelected = useGetIsSelected(element);
 
   if (ReactEditor.isReadOnly(editor)) {
     <p
@@ -38,6 +43,10 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
 
   return (
     <p
+      className={cn({
+        "outline outline-offset-2 outline-blue-500 outline-2 rounded-[1px]":
+          isSelected,
+      })}
       style={{
         fontSize: "14px",
         lineHeight: "24px",

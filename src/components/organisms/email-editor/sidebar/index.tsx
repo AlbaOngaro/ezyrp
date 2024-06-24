@@ -23,17 +23,11 @@ export function Sidebar({ container }: Props) {
       <Fragment>
         <H4 className="mb-4">Components</H4>
 
-        <ul className="flex flex-col gap-2">
-          <li>
-            <DraggableButton>Button</DraggableButton>
-          </li>
-          <li>
-            <DraggableImg src="/images/undraw_images_re_0kll.svg" />
-          </li>
-          <li>
-            <DraggableSeparator />
-          </li>
-        </ul>
+        <div className="grid grid-cols-2 gap-2">
+          <DraggableButton />
+          <DraggableImg />
+          <DraggableSeparator />
+        </div>
       </Fragment>
     </Portal.Root>
   );
