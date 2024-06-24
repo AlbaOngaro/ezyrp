@@ -74,8 +74,8 @@ export function PropertiesForm({ editableFields, element }: Props) {
               <Input
                 name={field}
                 value={get(element, `style.${field}`)}
-                onChange={(e) =>
-                  onChange(field as keyof CSSProperties, e.target.value)
+                onChange={(color: string) =>
+                  onChange(field as keyof CSSProperties, color)
                 }
                 className="col-span-2"
                 type="color"

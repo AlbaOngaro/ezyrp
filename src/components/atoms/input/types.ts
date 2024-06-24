@@ -1,3 +1,4 @@
+import { isDataView } from "util/types";
 import { ValidityMatcher } from "@radix-ui/react-form";
 import { ChangeEventHandler, InputHTMLAttributes } from "react";
 
@@ -8,28 +9,28 @@ interface BaseInputProps
   validations?: Partial<Record<ValidityMatcher, string>>;
   name: string;
   type?:
-    | "button"
-    | "checkbox"
-    | "color"
-    | "email"
-    | "file"
-    | "hidden"
-    | "image"
-    | "month"
-    | "number"
-    | "password"
-    | "radio"
-    | "range"
-    | "reset"
-    | "search"
-    | "submit"
-    | "tel"
-    | "text"
-    | "time"
-    | "url"
-    | "week"
-    | "date"
-    | "datetime-local";
+  | "button"
+  | "checkbox"
+  | "color"
+  | "email"
+  | "file"
+  | "hidden"
+  | "image"
+  | "month"
+  | "number"
+  | "password"
+  | "radio"
+  | "range"
+  | "reset"
+  | "search"
+  | "submit"
+  | "tel"
+  | "text"
+  | "time"
+  | "url"
+  | "week"
+  | "date"
+  | "datetime-local";
 }
 
 export interface DateTimeInputProps extends BaseInputProps {
@@ -37,32 +38,37 @@ export interface DateTimeInputProps extends BaseInputProps {
   onChange?: (date: Date) => void;
 }
 
+export interface ColorInputProps extends BaseInputProps {
+  type: "color";
+  onChange?: (color: string) => void;
+}
+
 export interface DefaultInputProps extends BaseInputProps {
   type?:
-    | "button"
-    | "checkbox"
-    | "color"
-    | "email"
-    | "file"
-    | "hidden"
-    | "image"
-    | "month"
-    | "number"
-    | "password"
-    | "radio"
-    | "range"
-    | "reset"
-    | "search"
-    | "submit"
-    | "tel"
-    | "text"
-    | "time"
-    | "url"
-    | "week";
+  | "button"
+  | "checkbox"
+  | "color"
+  | "email"
+  | "file"
+  | "hidden"
+  | "image"
+  | "month"
+  | "number"
+  | "password"
+  | "radio"
+  | "range"
+  | "reset"
+  | "search"
+  | "submit"
+  | "tel"
+  | "text"
+  | "time"
+  | "url"
+  | "week";
   onChange?: ChangeEventHandler<HTMLInputElement>;
 }
 
-export type Props = DefaultInputProps | DateTimeInputProps;
+export type Props = DefaultInputProps | ColorInputProps | DateTimeInputProps;
 
 export function isDateTimeInputProps(
   props: Props,
@@ -70,6 +76,10 @@ export function isDateTimeInputProps(
   return props?.type === "date" || props?.type === "datetime-local";
 }
 
+export function isColorInputProps(props: Props): props is ColorInputProps {
+  return props?.type === "color";
+}
+
 export function isDefaultInputProps(props: Props): props is DefaultInputProps {
-  return props?.type !== "date" && props?.type !== "datetime-local";
+  return !isDateTimeInputProps(props) && !isColorInputProps(props);
 }

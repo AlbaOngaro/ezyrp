@@ -1,7 +1,8 @@
 import * as Form from "@radix-ui/react-form";
 import { forwardRef } from "react";
+import { HexColorInput } from "react-colorful";
 
-import { Props, isDateTimeInputProps } from "./types";
+import { Props, isColorInputProps, isDateTimeInputProps } from "./types";
 
 import { FilePickerInput } from "./FilePickerInput";
 import { DateTimeInput } from "./DateTimeInput";
@@ -68,6 +69,49 @@ export const Input = forwardRef<HTMLInputElement, Props>(
               ))}
 
             {children}
+          </fieldset>
+        </Form.Field>
+      );
+    }
+
+    if (isColorInputProps(props)) {
+      const {
+        type: _type,
+        name,
+        className,
+        label,
+        description,
+        ...rest
+      } = props;
+
+      return (
+        <Form.Field
+          ref={ref}
+          className={cn("flex flex-col gap-2", className)}
+          name={name}
+          id={name}
+          asChild
+        >
+          <fieldset>
+            {(label || description) && (
+              <Form.Label className="flex flex-col text-sm font-bold text-gray-800">
+                {label}
+                {description && (
+                  <small className="text-sm font-normal text-dark-blue-gray">
+                    {description}
+                  </small>
+                )}
+              </Form.Label>
+            )}
+
+            <Form.Control asChild>
+              <HexColorInput
+                {...rest}
+                color={props.value?.toString()}
+                className="m-0 w-full resize-none py-2 px-4 text-sm bg-white rounded outline-none transition-all duration-300 border border-solid border-gray-300 focus:ring-0 focus:outline-none focus:border-gray-500 hover:border-gray-500 data-[invalid=true]:text-red-400 data-[invalid=true]:border-red-400"
+                prefixed
+              />
+            </Form.Control>
           </fieldset>
         </Form.Field>
       );
