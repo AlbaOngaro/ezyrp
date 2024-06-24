@@ -11,8 +11,10 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useOnClickOutside } from "usehooks-ts";
 
 import { EditableProps } from "slate-react/dist/components/editable";
+import { ReactEditor, useSlateStatic } from "slate-react";
 import { Sidebar } from "../sidebar";
 import { useOnDragEnd } from "./hooks/useOnDragEnd";
 import { useGetSortableItems } from "./hooks/useGetSortableItems";
@@ -23,6 +25,8 @@ import { Loader } from "components/atoms/loader";
 export const Editable = forwardRef<HTMLTableElement, EditableProps>(
   function Editable({ children, style, ...rest }, ref) {
     const key = useRef(0);
+    const editor = useSlateStatic();
+    const body = useRef<HTMLTableSectionElement | null>(null);
 
     const { setNodeRef } = useDroppable({
       id: "editor",
@@ -36,6 +40,14 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
     const mouseSensor = useSensor(MouseSensor);
     const keyboardSensor = useSensor(KeyboardSensor);
     const sensors = useSensors(mouseSensor, keyboardSensor);
+
+    useOnClickOutside(body, () => {
+      try {
+        ReactEditor.deselect(editor);
+      } catch (e) {
+        console.error(e);
+      }
+    });
 
     return (
       // @ts-ignore
@@ -53,7 +65,7 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
         ref={ref}
         {...rest}
       >
-        <tbody>
+        <tbody ref={body}>
           <tr style={{ width: "100%" }}>
             <td ref={setNodeRef}>
               <DndContext

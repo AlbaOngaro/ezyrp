@@ -57,6 +57,7 @@
     "tailwind-merge": "2.3.0",
     "tailwindcss-animate": "1.0.7",
     "use-debounce": "10.0.1",
+    "usehooks-ts": "3.1.0",
     "uuid": "10.0.0",
     "web-push": "3.6.6",
     "zod": "3.22.4"
