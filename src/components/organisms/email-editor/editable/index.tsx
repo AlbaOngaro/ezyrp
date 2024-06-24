@@ -4,7 +4,6 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useOnClickOutside } from "usehooks-ts";
 
 import { EditableProps } from "slate-react/dist/components/editable";
 import { ReactEditor, useSlateStatic } from "slate-react";
@@ -21,7 +20,14 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
     const editor = useSlateStatic();
     const body = useRef<HTMLTableSectionElement | null>(null);
 
-    useClickOutsideRect(body, () => ReactEditor.deselect(editor));
+    useClickOutsideRect(
+      body,
+      () => {
+        console.log("click outside");
+        ReactEditor.deselect(editor);
+      },
+      { tolerance: 20 },
+    );
 
     const { setNodeRef } = useDroppable({
       id: "editor",

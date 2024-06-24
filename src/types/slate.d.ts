@@ -29,6 +29,7 @@ interface ColumnElement extends BaseElement {
 interface HeadingElement extends BaseElement {
   type: "heading";
   children: CustomText[];
+  as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
 
 interface HrElement extends BaseElement {
@@ -54,6 +55,11 @@ interface RowElement extends BaseElement {
   children: CustomElement[];
 }
 
+interface HeadingElement extends BaseElement {
+  tye: "heading";
+  children: CustomText[];
+}
+
 type CustomElement =
   | ParagraphElement
   | ButtonElement
@@ -62,7 +68,8 @@ type CustomElement =
   | HrElement
   | ImgElement
   | LinkElement
-  | RowElement;
+  | RowElement
+  | HeadingElement;
 
 type CustomText = { text: string };
 

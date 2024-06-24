@@ -41,7 +41,12 @@ export function withToolbar<
           <Component {...props} ref={ref} />
         </PopoverAnchor>
 
-        <PopoverContent className="p-2 w-auto" side="top" sideOffset={16}>
+        <PopoverContent
+          className="p-2 w-auto"
+          side="top"
+          sideOffset={16}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           {renderToolbar(element as O)}
           <PopoverArrow className="fill-gray-200" />
         </PopoverContent>

@@ -16,7 +16,7 @@ import { HexColorPicker } from "react-colorful";
 import { useRef } from "react";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
-import { ParagraphElement } from "types/slate";
+import { HeadingElement } from "types/slate";
 import { getCSSValueWithoutUnit } from "lib/utils/getCSSValueWithoutUnit";
 import { Input } from "components/atoms/input";
 import { Button } from "components/atoms/button";
@@ -71,14 +71,14 @@ const OPTIONS = [
   },
 ];
 
-function Toolbar({ element }: { element: ParagraphElement }) {
+function Toolbar({ element }: { element: HeadingElement }) {
   const editor = useSlateStatic();
   const at = useGetSlatePath(element);
   const toolbar = useRef<HTMLFormElement | null>(null);
 
   const onChange = (
-    field: keyof ParagraphElement,
-    value: ParagraphElement[keyof ParagraphElement],
+    field: keyof HeadingElement,
+    value: HeadingElement[keyof HeadingElement],
   ) => {
     Transforms.setNodes(
       editor,
@@ -100,7 +100,9 @@ function Toolbar({ element }: { element: ParagraphElement }) {
       <Select
         className="row-start-1 col-span-3"
         name="type"
-        defaultValue={OPTIONS.find((option) => option.type === "paragraph")}
+        defaultValue={OPTIONS.find(
+          (option) => option.type === "heading" && option.as === element.as,
+        )}
         options={OPTIONS}
         onChange={(option) => {
           if (option) {
@@ -263,6 +265,6 @@ function Toolbar({ element }: { element: ParagraphElement }) {
   );
 }
 
-export function renderToolbar(element: ParagraphElement) {
+export function renderToolbar(element: HeadingElement) {
   return <Toolbar element={element} />;
 }

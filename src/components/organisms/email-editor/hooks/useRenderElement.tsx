@@ -28,12 +28,6 @@ export function useRenderElement() {
               {children}
             </Column>
           );
-        case "heading":
-          return (
-            <Heading {...attributes} {...element}>
-              {children}
-            </Heading>
-          );
         case "hr":
           return (
             <Hr attributes={attributes} element={element}>
@@ -58,6 +52,13 @@ export function useRenderElement() {
               {children}
             </Row>
           );
+        case "heading": {
+          return (
+            <Heading attributes={attributes} element={element}>
+              {children}
+            </Heading>
+          );
+        }
         default:
           return (
             <Text attributes={attributes} element={element}>

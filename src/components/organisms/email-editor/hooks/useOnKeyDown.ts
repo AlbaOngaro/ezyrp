@@ -4,7 +4,7 @@ import { KeyboardEvent } from "react";
 
 export function useOnKeyDown(editor: Editor) {
   return (event: KeyboardEvent) => {
-    if (isHotkey("mod+enter")(event)) {
+    if (isHotkey("shift+enter")(event)) {
       event.preventDefault();
       Transforms.insertText(editor, "\n");
       return;
