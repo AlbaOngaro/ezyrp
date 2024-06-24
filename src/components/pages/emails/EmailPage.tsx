@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { EmailEditor } from "components/organisms/email-editor";
@@ -34,7 +35,7 @@ export function EmailPage({ id }: Props) {
 
   return (
     <>
-      <Container as="section">
+      <Container as="section" className="py-10 sm:flex sm:items-center">
         <Breadcrumb />
       </Container>
       <Container

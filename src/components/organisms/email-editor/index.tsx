@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createEditor } from "slate";
+import { Descendant, Editor, createEditor } from "slate";
 import { Slate, Editable as SlateEditable, withReact } from "slate-react";
 
 import { useRenderElement } from "./hooks/useRenderElement";
@@ -11,7 +11,7 @@ import { withIds } from "./plugins/withIds";
 import { useOnKeyDown } from "./hooks/useOnKeyDown";
 import { useOnValueChange } from "./hooks/useOnValueChange";
 import { Editable } from "./editable";
-import { Doc } from "convex/_generated/dataModel";
+import { Doc, Id } from "convex/_generated/dataModel";
 import { cn } from "lib/utils/cn";
 
 type Props = {
@@ -19,33 +19,52 @@ type Props = {
   readOnly?: boolean;
 };
 
-export function EmailEditor({ email, readOnly = false }: Props) {
-  const [editor] = useState(() =>
-    withHr(withImages(withIds(withReact(createEditor())))),
+function ViewMode({
+  editor,
+  initialValue,
+}: {
+  editor: Editor;
+  initialValue: Descendant[];
+}) {
+  const renderElement = useRenderElement();
+  return (
+    <Slate editor={editor} initialValue={initialValue}>
+      <SlateEditable
+        className="focus-within:outline-none"
+        renderElement={renderElement}
+        as={Editable}
+        readOnly
+      />
+    </Slate>
   );
+}
 
+function EditMode({
+  id,
+  editor,
+  initialValue,
+}: {
+  id: Id<"emails">;
+  editor: Editor;
+  initialValue: Descendant[];
+}) {
   const onKeyDown = useOnKeyDown(editor);
   const renderElement = useRenderElement();
-  const onValueChange = useOnValueChange(email._id, {
+  const onValueChange = useOnValueChange(id, {
     autoSave: true,
   });
 
   return (
-    <div
-      className={cn("grid items-start h-full", {
-        "grid-cols-[1fr,350px]": !readOnly,
-      })}
-    >
+    <div className={cn("grid items-start h-full grid-cols-[1fr,350px]")}>
       <Slate
         editor={editor}
-        initialValue={email.body}
+        initialValue={initialValue}
         onValueChange={onValueChange}
       >
         <SlateEditable
           className="focus-within:outline-none"
           renderElement={renderElement}
           onKeyDown={onKeyDown}
-          readOnly={readOnly}
           as={Editable}
         />
       </Slate>
@@ -53,4 +72,16 @@ export function EmailEditor({ email, readOnly = false }: Props) {
       <aside id="sidebar" className="border-l h-full pl-8" />
     </div>
   );
+}
+
+export function EmailEditor({ email, readOnly = false }: Props) {
+  const [editor] = useState(() =>
+    withHr(withImages(withIds(withReact(createEditor())))),
+  );
+
+  if (readOnly) {
+    return <ViewMode editor={editor} initialValue={email.body} />;
+  }
+
+  return <EditMode id={email._id} editor={editor} initialValue={email.body} />;
 }

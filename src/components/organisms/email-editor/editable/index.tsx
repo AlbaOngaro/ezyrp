@@ -1,12 +1,5 @@
 import React, { forwardRef, useRef } from "react";
-import {
-  DndContext,
-  useDroppable,
-  useSensors,
-  useSensor,
-  MouseSensor,
-  KeyboardSensor,
-} from "@dnd-kit/core";
+import { DndContext, useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -18,7 +11,6 @@ import { useOnDragEnd } from "./hooks/useOnDragEnd";
 import { useGetSortableItems } from "./hooks/useGetSortableItems";
 import { useGetSidebarContainer } from "./hooks/useGetSidebarContainer";
 import { useOnDragOver } from "./hooks/useOnDragOver";
-import { Loader } from "components/atoms/loader";
 
 export const Editable = forwardRef<HTMLTableElement, EditableProps>(
   function Editable({ children, style, ...rest }, ref) {
@@ -33,10 +25,6 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
     const onDragOver = useOnDragOver();
     const items = useGetSortableItems();
     const container = useGetSidebarContainer();
-
-    const mouseSensor = useSensor(MouseSensor);
-    const keyboardSensor = useSensor(KeyboardSensor);
-    const sensors = useSensors(mouseSensor, keyboardSensor);
 
     return (
       // @ts-ignore
@@ -63,7 +51,6 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
                   onDragEnd(e);
                 }}
                 onDragOver={onDragOver}
-                sensors={sensors}
               >
                 <SortableContext
                   items={items}
@@ -72,9 +59,7 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
                   {children}
                   {container ? (
                     <Sidebar key={key.current} container={container} />
-                  ) : (
-                    <Loader />
-                  )}
+                  ) : null}
                 </SortableContext>
               </DndContext>
             </td>

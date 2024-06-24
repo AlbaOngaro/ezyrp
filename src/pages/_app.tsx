@@ -2,7 +2,6 @@ import type { AppProps } from "next/app";
 import { ReactElement, ReactNode } from "react";
 import { NextPage } from "next";
 import Head from "next/head";
-import { ConvexReactClient } from "convex/react";
 import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 
@@ -10,8 +9,7 @@ import "styles/globals.css";
 import { UserProvider } from "providers/user";
 import { OrganisationProvider } from "providers/organisation";
 import { ConvexCacheProvider } from "providers/convex-cache";
-
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL);
+import { convex } from "lib/external/convex";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

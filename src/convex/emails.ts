@@ -1,4 +1,5 @@
 import { ConvexError, v } from "convex/values";
+import { v4 as uuid } from "uuid";
 import { mutation, query } from "./_generated/server";
 import { getAuthData } from "./utils";
 
@@ -42,23 +43,13 @@ export const create = mutation({
       workspace,
       body: [
         {
-          id: "container:1",
-          type: "container",
+          id: uuid(),
+          type: "paragraph",
           style: {
-            margin: "0 auto",
-            padding: "20px 0 48px",
+            fontSize: "16px",
+            lineHeight: "26px",
           },
-          children: [
-            {
-              id: "paragraph:1",
-              type: "paragraph",
-              style: {
-                fontSize: "16px",
-                lineHeight: "26px",
-              },
-              children: [{ text: "Your text here" }],
-            },
-          ],
+          children: [{ text: "Your text here" }],
         },
       ],
     });
@@ -86,5 +77,26 @@ export const update = mutation({
     }
 
     await ctx.db.patch(email._id, { body });
+  },
+});
+
+export const remove = mutation({
+  args: {
+    id: v.id("emails"),
+  },
+  handler: async (ctx, { id }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const email = await ctx.db
+      .query("emails")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => q.eq(q.field("_id"), id as string))
+      .unique();
+
+    if (!email) {
+      throw new ConvexError("Email not found in this workspace");
+    }
+
+    await ctx.db.delete(id);
   },
 });

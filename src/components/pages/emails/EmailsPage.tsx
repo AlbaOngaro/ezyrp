@@ -1,6 +1,11 @@
 import { ReactElement, useState } from "react";
+import {
+  Root as DialogRoot,
+  Trigger as DialogTrigger,
+} from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
 import { useMutation } from "convex/react";
+import { FunctionReturnType } from "convex/server";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Heading } from "components/atoms/heading";
@@ -10,12 +15,21 @@ import { api } from "convex/_generated/api";
 import { Card } from "components/atoms/card";
 import { useQuery } from "lib/hooks/useQuery";
 import { Doc } from "convex/_generated/dataModel";
+import { useDownloadEmailHtml } from "components/organisms/email-editor/hooks/useDownloadEmailHtml";
+import { Dialog } from "components/atoms/dialog";
+
+type Email = FunctionReturnType<typeof api.emails.get>;
 
 export function EmailsPage() {
   const router = useRouter();
-  const [isCreatingEmail, setIsCreatingEmail] = useState(false);
   const createEmail = useMutation(api.emails.create);
+  const deleteEmail = useMutation(api.emails.remove);
+  const [downloadEmailHhtml] = useDownloadEmailHtml();
   const { data: emails = [] } = useQuery(api.emails.list);
+  const [isCreatingEmail, setIsCreatingEmail] = useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [email, setEmail] = useState<Email | null>(null);
 
   return (
     <>
@@ -73,17 +87,39 @@ export function EmailsPage() {
                 onClick: (row) => router.push(`/emails/${row._id}/edit`),
               },
               {
+                type: "item",
+                label: "Download",
+                onClick: (row) => downloadEmailHhtml(row._id),
+              },
+              {
                 type: "separator",
               },
               {
                 type: "item",
                 label: "Delete",
-                onClick: console.debug,
+                onClick: (row) => {
+                  setEmail(row as Email);
+                  setIsDialogOpen(true);
+                },
               },
             ]}
           />
         </Card>
       </Container>
+
+      <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog
+          title="Do you really want to delete this email template?"
+          description="This action cannot be undone"
+          onConfirm={() => {
+            if (email) {
+              return deleteEmail({
+                id: email._id,
+              });
+            }
+          }}
+        />
+      </DialogRoot>
     </>
   );
 }
