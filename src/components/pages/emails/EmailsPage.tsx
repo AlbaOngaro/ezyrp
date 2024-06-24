@@ -1,8 +1,5 @@
 import { ReactElement, useState } from "react";
-import {
-  Root as DialogRoot,
-  Trigger as DialogTrigger,
-} from "@radix-ui/react-alert-dialog";
+import { Root as DialogRoot } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
 import { useMutation } from "convex/react";
 import { FunctionReturnType } from "convex/server";

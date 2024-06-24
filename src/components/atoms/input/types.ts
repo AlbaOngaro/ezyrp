@@ -1,8 +1,11 @@
 import { ValidityMatcher } from "@radix-ui/react-form";
-import { ChangeEventHandler, InputHTMLAttributes } from "react";
+import { ChangeEventHandler, InputHTMLAttributes, ReactElement } from "react";
 
 interface BaseInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange"> {
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "type" | "onChange" | "prefix"
+  > {
   label?: string;
   description?: string;
   validations?: Partial<Record<ValidityMatcher, string>>;
@@ -72,6 +75,7 @@ export interface DefaultInputProps extends BaseInputProps {
     | "url"
     | "week";
   onChange?: ChangeEventHandler<HTMLInputElement>;
+  prefix?: ReactElement;
 }
 
 export type Props =

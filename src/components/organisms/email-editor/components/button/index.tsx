@@ -6,6 +6,7 @@ import { withToolbar } from "../../hocs/withToolbar";
 import { parsePadding, pxToPt } from "./utils";
 import { buttonStyle, buttonTextStyle } from "./styles";
 
+import { renderToolbar } from "./toolbar";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ButtonElement } from "types/slate";
 
@@ -105,23 +106,16 @@ const EnhancedButton = withToolbar(
         type: "number",
         defaultValue: 4,
       },
-      fontSize: {
-        label: "Font Size",
-        type: "number",
-        defaultValue: 16,
-      },
       backgroundColor: {
         label: "Background Color",
         type: "color",
         defaultValue: "#000000",
       },
-      color: {
-        label: "Color",
-        type: "color",
-        defaultValue: "#fff",
-      },
     },
   }),
+  {
+    renderToolbar,
+  },
 );
 
 export { EnhancedButton as Button };

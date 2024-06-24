@@ -1,5 +1,10 @@
 import { Move, SlidersHorizontal, Trash } from "lucide-react";
-import { JSXElementConstructor, Ref, RefAttributes } from "react";
+import {
+  ForwardRefExoticComponent,
+  PropsWithoutRef,
+  RefAttributes,
+  forwardRef,
+} from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
@@ -28,10 +33,10 @@ export function withActionHandlers<
   P extends RenderElementProps,
   E extends HTMLElement,
 >(
-  Component: JSXElementConstructor<P & RefAttributes<E>>,
+  Component: ForwardRefExoticComponent<P & RefAttributes<E>>,
   { editableFields }: Options = { editableFields: undefined },
-): JSXElementConstructor<P & RefAttributes<E>> {
-  return function WithActionHandlersWrapper(props: P, ref: Ref<E>) {
+): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<E>> {
+  return forwardRef<E, P>(function WithActionHandlersWrapper(props, ref) {
     const editor = useSlateStatic();
 
     const {
@@ -157,5 +162,5 @@ export function withActionHandlers<
         </div>
       </Popover>
     );
-  };
+  });
 }

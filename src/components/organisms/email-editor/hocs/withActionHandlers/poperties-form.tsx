@@ -12,15 +12,12 @@ import {
 import { CustomElement } from "types/slate";
 import { Input } from "components/atoms/input";
 import { Select } from "components/atoms/select";
+import { getCSSValueWithoutUnit } from "lib/utils/getCSSValueWithoutUnit";
 
 type Props = {
   element: CustomElement;
   editableFields: EditableFields;
 };
-
-function getValueWithoutUnit(value: string) {
-  return value.replace(/[^0-9.]/g, "");
-}
 
 export function PropertiesForm({ editableFields, element }: Props) {
   const editor = useSlateStatic();
@@ -59,7 +56,7 @@ export function PropertiesForm({ editableFields, element }: Props) {
                   name={key}
                   type="number"
                   defaultValue={defaultValue}
-                  value={getValueWithoutUnit(
+                  value={getCSSValueWithoutUnit(
                     get(element, `style.${key}`, 0).toString(),
                   )}
                   onChange={(e) =>
