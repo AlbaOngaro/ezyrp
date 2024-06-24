@@ -62,10 +62,17 @@ export function DraggableButton({ editor, children }: Props) {
           zIndex: 1000,
           transform: (() => {
             if (elTransform.current && transform && prevTransform) {
-              const deltaX = transform.x - prevTransform.x;
-              // TODO: fix this logic
+              const deltaX =
+                prevTransform.x === elTransform.current.x
+                  ? 0
+                  : transform.x - prevTransform.x;
               const x = elTransform.current.x + deltaX;
               const y = elTransform.current.y + transform.y;
+
+              elTransform.current = {
+                ...elTransform.current,
+                x,
+              };
 
               return `translate3d(${x}px, ${y}px, 0)`;
             }
