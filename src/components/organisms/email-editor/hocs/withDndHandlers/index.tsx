@@ -1,6 +1,6 @@
 import { Move, Settings, Trash } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes, useMemo } from "react";
-import { ReactEditor, RenderElementProps, useSlateWithV } from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
 import { Path, Transforms } from "slate";
@@ -31,7 +31,7 @@ export function withDndHandlers<
   { editableFields }: Options = { editableFields: undefined },
 ) {
   return function WithDndHandlersWrapper(props: P) {
-    const { editor, v } = useSlateWithV();
+    const editor = useSlateStatic();
 
     const {
       attributes,
