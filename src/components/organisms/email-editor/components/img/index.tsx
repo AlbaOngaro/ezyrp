@@ -81,7 +81,9 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
 
             try {
               const url = await uploadFile(file);
-              Transforms.setNodes(editor, { src: url }, { at: path });
+              if (url) {
+                Transforms.setNodes(editor, { src: url }, { at: path });
+              }
             } catch (e) {
               console.error(e);
             }

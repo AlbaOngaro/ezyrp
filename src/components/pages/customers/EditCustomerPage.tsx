@@ -64,11 +64,12 @@ export function EditCustomerPage({ id }: Props) {
 
         try {
           const photoUrl = await handleFileUpload(file);
-
-          await customers.update({
-            ...data,
-            photoUrl,
-          });
+          if (photoUrl) {
+            await customers.update({
+              ...data,
+              photoUrl,
+            });
+          }
 
           onSuccess(data);
 
