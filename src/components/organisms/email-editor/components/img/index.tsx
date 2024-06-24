@@ -5,6 +5,7 @@ import { Form } from "@radix-ui/react-form";
 import { Transforms } from "slate";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
+import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { ImgElement } from "types/slate";
 import { Input } from "components/atoms/input";
 import { useFileUpload } from "hooks/useFileUpload";
@@ -25,6 +26,7 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
   const editor = useSlateStatic();
   const uploadFile = useFileUpload();
   const path = useGetSlatePath(element);
+  const isSelected = useGetIsSelected(element);
 
   if (ReactEditor.isReadOnly(editor)) {
     const { src, alt, style } = element;
@@ -87,6 +89,7 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
         }}
         accept="image/png, image/jpeg"
         ref={ref}
+        disabled={!isSelected}
         {...rest}
       >
         {children}

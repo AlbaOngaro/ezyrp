@@ -1,5 +1,5 @@
 import { Move, Settings, Trash } from "lucide-react";
-import { ForwardRefExoticComponent, RefAttributes, useMemo } from "react";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
@@ -11,6 +11,7 @@ import {
 
 import { Form } from "@radix-ui/react-form";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
+import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { PropertiesForm } from "./poperties-form";
 import { Options } from "./types";
 import { Button } from "components/atoms/button";
@@ -46,18 +47,7 @@ export function withActionHandlers<
     });
 
     const path = useGetSlatePath(props.element);
-
-    const isActive = useMemo(() => {
-      if (
-        editor.selection &&
-        Path.isPath(editor.selection.anchor.path) &&
-        Path.isDescendant(editor.selection.anchor.path, path)
-      ) {
-        return true;
-      }
-
-      return false;
-    }, [editor.selection, path]);
+    const isSelected = useGetIsSelected(props.element);
 
     if (ReactEditor.isReadOnly(editor)) {
       return <Component {...props} />;
@@ -97,7 +87,7 @@ export function withActionHandlers<
             <Component {...props} ref={setNodeRef} />
           </PopoverAnchor>
 
-          {isActive && (
+          {isSelected && (
             <div className="flex flex-col gap-2 absolute top-0 -right-8">
               <Button
                 ref={setActivatorNodeRef}

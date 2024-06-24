@@ -1,39 +1,23 @@
-import { useAction } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
+import { useLazyQuery } from "lib/hooks/useLazyQuery";
+import { Id } from "convex/_generated/dataModel";
 
 export function useFileUpload() {
-  const getCloudinarySignature = useAction(
-    api.cloudinary.getCloudinarySignature,
-  );
+  const [getStorageUrl] = useLazyQuery(api.storage.get);
+  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
 
   return async (file: File) => {
-    const data = await getCloudinarySignature({
-      folder: "profiles",
-    });
-
-    if (!data || !file) {
-      throw new Error("Something went wrong");
-    }
-
-    const { apiKey, timestamp, signature, tags, cloudname } = data;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("api_key", apiKey);
-    formData.append("timestamp", timestamp.toString());
-    formData.append("signature", signature);
-    formData.append("folder", "profiles");
-    formData.append("tags", tags.join(","));
-
-    const url = "https://api.cloudinary.com/v1_1/" + cloudname + "/auto/upload";
-
-    const uploadRes = await fetch(url, {
+    const postUrl = await generateUploadUrl();
+    const result = await fetch(postUrl, {
       method: "POST",
-      body: formData,
+      headers: { "Content-Type": file!.type },
+      body: file,
     });
+    const { storageId } = await result.json();
 
-    const { secure_url } = (await uploadRes.json()) as { secure_url: string };
-
-    return secure_url;
+    return await getStorageUrl({
+      id: storageId as Id<"_storage">,
+    });
   };
 }
