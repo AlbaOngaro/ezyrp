@@ -6,7 +6,6 @@ import { ImgElement } from "types/slate";
 
 type Props = {
   disabled?: boolean;
-  src: string;
 };
 
 const DRAGGABLE_IMG_ID = "draggable-img";

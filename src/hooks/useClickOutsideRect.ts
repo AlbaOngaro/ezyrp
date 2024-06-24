@@ -27,5 +27,5 @@ export function useClickOutsideRect(
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [element, callback]);
+  }, [element, callback, tolerance]);
 }
