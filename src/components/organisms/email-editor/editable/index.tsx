@@ -6,28 +6,16 @@ import {
 } from "@dnd-kit/sortable";
 
 import { EditableProps } from "slate-react/dist/components/editable";
-import { ReactEditor, useSlateStatic } from "slate-react";
 import { Sidebar } from "../sidebar";
 import { useOnDragEnd } from "./hooks/useOnDragEnd";
 import { useGetSortableItems } from "./hooks/useGetSortableItems";
 import { useGetSidebarContainer } from "./hooks/useGetSidebarContainer";
 import { useOnDragOver } from "./hooks/useOnDragOver";
-import { useClickOutsideRect } from "hooks/useClickOutsideRect";
 
 export const Editable = forwardRef<HTMLTableElement, EditableProps>(
   function Editable({ children, style, ...rest }, ref) {
     const key = useRef(0);
-    const editor = useSlateStatic();
     const body = useRef<HTMLTableSectionElement | null>(null);
-
-    useClickOutsideRect(
-      body,
-      () => {
-        console.log("click outside");
-        ReactEditor.deselect(editor);
-      },
-      { tolerance: 20 },
-    );
 
     const { setNodeRef } = useDroppable({
       id: "editor",

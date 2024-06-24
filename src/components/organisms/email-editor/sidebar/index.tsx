@@ -3,6 +3,7 @@ import { ReactEditor, useSlateStatic } from "slate-react";
 import { Fragment } from "react";
 import { DraggableButton } from "./draggable-button";
 import { DraggableImg } from "./draggable-image";
+import { DraggableSeparator } from "./draggable-separator";
 import { H4 } from "components/atoms/typography";
 
 type Props = {
@@ -28,6 +29,9 @@ export function Sidebar({ container }: Props) {
           </li>
           <li>
             <DraggableImg src="/images/undraw_images_re_0kll.svg" />
+          </li>
+          <li>
+            <DraggableSeparator />
           </li>
         </ul>
       </Fragment>
