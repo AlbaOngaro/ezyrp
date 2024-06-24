@@ -12,6 +12,7 @@ import { useOnKeyDown } from "./hooks/useOnKeyDown";
 import { useOnValueChange } from "./hooks/useOnValueChange";
 import { Editable } from "./editable";
 import { Doc } from "convex/_generated/dataModel";
+import { cn } from "lib/utils/cn";
 
 type Props = {
   email: Doc<"emails">;
@@ -30,7 +31,11 @@ export function EmailEditor({ email, readOnly = false }: Props) {
   });
 
   return (
-    <div className="grid grid-cols-[1fr,350px] items-start h-full">
+    <div
+      className={cn("grid items-start h-full", {
+        "grid-cols-[1fr,350px]": !readOnly,
+      })}
+    >
       <Slate
         editor={editor}
         initialValue={email.body}

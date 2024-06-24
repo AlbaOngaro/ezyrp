@@ -11,8 +11,11 @@ type Props = {
 
 export function Sidebar({ container }: Props) {
   const editor = useSlateStatic();
+  const readOnly = ReactEditor.isReadOnly(editor);
 
-  const disabled = ReactEditor.isReadOnly(editor);
+  if (readOnly) {
+    return null;
+  }
 
   return (
     <Portal.Root asChild container={container}>
@@ -21,13 +24,10 @@ export function Sidebar({ container }: Props) {
 
         <ul className="flex flex-col gap-2">
           <li>
-            <DraggableButton disabled={disabled}>Button</DraggableButton>
+            <DraggableButton>Button</DraggableButton>
           </li>
           <li>
-            <DraggableImg
-              src="/images/undraw_images_re_0kll.svg"
-              disabled={disabled}
-            />
+            <DraggableImg src="/images/undraw_images_re_0kll.svg" />
           </li>
         </ul>
       </Fragment>
