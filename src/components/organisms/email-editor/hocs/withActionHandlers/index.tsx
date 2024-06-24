@@ -117,7 +117,12 @@ export function withActionHandlers<
                     </Button>
                   </PopoverTrigger>
 
-                  <PopoverContent className="w-96" side="right" align="start">
+                  <PopoverContent
+                    className="w-96"
+                    side="right"
+                    align="start"
+                    collisionPadding={20}
+                  >
                     <Form className="grid gap-4">
                       <div className="space-y-2">
                         <h4 className="font-medium leading-none">Properties</h4>
