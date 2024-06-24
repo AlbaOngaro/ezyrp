@@ -2,6 +2,8 @@ import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
 import { withActionHandlers } from "../../hocs/withActionHandlers";
+import { withToolbar } from "../../hocs/withToolbar";
+import { renderToolbar } from "./toolbar";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ParagraphElement } from "types/slate";
 
@@ -52,29 +54,8 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   );
 });
 
-const EnhancedText = withActionHandlers(Text, {
-  editableFields: {
-    fontSize: {
-      label: "Font size",
-      type: "number",
-      defaultValue: 14,
-    },
-    color: {
-      label: "Color",
-      type: "color",
-      defaultValue: "#000",
-    },
-    fontWeight: {
-      label: "Font weight",
-      type: "select",
-      defaultValue: { value: "normal", label: "Normal" },
-      options: [
-        { value: "normal", label: "Normal" },
-        { value: "lighter", label: "Light" },
-        { value: "bold", label: "Bold" },
-      ],
-    },
-  },
+const EnhancedText = withToolbar(withActionHandlers(Text), {
+  renderToolbar,
 });
 
 export { EnhancedText as Text };
