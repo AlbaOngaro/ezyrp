@@ -1,4 +1,4 @@
-import { ReactEditor, useSlateStatic } from "slate-react";
+import { useSlateStatic } from "slate-react";
 import { Transforms } from "slate";
 import { Form } from "@radix-ui/react-form";
 import { get } from "lodash";
@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { HexColorPicker } from "react-colorful";
 import { useRef } from "react";
-import { useOnClickOutside } from "usehooks-ts";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { ButtonElement } from "types/slate";
@@ -34,8 +33,6 @@ function Toolbar({ element }: { element: ButtonElement }) {
   const editor = useSlateStatic();
   const at = useGetSlatePath(element);
   const toolbar = useRef<HTMLFormElement | null>(null);
-
-  useOnClickOutside(toolbar, () => ReactEditor.deselect(editor));
 
   const onChange = (
     field: keyof ButtonElement,
