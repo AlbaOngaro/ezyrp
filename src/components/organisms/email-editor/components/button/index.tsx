@@ -120,6 +120,25 @@ const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
   );
 });
 
-const EnhancedButton = withDndHandlers(Button);
+const EnhancedButton = withDndHandlers(Button, {
+  editableFields: {
+    padding: {
+      label: "Padding",
+      type: "number",
+    },
+    borderRadius: {
+      label: "Border Radius",
+      type: "number",
+    },
+    fontSize: {
+      label: "Font Size",
+      type: "number",
+    },
+    backgroundColor: {
+      label: "Background Color",
+      type: "color",
+    },
+  },
+});
 
 export { EnhancedButton as Button };

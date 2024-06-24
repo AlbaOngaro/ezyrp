@@ -1,6 +1,4 @@
-import { ReactElement } from "react";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { EmailEditor } from "components/organisms/email-editor";
 import { useQuery } from "lib/hooks/useQuery";
