@@ -1,4 +1,4 @@
-import { Move, Settings, Trash } from "lucide-react";
+import { Move, SlidersHorizontal, Trash } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
@@ -103,7 +103,7 @@ export function withActionHandlers<
                 <>
                   <PopoverTrigger asChild>
                     <Button size="icon" variant="outline" className="w-6 h-6">
-                      <Settings className="w-4 h-4" />
+                      <SlidersHorizontal className="w-4 h-4" />
                     </Button>
                   </PopoverTrigger>
 
