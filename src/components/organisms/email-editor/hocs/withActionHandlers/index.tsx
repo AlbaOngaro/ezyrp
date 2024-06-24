@@ -1,5 +1,5 @@
 import { Move, SlidersHorizontal, Trash } from "lucide-react";
-import { ForwardRefExoticComponent, RefAttributes } from "react";
+import { JSXElementConstructor, Ref, RefAttributes } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
@@ -28,10 +28,10 @@ export function withActionHandlers<
   P extends RenderElementProps,
   E extends HTMLElement,
 >(
-  Component: ForwardRefExoticComponent<P & RefAttributes<E>>,
+  Component: JSXElementConstructor<P & RefAttributes<E>>,
   { editableFields }: Options = { editableFields: undefined },
-) {
-  return function WithDndHandlersWrapper(props: P) {
+): JSXElementConstructor<P & RefAttributes<E>> {
+  return function WithActionHandlersWrapper(props: P, ref: Ref<E>) {
     const editor = useSlateStatic();
 
     const {
@@ -50,7 +50,7 @@ export function withActionHandlers<
     const isSelected = useGetIsSelected(props.element);
 
     if (ReactEditor.isReadOnly(editor)) {
-      return <Component {...props} />;
+      return <Component {...props} ref={ref} />;
     }
 
     if (!validate(props.element.id)) {

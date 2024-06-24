@@ -2,6 +2,7 @@ import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 
 import { withActionHandlers } from "../../hocs/withActionHandlers";
+import { withToolbar } from "../../hocs/withToolbar";
 import { parsePadding, pxToPt } from "./utils";
 import { buttonStyle, buttonTextStyle } from "./styles";
 
@@ -91,34 +92,36 @@ const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
   );
 });
 
-const EnhancedButton = withActionHandlers(Button, {
-  editableFields: {
-    padding: {
-      label: "Padding",
-      type: "number",
-      defaultValue: 12,
+const EnhancedButton = withToolbar(
+  withActionHandlers(Button, {
+    editableFields: {
+      padding: {
+        label: "Padding",
+        type: "number",
+        defaultValue: 12,
+      },
+      borderRadius: {
+        label: "Border Radius",
+        type: "number",
+        defaultValue: 4,
+      },
+      fontSize: {
+        label: "Font Size",
+        type: "number",
+        defaultValue: 16,
+      },
+      backgroundColor: {
+        label: "Background Color",
+        type: "color",
+        defaultValue: "#000000",
+      },
+      color: {
+        label: "Color",
+        type: "color",
+        defaultValue: "#fff",
+      },
     },
-    borderRadius: {
-      label: "Border Radius",
-      type: "number",
-      defaultValue: 4,
-    },
-    fontSize: {
-      label: "Font Size",
-      type: "number",
-      defaultValue: 16,
-    },
-    backgroundColor: {
-      label: "Background Color",
-      type: "color",
-      defaultValue: "#000000",
-    },
-    color: {
-      label: "Color",
-      type: "color",
-      defaultValue: "#fff",
-    },
-  },
-});
+  }),
+);
 
 export { EnhancedButton as Button };
