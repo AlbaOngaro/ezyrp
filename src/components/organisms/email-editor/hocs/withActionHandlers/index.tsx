@@ -13,8 +13,8 @@ import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
-
 import { Form } from "@radix-ui/react-form";
+
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { PropertiesForm } from "./poperties-form";
@@ -28,6 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "components/atoms/popover";
+import { cn } from "lib/utils/cn";
 
 export function withActionHandlers<
   P extends RenderElementProps,
@@ -92,73 +93,85 @@ export function withActionHandlers<
             <Component {...props} ref={setNodeRef} />
           </PopoverAnchor>
 
-          {isSelected && (
-            <div className="flex flex-col gap-2 absolute top-0 -right-8">
-              <Button
-                ref={setActivatorNodeRef}
-                size="icon"
-                variant="outline"
-                className="w-6 h-6"
-                {...listeners}
-              >
-                <Move className="w-4 h-4" />
-              </Button>
+          <div
+            id="actions"
+            className={cn(
+              "hidden group-hover:flex hover:flex flex-col gap-2 absolute top-0 -right-8",
+              {
+                flex: isSelected,
+              },
+            )}
+          >
+            <Button
+              ref={setActivatorNodeRef}
+              size="icon"
+              variant="outline"
+              className="w-6 h-6"
+              {...listeners}
+            >
+              <Move className="w-4 h-4" />
+            </Button>
 
-              {editableFields && (
-                <>
-                  <PopoverTrigger asChild>
-                    <Button size="icon" variant="outline" className="w-6 h-6">
-                      <SlidersHorizontal className="w-4 h-4" />
-                    </Button>
-                  </PopoverTrigger>
-
-                  <PopoverContent
-                    className="w-96"
-                    side="right"
-                    align="start"
-                    collisionPadding={20}
-                  >
-                    <Form className="grid gap-4">
-                      <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Properties</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Set the properties for this element
-                        </p>
-                      </div>
-
-                      <PropertiesForm
-                        editableFields={editableFields}
-                        element={props.element}
-                      />
-                    </Form>
-
-                    <PopoverArrow className="fill-gray-200" />
-                  </PopoverContent>
-                </>
-              )}
-
-              <DialogRoot>
-                <DialogTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    className="w-6 h-6 z-10"
-                    disabled={
-                      editor.children.length === 1 && Path.equals(path, [0])
-                    }
-                  >
-                    <Trash className="w-4 h-4" />
+            {editableFields && (
+              <>
+                <PopoverTrigger asChild>
+                  <Button size="icon" variant="outline" className="w-6 h-6">
+                    <SlidersHorizontal className="w-4 h-4" />
                   </Button>
-                </DialogTrigger>
+                </PopoverTrigger>
 
-                <Dialog
-                  overlayClassname="!ml-0"
-                  title="Do you really want to remove this item?"
-                  onConfirm={() => Transforms.removeNodes(editor, { at: path })}
-                />
-              </DialogRoot>
-            </div>
-          )}
+                <PopoverContent
+                  className="w-96"
+                  side="right"
+                  align="start"
+                  collisionPadding={20}
+                >
+                  <Form
+                    className="grid gap-4"
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">Properties</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Set the properties for this element
+                      </p>
+                    </div>
+
+                    <PropertiesForm
+                      editableFields={editableFields}
+                      element={props.element}
+                    />
+                  </Form>
+
+                  <PopoverArrow className="fill-gray-200" />
+                </PopoverContent>
+              </>
+            )}
+
+            <DialogRoot>
+              <DialogTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  className="w-6 h-6 z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  disabled={
+                    editor.children.length === 1 && Path.equals(path, [0])
+                  }
+                >
+                  <Trash className="w-4 h-4" />
+                </Button>
+              </DialogTrigger>
+
+              <Dialog
+                overlayClassname="!ml-0"
+                title="Do you really want to remove this item?"
+                onConfirm={() => Transforms.removeNodes(editor, { at: path })}
+              />
+            </DialogRoot>
+          </div>
         </div>
       </Popover>
     );

@@ -1,9 +1,10 @@
 import { CSSProperties } from "react";
+import { CustomElement } from "types/slate";
 
 interface BaseEditableField {
   type: string;
   label: string;
-  defaultValue: string | number | { label: string; value: string };
+  defaultValue?: string | number | { label: string; value: string };
 }
 
 interface EditableSelectField extends BaseEditableField {
@@ -19,14 +20,28 @@ interface EditableColorField extends BaseEditableField {
 
 interface EditableNumberField extends BaseEditableField {
   type: "number";
-  defaultValue: number;
+  defaultValue?: number;
   unit?: "px" | "%";
+}
+
+export type CustomEditableFieldRenderArgs = {
+  element: CustomElement;
+  onChange: (
+    field: keyof CSSProperties,
+    value: CSSProperties[keyof CSSProperties],
+  ) => void;
+};
+
+interface CustomEditableField extends Omit<BaseEditableField, "label"> {
+  type: "custom";
+  render: ({ element, onChange }: CustomEditableFieldRenderArgs) => JSX.Element;
 }
 
 type EditableField =
   | EditableSelectField
   | EditableColorField
-  | EditableNumberField;
+  | EditableNumberField
+  | CustomEditableField;
 
 export function isEditableColorField(
   field: EditableField,
@@ -44,6 +59,12 @@ export function isEditableSelectField(
   field: EditableField,
 ): field is EditableSelectField {
   return field.type === "select";
+}
+
+export function isCustomEditableField(
+  field: EditableField,
+): field is CustomEditableField {
+  return field.type === "custom";
 }
 
 export type EditableFields = {

@@ -1,5 +1,10 @@
 import { ValidityMatcher } from "@radix-ui/react-form";
-import { ChangeEventHandler, InputHTMLAttributes, ReactElement } from "react";
+import {
+  CSSProperties,
+  ChangeEventHandler,
+  InputHTMLAttributes,
+  ReactElement,
+} from "react";
 
 interface BaseInputProps
   extends Omit<
@@ -50,6 +55,7 @@ export interface FilePickerInputProps extends BaseInputProps {
   onChange: ChangeEventHandler<HTMLInputElement>;
   alt?: string;
   imageClassName?: string;
+  imgStyle?: CSSProperties;
 }
 
 export interface DefaultInputProps extends BaseInputProps {

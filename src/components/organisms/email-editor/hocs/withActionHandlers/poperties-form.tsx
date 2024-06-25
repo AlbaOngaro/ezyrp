@@ -5,6 +5,7 @@ import { CSSProperties } from "react";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import {
   EditableFields,
+  isCustomEditableField,
   isEditableColorField,
   isEditableNumberField,
   isEditableSelectField,
@@ -119,6 +120,10 @@ export function PropertiesForm({ editableFields, element }: Props) {
               </div>
             </div>
           );
+        }
+
+        if (isCustomEditableField(field)) {
+          return field.render({ element, onChange });
         }
 
         return null;

@@ -22,6 +22,7 @@ export const FilePickerInput = forwardRef<
     value,
     alt,
     imageClassName,
+    imgStyle,
     ...rest
   },
   ref,
@@ -50,6 +51,7 @@ export const FilePickerInput = forwardRef<
             <img
               src={value}
               alt={alt}
+              style={imgStyle}
               className={cn(
                 "relative w-auto h-auto object-contain aspect-auto",
                 imageClassName,

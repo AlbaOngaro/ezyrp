@@ -6,6 +6,7 @@ import { Transforms } from "slate";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { HeightAndWidthEditableField } from "./editable-fields";
 import { ImgElement } from "types/slate";
 import { Input } from "components/atoms/input";
 import { useFileUpload } from "hooks/useFileUpload";
@@ -45,7 +46,7 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
     );
   }
 
-  const { src, alt } = element;
+  const { src, alt, style } = element;
 
   return (
     <Form contentEditable={false} ref={slateRef} {...slateAttributes}>
@@ -89,6 +90,7 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
         accept="image/png, image/jpeg"
         ref={ref}
         disabled={!isSelected}
+        imgStyle={style}
         {...rest}
       >
         {children}
@@ -97,6 +99,15 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
   );
 });
 
-const EnhancedImg = withActionHandlers(Img);
+const EnhancedImg = withActionHandlers(Img, {
+  editableFields: {
+    height: {
+      type: "custom",
+      render: ({ onChange, element }) => (
+        <HeightAndWidthEditableField onChange={onChange} element={element} />
+      ),
+    },
+  },
+});
 
 export { EnhancedImg as Img };
