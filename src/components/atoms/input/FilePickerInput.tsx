@@ -46,16 +46,14 @@ export const FilePickerInput = forwardRef<
         )}
 
         {typeof value === "string" ? (
-          <picture
-            className={cn(
-              "w-full min-w-[194px] block relative aspect-square rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-sm after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']",
-              imageClassName,
-            )}
-          >
+          <picture className="relative rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-sm after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']">
             <img
               src={value}
               alt={alt}
-              className="absolute inset-0 h-full w-full object-cover object-center"
+              className={cn(
+                "relative w-auto h-auto object-contain aspect-auto",
+                imageClassName,
+              )}
             />
           </picture>
         ) : (

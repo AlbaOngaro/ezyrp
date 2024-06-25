@@ -36,6 +36,7 @@ export function CustomerForm({ disabled }: Props) {
             disabled={disabled}
             label="Profile picture"
             className="col-span-3"
+            imageClassName="aspect-square object-cover"
             type="file"
             name="photoUrl"
             value={value || ""}

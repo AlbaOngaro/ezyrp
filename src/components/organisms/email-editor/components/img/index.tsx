@@ -53,7 +53,6 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
         name="img"
         type="file"
         className="w-full flex justify-center items-center"
-        imageClassName="aspect-video w-full h-full object-cover"
         alt={alt}
         value={src}
         onChange={async (e) => {
