@@ -60,17 +60,15 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
             const file = e.target.files[0];
 
             const fr = new FileReader();
-            const promise = new Promise<string | undefined>(
-              (resolve, reject) => {
-                fr.onload = () => {
-                  if (fr.result && typeof fr.result === "string") {
-                    return resolve(fr.result);
-                  }
+            const promise = new Promise<string>((resolve, reject) => {
+              fr.onload = () => {
+                if (fr.result && typeof fr.result === "string") {
+                  return resolve(fr.result);
+                }
 
-                  reject();
-                };
-              },
-            );
+                reject();
+              };
+            });
 
             fr.readAsDataURL(file);
 
