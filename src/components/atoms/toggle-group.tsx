@@ -5,7 +5,7 @@ import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "lib/utils/cn";
 import { toggleVariants } from "components/atoms/toggle";
 
-const toggleGroupVariants = cva("grid", {
+const toggleGroupVariants = cva("grid gap-2", {
   variants: {
     orientation: {
       horizontal: "grid-flow-col",

@@ -15,7 +15,7 @@ type Props = CustomEditableFieldRenderArgs;
 export function HeightAndWidthEditableField({ element, onChange }: Props) {
   const editor = useSlateStatic();
   const at = useGetSlatePath(element);
-  const [linked, setLinked] = useState(false);
+  const [linked, setLinked] = useState(true);
 
   const onChangeHandler = (
     field: keyof CSSProperties,
