@@ -23,7 +23,7 @@ export function Sidebar({ container }: Props) {
       <Fragment>
         <H4 className="mb-4">Components</H4>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-4">
           <DraggableButton />
           <DraggableImg />
           <DraggableSeparator />
