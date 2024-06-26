@@ -5,7 +5,7 @@ import {
   RefAttributes,
   forwardRef,
 } from "react";
-import { RenderElementProps } from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import {
   Popover,
@@ -33,7 +33,13 @@ export function withToolbar<
 ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<E>> {
   return forwardRef<E, P>(function WithToolbarWrapper(props, ref) {
     const { element } = props;
+    const editor = useSlateStatic();
     const isSelected = useGetIsSelected(element);
+    const isReadonly = ReactEditor.isReadOnly(editor);
+
+    if (isReadonly) {
+      return <Component {...props} ref={ref} />;
+    }
 
     return (
       <Popover open={isSelected}>

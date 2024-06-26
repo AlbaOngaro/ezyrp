@@ -28,17 +28,19 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   const isSelected = useGetIsSelected(element);
 
   if (ReactEditor.isReadOnly(editor)) {
-    <p
-      style={{
-        fontSize: "14px",
-        lineHeight: "24px",
-        margin: "16px 0",
-        cursor: "text",
-        ...(style || {}),
-      }}
-    >
-      {children}
-    </p>;
+    return (
+      <p
+        style={{
+          fontSize: "14px",
+          lineHeight: "24px",
+          margin: "16px 0",
+          cursor: "text",
+          ...(style || {}),
+        }}
+      >
+        {children}
+      </p>
+    );
   }
 
   return (

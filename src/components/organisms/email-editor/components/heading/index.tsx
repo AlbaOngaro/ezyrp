@@ -1,6 +1,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import React, { forwardRef } from "react";
-import { RenderElementProps } from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { withToolbar } from "../../hocs/withToolbar";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
@@ -21,7 +21,16 @@ const Heading = forwardRef<HTMLHeadingElement, Props>(function Heading(
   ref,
 ) {
   const { as: Tag = "h1", style } = element;
+  const editor = useSlateStatic();
   const isSelected = useGetIsSelected(element);
+
+  if (ReactEditor.isReadOnly(editor)) {
+    return (
+      <Slot {...attributes} style={style}>
+        <Tag ref={ref}>{children}</Tag>
+      </Slot>
+    );
+  }
 
   return (
     <Slot {...attributes} style={style}>
