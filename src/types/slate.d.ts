@@ -71,7 +71,7 @@ type CustomElement =
   | RowElement
   | HeadingElement;
 
-type CustomText = { text: string };
+type CustomText = { text: string; bold?: boolean; italic?: boolean };
 
 declare module "slate" {
   interface CustomTypes {

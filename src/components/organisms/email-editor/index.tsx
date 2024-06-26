@@ -11,6 +11,7 @@ import { withIds } from "./plugins/withIds";
 import { useOnKeyDown } from "./hooks/useOnKeyDown";
 import { useOnValueChange } from "./hooks/useOnValueChange";
 import { Editable } from "./editable";
+import { useRenderLeaf } from "./hooks/useRenderLeaf";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { cn } from "lib/utils/cn";
 
@@ -26,10 +27,16 @@ function ViewMode({
   editor: Editor;
   initialValue: Descendant[];
 }) {
+  const renderLeaf = useRenderLeaf();
   const renderElement = useRenderElement();
   return (
     <Slate editor={editor} initialValue={initialValue}>
-      <SlateEditable renderElement={renderElement} as={Editable} readOnly />
+      <SlateEditable
+        renderElement={renderElement}
+        renderLeaf={renderLeaf}
+        as={Editable}
+        readOnly
+      />
     </Slate>
   );
 }
@@ -44,6 +51,7 @@ function EditMode({
   initialValue: Descendant[];
 }) {
   const onKeyDown = useOnKeyDown(editor);
+  const renderLeaf = useRenderLeaf();
   const renderElement = useRenderElement();
   const onValueChange = useOnValueChange(id, {
     autoSave: true,
@@ -59,6 +67,7 @@ function EditMode({
         <SlateEditable
           className="focus-within:outline-none"
           renderElement={renderElement}
+          renderLeaf={renderLeaf}
           onKeyDown={onKeyDown}
           as={Editable}
         />

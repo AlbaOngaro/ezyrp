@@ -19,5 +19,55 @@ export function useOnKeyDown(editor: Editor) {
       });
       return;
     }
+
+    if (isHotkey("mod+b")(event)) {
+      event.preventDefault();
+      try {
+        if (!editor.selection) {
+          return;
+        }
+
+        const entry = Editor.leaf(editor, editor.selection);
+        if (!entry) {
+          return;
+        }
+
+        const [leaf] = entry;
+        if (leaf.bold) {
+          Editor.removeMark(editor, "bold");
+        } else {
+          Editor.addMark(editor, "bold", true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      return;
+    }
+
+    if (isHotkey("mod+i")(event)) {
+      event.preventDefault();
+      try {
+        if (!editor.selection) {
+          return;
+        }
+
+        const entry = Editor.leaf(editor, editor.selection);
+        if (!entry) {
+          return;
+        }
+
+        const [leaf] = entry;
+        if (leaf.italic) {
+          Editor.removeMark(editor, "italic");
+        } else {
+          Editor.addMark(editor, "italic", true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      return;
+    }
   };
 }
