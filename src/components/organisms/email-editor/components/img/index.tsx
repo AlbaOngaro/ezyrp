@@ -6,7 +6,9 @@ import { Transforms } from "slate";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { withToolbar } from "../../hocs/withToolbar";
 import { HeightAndWidthEditableField } from "./editable-fields";
+import { renderToolbar } from "./toolbar";
 import { ImgElement } from "types/slate";
 import { Input } from "components/atoms/input";
 import { useFileUpload } from "hooks/useFileUpload";
@@ -87,6 +89,9 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
             }
           }
         }}
+        onClick={(e) => {
+          e.preventDefault();
+        }}
         accept="image/png, image/jpeg"
         ref={ref}
         disabled={!isSelected}
@@ -99,15 +104,20 @@ const Img = forwardRef<HTMLInputElement, Props>(function Img(
   );
 });
 
-const EnhancedImg = withActionHandlers(Img, {
-  editableFields: {
-    height: {
-      type: "custom",
-      render: ({ onChange, element }) => (
-        <HeightAndWidthEditableField onChange={onChange} element={element} />
-      ),
+const EnhancedImg = withToolbar(
+  withActionHandlers(Img, {
+    editableFields: {
+      height: {
+        type: "custom",
+        render: ({ onChange, element }) => (
+          <HeightAndWidthEditableField onChange={onChange} element={element} />
+        ),
+      },
     },
+  }),
+  {
+    renderToolbar,
   },
-});
+);
 
 export { EnhancedImg as Img };
