@@ -18,7 +18,7 @@ function Toolbar({ element }: { element: ImgElement }) {
   const toolbar = useRef<HTMLFormElement | null>(null);
 
   const { style } = element;
-  const { justifyContent = "center", alignItems = "center" } = style || {};
+  const { justifyContent = "center" } = style || {};
 
   const onChange = (
     field: keyof CSSProperties,
