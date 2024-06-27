@@ -13,7 +13,11 @@ export function useRenderLeaf() {
     }
 
     return (
-      <span {...attributes} style={style}>
+      <span
+        {...attributes}
+        style={style}
+        className="relative after:text-gray-300 after:absolute after:top-0 after:w-full has-[span[data-slate-zero-width]]:block has-[span[data-slate-zero-width]]:after:content-['Something_good_here_I_hope']"
+      >
         {children}
       </span>
     );
