@@ -52,7 +52,8 @@ interface LinkElement extends BaseElement {
 
 interface RowElement extends BaseElement {
   type: "row";
-  children: ColumnElement[];
+  columns: ColumnElement[];
+  children: [{ text: "" }];
 }
 
 interface HeadingElement extends BaseElement {

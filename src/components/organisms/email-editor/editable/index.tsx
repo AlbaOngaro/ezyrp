@@ -22,8 +22,7 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
 
     useClickOutsideRect(
       body,
-      (event) => {
-        console.log("click outside", event.target);
+      () => {
         return ReactEditor.deselect(editor);
       },
       {

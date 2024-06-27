@@ -14,7 +14,7 @@ const DRAGGABLE_ID = "draggable-columns";
 const DATA = {
   id: DRAGGABLE_ID,
   type: "row",
-  children: [
+  columns: [
     {
       id: uuid(),
       type: "column",
@@ -30,6 +30,7 @@ const DATA = {
       ],
     },
   ],
+  children: [{ text: "" }],
 } satisfies RowElement;
 
 export function DraggableColumns({ disabled }: Props) {

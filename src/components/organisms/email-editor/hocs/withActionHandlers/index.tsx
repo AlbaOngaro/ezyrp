@@ -17,6 +17,7 @@ import { Form } from "@radix-ui/react-form";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { useEditorConfig } from "../../context";
 import { PropertiesForm } from "./poperties-form";
 import { Options } from "./types";
 import { Button } from "components/atoms/button";
@@ -39,6 +40,8 @@ export function withActionHandlers<
 ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<E>> {
   return forwardRef<E, P>(function WithActionHandlersWrapper(props, ref) {
     const editor = useSlateStatic();
+    const isReadOnly = ReactEditor.isReadOnly(editor);
+    const { dnd, actions } = useEditorConfig();
 
     const {
       attributes,
@@ -48,14 +51,14 @@ export function withActionHandlers<
       setActivatorNodeRef,
     } = useSortable({
       id: props.element.id,
-      disabled: ReactEditor.isReadOnly(editor),
+      disabled: isReadOnly || !dnd,
       data: props.element,
     });
 
     const path = useGetSlatePath(props.element);
     const isSelected = useGetIsSelected(props.element);
 
-    if (ReactEditor.isReadOnly(editor)) {
+    if (isReadOnly || !actions) {
       return <Component {...props} ref={ref} />;
     }
 
