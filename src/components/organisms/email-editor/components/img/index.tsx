@@ -127,7 +127,6 @@ const Img = forwardRef<any, Props>(function Img(
           justifyContent,
           alignItems,
         }}
-        imageClassName="object-none"
         imgStyle={{
           display: "block",
           ...(additionalStyles || {}),

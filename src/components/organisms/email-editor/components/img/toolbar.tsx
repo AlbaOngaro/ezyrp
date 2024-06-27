@@ -11,6 +11,13 @@ import {
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { ImgElement } from "types/slate";
 import { ToggleGroup, ToggleGroupItem } from "components/atoms/toggle-group";
+import { Select } from "components/atoms/select";
+
+const OBJECT_FIT_OPTIONS = [
+  { label: "Contain", value: "contain" },
+  { label: "Cover", value: "cover" },
+  { label: "Fill", value: "fill" },
+];
 
 function Toolbar({ element }: { element: ImgElement }) {
   const editor = useSlateStatic();
@@ -18,7 +25,7 @@ function Toolbar({ element }: { element: ImgElement }) {
   const toolbar = useRef<HTMLFormElement | null>(null);
 
   const { style } = element;
-  const { justifyContent = "center" } = style || {};
+  const { justifyContent = "center", objectFit = "contain" } = style || {};
 
   const onChange = (
     field: keyof CSSProperties,
@@ -41,9 +48,23 @@ function Toolbar({ element }: { element: ImgElement }) {
   return (
     <Form
       ref={toolbar}
-      className="grid grid-cols-[repeat(12,2.5rem)] gap-2 items-end w-fit"
+      className="grid grid-cols-[repeat(12,2.5rem)] gap-4 items-end w-fit"
       onSubmit={(e) => e.preventDefault()}
     >
+      <Select
+        className="col-span-3"
+        name="objectFit"
+        defaultValue={OBJECT_FIT_OPTIONS.find(
+          (option) => option.value === objectFit,
+        )}
+        options={OBJECT_FIT_OPTIONS}
+        onChange={(option) => {
+          if (option) {
+            return onChange("objectFit", option.value);
+          }
+        }}
+      />
+
       <ToggleGroup
         id="justifyContent"
         type="single"
