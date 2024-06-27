@@ -24,7 +24,7 @@ export function useRenderElement() {
           );
         case "column":
           return (
-            <Column {...attributes} {...element}>
+            <Column attributes={attributes} element={element}>
               {children}
             </Column>
           );
@@ -48,7 +48,7 @@ export function useRenderElement() {
           );
         case "row":
           return (
-            <Row {...attributes} {...element}>
+            <Row attributes={attributes} element={element}>
               {children}
             </Row>
           );

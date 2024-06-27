@@ -1,13 +1,28 @@
 import React, { forwardRef } from "react";
+import { RenderElementProps } from "slate-react";
+import { mergeRefs } from "lib/utils/mergeRefs";
+import { ColumnElement } from "types/slate";
 
-type RootProps = React.ComponentPropsWithoutRef<"td">;
+interface Props extends RenderElementProps {
+  element: ColumnElement;
+}
 
-export type ColumnProps = RootProps;
-
-export const Column = forwardRef<HTMLTableDataCellElement, ColumnProps>(
-  function Column({ children, style, ...props }, ref) {
+export const Column = forwardRef<HTMLTableDataCellElement, Props>(
+  function Column(
+    {
+      children,
+      element: { style },
+      attributes: { ref: slateRef, ...slateAttributes },
+    },
+    ref,
+  ) {
     return (
-      <td {...props} data-id="__react-email-column" ref={ref} style={style}>
+      <td
+        data-id="__react-email-column"
+        ref={mergeRefs(slateRef, ref)}
+        style={style}
+        {...slateAttributes}
+      >
         {children}
       </td>
     );

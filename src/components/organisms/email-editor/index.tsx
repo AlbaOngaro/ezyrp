@@ -12,6 +12,7 @@ import { useOnKeyDown } from "./hooks/useOnKeyDown";
 import { useOnValueChange } from "./hooks/useOnValueChange";
 import { Editable } from "./editable";
 import { useRenderLeaf } from "./hooks/useRenderLeaf";
+import { withColumns } from "./plugins/wihtColumns";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { cn } from "lib/utils/cn";
 
@@ -80,7 +81,7 @@ function EditMode({
 
 export function EmailEditor({ email, readOnly = false }: Props) {
   const [editor] = useState(() =>
-    withHr(withImages(withIds(withReact(createEditor())))),
+    withColumns(withHr(withImages(withIds(withReact(createEditor()))))),
   );
 
   if (readOnly) {
