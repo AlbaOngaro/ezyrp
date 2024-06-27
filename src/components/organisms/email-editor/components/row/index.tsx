@@ -8,11 +8,11 @@ import {
 } from "slate-react";
 import {
   createEditor,
+  Descendant,
   Location,
-  Editor,
-  Element,
   Path,
   Transforms,
+  Element,
 } from "slate";
 
 import { withColumns } from "../../plugins/wihtColumns";
@@ -27,11 +27,22 @@ import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 
 import { EditorConfigProvider } from "../../context";
-import { RowElement } from "types/slate";
+
+import { ColumnElement, RowElement } from "types/slate";
 import { mergeRefs } from "lib/utils/mergeRefs";
 
 interface Props extends RenderElementProps {
   element: RowElement;
+}
+
+function isColumnElementArray(
+  descendants: Descendant[],
+): descendants is ColumnElement[] {
+  return descendants.every(
+    (descendant) =>
+      Element.isElement(descendant) &&
+      Element.isElementType(descendant, "column"),
+  );
 }
 
 const Row = forwardRef<any, Props>(function Row(
@@ -49,7 +60,11 @@ const Row = forwardRef<any, Props>(function Row(
   const renderLeaf = useRenderLeaf();
   const onKeyDown = useOnKeyDown(editor);
 
-  const onValueChange = console.log;
+  const onValueChange = (descendants: Descendant[]) => {
+    if (isColumnElementArray(descendants)) {
+      Transforms.setNodes(parent, { columns: descendants }, { at: path });
+    }
+  };
 
   useEffect(() => {
     const selection = parent.selection;
