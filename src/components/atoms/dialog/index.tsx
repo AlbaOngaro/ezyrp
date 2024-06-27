@@ -76,3 +76,7 @@ export function Dialog({
     </AlertDialog.Portal>
   );
 }
+
+export const DialogTrigger = AlertDialog.Trigger;
+
+export const DialogRoot = AlertDialog.Root;

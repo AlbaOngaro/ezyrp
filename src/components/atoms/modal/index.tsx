@@ -44,3 +44,7 @@ export function Modal({ title, description, children, className }: Props) {
     </RUIModal.Portal>
   );
 }
+
+export const ModalRoot = RUIModal.Root;
+
+export const ModalTrigger = RUIModal.Trigger;

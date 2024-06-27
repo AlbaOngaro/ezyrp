@@ -1,8 +1,9 @@
 import { ReactElement, useState } from "react";
-import { Root as DialogRoot } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
 import { useMutation } from "convex/react";
 import { FunctionReturnType } from "convex/server";
+
+import { Form } from "@radix-ui/react-form";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Heading } from "components/atoms/heading";
@@ -11,9 +12,11 @@ import { Table } from "components/atoms/table";
 import { api } from "convex/_generated/api";
 import { Card } from "components/atoms/card";
 import { useQuery } from "lib/hooks/useQuery";
-import { Doc } from "convex/_generated/dataModel";
+import { Doc, Id } from "convex/_generated/dataModel";
 import { useDownloadEmailHtml } from "components/organisms/email-editor/hooks/useDownloadEmailHtml";
-import { Dialog } from "components/atoms/dialog";
+import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
+import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
+import { Input } from "components/atoms/input";
 
 type Email = FunctionReturnType<typeof api.emails.get>;
 
@@ -37,22 +40,49 @@ export function EmailsPage() {
         />
 
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Button
-            loading={isCreatingEmail}
-            onClick={async () => {
-              try {
-                setIsCreatingEmail(true);
-                const _id = await createEmail();
-                return router.push(`/emails/${_id}/edit`);
-              } catch (error) {
-                console.error(error);
-              } finally {
-                setIsCreatingEmail(false);
-              }
-            }}
-          >
-            Add email template
-          </Button>
+          <ModalRoot>
+            <ModalTrigger asChild>
+              <Button>Create new template</Button>
+            </ModalTrigger>
+
+            <Modal title="Create new template" description=" ">
+              <Form
+                className="flex flex-col gap-4"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+
+                  try {
+                    setIsCreatingEmail(true);
+                    const _id = await createEmail({
+                      title: (formData.get("title") || "") as string,
+                    });
+                    return router.push(`/emails/${_id}/edit`);
+                  } catch (error) {
+                    console.error(error);
+                  } finally {
+                    setIsCreatingEmail(false);
+                  }
+                }}
+              >
+                <Input
+                  required
+                  label="Choose a name for your new template"
+                  name="title"
+                  validations={{
+                    valueMissing: "Please enter a title",
+                  }}
+                />
+                <Button
+                  className="ml-auto"
+                  type="submit"
+                  loading={isCreatingEmail}
+                >
+                  Create
+                </Button>
+              </Form>
+            </Modal>
+          </ModalRoot>
         </div>
       </Container>
       <Container as="section">
@@ -60,11 +90,6 @@ export function EmailsPage() {
           <Table<Omit<Doc<"emails">, "body">>
             rows={emails}
             columns={[
-              {
-                id: "id",
-                field: "_id",
-                headerName: "ID",
-              },
               {
                 id: "title",
                 field: "title",
@@ -100,6 +125,29 @@ export function EmailsPage() {
                 },
               },
             ]}
+            withMultiSelect
+            renderSelectedActions={(rows) => (
+              <DialogRoot>
+                <DialogTrigger asChild>
+                  <Button variant="destructive" size="sm">
+                    Delete all
+                  </Button>
+                </DialogTrigger>
+
+                <Dialog
+                  overlayClassname="!ml-0"
+                  title="Do you really want to delete all the selected email templates?"
+                  description="This action cannot be undone."
+                  onConfirm={() =>
+                    Promise.all(
+                      rows.map((row) =>
+                        deleteEmail({ id: row._id as Id<"emails"> }),
+                      ),
+                    )
+                  }
+                />
+              </DialogRoot>
+            )}
           />
         </Card>
       </Container>

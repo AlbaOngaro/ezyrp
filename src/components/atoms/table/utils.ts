@@ -26,3 +26,23 @@ export function wrapWithRow<R extends Row = Row>(
     };
   }, {} as ContextMenuItem);
 }
+
+export function getGridTemplateColumns(
+  colums: number,
+  withContextMenu?: boolean,
+  withMultiSelect?: boolean,
+) {
+  if (withContextMenu && withMultiSelect) {
+    return `3rem repeat(${colums}, 1fr) 3rem`;
+  }
+
+  if (withContextMenu) {
+    return `repeat(${colums}, 1fr) 3rem`;
+  }
+
+  if (withMultiSelect) {
+    return `3rem repeat(${colums}, 1fr)`;
+  }
+
+  return `repeat(${colums}, 1fr)`;
+}

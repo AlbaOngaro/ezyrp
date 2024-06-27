@@ -36,10 +36,14 @@ export const list = query({
 });
 
 export const create = mutation({
-  handler: async (ctx) => {
+  args: {
+    title: v.optional(v.string()),
+  },
+  handler: async (ctx, { title }) => {
     const { workspace } = await getAuthData(ctx);
 
     const id = await ctx.db.insert("emails", {
+      title,
       workspace,
       body: [
         {
@@ -49,7 +53,7 @@ export const create = mutation({
             fontSize: "16px",
             lineHeight: "26px",
           },
-          children: [{ text: "Your text here" }],
+          children: [{ text: "" }],
         },
       ],
     });

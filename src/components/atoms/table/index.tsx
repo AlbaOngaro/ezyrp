@@ -8,6 +8,7 @@ import {
 import { Props, Row, Sort } from "./types";
 import { TableRowRenderer } from "./RowRenderer";
 import { Pagination } from "./Pagination";
+import { getGridTemplateColumns } from "./utils";
 import { cn } from "lib/utils/cn";
 import { Checkbox } from "components/atoms/checkbox";
 
