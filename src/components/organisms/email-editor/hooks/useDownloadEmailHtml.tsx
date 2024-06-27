@@ -1,8 +1,10 @@
 import { ConvexProvider } from "convex/react";
 import { useState } from "react";
 import { render } from "@react-email/render";
+import { Font } from "@react-email/font";
+
 import { EmailEditor } from "..";
-import { Html } from "../components";
+import { Head, Html } from "../components";
 import { convex } from "lib/external/convex";
 import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
@@ -36,6 +38,18 @@ export function useDownloadEmailHtml(): ReturnTuple {
       const html = render(
         <ConvexProvider client={convex}>
           <Html>
+            <Head>
+              <Font
+                fontFamily="Roboto"
+                fallbackFontFamily="Verdana"
+                webFont={{
+                  url: "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2",
+                  format: "woff2",
+                }}
+                fontWeight={400}
+                fontStyle="normal"
+              />
+            </Head>
             <EmailEditor email={email} readOnly />
           </Html>
         </ConvexProvider>,
@@ -46,7 +60,7 @@ export function useDownloadEmailHtml(): ReturnTuple {
       });
 
       const fr = new FileReader();
-      const promise = new Promise<string | undefined>((resolve, reject) => {
+      const promise = new Promise<string>((resolve, reject) => {
         fr.onload = () => {
           if (fr.result && typeof fr.result === "string") {
             return resolve(fr.result);
