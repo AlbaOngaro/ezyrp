@@ -23,6 +23,7 @@ interface ButtonElement extends BaseElement {
 
 interface ColumnElement extends BaseElement {
   type: "column";
+  width: number;
   children: CustomElement[];
 }
 

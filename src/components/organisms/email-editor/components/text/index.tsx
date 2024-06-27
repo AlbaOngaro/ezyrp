@@ -23,7 +23,6 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   ref,
 ) {
   const { style } = element;
-
   const editor = useSlateStatic();
   const isSelected = useGetIsSelected(element);
 

@@ -18,12 +18,14 @@ const DATA = {
     {
       id: uuid(),
       type: "column",
+      width: 50,
       children: [
         { id: uuid(), type: "paragraph", children: [{ text: "Column 1" }] },
       ],
     },
     {
       id: uuid(),
+      width: 50,
       type: "column",
       children: [
         { id: uuid(), type: "paragraph", children: [{ text: "Column 2" }] },

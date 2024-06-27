@@ -4,6 +4,7 @@ import {
   Slate,
   Editable as SlateEditable,
   useSlate,
+  useSlateStatic,
   withReact,
 } from "slate-react";
 import {
@@ -14,8 +15,9 @@ import {
   Transforms,
   Element,
 } from "slate";
+import { EditableProps } from "slate-react/dist/components/editable";
+import { debounce } from "lodash";
 
-import { withColumns } from "../../plugins/wihtColumns";
 import { withHr } from "../../plugins/withHr";
 import { withImages } from "../../plugins/withImages";
 import { withIds } from "../../plugins/withIds";
@@ -30,6 +32,7 @@ import { EditorConfigProvider } from "../../context";
 
 import { ColumnElement, RowElement } from "types/slate";
 import { mergeRefs } from "lib/utils/mergeRefs";
+import { ResizablePanelGroup } from "components/atoms/resizable";
 
 interface Props extends RenderElementProps {
   element: RowElement;
@@ -45,6 +48,28 @@ function isColumnElementArray(
   );
 }
 
+const Editable = forwardRef<any, EditableProps>(function Editable(
+  { children, ...props },
+  ref,
+) {
+  const editor = useSlateStatic();
+  const onLayout = debounce((columns: number[]) => {
+    columns.forEach((width, index) => {
+      const path = [index];
+      Transforms.setNodes(editor, { width }, { at: path });
+    });
+  }, 250);
+
+  return (
+    // @ts-ignore
+    <tr {...props} ref={ref}>
+      <ResizablePanelGroup direction="horizontal" onLayout={onLayout}>
+        {children}
+      </ResizablePanelGroup>
+    </tr>
+  );
+});
+
 const Row = forwardRef<any, Props>(function Row(
   { element, attributes: { ref: slateRef, ...slateAttributes }, children },
   ref,
@@ -53,7 +78,7 @@ const Row = forwardRef<any, Props>(function Row(
   const parent = useSlate();
   const path = useGetSlatePath(element);
   const [editor] = useState(() =>
-    withColumns(withHr(withImages(withIds(withReact(createEditor()))))),
+    withHr(withImages(withIds(withReact(createEditor())))),
   );
 
   const renderElement = useRenderElement();
@@ -108,7 +133,7 @@ const Row = forwardRef<any, Props>(function Row(
               renderLeaf={renderLeaf}
               onKeyDown={onKeyDown}
               onFocus={() => Transforms.select(parent, path)}
-              as="tr"
+              as={Editable}
             />
           </Slate>
         </EditorConfigProvider>
