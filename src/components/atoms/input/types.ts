@@ -16,28 +16,28 @@ interface BaseInputProps
   validations?: Partial<Record<ValidityMatcher, string>>;
   name: string;
   type?:
-    | "button"
-    | "checkbox"
-    | "color"
-    | "email"
-    | "file"
-    | "hidden"
-    | "image"
-    | "month"
-    | "number"
-    | "password"
-    | "radio"
-    | "range"
-    | "reset"
-    | "search"
-    | "submit"
-    | "tel"
-    | "text"
-    | "time"
-    | "url"
-    | "week"
-    | "date"
-    | "datetime-local";
+  | "button"
+  | "checkbox"
+  | "color"
+  | "email"
+  | "file"
+  | "hidden"
+  | "image"
+  | "month"
+  | "number"
+  | "password"
+  | "radio"
+  | "range"
+  | "reset"
+  | "search"
+  | "submit"
+  | "tel"
+  | "text"
+  | "time"
+  | "url"
+  | "week"
+  | "date"
+  | "datetime-local";
 }
 
 export interface DateTimeInputProps extends BaseInputProps {
@@ -54,32 +54,34 @@ export interface FilePickerInputProps extends BaseInputProps {
   type: "file";
   onChange: ChangeEventHandler<HTMLInputElement>;
   alt?: string;
+  pictureClassName?: string;
+  pictureStyle?: CSSProperties;
   imageClassName?: string;
   imgStyle?: CSSProperties;
 }
 
 export interface DefaultInputProps extends BaseInputProps {
   type?:
-    | "button"
-    | "checkbox"
-    | "color"
-    | "email"
-    | "file"
-    | "hidden"
-    | "image"
-    | "month"
-    | "number"
-    | "password"
-    | "radio"
-    | "range"
-    | "reset"
-    | "search"
-    | "submit"
-    | "tel"
-    | "text"
-    | "time"
-    | "url"
-    | "week";
+  | "button"
+  | "checkbox"
+  | "color"
+  | "email"
+  | "file"
+  | "hidden"
+  | "image"
+  | "month"
+  | "number"
+  | "password"
+  | "radio"
+  | "range"
+  | "reset"
+  | "search"
+  | "submit"
+  | "tel"
+  | "text"
+  | "time"
+  | "url"
+  | "week";
   onChange?: ChangeEventHandler<HTMLInputElement>;
   prefix?: ReactElement;
 }

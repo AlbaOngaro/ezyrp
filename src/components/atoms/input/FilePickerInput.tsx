@@ -21,6 +21,8 @@ export const FilePickerInput = forwardRef<
     children,
     value,
     alt,
+    pictureStyle,
+    pictureClassName,
     imageClassName,
     imgStyle,
     ...rest
@@ -47,7 +49,13 @@ export const FilePickerInput = forwardRef<
         )}
 
         {typeof value === "string" ? (
-          <picture className="relative rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-sm after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']">
+          <picture
+            style={pictureStyle}
+            className={cn(
+              "relative rounded-xl overflow-hidden cursor-pointer after:hidden after:items-center after:justify-center after:text-sm after:text-center after:font-bold after:text-white after:bg-black/20 after:absolute after:inset-0 hover:after:flex hover:after:content-['Change_image']",
+              pictureClassName,
+            )}
+          >
             <img
               src={value}
               alt={alt}
