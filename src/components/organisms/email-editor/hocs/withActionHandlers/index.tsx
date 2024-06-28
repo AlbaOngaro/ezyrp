@@ -105,15 +105,17 @@ export function withActionHandlers<
               },
             )}
           >
-            <Button
-              ref={setActivatorNodeRef}
-              size="icon"
-              variant="outline"
-              className="w-6 h-6"
-              {...listeners}
-            >
-              <Move className="w-4 h-4" />
-            </Button>
+            {dnd && (
+              <Button
+                ref={setActivatorNodeRef}
+                size="icon"
+                variant="outline"
+                className="w-6 h-6"
+                {...listeners}
+              >
+                <Move className="w-4 h-4" />
+              </Button>
+            )}
 
             {editableFields && (
               <>

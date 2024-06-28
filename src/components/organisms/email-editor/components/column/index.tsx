@@ -21,34 +21,20 @@ export const Column = forwardRef<HTMLTableDataCellElement, Props>(
 
     const hasNextSibling = !!Editor.next(editor, { at: path });
 
-    if (hasNextSibling) {
-      return (
-        <>
-          <ResizablePanel
-            ref={mergeRefs(slateRef, ref)}
-            style={style}
-            tagName="td"
-            defaultSize={width}
-            {...slateAttributes}
-          >
-            {children}
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-        </>
-      );
-    }
-
     return (
-      <ResizablePanel
-        ref={mergeRefs(slateRef, ref)}
-        style={style}
-        tagName="td"
-        className="pl-4"
-        defaultSize={width}
-        {...slateAttributes}
-      >
-        {children}
-      </ResizablePanel>
+      <>
+        <ResizablePanel
+          className="px-8"
+          ref={mergeRefs(slateRef, ref)}
+          style={style}
+          tagName="td"
+          defaultSize={width}
+          {...slateAttributes}
+        >
+          {children}
+        </ResizablePanel>
+        {hasNextSibling && <ResizableHandle withHandle />}
+      </>
     );
   },
 );

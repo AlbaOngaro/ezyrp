@@ -1,22 +1,11 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import {
-  RenderElementProps,
   Slate,
   Editable as SlateEditable,
   useSlate,
-  useSlateStatic,
   withReact,
 } from "slate-react";
-import {
-  createEditor,
-  Descendant,
-  Location,
-  Path,
-  Transforms,
-  Element,
-} from "slate";
-import { EditableProps } from "slate-react/dist/components/editable";
-import { debounce } from "lodash";
+import { createEditor, Descendant, Location, Path, Transforms } from "slate";
 
 import { withHr } from "../../plugins/withHr";
 import { withImages } from "../../plugins/withImages";
@@ -30,45 +19,10 @@ import { withActionHandlers } from "../../hocs/withActionHandlers";
 
 import { EditorConfigProvider } from "../../context";
 
-import { ColumnElement, RowElement } from "types/slate";
+import { isColumnElementArray, Props } from "./types";
+import { Editable } from "./editable";
+import { ColumnsWidthEditableFields } from "./editable-fields";
 import { mergeRefs } from "lib/utils/mergeRefs";
-import { ResizablePanelGroup } from "components/atoms/resizable";
-
-interface Props extends RenderElementProps {
-  element: RowElement;
-}
-
-function isColumnElementArray(
-  descendants: Descendant[],
-): descendants is ColumnElement[] {
-  return descendants.every(
-    (descendant) =>
-      Element.isElement(descendant) &&
-      Element.isElementType(descendant, "column"),
-  );
-}
-
-const Editable = forwardRef<any, EditableProps>(function Editable(
-  { children, ...props },
-  ref,
-) {
-  const editor = useSlateStatic();
-  const onLayout = debounce((columns: number[]) => {
-    columns.forEach((width, index) => {
-      const path = [index];
-      Transforms.setNodes(editor, { width }, { at: path });
-    });
-  }, 250);
-
-  return (
-    // @ts-ignore
-    <tr {...props} ref={ref}>
-      <ResizablePanelGroup direction="horizontal" onLayout={onLayout}>
-        {children}
-      </ResizablePanelGroup>
-    </tr>
-  );
-});
 
 const Row = forwardRef<any, Props>(function Row(
   { element, attributes: { ref: slateRef, ...slateAttributes }, children },
@@ -121,7 +75,7 @@ const Row = forwardRef<any, Props>(function Row(
         ref={mergeRefs(slateRef, ref)}
       >
         {children}
-        <EditorConfigProvider dnd={false} actions={false} toolbar={false}>
+        <EditorConfigProvider dnd={false} actions toolbar={false}>
           <Slate
             editor={editor}
             initialValue={initialValue}
@@ -142,6 +96,13 @@ const Row = forwardRef<any, Props>(function Row(
   );
 });
 
-const EnhancedRow = withActionHandlers(Row);
+const EnhancedRow = withActionHandlers(Row, {
+  editableFields: {
+    width: {
+      type: "custom",
+      render: (props) => <ColumnsWidthEditableFields {...props} />,
+    },
+  },
+});
 
 export { EnhancedRow as Row };
