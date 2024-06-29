@@ -1,5 +1,4 @@
 import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
-import { v4 as uuid } from "uuid";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { FunctionReturnType } from "convex/server";
@@ -123,8 +122,8 @@ export function InvoiceItemsTable({ disabled }: Props) {
                   item.onetime
                     ? undefined
                     : {
-                      rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
-                    }
+                        rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
+                      }
                 }
               />
 

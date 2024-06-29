@@ -5,6 +5,7 @@ import { ReactEditor, useSlateStatic } from "slate-react";
 import { Transforms, Node } from "slate";
 
 import { useGetSortableItems } from "./useGetSortableItems";
+import { CustomElement } from "types/slate";
 
 export function useOnDragOver() {
   const editor = useSlateStatic();
@@ -45,7 +46,7 @@ export function useOnDragOver() {
           {
             ...active.data.current,
             skipUpdate: true,
-          },
+          } as CustomElement,
           { at: path },
         );
       }
