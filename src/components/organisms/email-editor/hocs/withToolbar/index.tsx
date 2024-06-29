@@ -7,6 +7,7 @@ import {
 } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { useEditorConfig } from "../../context";
 import {
   Popover,
   PopoverAnchor,
@@ -34,10 +35,11 @@ export function withToolbar<
   return forwardRef<E, P>(function WithToolbarWrapper(props, ref) {
     const { element } = props;
     const editor = useSlateStatic();
+    const { toolbar } = useEditorConfig();
     const isSelected = useGetIsSelected(element);
     const isReadonly = ReactEditor.isReadOnly(editor);
 
-    if (isReadonly) {
+    if (isReadonly || !toolbar) {
       return <Component {...props} ref={ref} />;
     }
 

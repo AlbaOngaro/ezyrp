@@ -1,15 +1,40 @@
 import React, { forwardRef } from "react";
+import { RenderElementProps, useSlateStatic } from "slate-react";
+import { Editor } from "slate";
+import { useGetSlatePath } from "../../hooks/useGetSlatePath";
+import { mergeRefs } from "lib/utils/mergeRefs";
+import { ColumnElement } from "types/slate";
+import { ResizableHandle, ResizablePanel } from "components/atoms/resizable";
 
-type RootProps = React.ComponentPropsWithoutRef<"td">;
+interface Props extends RenderElementProps {
+  element: ColumnElement;
+}
 
-export type ColumnProps = RootProps;
+export const Column = forwardRef<HTMLTableDataCellElement, Props>(
+  function Column(
+    { element, children, attributes: { ref: slateRef, ...slateAttributes } },
+    ref,
+  ) {
+    const { style, width } = element;
+    const editor = useSlateStatic();
+    const path = useGetSlatePath(element);
 
-export const Column = forwardRef<HTMLTableDataCellElement, ColumnProps>(
-  function Column({ children, style, ...props }, ref) {
+    const hasNextSibling = !!Editor.next(editor, { at: path });
+
     return (
-      <td {...props} data-id="__react-email-column" ref={ref} style={style}>
-        {children}
-      </td>
+      <>
+        <ResizablePanel
+          className="px-8"
+          ref={mergeRefs(slateRef, ref)}
+          style={style}
+          tagName="td"
+          defaultSize={width}
+          {...slateAttributes}
+        >
+          {children}
+        </ResizablePanel>
+        {hasNextSibling && <ResizableHandle withHandle />}
+      </>
     );
   },
 );

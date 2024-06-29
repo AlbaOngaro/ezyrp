@@ -17,6 +17,7 @@ import { Form } from "@radix-ui/react-form";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { useEditorConfig } from "../../context";
 import { PropertiesForm } from "./poperties-form";
 import { Options } from "./types";
 import { Button } from "components/atoms/button";
@@ -35,10 +36,12 @@ export function withActionHandlers<
   E extends HTMLElement,
 >(
   Component: ForwardRefExoticComponent<P & RefAttributes<E>>,
-  { editableFields }: Options = { editableFields: undefined },
+  { editableFields, exact = false, actionsClassName }: Options = {},
 ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<E>> {
   return forwardRef<E, P>(function WithActionHandlersWrapper(props, ref) {
     const editor = useSlateStatic();
+    const isReadOnly = ReactEditor.isReadOnly(editor);
+    const { dnd, actions } = useEditorConfig();
 
     const {
       attributes,
@@ -48,14 +51,16 @@ export function withActionHandlers<
       setActivatorNodeRef,
     } = useSortable({
       id: props.element.id,
-      disabled: ReactEditor.isReadOnly(editor),
+      disabled: isReadOnly || !dnd,
       data: props.element,
     });
 
     const path = useGetSlatePath(props.element);
-    const isSelected = useGetIsSelected(props.element);
+    const isSelected = useGetIsSelected(props.element, {
+      exact,
+    });
 
-    if (ReactEditor.isReadOnly(editor)) {
+    if (isReadOnly || !actions) {
       return <Component {...props} ref={ref} />;
     }
 
@@ -97,20 +102,23 @@ export function withActionHandlers<
             id="actions"
             className={cn(
               "hidden group-hover:flex hover:flex flex-col gap-2 absolute top-0 -right-8",
+              actionsClassName,
               {
                 flex: isSelected,
               },
             )}
           >
-            <Button
-              ref={setActivatorNodeRef}
-              size="icon"
-              variant="outline"
-              className="w-6 h-6"
-              {...listeners}
-            >
-              <Move className="w-4 h-4" />
-            </Button>
+            {dnd && (
+              <Button
+                ref={setActivatorNodeRef}
+                size="icon"
+                variant="outline"
+                className="w-6 h-6"
+                {...listeners}
+              >
+                <Move className="w-4 h-4" />
+              </Button>
+            )}
 
             {editableFields && (
               <>

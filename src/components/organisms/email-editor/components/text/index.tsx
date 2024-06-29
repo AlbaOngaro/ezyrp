@@ -23,9 +23,10 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   ref,
 ) {
   const { style } = element;
-
   const editor = useSlateStatic();
-  const isSelected = useGetIsSelected(element);
+  const isSelected = useGetIsSelected(element, {
+    exact: true,
+  });
 
   if (ReactEditor.isReadOnly(editor)) {
     return (
@@ -45,10 +46,13 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
 
   return (
     <p
-      className={cn({
-        "outline outline-offset-2 outline-blue-500 outline-2 rounded-[1px]":
-          isSelected,
-      })}
+      className={cn(
+        "paragraph hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
+        {
+          "hover:bg-transparent outline outline-2 outline-green-300":
+            isSelected,
+        },
+      )}
       style={{
         fontSize: "14px",
         lineHeight: "24px",

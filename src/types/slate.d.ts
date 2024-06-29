@@ -21,8 +21,21 @@ interface ButtonElement extends BaseElement {
   children: CustomText[];
 }
 
+interface SectionElement extends BaseElement {
+  type: "section";
+  contents: CustomElement[];
+  children: [{ text: "" }];
+}
+
+interface RowElement extends BaseElement {
+  type: "row";
+  columns: ColumnElement[];
+  children: [{ text: "" }];
+}
+
 interface ColumnElement extends BaseElement {
   type: "column";
+  width: number;
   children: CustomElement[];
 }
 
@@ -50,11 +63,6 @@ interface LinkElement extends BaseElement {
   children: CustomText[];
 }
 
-interface RowElement extends BaseElement {
-  type: "row";
-  children: CustomElement[];
-}
-
 interface HeadingElement extends BaseElement {
   tye: "heading";
   children: CustomText[];
@@ -69,9 +77,15 @@ type CustomElement =
   | ImgElement
   | LinkElement
   | RowElement
-  | HeadingElement;
+  | HeadingElement
+  | SectionElement;
 
-type CustomText = { text: string; bold?: boolean; italic?: boolean };
+type CustomText = {
+  text: string;
+  void?: boolean;
+  bold?: boolean;
+  italic?: boolean;
+};
 
 declare module "slate" {
   interface CustomTypes {

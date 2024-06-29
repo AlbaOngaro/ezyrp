@@ -13,6 +13,8 @@ export function useOnValueChange(
   const updateEmail = useMutation(api.emails.update);
 
   return debounce(async (body: Descendant[]) => {
+    console.log("root onValueChange", body);
+
     if (autoSave) {
       try {
         await updateEmail({ id, body });

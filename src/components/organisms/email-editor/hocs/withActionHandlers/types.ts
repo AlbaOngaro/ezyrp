@@ -72,5 +72,7 @@ export type EditableFields = {
 };
 
 export type Options = {
+  exact?: boolean;
   editableFields?: EditableFields;
+  actionsClassName?: string;
 };

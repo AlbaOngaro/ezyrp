@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { DraggableButton } from "./draggable-button";
 import { DraggableImg } from "./draggable-image";
 import { DraggableSeparator } from "./draggable-separator";
+import { DraggableColumns } from "./draggable-columns";
 import { H4 } from "components/atoms/typography";
 
 type Props = {
@@ -27,6 +28,7 @@ export function Sidebar({ container }: Props) {
           <DraggableButton />
           <DraggableImg />
           <DraggableSeparator />
+          <DraggableColumns />
         </div>
       </Fragment>
     </Portal.Root>

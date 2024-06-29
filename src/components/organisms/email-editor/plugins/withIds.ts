@@ -1,5 +1,6 @@
 import { Editor, Element, Transforms } from "slate";
-import { validate, v4 as uuid } from "uuid";
+import { validate } from "uuid";
+import { getValidUuid } from "lib/utils/getValidUuid";
 
 export function withIds(editor: Editor) {
   const { normalizeNode } = editor;
@@ -11,7 +12,7 @@ export function withIds(editor: Editor) {
       const { skipUpdate = false } = node;
 
       if ((!node.id || !validate(node.id)) && !skipUpdate) {
-        Transforms.setNodes(editor, { id: uuid() }, { at: path });
+        Transforms.setNodes(editor, { id: getValidUuid() }, { at: path });
         return;
       }
     }
