@@ -127,7 +127,9 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
     return (
       <div
         className={cn(
-          "relative w-[calc(100%+8rem)] -ml-16 px-16 [&:not(:has(.paragraph:hover,.paragraph.selected))]:hover:bg-purple-50 [&:not(:has(.paragraph:hover,.paragraph.selected))]:hover:outline [&:not(:has(.paragraph:hover,.paragraph.selected))]:hover:outline-purple-300",
+          "relative w-[calc(100%+8rem)] -ml-16 px-16 py-4",
+          "[&:not(:has(.paragraph:hover))]:hover:bg-purple-50 [&:not(:has(.paragraph:hover))]:hover:outline [&:not(:has(.paragraph:hover))]:hover:outline-purple-300",
+          "[&:not(:has(.paragraph:hover)):hover>table]:outline [&:not(:has(.paragraph:hover)):hover>table]:outline-purple-200",
           {
             "hover:bg-transparent outline outline-2 outline-purple-300":
               isSelected,
@@ -175,7 +177,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         </table>
 
         {isSelected && (
-          <footer className="flex flex-row justify-center">
+          <footer className="absolute left-0 right-0 -bottom-3 flex flex-row justify-center">
             <Button
               size="icon"
               variant="outline"
