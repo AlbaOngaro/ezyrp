@@ -49,7 +49,7 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
       className={cn(
         "paragraph hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
         {
-          "selected hover:bg-transparent outline outline-2 outline-green-300":
+          "hover:bg-transparent outline outline-2 outline-green-300":
             isSelected,
         },
       )}

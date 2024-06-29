@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import {
   Editable,
   ReactEditor,
@@ -13,16 +7,7 @@ import {
   useSlateStatic,
   withReact,
 } from "slate-react";
-import { Plus } from "lucide-react";
-import {
-  createEditor,
-  Transforms,
-  Location,
-  Path,
-  Descendant,
-  Element,
-} from "slate";
-import { v4 as uuid, validate } from "uuid";
+import { createEditor, Transforms, Location, Descendant, Element } from "slate";
 
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
@@ -35,9 +20,9 @@ import { useRenderElement } from "../../hooks/useRenderElement";
 import { useRenderLeaf } from "../../hooks/useRenderLeaf";
 import { EditorConfigProvider } from "../../context";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
-import { Button } from "components/atoms/button";
 import { CustomElement, SectionElement } from "types/slate";
 import { cn } from "lib/utils/cn";
+import { useClickOutsideRect } from "hooks/useClickOutsideRect";
 
 interface Props extends RenderElementProps {
   element: SectionElement;
@@ -55,6 +40,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
     const renderLeaf = useRenderLeaf();
     const path = useGetSlatePath(element);
     const renderElement = useRenderElement();
+    const tr = useRef<HTMLTableRowElement | null>(null);
     const isSelected = useGetIsSelected(element, {
       exact: true,
     });
@@ -62,17 +48,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
       withColumns(withHr(withImages(withIds(withReact(createEditor()))))),
     );
 
-    const [hasSelection, setHasSelection] = useState(false);
-
-    useEffect(() => {
-      if (
-        !Location.isLocation(parent.selection) ||
-        !Path.isDescendant(path, parent.selection.anchor.path)
-      ) {
-        editor.deselect();
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [parent.selection]);
+    useClickOutsideRect(tr, () => editor.deselect());
 
     const { style, contents } = element;
     const isReadOnly = ReactEditor.isReadOnly(parent);
@@ -90,27 +66,6 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         }
       },
       [parent, path],
-    );
-
-    const addNewSection = useCallback(
-      (e: MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        Transforms.insertNodes(
-          parent,
-          {
-            id: uuid(),
-            type: "section",
-            contents: [
-              { id: uuid(), type: "paragraph", children: [{ text: "" }] },
-            ],
-            children: [{ text: "" }],
-          },
-          { at: Path.next(path) },
-        );
-      },
-      [path, parent],
     );
 
     if (isReadOnly) {
@@ -140,7 +95,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
           "relative w-[calc(100%+8rem)] -ml-16 px-16 [&:not(:has(.paragraph:hover,.paragraph.selected))]:hover:bg-purple-50 [&:not(:has(.paragraph:hover,.paragraph.selected))]:hover:outline [&:not(:has(.paragraph:hover,.paragraph.selected))]:hover:outline-purple-300",
           {
             "hover:bg-transparent outline outline-2 outline-purple-300":
-              isSelected && !hasSelection,
+              isSelected,
           },
         )}
         {...attributes}
@@ -158,15 +113,17 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
           ref={ref}
         >
           <tbody>
-            <tr>
+            <tr ref={tr}>
               <EditorConfigProvider dnd={false} actions={false} toolbar={false}>
                 <Slate
                   editor={editor}
                   initialValue={contents}
                   onValueChange={onValueChange}
-                  onSelectionChange={(selection) =>
-                    setHasSelection(Location.isLocation(selection))
-                  }
+                  onSelectionChange={(selection) => {
+                    if (Location.isLocation(selection)) {
+                      parent.deselect();
+                    }
+                  }}
                 >
                   <Editable
                     as="td"
@@ -181,24 +138,13 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
             </tr>
           </tbody>
         </table>
-
-        {/* {isSelected && (
-          <footer className="flex flex-row justify-center">
-            <Button
-              size="icon"
-              variant="outline"
-              className="w-6 h-6"
-              onClick={addNewSection}
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-          </footer>
-        )} */}
       </div>
     );
   },
 );
 
-const EnhancedSection = withActionHandlers(Section);
+const EnhancedSection = withActionHandlers(Section, {
+  exact: true,
+});
 
 export { EnhancedSection as Section };

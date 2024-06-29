@@ -36,7 +36,7 @@ export function withActionHandlers<
   E extends HTMLElement,
 >(
   Component: ForwardRefExoticComponent<P & RefAttributes<E>>,
-  { editableFields }: Options = { editableFields: undefined },
+  { editableFields, exact = false }: Options = {},
 ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<E>> {
   return forwardRef<E, P>(function WithActionHandlersWrapper(props, ref) {
     const editor = useSlateStatic();
@@ -56,7 +56,9 @@ export function withActionHandlers<
     });
 
     const path = useGetSlatePath(props.element);
-    const isSelected = useGetIsSelected(props.element);
+    const isSelected = useGetIsSelected(props.element, {
+      exact,
+    });
 
     if (isReadOnly || !actions) {
       return <Component {...props} ref={ref} />;
