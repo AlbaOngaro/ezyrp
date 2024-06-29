@@ -1,10 +1,10 @@
 import { PropsWithChildren } from "react";
-import { v4 as uuid } from "uuid";
 
 import { Columns2 } from "lucide-react";
 import { DraggableWrapper } from "./draggable-wrapper";
 import { RowElement } from "types/slate";
 import { Card } from "components/atoms/card";
+import { getValidUuid } from "lib/utils/getValidUuid";
 
 type Props = PropsWithChildren<{
   disabled?: boolean;
@@ -16,19 +16,27 @@ const DATA = {
   type: "row",
   columns: [
     {
-      id: uuid(),
+      id: getValidUuid(),
       type: "column",
       width: 50,
       children: [
-        { id: uuid(), type: "paragraph", children: [{ text: "Column 1" }] },
+        {
+          id: getValidUuid(),
+          type: "paragraph",
+          children: [{ text: "Column 1" }],
+        },
       ],
     },
     {
-      id: uuid(),
+      id: getValidUuid(),
       width: 50,
       type: "column",
       children: [
-        { id: uuid(), type: "paragraph", children: [{ text: "Column 2" }] },
+        {
+          id: getValidUuid(),
+          type: "paragraph",
+          children: [{ text: "Column 2" }],
+        },
       ],
     },
   ],

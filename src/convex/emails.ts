@@ -1,8 +1,7 @@
 import { ConvexError, v } from "convex/values";
-import { v4 as uuid, validate } from "uuid";
 
 import { mutation, query } from "./_generated/server";
-import { getAuthData } from "./utils";
+import { getAuthData, getValidUuid } from "./utils";
 
 export const get = query({
   args: {
@@ -36,15 +35,6 @@ export const list = query({
   },
 });
 
-function getValidUuid() {
-  const id = uuid();
-  if (!validate(id)) {
-    return getValidUuid();
-  }
-
-  return id;
-}
-
 export const create = mutation({
   args: {
     title: v.optional(v.string()),
@@ -53,12 +43,7 @@ export const create = mutation({
     const { workspace } = await getAuthData(ctx);
 
     const sid = getValidUuid();
-    const isValid = validate(sid);
-    console.log(sid, isValid);
-
     const pid = getValidUuid();
-    const isValid2 = validate(pid);
-    console.log(pid, isValid2);
 
     const id = await ctx.db.insert("emails", {
       title,

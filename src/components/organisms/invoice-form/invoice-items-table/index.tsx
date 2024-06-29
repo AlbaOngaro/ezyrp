@@ -13,6 +13,7 @@ import { useItems } from "hooks/useItems";
 import { Id } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
 import { cn } from "lib/utils/cn";
+import { getValidUuid } from "lib/utils/getValidUuid";
 
 type Props = {
   disabled?: boolean;
@@ -122,8 +123,8 @@ export function InvoiceItemsTable({ disabled }: Props) {
                   item.onetime
                     ? undefined
                     : {
-                        rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
-                      }
+                      rangeOverflow: `You don't have enough of this item in stock (${item.quantity} in stock)`,
+                    }
                 }
               />
 
@@ -156,7 +157,7 @@ export function InvoiceItemsTable({ disabled }: Props) {
 
             append({
               workspace: "",
-              _id: uuid() as Id<"items">,
+              _id: getValidUuid() as Id<"items">,
               _creationTime: 0,
               name: "",
               price: 0,
