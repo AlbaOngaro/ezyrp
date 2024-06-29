@@ -36,10 +36,13 @@ const Heading = forwardRef<HTMLHeadingElement, Props>(function Heading(
     <Slot {...attributes} style={style}>
       <Tag
         ref={ref}
-        className={cn("py-4", {
-          "outline outline-offset-2 outline-blue-500 outline-2 rounded-[1px]":
-            isSelected,
-        })}
+        className={cn(
+          "element hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
+          {
+            "hover:bg-transparent outline outline-2 outline-green-300":
+              isSelected,
+          },
+        )}
       >
         {children}
       </Tag>

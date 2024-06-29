@@ -17,6 +17,7 @@ import {
 import { CustomElement } from "types/slate";
 
 type Options<E extends CustomElement> = {
+  exact?: boolean;
   renderToolbar: (element: E) => JSX.Element;
 };
 
@@ -30,13 +31,17 @@ export function withToolbar<
   O extends CustomElement,
 >(
   Component: ForwardRefExoticComponent<P & RefAttributes<E>>,
-  { renderToolbar }: Options<O> = { renderToolbar: defaultRenderToolBar },
+  { renderToolbar, exact = false }: Options<O> = {
+    renderToolbar: defaultRenderToolBar,
+  },
 ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<E>> {
   return forwardRef<E, P>(function WithToolbarWrapper(props, ref) {
     const { element } = props;
     const editor = useSlateStatic();
     const { toolbar } = useEditorConfig();
-    const isSelected = useGetIsSelected(element);
+    const isSelected = useGetIsSelected(element, {
+      exact,
+    });
     const isReadonly = ReactEditor.isReadOnly(editor);
 
     if (isReadonly || !toolbar) {

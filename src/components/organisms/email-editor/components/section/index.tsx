@@ -133,8 +133,8 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
       <div
         className={cn(
           "relative w-[calc(100%+8rem)] -ml-16 px-16 py-4",
-          "[&:not(:has(.paragraph:hover))]:hover:bg-purple-50 [&:not(:has(.paragraph:hover))]:hover:outline [&:not(:has(.paragraph:hover))]:hover:outline-purple-300",
-          "[&:not(:has(.paragraph:hover)):hover>table]:outline [&:not(:has(.paragraph:hover)):hover>table]:outline-purple-200",
+          "[&:not(:has(.element:hover))]:hover:bg-purple-50 [&:not(:has(.element:hover))]:hover:outline [&:not(:has(.element:hover))]:hover:outline-purple-300",
+          "[&:not(:has(.element:hover)):hover>table]:outline [&:not(:has(.element:hover)):hover>table]:outline-purple-200",
           {
             "hover:bg-transparent outline outline-2 outline-purple-300":
               isSelected,
@@ -143,7 +143,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         {...attributes}
         contentEditable={false}
         onMouseDown={(e) => {
-          if (e?.target?.classList?.contains("drag-handle")) {
+          if ((e?.target as HTMLElement)?.classList?.contains("drag-handle")) {
             e.stopPropagation();
             e.preventDefault();
           }
@@ -162,7 +162,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         >
           <tbody>
             <tr ref={tr}>
-              <EditorConfigProvider toolbar={false}>
+              <EditorConfigProvider>
                 <ParentEditorProvider parent={parent}>
                   <Slate
                     editor={editor}
