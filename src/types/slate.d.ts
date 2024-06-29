@@ -23,7 +23,8 @@ interface ButtonElement extends BaseElement {
 
 interface SectionElement extends BaseElement {
   type: "section";
-  children: CustomElement[];
+  contents: CustomElement[];
+  children: [{ text: "" }];
 }
 
 interface RowElement extends BaseElement {
