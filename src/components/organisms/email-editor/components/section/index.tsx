@@ -191,7 +191,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         </table>
 
         {isSelected && (
-          <footer className="absolute left-0 right-0 -bottom-3 flex flex-row justify-center">
+          <footer className="absolute z-10 left-0 right-0 -bottom-3 flex flex-row justify-center">
             <Button
               size="icon"
               variant="outline"
