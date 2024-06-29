@@ -7,7 +7,7 @@ import {
 } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
-import { useEditorConfig } from "../../context";
+import { useEditorConfig } from "../../providers/config";
 import {
   Popover,
   PopoverAnchor,

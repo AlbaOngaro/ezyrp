@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useRef, useState, MouseEvent } from "react";
 import {
-  Editable,
+  Editable as SlateEditable,
   ReactEditor,
   RenderElementProps,
   Slate,
@@ -26,8 +26,10 @@ import { withColumns } from "../../plugins/wihtColumns";
 
 import { useRenderElement } from "../../hooks/useRenderElement";
 import { useRenderLeaf } from "../../hooks/useRenderLeaf";
-import { EditorConfigProvider } from "../../context";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
+import { EditorConfigProvider } from "../../providers/config";
+import { ParentEditorProvider } from "../../providers/parent-editor";
+import { Editable } from "./editable";
 import { CustomElement, SectionElement } from "types/slate";
 import { cn } from "lib/utils/cn";
 import { useClickOutsideRect } from "hooks/useClickOutsideRect";
@@ -152,25 +154,28 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
           <tbody>
             <tr ref={tr}>
               <EditorConfigProvider dnd={false} actions={false} toolbar={false}>
-                <Slate
-                  editor={editor}
-                  initialValue={contents}
-                  onValueChange={onValueChange}
-                  onSelectionChange={(selection) => {
-                    if (Location.isLocation(selection)) {
-                      parent.deselect();
-                    }
-                  }}
-                >
-                  <Editable
-                    as="td"
-                    className="focus-within:outline-none"
-                    readOnly={isReadOnly}
-                    renderLeaf={renderLeaf}
-                    renderElement={renderElement}
-                    onFocus={() => Transforms.select(parent, [...path, 0])}
-                  />
-                </Slate>
+                <ParentEditorProvider parent={parent}>
+                  <Slate
+                    editor={editor}
+                    initialValue={contents}
+                    onValueChange={onValueChange}
+                    onSelectionChange={(selection) => {
+                      if (Location.isLocation(selection)) {
+                        parent.deselect();
+                      }
+                    }}
+                  >
+                    <SlateEditable
+                      as={Editable}
+                      className="focus-within:outline-none"
+                      readOnly={isReadOnly}
+                      renderLeaf={renderLeaf}
+                      renderElement={renderElement}
+                      onFocus={() => Transforms.select(parent, [...path, 0])}
+                      id={element.id}
+                    />
+                  </Slate>
+                </ParentEditorProvider>
               </EditorConfigProvider>
             </tr>
           </tbody>

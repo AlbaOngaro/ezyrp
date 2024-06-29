@@ -17,7 +17,7 @@ import { Form } from "@radix-ui/react-form";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
-import { useEditorConfig } from "../../context";
+import { useEditorConfig } from "../../providers/config";
 import { PropertiesForm } from "./poperties-form";
 import { Options } from "./types";
 import { Button } from "components/atoms/button";

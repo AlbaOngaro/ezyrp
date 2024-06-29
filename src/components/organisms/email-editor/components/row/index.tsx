@@ -17,8 +17,7 @@ import { useOnKeyDown } from "../../hooks/useOnKeyDown";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 
-import { EditorConfigProvider } from "../../context";
-
+import { EditorConfigProvider } from "../../providers/config";
 import { isColumnElementArray, Props } from "./types";
 import { Editable } from "./editable";
 import { ColumnsWidthEditableFields } from "./editable-fields";
