@@ -11,6 +11,7 @@ import {
   Link,
   Row,
 } from "../components";
+import { Section } from "../components/section";
 
 export function useRenderElement() {
   return useCallback(
@@ -57,6 +58,13 @@ export function useRenderElement() {
             <Heading attributes={attributes} element={element}>
               {children}
             </Heading>
+          );
+        }
+        case "section": {
+          return (
+            <Section attributes={attributes} element={element}>
+              {children}
+            </Section>
           );
         }
         default:

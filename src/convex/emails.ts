@@ -1,5 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { v4 as uuid } from "uuid";
+
 import { mutation, query } from "./_generated/server";
 import { getAuthData } from "./utils";
 
@@ -48,12 +49,19 @@ export const create = mutation({
       body: [
         {
           id: uuid(),
-          type: "paragraph",
-          style: {
-            fontSize: "16px",
-            lineHeight: "26px",
-          },
-          children: [{ text: "" }],
+          type: "section",
+          children: [
+            { text: "" },
+            {
+              id: uuid(),
+              type: "paragraph",
+              style: {
+                fontSize: "16px",
+                lineHeight: "26px",
+              },
+              children: [{ text: "" }],
+            },
+          ],
         },
       ],
     });

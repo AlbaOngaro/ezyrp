@@ -13,6 +13,7 @@ import { useOnValueChange } from "./hooks/useOnValueChange";
 import { Editable } from "./editable";
 import { useRenderLeaf } from "./hooks/useRenderLeaf";
 import { withColumns } from "./plugins/wihtColumns";
+import { withSections } from "./plugins/withSections";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { cn } from "lib/utils/cn";
 
@@ -55,7 +56,7 @@ function EditMode({
   const renderLeaf = useRenderLeaf();
   const renderElement = useRenderElement();
   const onValueChange = useOnValueChange(id, {
-    autoSave: true,
+    autoSave: false,
   });
 
   return (
@@ -81,7 +82,9 @@ function EditMode({
 
 export function EmailEditor({ email, readOnly = false }: Props) {
   const [editor] = useState(() =>
-    withColumns(withHr(withImages(withIds(withReact(createEditor()))))),
+    withSections(
+      withColumns(withHr(withImages(withIds(withReact(createEditor()))))),
+    ),
   );
 
   if (readOnly) {
