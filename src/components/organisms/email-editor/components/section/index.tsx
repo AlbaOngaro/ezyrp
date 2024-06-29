@@ -195,6 +195,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
 
 const EnhancedSection = withActionHandlers(Section, {
   exact: true,
+  actionsClassName: "top-4",
 });
 
 export { EnhancedSection as Section };

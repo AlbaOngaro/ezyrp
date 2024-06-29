@@ -36,7 +36,7 @@ export function withActionHandlers<
   E extends HTMLElement,
 >(
   Component: ForwardRefExoticComponent<P & RefAttributes<E>>,
-  { editableFields, exact = false }: Options = {},
+  { editableFields, exact = false, actionsClassName }: Options = {},
 ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<E>> {
   return forwardRef<E, P>(function WithActionHandlersWrapper(props, ref) {
     const editor = useSlateStatic();
@@ -102,6 +102,7 @@ export function withActionHandlers<
             id="actions"
             className={cn(
               "hidden group-hover:flex hover:flex flex-col gap-2 absolute top-0 -right-8",
+              actionsClassName,
               {
                 flex: isSelected,
               },
