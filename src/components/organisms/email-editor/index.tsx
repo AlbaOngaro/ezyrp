@@ -56,7 +56,7 @@ function EditMode({
   const renderLeaf = useRenderLeaf();
   const renderElement = useRenderElement();
   const onValueChange = useOnValueChange(id, {
-    autoSave: false,
+    autoSave: true,
   });
 
   return (

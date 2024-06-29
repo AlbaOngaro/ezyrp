@@ -74,7 +74,7 @@ const Row = forwardRef<any, Props>(function Row(
         ref={mergeRefs(slateRef, ref)}
       >
         {children}
-        <EditorConfigProvider dnd={false} actions toolbar={false}>
+        <EditorConfigProvider dnd={false} toolbar={false}>
           <Slate
             editor={editor}
             initialValue={initialValue}

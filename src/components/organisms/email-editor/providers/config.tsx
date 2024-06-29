@@ -12,13 +12,13 @@ const EditorConfigContext = createContext<EditorConfig>({
   actions: true,
 });
 
-type Props = PropsWithChildren<EditorConfig>;
+type Props = PropsWithChildren<Partial<EditorConfig>>;
 
 export function EditorConfigProvider({
   children,
-  dnd,
-  actions,
-  toolbar,
+  dnd = true,
+  actions = true,
+  toolbar = true,
 }: Props) {
   return (
     <EditorConfigContext.Provider value={{ dnd, actions, toolbar }}>

@@ -1,6 +1,7 @@
 import isHotkey from "is-hotkey";
 import { Editor, Transforms } from "slate";
 import { KeyboardEvent } from "react";
+import { getValidUuid } from "lib/utils/getValidUuid";
 
 export function useOnKeyDown(editor: Editor) {
   return (event: KeyboardEvent) => {
@@ -13,7 +14,7 @@ export function useOnKeyDown(editor: Editor) {
     if (isHotkey("enter")(event)) {
       event.preventDefault();
       Transforms.insertNodes(editor, {
-        id: Math.random().toString(36).substr(2, 9),
+        id: getValidUuid(),
         type: "paragraph",
         children: [{ text: "" }],
       });

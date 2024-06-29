@@ -101,6 +101,7 @@ export function withActionHandlers<
           <div
             id="actions"
             className={cn(
+              "actions",
               "hidden group-hover:flex hover:flex flex-col gap-2 absolute top-0 -right-8",
               actionsClassName,
               {
@@ -113,10 +114,10 @@ export function withActionHandlers<
                 ref={setActivatorNodeRef}
                 size="icon"
                 variant="outline"
-                className="w-6 h-6"
+                className="drag-handle w-6 h-6"
                 {...listeners}
               >
-                <Move className="w-4 h-4" />
+                <Move className="pointer-events-none w-4 h-4" />
               </Button>
             )}
 

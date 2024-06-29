@@ -8,6 +8,7 @@ import {
 import { EditableProps } from "slate-react/dist/components/editable";
 import { ReactEditor, useSlateStatic } from "slate-react";
 import { Sidebar } from "../sidebar";
+import { EditorConfigProvider } from "../providers/config";
 import { useOnDragEnd } from "./hooks/useOnDragEnd";
 import { useGetSortableItems } from "./hooks/useGetSortableItems";
 import { useGetSidebarContainer } from "./hooks/useGetSidebarContainer";
@@ -58,23 +59,25 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
         <tbody ref={body}>
           <tr style={{ width: "100%" }}>
             <td ref={setNodeRef}>
-              <DndContext
-                onDragEnd={(e) => {
-                  key.current = key.current + 1;
-                  onDragEnd(e);
-                }}
-                onDragOver={onDragOver}
-              >
-                <SortableContext
-                  items={items}
-                  strategy={verticalListSortingStrategy}
+              <EditorConfigProvider>
+                <DndContext
+                  onDragEnd={(e) => {
+                    key.current = key.current + 1;
+                    onDragEnd(e);
+                  }}
+                  onDragOver={onDragOver}
                 >
-                  {children}
-                  {container ? (
-                    <Sidebar key={key.current} container={container} />
-                  ) : null}
-                </SortableContext>
-              </DndContext>
+                  <SortableContext
+                    items={items}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {children}
+                    {container ? (
+                      <Sidebar key={key.current} container={container} />
+                    ) : null}
+                  </SortableContext>
+                </DndContext>
+              </EditorConfigProvider>
             </td>
           </tr>
         </tbody>
