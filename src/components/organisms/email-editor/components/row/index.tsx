@@ -107,7 +107,7 @@ const Row = forwardRef<any, Props>(function Row(
         ref={ref}
       >
         <tbody style={{ width: "100%" }} ref={tbody}>
-          <EditorConfigProvider toolbar={false}>
+          <EditorConfigProvider dnd={false}>
             <Slate
               editor={editor}
               initialValue={initialValue}
