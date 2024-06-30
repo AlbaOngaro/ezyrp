@@ -45,6 +45,7 @@ const Img = forwardRef<any, Props>(function Img(
     const {
       justifyContent = "center",
       alignItems = "center",
+      objectFit = "contain",
       ...additionalStyles
     } = style || {};
 
@@ -55,6 +56,7 @@ const Img = forwardRef<any, Props>(function Img(
           src={src}
           style={{
             display: "block",
+            objectFit,
             ...(additionalStyles || {}),
           }}
         />

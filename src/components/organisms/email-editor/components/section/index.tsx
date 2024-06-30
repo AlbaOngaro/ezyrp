@@ -127,7 +127,14 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         >
           <tbody>
             <tr>
-              <td>{children}</td>
+              <Slate editor={editor} initialValue={contents}>
+                <SlateEditable
+                  as="td"
+                  readOnly={isReadOnly}
+                  renderLeaf={renderLeaf}
+                  renderElement={renderElement}
+                />
+              </Slate>
             </tr>
           </tbody>
         </table>
