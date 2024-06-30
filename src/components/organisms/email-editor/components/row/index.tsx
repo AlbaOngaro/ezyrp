@@ -22,6 +22,7 @@ import { isColumnElementArray, Props } from "./types";
 import { Editable } from "./editable";
 import { ColumnsWidthEditableFields } from "./editable-fields";
 import { mergeRefs } from "lib/utils/mergeRefs";
+import { cn } from "lib/utils/cn";
 
 const Row = forwardRef<any, Props>(function Row(
   { element, attributes: { ref: slateRef, ...slateAttributes }, children },
@@ -66,6 +67,9 @@ const Row = forwardRef<any, Props>(function Row(
       role="presentation"
       style={style}
       ref={ref}
+      className={cn(
+        "element hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
+      )}
     >
       <tbody
         style={{ width: "100%" }}
