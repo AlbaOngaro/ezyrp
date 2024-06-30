@@ -80,10 +80,13 @@ const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
       })}
       target={target}
       ref={mergeRefs(ref, slateRef)}
-      className={cn("py-4", {
-        "outline outline-offset-2 outline-blue-500 outline-2 rounded-[1px]":
-          isSelected,
-      })}
+      className={cn(
+        "element hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
+        {
+          "hover:bg-transparent outline outline-2 outline-green-300":
+            isSelected,
+        },
+      )}
       {...slateAttributes}
       {...rest}
     >

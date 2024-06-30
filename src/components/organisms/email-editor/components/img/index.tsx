@@ -71,7 +71,18 @@ const Img = forwardRef<any, Props>(function Img(
   } = style || {};
 
   return (
-    <Form contentEditable={false} ref={slateRef} {...slateAttributes}>
+    <Form
+      contentEditable={false}
+      ref={slateRef}
+      {...slateAttributes}
+      className={cn(
+        "element hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
+        {
+          "hover:bg-transparent outline outline-2 outline-green-300":
+            isSelected,
+        },
+      )}
+    >
       <Input
         name="img"
         type="file"
@@ -137,33 +148,6 @@ const Img = forwardRef<any, Props>(function Img(
       </Input>
     </Form>
   );
-
-  // const { style, alt } = element;
-  // const {
-  //   justifyContent = "center",
-  //   alignItems = "center",
-  //   ...additionalStyles
-  // } = style || {};
-
-  // return (
-  //   <picture
-  //     style={{ display: "flex", justifyContent, alignItems }}
-  //     contentEditable={false}
-  //     ref={mergeRefs(slateRef, ref)}
-  //     {...slateAttributes}
-  //     {...rest}
-  //   >
-  //     <img
-  //       alt={alt}
-  //       src={src}
-  // style={{
-  //   display: "block",
-  //   ...(additionalStyles || {}),
-  // }}
-  //     />
-  //     {children}
-  //   </picture>
-  // );
 });
 
 const EnhancedImg = withToolbar(
