@@ -1,9 +1,14 @@
 import { forwardRef, TextareaHTMLAttributes } from "react";
 import { EditableProps } from "slate-react/dist/components/editable";
-import { DndContext, useDroppable } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
+import { useDroppable, useDndMonitor } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
 import { useGetSortableItems } from "../../editable/hooks/useGetSortableItems";
 import { useOnDragEnd } from "../../editable/hooks/useOnDragEnd";
+
 import { mergeRefs } from "lib/utils/mergeRefs";
 
 type Props = Omit<EditableProps, "onChange" | "id"> &
@@ -17,14 +22,21 @@ export const Editable = forwardRef<HTMLTableDataCellElement, Props>(
       id,
     });
 
-    const items = useGetSortableItems();
     const onDragEnd = useOnDragEnd();
+    const items = useGetSortableItems();
+
+    useDndMonitor({
+      onDragEnd,
+      onDragOver: (e) => {
+        console.log("dragging over", e);
+      },
+    });
 
     return (
       <td {...rest} ref={mergeRefs(ref, setNodeRef)}>
-        <DndContext onDragEnd={onDragEnd}>
-          <SortableContext items={items}>{children}</SortableContext>
-        </DndContext>
+        <SortableContext items={items} strategy={verticalListSortingStrategy}>
+          {children}
+        </SortableContext>
       </td>
     );
   },

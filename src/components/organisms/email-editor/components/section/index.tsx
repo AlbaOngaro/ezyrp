@@ -63,7 +63,11 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
 
     const onKeyDown = useOnKeyDown(editor);
 
-    useClickOutsideRect(tr, () => editor.deselect());
+    useClickOutsideRect(tr, (e) => {
+      if (!e.defaultPrevented) {
+        editor.deselect();
+      }
+    });
 
     const { style, contents } = element;
     const isReadOnly = ReactEditor.isReadOnly(parent);

@@ -42,6 +42,7 @@ export function withActionHandlers<
     const editor = useSlateStatic();
     const isReadOnly = ReactEditor.isReadOnly(editor);
     const { dnd, actions } = useEditorConfig();
+    const path = useGetSlatePath(props.element);
 
     const {
       attributes,
@@ -55,7 +56,6 @@ export function withActionHandlers<
       data: props.element,
     });
 
-    const path = useGetSlatePath(props.element);
     const isSelected = useGetIsSelected(props.element, {
       exact,
     });

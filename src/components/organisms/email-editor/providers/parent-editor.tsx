@@ -2,11 +2,10 @@ import { createContext, PropsWithChildren, useContext } from "react";
 import { Editor } from "slate";
 
 type ParentEditorContextValue = {
-  parent: Editor;
+  parent: Editor | null;
 };
 
 const ParentEditorContext = createContext<ParentEditorContextValue>({
-  // @ts-ignore
   parent: null,
 });
 

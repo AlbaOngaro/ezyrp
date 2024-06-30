@@ -6,13 +6,12 @@ import {
 } from "@dnd-kit/sortable";
 
 import { EditableProps } from "slate-react/dist/components/editable";
-import { ReactEditor, useSlateStatic } from "slate-react";
+import { useSlateStatic } from "slate-react";
 import { Sidebar } from "../sidebar";
 import { EditorConfigProvider } from "../providers/config";
 import { useOnDragEnd } from "./hooks/useOnDragEnd";
 import { useGetSortableItems } from "./hooks/useGetSortableItems";
 import { useGetSidebarContainer } from "./hooks/useGetSidebarContainer";
-import { useOnDragOver } from "./hooks/useOnDragOver";
 import { useClickOutsideRect } from "hooks/useClickOutsideRect";
 
 export const Editable = forwardRef<HTMLTableElement, EditableProps>(
@@ -23,8 +22,10 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
 
     useClickOutsideRect(
       body,
-      () => {
-        return ReactEditor.deselect(editor);
+      (e) => {
+        if (!e.defaultPrevented) {
+          editor.deselect();
+        }
       },
       {
         tolerance: 40,
@@ -36,7 +37,6 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
     });
 
     const onDragEnd = useOnDragEnd();
-    const onDragOver = useOnDragOver();
     const items = useGetSortableItems();
     const container = useGetSidebarContainer();
 
@@ -65,7 +65,6 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
                     key.current = key.current + 1;
                     onDragEnd(e);
                   }}
-                  onDragOver={onDragOver}
                 >
                   <SortableContext
                     items={items}
