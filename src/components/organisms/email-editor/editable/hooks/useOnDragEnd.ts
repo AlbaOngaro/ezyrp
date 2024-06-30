@@ -1,8 +1,7 @@
 import { useCallback } from "react";
 import { DragEndEvent } from "@dnd-kit/core";
 import { useSlateStatic } from "slate-react";
-import { Transforms, Element } from "slate";
-import { validate } from "uuid";
+import { Transforms } from "slate";
 import { useGetSortableItems } from "./useGetSortableItems";
 
 export function useOnDragEnd() {
@@ -35,11 +34,6 @@ export function useOnDragEnd() {
           console.error(err);
         }
       }
-
-      Transforms.removeNodes(editor, {
-        at: [],
-        match: (n) => Element.isElement(n) && !validate(n.id),
-      });
     },
     [editor, items],
   );

@@ -4,6 +4,7 @@ import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { withToolbar } from "../../hocs/withToolbar";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { withInsertPreview } from "../../hocs/withInsertPreview";
 import { renderToolbar } from "./toolbar";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ParagraphElement } from "types/slate";
@@ -69,8 +70,10 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
   );
 });
 
-const EnhancedText = withToolbar(withActionHandlers(Text), {
-  renderToolbar,
-});
+const EnhancedText = withInsertPreview(
+  withToolbar(withActionHandlers(Text), {
+    renderToolbar,
+  }),
+);
 
 export { EnhancedText as Text };

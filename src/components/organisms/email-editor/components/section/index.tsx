@@ -30,6 +30,7 @@ import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { EditorConfigProvider } from "../../providers/config";
 import { ParentEditorProvider } from "../../providers/parent-editor";
 import { useOnKeyDown } from "../../hooks/useOnKeyDown";
+import { withInsertPreview } from "../../hocs/withInsertPreview";
 import { Editable } from "./editable";
 import { CustomElement, SectionElement } from "types/slate";
 import { cn } from "lib/utils/cn";
@@ -166,7 +167,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         >
           <tbody>
             <tr ref={tr}>
-              <EditorConfigProvider>
+              <EditorConfigProvider toolbar={false}>
                 <ParentEditorProvider parent={parent}>
                   <Slate
                     editor={editor}
@@ -211,9 +212,11 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
   },
 );
 
-const EnhancedSection = withActionHandlers(Section, {
-  exact: true,
-  actionsClassName: "top-4",
-});
+const EnhancedSection = withInsertPreview(
+  withActionHandlers(Section, {
+    exact: true,
+    actionsClassName: "top-4",
+  }),
+);
 
 export { EnhancedSection as Section };

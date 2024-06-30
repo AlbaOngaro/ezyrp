@@ -4,18 +4,15 @@ import {
   PropsWithoutRef,
   RefAttributes,
   forwardRef,
-  useMemo,
 } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
-import { validate } from "uuid";
-import { Path, Transforms, Element } from "slate";
+import { Path, Transforms } from "slate";
 import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { Form } from "@radix-ui/react-form";
-import { Over, Active } from "@dnd-kit/core";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
@@ -34,22 +31,6 @@ import {
 } from "components/atoms/popover";
 import { cn } from "lib/utils/cn";
 
-function getSlateElementFromOver(over: Over | null): Element | null {
-  if (!over || !Element.isElement(over?.data?.current)) {
-    return null;
-  }
-
-  return over?.data?.current;
-}
-
-function getPreviewTop(active: Active | null, over: Over | null): number {
-  if (!over || !active) {
-    return 0;
-  }
-
-  return 0;
-}
-
 export function withActionHandlers<
   P extends RenderElementProps,
   E extends HTMLElement,
@@ -64,8 +45,6 @@ export function withActionHandlers<
     const path = useGetSlatePath(props.element);
 
     const {
-      over,
-      active,
       attributes,
       listeners,
       setNodeRef,
@@ -77,10 +56,6 @@ export function withActionHandlers<
       data: props.element,
     });
 
-    const overEl = getSlateElementFromOver(over);
-
-    const top = getPreviewTop(active, over);
-
     const isSelected = useGetIsSelected(props.element, {
       exact,
     });
@@ -89,30 +64,8 @@ export function withActionHandlers<
       return <Component {...props} ref={ref} />;
     }
 
-    if (!validate(props.element.id)) {
-      return (
-        <div
-          className="relative"
-          style={{
-            opacity: "0.5",
-            cursor: "default",
-            transform: transform
-              ? `translate3d(0, ${transform.y}px, 0)`
-              : "unset",
-          }}
-          {...attributes}
-        >
-          <Component {...props} ref={setNodeRef} />
-        </div>
-      );
-    }
-
     return (
       <Popover>
-        {overEl && overEl.id === props.element.id && (
-          <div className="h-1 w-full bg-blue-100" />
-        )}
-
         <div
           className="relative"
           style={{

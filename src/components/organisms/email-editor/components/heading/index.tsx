@@ -4,6 +4,7 @@ import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { withToolbar } from "../../hocs/withToolbar";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { withInsertPreview } from "../../hocs/withInsertPreview";
 import type { As, Margin } from "./utils";
 import { renderToolbar } from "./toolbar";
 import { HeadingElement } from "types/slate";
@@ -50,8 +51,10 @@ const Heading = forwardRef<HTMLHeadingElement, Props>(function Heading(
   );
 });
 
-const EnhancedHeading = withToolbar(withActionHandlers(Heading), {
-  renderToolbar,
-});
+const EnhancedHeading = withInsertPreview(
+  withToolbar(withActionHandlers(Heading), {
+    renderToolbar,
+  }),
+);
 
 export { EnhancedHeading as Heading };
