@@ -27,9 +27,6 @@ export const Editable = forwardRef<HTMLTableDataCellElement, Props>(
 
     useDndMonitor({
       onDragEnd,
-      onDragOver: (e) => {
-        console.log("dragging over", e);
-      },
     });
 
     return (

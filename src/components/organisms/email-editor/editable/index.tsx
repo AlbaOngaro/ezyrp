@@ -12,6 +12,7 @@ import { EditorConfigProvider } from "../providers/config";
 import { useOnDragEnd } from "./hooks/useOnDragEnd";
 import { useGetSortableItems } from "./hooks/useGetSortableItems";
 import { useGetSidebarContainer } from "./hooks/useGetSidebarContainer";
+import { collisionDetection } from "./collisionDetection";
 import { useClickOutsideRect } from "hooks/useClickOutsideRect";
 
 export const Editable = forwardRef<HTMLTableElement, EditableProps>(
@@ -65,6 +66,7 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
                     key.current = key.current + 1;
                     onDragEnd(e);
                   }}
+                  collisionDetection={collisionDetection}
                 >
                   <SortableContext
                     items={items}
