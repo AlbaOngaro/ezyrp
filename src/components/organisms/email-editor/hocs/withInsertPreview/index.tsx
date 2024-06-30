@@ -2,7 +2,7 @@ import { forwardRef, ForwardRefExoticComponent, RefAttributes } from "react";
 import { RenderElementProps } from "slate-react/dist/components/editable";
 import { useDndContext, Active, Over, useDndMonitor } from "@dnd-kit/core";
 import { Path, Node, Element, Editor, Transforms } from "slate";
-import { useSlateStatic } from "slate-react";
+import { ReactEditor, useSlateStatic } from "slate-react";
 import { validate } from "uuid";
 
 function getPreviewPosition(
@@ -81,6 +81,10 @@ export function withInsertPreview<
         }
       },
     });
+
+    if (ReactEditor.isReadOnly(editor)) {
+      return <Component {...props} ref={ref} />;
+    }
 
     return (
       <div>

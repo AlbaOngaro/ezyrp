@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import {
+  ReactEditor,
   Slate,
   Editable as SlateEditable,
   useSlate,
@@ -56,6 +57,32 @@ const Row = forwardRef<any, Props>(function Row(
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parent.selection]);
+
+  if (ReactEditor.isReadOnly(parent)) {
+    return (
+      <table
+        align="center"
+        width="100%"
+        border={0}
+        cellPadding="0"
+        cellSpacing="0"
+        role="presentation"
+        style={style}
+      >
+        <tbody style={{ width: "100%" }}>
+          {children}
+          <Slate editor={editor} initialValue={initialValue}>
+            <SlateEditable
+              renderElement={renderElement}
+              renderLeaf={renderLeaf}
+              readOnly
+              as="tr"
+            />
+          </Slate>
+        </tbody>
+      </table>
+    );
+  }
 
   return (
     <table

@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { RenderElementProps, useSlateStatic } from "slate-react";
+import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { Editor } from "slate";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
@@ -24,6 +24,10 @@ export const Column = forwardRef<HTMLTableDataCellElement, Props>(
     const isSelected = useGetIsSelected(element);
 
     const hasNextSibling = !!Editor.next(editor, { at: path });
+
+    if (ReactEditor.isReadOnly(editor)) {
+      return <td style={style}>{children}</td>;
+    }
 
     return (
       <>
