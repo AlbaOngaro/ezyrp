@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import {
   ReactEditor,
   Slate,
@@ -6,7 +6,7 @@ import {
   useSlate,
   withReact,
 } from "slate-react";
-import { createEditor, Descendant, Location, Path, Transforms } from "slate";
+import { createEditor, Descendant, Location, Transforms } from "slate";
 
 import { withHr } from "../../plugins/withHr";
 import { withImages } from "../../plugins/withImages";
@@ -19,14 +19,14 @@ import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 
 import { EditorConfigProvider } from "../../providers/config";
+import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { isColumnElementArray, Props } from "./types";
 import { Editable } from "./editable";
-import { ColumnsWidthEditableFields } from "./editable-fields";
-import { mergeRefs } from "lib/utils/mergeRefs";
 import { cn } from "lib/utils/cn";
+import { useClickOutsideRect } from "hooks/useClickOutsideRect";
 
 const Row = forwardRef<any, Props>(function Row(
-  { element, attributes: { ref: slateRef, ...slateAttributes }, children },
+  { element, attributes, children },
   ref,
 ) {
   const { style, columns: initialValue } = element;
@@ -35,28 +35,26 @@ const Row = forwardRef<any, Props>(function Row(
   const [editor] = useState(() =>
     withHr(withImages(withIds(withReact(createEditor())))),
   );
+  const tbody = useRef<HTMLTableSectionElement | null>(null);
+  const isSelected = useGetIsSelected(element, {
+    exact: true,
+  });
 
   const renderElement = useRenderElement();
   const renderLeaf = useRenderLeaf();
   const onKeyDown = useOnKeyDown(editor);
+
+  useClickOutsideRect(tbody, (e) => {
+    if (!e.defaultPrevented) {
+      editor.deselect();
+    }
+  });
 
   const onValueChange = (descendants: Descendant[]) => {
     if (isColumnElementArray(descendants)) {
       Transforms.setNodes(parent, { columns: descendants }, { at: path });
     }
   };
-
-  useEffect(() => {
-    const selection = parent.selection;
-    if (
-      !Location.isLocation(selection) ||
-      (Location.isLocation(selection) &&
-        !Path.isCommon(path, selection.anchor.path))
-    ) {
-      Transforms.deselect(editor);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parent.selection]);
 
   if (ReactEditor.isReadOnly(parent)) {
     return (
@@ -70,7 +68,6 @@ const Row = forwardRef<any, Props>(function Row(
         style={style}
       >
         <tbody style={{ width: "100%" }}>
-          {children}
           <Slate editor={editor} initialValue={initialValue}>
             <SlateEditable
               renderElement={renderElement}
@@ -85,54 +82,58 @@ const Row = forwardRef<any, Props>(function Row(
   }
 
   return (
-    <table
-      align="center"
-      width="100%"
-      border={0}
-      cellPadding="0"
-      cellSpacing="0"
-      role="presentation"
-      style={style}
-      ref={ref}
+    <div
+      contentEditable={false}
       className={cn(
-        "element hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
+        "element relative w-[calc(100%+4rem)] -ml-8 px-8 py-4",
+        "[&:not(:has(.element:hover))]:hover:bg-green-50 [&:not(:has(.element:hover))]:hover:outline [&:not(:has(.element:hover))]:hover:outline-green-300",
+        "[&:not(:has(.element:hover)):hover>table]:outline [&:not(:has(.element:hover)):hover>table]:outline-green-200",
+        {
+          "hover:bg-transparent outline outline-2 outline-green-300":
+            isSelected,
+        },
       )}
+      {...attributes}
     >
-      <tbody
-        style={{ width: "100%" }}
-        contentEditable={false}
-        {...slateAttributes}
-        ref={mergeRefs(slateRef, ref)}
+      {children}
+      <table
+        align="center"
+        width="100%"
+        border={0}
+        cellPadding="0"
+        cellSpacing="0"
+        role="presentation"
+        style={style}
+        ref={ref}
       >
-        {children}
-        <EditorConfigProvider dnd={false} toolbar={false}>
-          <Slate
-            editor={editor}
-            initialValue={initialValue}
-            onValueChange={onValueChange}
-          >
-            <SlateEditable
-              className="focus-within:outline-none"
-              renderElement={renderElement}
-              renderLeaf={renderLeaf}
-              onKeyDown={onKeyDown}
-              onFocus={() => Transforms.select(parent, path)}
-              as={Editable}
-            />
-          </Slate>
-        </EditorConfigProvider>
-      </tbody>
-    </table>
+        <tbody style={{ width: "100%" }} ref={tbody}>
+          <EditorConfigProvider toolbar={false}>
+            <Slate
+              editor={editor}
+              initialValue={initialValue}
+              onValueChange={onValueChange}
+              onSelectionChange={(selection) => {
+                if (Location.isLocation(selection)) {
+                  parent.deselect();
+                }
+              }}
+            >
+              <SlateEditable
+                className="focus-within:outline-none"
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
+                onKeyDown={onKeyDown}
+                onFocus={() => Transforms.select(parent, path)}
+                as={Editable}
+              />
+            </Slate>
+          </EditorConfigProvider>
+        </tbody>
+      </table>
+    </div>
   );
 });
 
-const EnhancedRow = withActionHandlers(Row, {
-  editableFields: {
-    width: {
-      type: "custom",
-      render: (props) => <ColumnsWidthEditableFields {...props} />,
-    },
-  },
-});
+const EnhancedRow = withActionHandlers(Row);
 
 export { EnhancedRow as Row };

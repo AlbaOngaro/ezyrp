@@ -23,8 +23,9 @@ export const Editable = forwardRef<any, EditableProps>(function Editable(
       <ResizablePanelGroup
         direction="horizontal"
         onLayout={onLayout}
-        className="w-[calc(100%+4rem)] -ml-8"
-        style={{ width: "calc(100% + 4rem)" }}
+        style={{
+          overflow: "initial",
+        }}
       >
         {children}
       </ResizablePanelGroup>
