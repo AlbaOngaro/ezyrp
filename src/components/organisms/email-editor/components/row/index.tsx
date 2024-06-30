@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import {
   ReactEditor,
   Slate,
