@@ -4,22 +4,25 @@ import {
   PropsWithoutRef,
   RefAttributes,
   forwardRef,
+  useMemo,
 } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { validate } from "uuid";
-import { Path, Transforms } from "slate";
+import { Path, Transforms, Element } from "slate";
 import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { Form } from "@radix-ui/react-form";
+import { Over, Active } from "@dnd-kit/core";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { useEditorConfig } from "../../providers/config";
 import { PropertiesForm } from "./poperties-form";
 import { Options } from "./types";
+
 import { Button } from "components/atoms/button";
 import { Dialog } from "components/atoms/dialog";
 import {
@@ -30,6 +33,22 @@ import {
   PopoverTrigger,
 } from "components/atoms/popover";
 import { cn } from "lib/utils/cn";
+
+function getSlateElementFromOver(over: Over | null): Element | null {
+  if (!over || !Element.isElement(over?.data?.current)) {
+    return null;
+  }
+
+  return over?.data?.current;
+}
+
+function getPreviewTop(active: Active | null, over: Over | null): number {
+  if (!over || !active) {
+    return 0;
+  }
+
+  return 0;
+}
 
 export function withActionHandlers<
   P extends RenderElementProps,
@@ -45,6 +64,8 @@ export function withActionHandlers<
     const path = useGetSlatePath(props.element);
 
     const {
+      over,
+      active,
       attributes,
       listeners,
       setNodeRef,
@@ -55,6 +76,10 @@ export function withActionHandlers<
       disabled: isReadOnly || !dnd,
       data: props.element,
     });
+
+    const overEl = getSlateElementFromOver(over);
+
+    const top = getPreviewTop(active, over);
 
     const isSelected = useGetIsSelected(props.element, {
       exact,
@@ -84,6 +109,10 @@ export function withActionHandlers<
 
     return (
       <Popover>
+        {overEl && overEl.id === props.element.id && (
+          <div className="h-1 w-full bg-blue-100" />
+        )}
+
         <div
           className="relative"
           style={{
