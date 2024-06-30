@@ -17,6 +17,7 @@ import { useDownloadEmailHtml } from "components/organisms/email-editor/hooks/us
 import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
+import { UpdateEmailModal } from "components/organisms/update-email-modal";
 
 type Email = FunctionReturnType<typeof api.emails.get>;
 
@@ -28,7 +29,9 @@ export function EmailsPage() {
   const { data: emails = [] } = useQuery(api.emails.list);
   const [isCreatingEmail, setIsCreatingEmail] = useState(false);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const [email, setEmail] = useState<Email | null>(null);
 
   return (
@@ -109,9 +112,23 @@ export function EmailsPage() {
                 onClick: (row) => router.push(`/emails/${row._id}/edit`),
               },
               {
-                type: "item",
-                label: "Download",
-                onClick: (row) => downloadEmailHhtml(row._id),
+                type: "sub",
+                label: "Quick actions",
+                children: [
+                  {
+                    type: "item",
+                    label: "Rename",
+                    onClick: (row) => {
+                      setEmail(row as Email);
+                      setIsRenameModalOpen(true);
+                    },
+                  },
+                  {
+                    type: "item",
+                    label: "Download",
+                    onClick: (row) => downloadEmailHhtml(row._id),
+                  },
+                ],
               },
               {
                 type: "separator",
@@ -121,7 +138,7 @@ export function EmailsPage() {
                 label: "Delete",
                 onClick: (row) => {
                   setEmail(row as Email);
-                  setIsDialogOpen(true);
+                  setIsDeleteDialogOpen(true);
                 },
               },
             ]}
@@ -152,7 +169,10 @@ export function EmailsPage() {
         </Card>
       </Container>
 
-      <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogRoot
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <Dialog
           title="Do you really want to delete this email template?"
           description="This action cannot be undone"
@@ -165,6 +185,16 @@ export function EmailsPage() {
           }}
         />
       </DialogRoot>
+
+      <ModalRoot open={isRenameModalOpen} onOpenChange={setIsRenameModalOpen}>
+        <UpdateEmailModal
+          email={email}
+          onSuccess={() => {
+            setTimeout(() => (document.body.style.pointerEvents = ""), 0);
+            setIsRenameModalOpen(false);
+          }}
+        />
+      </ModalRoot>
     </>
   );
 }

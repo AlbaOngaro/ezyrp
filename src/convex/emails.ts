@@ -75,9 +75,10 @@ export const create = mutation({
 export const update = mutation({
   args: {
     id: v.id("emails"),
-    body: v.any(),
+    title: v.optional(v.string()),
+    body: v.optional(v.any()),
   },
-  handler: async (ctx, { id, body }) => {
+  handler: async (ctx, { id, title, body }) => {
     const { workspace } = await getAuthData(ctx);
 
     const email = await ctx.db
@@ -90,7 +91,10 @@ export const update = mutation({
       throw new ConvexError("Email template not found");
     }
 
-    await ctx.db.patch(email._id, { body });
+    await ctx.db.patch(email._id, {
+      body: body || email.body,
+      title: title || email.title,
+    });
   },
 });
 
