@@ -20,6 +20,7 @@ import { withActionHandlers } from "../../hocs/withActionHandlers";
 
 import { EditorConfigProvider } from "../../providers/config";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
+import { withLinks } from "../../plugins/withLinks";
 import { isColumnElementArray, Props } from "./types";
 import { Editable } from "./editable";
 import { cn } from "lib/utils/cn";
@@ -33,7 +34,7 @@ const Row = forwardRef<any, Props>(function Row(
   const parent = useSlate();
   const path = useGetSlatePath(element);
   const [editor] = useState(() =>
-    withHr(withImages(withIds(withReact(createEditor())))),
+    withLinks(withHr(withImages(withIds(withReact(createEditor()))))),
   );
   const tbody = useRef<HTMLTableSectionElement | null>(null);
   const isSelected = useGetIsSelected(element, {

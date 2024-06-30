@@ -31,6 +31,7 @@ import { EditorConfigProvider } from "../../providers/config";
 import { ParentEditorProvider } from "../../providers/parent-editor";
 import { useOnKeyDown } from "../../hooks/useOnKeyDown";
 import { withInsertPreview } from "../../hocs/withInsertPreview";
+import { withLinks } from "../../plugins/withLinks";
 import { Editable } from "./editable";
 import { CustomElement, SectionElement } from "types/slate";
 import { cn } from "lib/utils/cn";
@@ -59,7 +60,9 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
       exact: true,
     });
     const [editor] = useState(() =>
-      withColumns(withHr(withImages(withIds(withReact(createEditor()))))),
+      withLinks(
+        withColumns(withHr(withImages(withIds(withReact(createEditor()))))),
+      ),
     );
 
     const onKeyDown = useOnKeyDown(editor);
