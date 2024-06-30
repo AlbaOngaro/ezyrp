@@ -167,7 +167,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         >
           <tbody>
             <tr ref={tr}>
-              <EditorConfigProvider toolbar={false}>
+              <EditorConfigProvider>
                 <ParentEditorProvider parent={parent}>
                   <Slate
                     editor={editor}

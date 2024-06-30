@@ -96,6 +96,9 @@ function Toolbar({ element }: { element: ParagraphElement }) {
       ref={toolbar}
       className="grid grid-cols-[repeat(12,2.5rem)] gap-2 items-end w-fit"
       onSubmit={(e) => e.preventDefault()}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+      }}
     >
       <Select
         className="row-start-1 col-span-3"
