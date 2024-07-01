@@ -10,28 +10,44 @@ import ReactFlow, {
   addEdge,
   useReactFlow,
   ReactFlowProvider,
+  ReactFlowInstance,
+  Node,
 } from "reactflow";
 import { useCallback, useState, DragEvent } from "react";
 
 import { edgeTypes, initialEdges, initialNodes, nodeTypes } from "./constants";
 import { Sidebar } from "./sidebar";
+import { NodeData, NodeType } from "./types";
 import { getValidUuid } from "lib/utils/getValidUuid";
+import { Button } from "components/atoms/button";
 
 function FlowEditor() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      console.log("Flow data", flow);
+    }
+  }, [rfInstance]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds)),
+      setNodes(
+        (nds) => applyNodeChanges(changes, nds) as Node<NodeData, NodeType>[],
+      ),
     [],
   );
+
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) =>
       setEdges((eds) => applyEdgeChanges(changes, eds)),
     [],
   );
+
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     [],
@@ -90,11 +106,15 @@ function FlowEditor() {
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        onInit={setRfInstance}
         proOptions={{
           hideAttribution: true,
         }}
         fitView
       >
+        <header className="absolute top-0 left-0 right-0 w-full flex justify-end z-30">
+          <Button onClick={onSave}>Save</Button>
+        </header>
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
