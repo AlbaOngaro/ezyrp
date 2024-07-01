@@ -5,7 +5,9 @@ import Head from "next/head";
 import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 
+import "reactflow/dist/base.css";
 import "styles/globals.css";
+
 import { UserProvider } from "providers/user";
 import { OrganisationProvider } from "providers/organisation";
 import { ConvexCacheProvider } from "providers/convex-cache";
