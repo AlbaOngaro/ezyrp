@@ -11,7 +11,7 @@ import ReactFlow, {
 } from "reactflow";
 import { useCallback, useState } from "react";
 
-import { initialEdges, initialNodes, nodeTypes } from "./constants";
+import { edgeTypes, initialEdges, initialNodes, nodeTypes } from "./constants";
 
 export function FlowEditor() {
   const [nodes, setNodes] = useState(initialNodes);
@@ -34,6 +34,7 @@ export function FlowEditor() {
 
   return (
     <ReactFlow
+      edgeTypes={edgeTypes}
       nodeTypes={nodeTypes}
       nodes={nodes}
       onNodesChange={onNodesChange}
