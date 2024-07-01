@@ -6,7 +6,7 @@ export function Handle({ type, position }: HandleProps) {
     <RFHandle
       type={type}
       position={position}
-      className={cn("bg-white rounded-full border-2 border-gray-300 w-3 h-3", {
+      className={cn("bg-white rounded-full border-2 border-black w-3 h-3", {
         "-right-4": position === Position.Right,
         "-left-4": position === Position.Left,
         "-top-4": position === Position.Top,

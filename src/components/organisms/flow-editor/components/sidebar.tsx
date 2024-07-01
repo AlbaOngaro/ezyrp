@@ -1,17 +1,22 @@
-import { DragEvent, PropsWithChildren } from "react";
-import { Cake, CalendarClock, CalendarRange, UserPlus } from "lucide-react";
+import { DragEvent, PropsWithChildren, useState } from "react";
+import {
+  Cake,
+  CalendarClock,
+  CalendarRange,
+  Minus,
+  UserPlus,
+} from "lucide-react";
 import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
 import { nodeTypes } from "../constants";
 import { NodeData } from "../types";
 import { Heading } from "components/atoms/heading";
 import { cn } from "lib/utils/cn";
-
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "components/atoms/accordion";
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "components/atoms/collapsible";
+import { Button } from "components/atoms/button";
 
 type NodeTypes = typeof nodeTypes;
 
@@ -21,7 +26,11 @@ type Props = PropsWithChildren<{
 }>;
 
 function Node({ type, data, children }: Props) {
+  const [isDragging, setIsDragging] = useState(false);
+
   const onDragStart = (event: DragEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+
     event.dataTransfer.setData(
       "application/reactflow",
       JSON.stringify({ type, data }),
@@ -29,16 +38,20 @@ function Node({ type, data, children }: Props) {
     event.dataTransfer.effectAllowed = "move";
   };
 
+  const onDragEnd = () => {
+    setIsDragging(false);
+  };
+
   return (
     <div
       className={cn(
-        "bg-white border-2 rounded-sm px-4 py-2 flex gap-2 flex-row items-center",
+        "cursor-pointer bg-gray-100 rounded-sm p-4 flex flex-col gap-2 justify-start items-start",
         {
-          "border-orange-300": type === "action",
-          "border-green-300": type === "trigger",
+          "cursor-grabbing": isDragging,
         },
       )}
       onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
       draggable
     >
       {children}
@@ -48,52 +61,58 @@ function Node({ type, data, children }: Props) {
 
 export function Sidebar() {
   return (
-    <aside className="flex flex-col">
+    <aside className="flex flex-col gap-4">
       <Heading
         title="Actions"
         description="You can drag these nodes to the pane on the right."
-        className="sm:flex-none mb-4"
+        className="sm:flex-none"
       />
 
-      <strong>Triggers</strong>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="user">
-          <AccordionTrigger>Users</AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-2">
-            <Node type="trigger" data={{ label: "User Creation" }}>
-              <UserPlus className="w-4 h-4" /> Creation
-            </Node>
-            <Node type="trigger" data={{ label: "User Birthday" }}>
-              <Cake className="w-4 h-4" /> Birthday
-            </Node>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="event">
-          <AccordionTrigger>Events</AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-2">
-            <Node type="trigger" data={{ label: "Event Upcoming" }}>
-              <CalendarClock className="w-4 h-4" /> Upcoming
-            </Node>
-            <Node type="trigger" data={{ label: "Days passed" }}>
-              <CalendarRange className="w-4 h-4" /> Passed
-            </Node>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <Collapsible defaultOpen>
+        <strong className="flex items-center gap-2">
+          <span className="bg-orange-300 inline-block rounded-full w-4 h-4" />
+          Triggers
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="ml-auto hover:bg-transparent">
+              <Minus className="w-4 h-4" />
+            </Button>
+          </CollapsibleTrigger>
+        </strong>
 
-      <strong className="mt-4">Actions</strong>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="notifications">
-          <AccordionTrigger>Notifications</AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-2">
-            <Node type="action" data={{ label: "Send Email" }}>
-              <EnvelopeClosedIcon className="w-4 h-4" /> Email
-            </Node>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+        <CollapsibleContent className="grid grid-cols-2 auto-rows-fr gap-2">
+          <Node type="trigger" data={{ label: "User Creation" }}>
+            <UserPlus className="w-6 h-6" />
+            User creation
+          </Node>
+          <Node type="trigger" data={{ label: "User Birthday" }}>
+            <Cake className="w-6 h-6" /> User's birthday
+          </Node>
+          <Node type="trigger" data={{ label: "Event Upcoming" }}>
+            <CalendarClock className="w-6 h-6" /> Event upcoming
+          </Node>
+          <Node type="trigger" data={{ label: "Days passed" }}>
+            <CalendarRange className="w-6 h-6" /> Days passed since event
+          </Node>
+        </CollapsibleContent>
+      </Collapsible>
+
+      <Collapsible defaultOpen>
+        <strong className="flex items-center gap-2">
+          <span className="bg-green-300 inline-block rounded-full w-4 h-4" />
+          Actions
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="ml-auto hover:bg-transparent">
+              <Minus className="w-4 h-4" />
+            </Button>
+          </CollapsibleTrigger>
+        </strong>
+
+        <CollapsibleContent className="grid grid-cols-2 auto-rows-fr gap-2">
+          <Node type="action" data={{ label: "Send Email" }}>
+            <EnvelopeClosedIcon className="w-6 h-6" /> Email
+          </Node>
+        </CollapsibleContent>
+      </Collapsible>
     </aside>
   );
 }

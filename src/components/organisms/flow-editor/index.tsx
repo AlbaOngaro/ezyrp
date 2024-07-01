@@ -65,7 +65,12 @@ function FlowEditor() {
           </Button>
         </header>
         <Controls />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        <Background
+          className="bg-gray-50"
+          variant={BackgroundVariant.Dots}
+          gap={12}
+          size={1}
+        />
       </ReactFlow>
     </div>
   );
