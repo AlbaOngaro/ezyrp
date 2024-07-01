@@ -1,8 +1,12 @@
 import { Form } from "@radix-ui/react-form";
-import { Link } from "lucide-react";
-import { useSlate } from "slate-react";
-import { FormEvent } from "react";
-import { Range, Transforms, Element, Editor, Text } from "slate";
+import { CircleCheck, CircleX, Link } from "lucide-react";
+import { useSlateWithV } from "slate-react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Editor, Range, Transforms, Element } from "slate";
+
+import { LinkElement } from "types/slate";
+
+import { getValidUuid } from "lib/utils/getValidUuid";
 
 import { Button } from "components/atoms/button";
 import { Input } from "components/atoms/input";
@@ -12,20 +16,29 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "components/atoms/popover";
-import { getValidUuid } from "lib/utils/getValidUuid";
+import { Toggle } from "components/atoms/toggle";
 
 export function LinkButton() {
-  const editor = useSlate();
+  const { editor, v } = useSlateWithV();
+  const link = useMemo<LinkElement | null>(() => {
+    const [entry] = Editor.nodes(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        Element.isElement(n) &&
+        Element.isElementType(n, "link"),
+    });
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const href = formData.get("href") as string;
-
-    if (!href) {
-      return;
+    if (!entry) {
+      return null;
     }
+
+    const [link] = entry;
+    return link as LinkElement;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, v]);
+
+  const onWrap = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     if (
       Range.isRange(editor.selection) &&
@@ -56,17 +69,52 @@ export function LinkButton() {
     Transforms.collapse(editor, { edge: "end" });
   };
 
+  const onUnwrap = () => {
+    Transforms.unwrapNodes(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        Element.isElement(n) &&
+        Element.isElementType(n, "link"),
+    });
+  };
+
+  const [href, setHref] = useState(link?.href || "");
+
+  useEffect(() => {
+    setHref(link?.href || "");
+  }, [link]);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="icon" variant="outline">
+        <Toggle variant="outline" pressed>
           <Link className="w-4 h-4" />
-        </Button>
+        </Toggle>
       </PopoverTrigger>
       <PopoverContent side="top">
-        <Form className="flex flex-row gap-2" onSubmit={onSubmit}>
-          <Input name="href" placeholder="https://example.com" />
-          <Button>add</Button>
+        <Form className="grid grid-cols-6 gap-2" onSubmit={onWrap}>
+          <Input
+            className="col-span-4"
+            name="href"
+            placeholder="https://example.com"
+            value={href}
+            onChange={(e) => setHref(e.target.value)}
+            validations={{
+              valueMissing: "URL is required",
+            }}
+          />
+          <Button
+            disabled={!link}
+            type="button"
+            size="icon"
+            variant="destructive"
+            onClick={onUnwrap}
+          >
+            <CircleX className="w-4 h-4" />
+          </Button>
+          <Button disabled={!href} type="submit" size="icon" variant="outline">
+            <CircleCheck className="w-4 h-4" />
+          </Button>
         </Form>
         <PopoverArrow />
       </PopoverContent>
