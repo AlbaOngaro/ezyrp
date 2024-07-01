@@ -6,7 +6,7 @@ export function DefaultEdge(props: EdgeProps) {
     <BezierEdge
       {...props}
       style={{
-        stroke: props.selected ? colors.blue[500] : colors.blue[300],
+        stroke: props.selected ? colors.gray[400] : colors.gray[300],
         strokeWidth: 2,
       }}
     />
