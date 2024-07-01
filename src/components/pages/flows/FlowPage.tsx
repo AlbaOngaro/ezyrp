@@ -7,19 +7,40 @@ import { Heading } from "components/atoms/heading";
 import { Id } from "convex/_generated/dataModel";
 
 import { FlowEditor } from "components/organisms/flow-editor";
+import { Loader } from "components/atoms/loader";
+import { useQuery } from "lib/hooks/useQuery";
+import { api } from "convex/_generated/api";
 
 type Props = {
   id: Id<"workflows">;
 };
 
 export function FlowPage({ id }: Props) {
+  const { data: workflow, status } = useQuery(api.workflows.get, { id });
+
+  if (status === "pending") {
+    return (
+      <main className="h-screen w-screen flex justify-center items-center">
+        <Loader />
+      </main>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <main className="h-screen w-screen flex justify-center items-center">
+        There was an error loading the workflow.
+      </main>
+    );
+  }
+
   return (
     <>
       <Container as="section" className="py-10 sm:flex sm:items-center">
         <Heading title={id} />
       </Container>
       <Container className="h-[calc(100vh-104px-60px)]">
-        <FlowEditor />
+        <FlowEditor workflow={workflow} />
       </Container>
     </>
   );

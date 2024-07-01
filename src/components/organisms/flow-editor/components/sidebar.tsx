@@ -1,22 +1,11 @@
 import { DragEvent, PropsWithChildren } from "react";
-import {
-  Cake,
-  CalendarClock,
-  CalendarRange,
-  ChevronsUpDown,
-  User,
-  UserPlus,
-} from "lucide-react";
+import { Cake, CalendarClock, CalendarRange, UserPlus } from "lucide-react";
 import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
-import { nodeTypes } from "./constants";
-import { NodeData } from "./types";
+import { nodeTypes } from "../constants";
+import { NodeData } from "../types";
 import { Heading } from "components/atoms/heading";
 import { cn } from "lib/utils/cn";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "components/atoms/collapsible";
+
 import {
   Accordion,
   AccordionContent,

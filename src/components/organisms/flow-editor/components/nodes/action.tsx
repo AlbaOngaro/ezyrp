@@ -1,7 +1,7 @@
 import { NodeProps, Position } from "reactflow";
 
 import { Handle } from "../handle";
-import { ActionNodeData } from "../types";
+import { ActionNodeData } from "../../types";
 
 import { cn } from "lib/utils/cn";
 

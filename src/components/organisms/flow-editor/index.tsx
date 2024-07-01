@@ -2,117 +2,41 @@ import ReactFlow, {
   Controls,
   Background,
   BackgroundVariant,
-  NodeChange,
-  EdgeChange,
-  Connection,
-  applyNodeChanges,
-  applyEdgeChanges,
-  addEdge,
-  useReactFlow,
   ReactFlowProvider,
-  ReactFlowInstance,
-  Node,
 } from "reactflow";
-import { useCallback, useState, DragEvent } from "react";
 
-import { useMutation } from "convex/react";
-import { edgeTypes, initialEdges, initialNodes, nodeTypes } from "./constants";
-import { Sidebar } from "./sidebar";
-import { NodeData, NodeType } from "./types";
-import { getValidUuid } from "lib/utils/getValidUuid";
+import { edgeTypes, nodeTypes } from "./constants";
+import { Sidebar } from "./components/sidebar";
+import { useOnNodeDrag } from "./hooks/useOnNodeDrag";
+import { useOnNodeDragStop } from "./hooks/useOnNodeDragStop";
+import { useNodes } from "./hooks/useNodes";
+import { useEdges } from "./hooks/useEdges";
+import { WorkflowProvider } from "./context";
+import { useOnSave } from "./hooks/useOnSave";
+import { useOnDrop } from "./hooks/useOnDrop";
+import { useOnDragOver } from "./hooks/useOnDragOver";
+import { useOnNodesChange } from "./hooks/useOnNodesChange";
+import { useOnEdgesChange } from "./hooks/useOnEdgesChange";
+import { useOnConnect } from "./hooks/useOnConnect";
+
 import { Button } from "components/atoms/button";
 import { Doc } from "convex/_generated/dataModel";
-import { api } from "convex/_generated/api";
 
 type Props = {
   workflow: Doc<"workflows">;
 };
 
-function FlowEditor({ workflow }: Props) {
-  const [nodes, setNodes] = useState(workflow.nodes);
-  const [edges, setEdges] = useState(workflow.edges);
-  const { screenToFlowPosition } = useReactFlow();
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-
-  const [isSavingWorkflow, setIsSavingWorkflow] = useState(false);
-
-  const updateWorfklow = useMutation(api.workflows.update);
-
-  const onSave = useCallback(async () => {
-    if (rfInstance) {
-      try {
-        setIsSavingWorkflow(true);
-        const flow = rfInstance.toObject();
-        await updateWorfklow({
-          id: workflow._id,
-          nodes: flow.nodes,
-          edges: flow.edges,
-        });
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsSavingWorkflow(false);
-      }
-    }
-  }, [rfInstance, workflow._id, updateWorfklow]);
-
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes(
-        (nds) => applyNodeChanges(changes, nds) as Node<NodeData, NodeType>[],
-      ),
-    [],
-  );
-
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [],
-  );
-
-  const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [],
-  );
-
-  const onDragOver = useCallback((event: DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
-
-  const onDrop = useCallback(
-    (event: DragEvent) => {
-      event.preventDefault();
-
-      const { type, data } = JSON.parse(
-        event.dataTransfer.getData("application/reactflow"),
-      );
-
-      // check if the dropped element is valid
-      if (typeof type === "undefined" || !type) {
-        return;
-      }
-
-      // project was renamed to screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-
-      setNodes((curr) => [
-        ...curr,
-        {
-          id: getValidUuid(),
-          type,
-          position,
-          data,
-        },
-      ]);
-    },
-    [screenToFlowPosition],
-  );
+function FlowEditor() {
+  const [nodes] = useNodes();
+  const [edges] = useEdges();
+  const onDrop = useOnDrop();
+  const onConnect = useOnConnect();
+  const onDragOver = useOnDragOver();
+  const onNodeDrag = useOnNodeDrag();
+  const onNodesChange = useOnNodesChange();
+  const onEdgesChange = useOnEdgesChange();
+  const onNodeDragStop = useOnNodeDragStop();
+  const [onSave, { loading: isSavingWorkflow }] = useOnSave();
 
   return (
     <div className="grid grid-cols-3 gap-4 h-full w-full">
@@ -128,7 +52,8 @@ function FlowEditor({ workflow }: Props) {
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
-        onInit={setRfInstance}
+        onNodeDrag={onNodeDrag}
+        onNodeDragStop={onNodeDragStop}
         proOptions={{
           hideAttribution: true,
         }}
@@ -147,9 +72,11 @@ function FlowEditor({ workflow }: Props) {
 }
 
 const EnhancedFlowEditor = ({ workflow }: Props) => (
-  <ReactFlowProvider>
-    <FlowEditor workflow={workflow} />
-  </ReactFlowProvider>
+  <WorkflowProvider workflow={workflow}>
+    <ReactFlowProvider>
+      <FlowEditor />
+    </ReactFlowProvider>
+  </WorkflowProvider>
 );
 
 export { EnhancedFlowEditor as FlowEditor };

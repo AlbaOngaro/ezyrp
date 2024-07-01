@@ -3,7 +3,6 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
-import { Heading } from "components/atoms/heading";
 import { Id } from "convex/_generated/dataModel";
 
 import { FlowEditor } from "components/organisms/flow-editor";

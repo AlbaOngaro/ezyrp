@@ -1,9 +1,9 @@
 import { Edge, NodeProps, EdgeTypes, Node } from "reactflow";
 import { ComponentType } from "react";
 
-import { TriggerNode } from "./nodes/trigger";
-import { ActionNode } from "./nodes/action";
-import { DefaultEdge } from "./edges/default";
+import { TriggerNode } from "./components/nodes/trigger";
+import { ActionNode } from "./components/nodes/action";
+import { DefaultEdge } from "./components/edges/default";
 
 import { NodeData, NodeType } from "./types";
 
