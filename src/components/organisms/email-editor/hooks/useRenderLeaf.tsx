@@ -20,8 +20,6 @@ export function useRenderLeaf() {
         style={style}
         className={cn({
           hidden: isVoid,
-          "relative after:text-gray-300 after:absolute after:top-0 after:w-full has-[span[data-slate-zero-width]]:block has-[span[data-slate-zero-width]]:after:content-['Something_good_here_I_hope']":
-            !isVoid,
         })}
       >
         {children}

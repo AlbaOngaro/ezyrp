@@ -1,25 +1,33 @@
 import React, { forwardRef } from "react";
+import { RenderElementProps } from "slate-react";
+import { mergeRefs } from "lib/utils/mergeRefs";
+import { LinkElement } from "types/slate";
 
-type RootProps = React.ComponentPropsWithoutRef<"a">;
+interface Props extends RenderElementProps {
+  element: LinkElement;
+}
 
-export type LinkProps = RootProps;
-
-export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  { target = "_blank", style, ...props },
+export const Link = forwardRef<HTMLAnchorElement, Props>(function Link(
+  {
+    element: { style, href, target = "_blank" },
+    attributes: { ref: slateRef, ...slateAttributes },
+    children,
+  },
   ref,
 ) {
   return (
     <a
-      {...props}
       style={{
         color: "#067df7",
         textDecoration: "none",
         ...style,
       }}
       target={target}
-      ref={ref}
+      href={href}
+      ref={mergeRefs(ref, slateRef)}
+      {...slateAttributes}
     >
-      {props.children}
+      {children}
     </a>
   );
 });

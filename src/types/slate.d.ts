@@ -59,7 +59,8 @@ interface ImgElement extends BaseElement {
 
 interface LinkElement extends BaseElement {
   type: "link";
-  url: string;
+  href: string;
+  target?: "_blank" | "_self";
   children: CustomText[];
 }
 

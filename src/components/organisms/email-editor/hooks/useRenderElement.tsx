@@ -43,7 +43,7 @@ export function useRenderElement() {
           );
         case "link":
           return (
-            <Link {...attributes} {...element}>
+            <Link attributes={attributes} element={element}>
               {children}
             </Link>
           );

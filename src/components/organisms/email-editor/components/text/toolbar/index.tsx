@@ -15,7 +15,8 @@ import {
 import { HexColorPicker } from "react-colorful";
 import { useRef } from "react";
 
-import { useGetSlatePath } from "../../hooks/useGetSlatePath";
+import { useGetSlatePath } from "../../../hooks/useGetSlatePath";
+import { LinkButton } from "./link-button";
 import { ParagraphElement } from "types/slate";
 import { getCSSValueWithoutUnit } from "lib/utils/getCSSValueWithoutUnit";
 import { Input } from "components/atoms/input";
@@ -123,6 +124,8 @@ function Toolbar({ element }: { element: ParagraphElement }) {
           }
         }}
       />
+
+      <LinkButton />
 
       <Input
         prefix={<ALargeSmall className="w-4 h-4" />}
