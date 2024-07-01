@@ -60,5 +60,7 @@ export default defineSchema({
   workflows: defineTable({
     title: v.string(),
     workspace: v.string(),
+    nodes: v.array(v.any()),
+    edges: v.array(v.any()),
   }).index("by_workspace", ["workspace"]),
 });

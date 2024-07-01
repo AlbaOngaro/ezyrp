@@ -44,9 +44,39 @@ export const create = mutation({
     const id = await ctx.db.insert("workflows", {
       title,
       workspace,
+      nodes: [],
+      edges: [],
     });
 
     return id;
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("workflows"),
+    title: v.optional(v.string()),
+    nodes: v.optional(v.array(v.any())),
+    edges: v.optional(v.array(v.any())),
+  },
+  handler: async (ctx, { id, title, nodes, edges }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const workflow = await ctx.db
+      .query("workflows")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => q.eq(q.field("_id"), id))
+      .unique();
+
+    if (!workflow) {
+      throw new ConvexError("Workflow not found");
+    }
+
+    await ctx.db.patch(workflow._id, {
+      title: title || workflow.title,
+      nodes: nodes || workflow.nodes,
+      edges: edges || workflow.edges,
+    });
   },
 });
 

@@ -7,15 +7,36 @@ import { Heading } from "components/atoms/heading";
 import { Id } from "convex/_generated/dataModel";
 
 import { FlowEditor } from "components/organisms/flow-editor";
+import { useQuery } from "lib/hooks/useQuery";
+import { api } from "convex/_generated/api";
+import { Loader } from "components/atoms/loader";
 
 type Props = {
   id: Id<"workflows">;
 };
 
 export function EditFlowPage({ id }: Props) {
+  const { data: workflow, status } = useQuery(api.workflows.get, { id });
+
+  if (status === "pending") {
+    return (
+      <main className="h-screen w-screen flex justify-center items-center">
+        <Loader />
+      </main>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <main className="h-screen w-screen flex justify-center items-center">
+        There was an error loading the workflow.
+      </main>
+    );
+  }
+
   return (
     <Container className="h-[calc(100vh-60px)]">
-      <FlowEditor />
+      <FlowEditor workflow={workflow} />
     </Container>
   );
 }

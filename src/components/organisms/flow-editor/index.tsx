@@ -15,24 +15,46 @@ import ReactFlow, {
 } from "reactflow";
 import { useCallback, useState, DragEvent } from "react";
 
+import { useMutation } from "convex/react";
 import { edgeTypes, initialEdges, initialNodes, nodeTypes } from "./constants";
 import { Sidebar } from "./sidebar";
 import { NodeData, NodeType } from "./types";
 import { getValidUuid } from "lib/utils/getValidUuid";
 import { Button } from "components/atoms/button";
+import { Doc } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
 
-function FlowEditor() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
+type Props = {
+  workflow: Doc<"workflows">;
+};
+
+function FlowEditor({ workflow }: Props) {
+  const [nodes, setNodes] = useState(workflow.nodes);
+  const [edges, setEdges] = useState(workflow.edges);
   const { screenToFlowPosition } = useReactFlow();
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
-  const onSave = useCallback(() => {
+  const [isSavingWorkflow, setIsSavingWorkflow] = useState(false);
+
+  const updateWorfklow = useMutation(api.workflows.update);
+
+  const onSave = useCallback(async () => {
     if (rfInstance) {
-      const flow = rfInstance.toObject();
-      console.log("Flow data", flow);
+      try {
+        setIsSavingWorkflow(true);
+        const flow = rfInstance.toObject();
+        await updateWorfklow({
+          id: workflow._id,
+          nodes: flow.nodes,
+          edges: flow.edges,
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsSavingWorkflow(false);
+      }
     }
-  }, [rfInstance]);
+  }, [rfInstance, workflow._id, updateWorfklow]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
@@ -113,7 +135,9 @@ function FlowEditor() {
         fitView
       >
         <header className="absolute top-0 left-0 right-0 w-full flex justify-end z-30">
-          <Button onClick={onSave}>Save</Button>
+          <Button loading={isSavingWorkflow} onClick={onSave}>
+            Save
+          </Button>
         </header>
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
@@ -122,9 +146,9 @@ function FlowEditor() {
   );
 }
 
-const EnhancedFlowEditor = () => (
+const EnhancedFlowEditor = ({ workflow }: Props) => (
   <ReactFlowProvider>
-    <FlowEditor />
+    <FlowEditor workflow={workflow} />
   </ReactFlowProvider>
 );
 
