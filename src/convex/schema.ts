@@ -1,3 +1,4 @@
+import { title } from "process";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -56,5 +57,9 @@ export default defineSchema({
     body: v.any(),
     workspace: v.string(),
     title: v.optional(v.string()),
+  }).index("by_workspace", ["workspace"]),
+  workflows: defineTable({
+    title: v.string(),
+    workspace: v.string(),
   }).index("by_workspace", ["workspace"]),
 });

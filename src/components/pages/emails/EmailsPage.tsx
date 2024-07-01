@@ -27,8 +27,8 @@ export function EmailsPage() {
   const deleteEmail = useMutation(api.emails.remove);
   const [downloadEmailHhtml] = useDownloadEmailHtml();
   const { data: emails = [] } = useQuery(api.emails.list);
-  const [isCreatingEmail, setIsCreatingEmail] = useState(false);
 
+  const [isCreatingEmail, setIsCreatingEmail] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 

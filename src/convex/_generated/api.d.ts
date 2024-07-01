@@ -25,6 +25,7 @@ import type * as items from "../items.js";
 import type * as settings from "../settings.js";
 import type * as storage from "../storage.js";
 import type * as utils from "../utils.js";
+import type * as workflows from "../workflows.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   settings: typeof settings;
   storage: typeof storage;
   utils: typeof utils;
+  workflows: typeof workflows;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

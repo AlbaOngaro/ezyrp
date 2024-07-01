@@ -1,3 +1,5 @@
-import { FlowPage } from "components/pages/flows/FlowPage";
+import { FlowPage, getServerSideProps } from "components/pages/flows/FlowPage";
+
+export { getServerSideProps };
 
 export default FlowPage;

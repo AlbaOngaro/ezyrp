@@ -20,7 +20,7 @@ const initialNodes = [
 
 const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 
-export function FlowPage({ id }: Props) {
+export function EditFlowPage({ id }: Props) {
   return (
     <>
       <Container as="section" className="py-10 sm:flex sm:items-center">
@@ -54,6 +54,6 @@ export async function getServerSideProps({
   };
 }
 
-FlowPage.getLayout = (page: ReactElement) => (
+EditFlowPage.getLayout = (page: ReactElement) => (
   <SidebarLayout>{page}</SidebarLayout>
 );

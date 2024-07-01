@@ -57,6 +57,7 @@
     "react-hook-form": "7.46.2",
     "react-resizable-panels": "2.0.19",
     "react-select": "5.7.5",
+    "reactflow": "11.11.4",
     "slate": "0.103.0",
     "slate-react": "0.105.0",
     "swr": "2.2.1",
