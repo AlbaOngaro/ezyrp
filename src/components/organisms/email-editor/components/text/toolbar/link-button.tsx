@@ -2,7 +2,7 @@ import { Form } from "@radix-ui/react-form";
 import { CircleCheck, CircleX, Link } from "lucide-react";
 import { useSlateWithV } from "slate-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { Editor, Range, Transforms, Element } from "slate";
+import { Editor, Range, Transforms, Element, NodeEntry } from "slate";
 
 import { LinkElement } from "types/slate";
 
@@ -20,7 +20,7 @@ import { Toggle } from "components/atoms/toggle";
 
 export function LinkButton() {
   const { editor, v } = useSlateWithV();
-  const link = useMemo<LinkElement | null>(() => {
+  const link = useMemo<NodeEntry<LinkElement> | null>(() => {
     const [entry] = Editor.nodes(editor, {
       match: (n) =>
         !Editor.isEditor(n) &&
@@ -32,13 +32,17 @@ export function LinkButton() {
       return null;
     }
 
-    const [link] = entry;
-    return link as LinkElement;
+    return entry as NodeEntry<LinkElement>;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, v]);
 
-  const onWrap = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (link) {
+      Transforms.setNodes(editor, { href }, { at: link[1] });
+      return;
+    }
 
     if (
       Range.isRange(editor.selection) &&
@@ -78,10 +82,10 @@ export function LinkButton() {
     });
   };
 
-  const [href, setHref] = useState(link?.href || "");
+  const [href, setHref] = useState(link ? link[0].href : "");
 
   useEffect(() => {
-    setHref(link?.href || "");
+    setHref(link ? link[0].href : "");
   }, [link]);
 
   return (
@@ -92,7 +96,7 @@ export function LinkButton() {
         </Toggle>
       </PopoverTrigger>
       <PopoverContent side="top">
-        <Form className="grid grid-cols-6 gap-2" onSubmit={onWrap}>
+        <Form className="grid grid-cols-6 gap-2" onSubmit={onSubmit}>
           <Input
             className="col-span-4"
             name="href"
