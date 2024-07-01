@@ -14,14 +14,9 @@ type Props = {
 
 export function EditFlowPage({ id }: Props) {
   return (
-    <>
-      <Container as="section" className="py-10 sm:flex sm:items-center">
-        <Heading title={id} />
-      </Container>
-      <Container className="h-[calc(100vh-104px-60px)]">
-        <FlowEditor />
-      </Container>
-    </>
+    <Container className="h-[calc(100vh-60px)]">
+      <FlowEditor />
+    </Container>
   );
 }
 

@@ -46,7 +46,9 @@ function FlowEditor() {
     (event: DragEvent) => {
       event.preventDefault();
 
-      const type = event.dataTransfer.getData("application/reactflow");
+      const { type, data } = JSON.parse(
+        event.dataTransfer.getData("application/reactflow"),
+      );
 
       // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {
@@ -61,14 +63,15 @@ function FlowEditor() {
         y: event.clientY,
       });
 
-      const newNode = {
-        id: getValidUuid(),
-        type,
-        position,
-        data: { label: `${type} node` },
-      };
-
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((curr) => [
+        ...curr,
+        {
+          id: getValidUuid(),
+          type,
+          position,
+          data,
+        },
+      ]);
     },
     [screenToFlowPosition],
   );

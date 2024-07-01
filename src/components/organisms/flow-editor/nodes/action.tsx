@@ -17,7 +17,6 @@ export function ActionNode({ data, selected }: NodeProps<ActionNodeData>) {
     >
       <Handle type="target" position={Position.Left} />
       {data.label}
-      <Handle type="source" position={Position.Right} />
     </div>
   );
 }
