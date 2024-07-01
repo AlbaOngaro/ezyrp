@@ -1,36 +1,26 @@
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthData } from "./utils";
+import {
+  getAuthData,
+  getEntitiesInWorkspace,
+  getEntityByIdInWorkspace,
+} from "./utils";
 
 export const get = query({
   args: {
     id: v.id("events"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const event = await ctx.db
-      .query("events")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id))
-      .unique();
-
-    if (!event) {
-      throw new ConvexError("Event not found");
-    }
-
-    return event;
+    return await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "events",
+    });
   },
 });
 
 export const list = query({
   handler: async (ctx) => {
-    const { workspace } = await getAuthData(ctx);
-
-    return await ctx.db
-      .query("events")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .collect();
+    return await getEntitiesInWorkspace(ctx, "events");
   },
 });
 
@@ -71,20 +61,12 @@ export const update = mutation({
     guests: v.optional(v.array(v.id("customers"))),
   },
   handler: async (ctx, { id, end, start, title, notes, variant, guests }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const event = await ctx.db
-      .query("events")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!event) {
-      throw new ConvexError("Item not found");
-    }
+    const event = await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "events",
+    });
 
     await ctx.db.patch(id, {
-      workspace,
       end: end || event.end,
       start: start || event.start,
       title: title || event.title,
@@ -100,17 +82,10 @@ export const remove = mutation({
     id: v.id("events"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const event = await ctx.db
-      .query("events")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!event) {
-      throw new ConvexError("Event not found in this workspace");
-    }
+    await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "events",
+    });
 
     await ctx.db.delete(id);
   },

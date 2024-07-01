@@ -1,37 +1,27 @@
-import { ConvexError, v } from "convex/values";
-
+import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthData, getValidUuid } from "./utils";
+import {
+  getAuthData,
+  getEntitiesInWorkspace,
+  getEntityByIdInWorkspace,
+  getValidUuid,
+} from "./utils";
 
 export const get = query({
   args: {
     id: v.id("emails"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const item = await ctx.db
-      .query("emails")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id))
-      .unique();
-
-    if (!item) {
-      throw new ConvexError("Email template not found");
-    }
-
-    return item;
+    return await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "emails",
+    });
   },
 });
 
 export const list = query({
   handler: async (ctx) => {
-    const { workspace } = await getAuthData(ctx);
-
-    return await ctx.db
-      .query("emails")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .collect();
+    return await getEntitiesInWorkspace(ctx, "emails");
   },
 });
 
@@ -79,17 +69,10 @@ export const update = mutation({
     body: v.optional(v.any()),
   },
   handler: async (ctx, { id, title, body }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const email = await ctx.db
-      .query("emails")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id))
-      .unique();
-
-    if (!email) {
-      throw new ConvexError("Email template not found");
-    }
+    const email = await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "emails",
+    });
 
     await ctx.db.patch(email._id, {
       body: body || email.body,
@@ -103,17 +86,10 @@ export const remove = mutation({
     id: v.id("emails"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const email = await ctx.db
-      .query("emails")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!email) {
-      throw new ConvexError("Email not found in this workspace");
-    }
+    await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "emails",
+    });
 
     await ctx.db.delete(id);
   },

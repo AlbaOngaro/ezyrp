@@ -1,36 +1,26 @@
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthData } from "./utils";
+import {
+  getAuthData,
+  getEntitiesInWorkspace,
+  getEntityByIdInWorkspace,
+} from "./utils";
 
 export const get = query({
   args: {
     id: v.id("eventTypes"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const eventType = await ctx.db
-      .query("eventTypes")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id))
-      .unique();
-
-    if (!eventType) {
-      throw new ConvexError("Item not found");
-    }
-
-    return eventType;
+    return await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "eventTypes",
+    });
   },
 });
 
 export const list = query({
   handler: async (ctx) => {
-    const { workspace } = await getAuthData(ctx);
-
-    return await ctx.db
-      .query("eventTypes")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .collect();
+    return await getEntitiesInWorkspace(ctx, "eventTypes");
   },
 });
 
@@ -63,20 +53,12 @@ export const update = mutation({
     duration: v.optional(v.number()),
   },
   handler: async (ctx, { id, name, variant, description, duration }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const eventType = await ctx.db
-      .query("eventTypes")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!eventType) {
-      throw new ConvexError("Item not found");
-    }
+    const eventType = await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "eventTypes",
+    });
 
     await ctx.db.patch(id, {
-      workspace,
       name: name || eventType.name,
       variant: variant || eventType.variant,
       description: description || eventType.description,
@@ -90,17 +72,10 @@ export const remove = mutation({
     id: v.id("eventTypes"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const eventType = await ctx.db
-      .query("eventTypes")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!eventType) {
-      throw new ConvexError("EventType not found in this workspace");
-    }
+    await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "eventTypes",
+    });
 
     await ctx.db.delete(id);
   },
