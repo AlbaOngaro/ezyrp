@@ -22,12 +22,16 @@ export function useLazyQuery<Query extends FunctionReference<"query">>(
 
   useEffect(() => {
     switch (status) {
-      case "success":
+      case "success": {
         promiseResolve?.current?.call(undefined, data);
+        setArgs("skip");
         break;
-      case "error":
+      }
+      case "error": {
         promiseReject?.current?.call(undefined, error as Error);
+        setArgs("skip");
         break;
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, promiseResolve, promiseReject]);

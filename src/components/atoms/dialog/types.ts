@@ -11,4 +11,5 @@ export interface Props {
   confirmButtonProps?: Omit<ButtonProps, "onClick">;
   confirmText?: string;
   onConfirm?: () => void;
+  onOpenAutoFocus?: (e: Event) => void;
 }

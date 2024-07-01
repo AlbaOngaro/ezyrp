@@ -38,7 +38,7 @@ export function TableRowRenderer<R extends Row = Row>({
           })}
         >
           {withMultiSelect && (
-            <td className="relative px-7 sm:w-12 sm:px-6">
+            <td className="relative w-12">
               <Checkbox
                 checked={selectedRows.includes(row)}
                 onChange={(e) =>
@@ -64,9 +64,9 @@ export function TableRowRenderer<R extends Row = Row>({
           ))}
 
           {withContextMenu && (
-            <td>
+            <td className="w-12">
               <button
-                className="flex justify-center items-center p-2 text-gray-700 rounded-md transition-colors duration-300 hover:bg-gray-200"
+                className="flex justify-center items-center mx-auto p-2 text-gray-700 rounded-md transition-colors duration-300 hover:bg-gray-200"
                 ref={button}
                 onClick={() => {
                   tr.current?.dispatchEvent(

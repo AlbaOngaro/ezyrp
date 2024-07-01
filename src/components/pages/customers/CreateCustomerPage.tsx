@@ -50,11 +50,12 @@ export function CreateCustomerPage() {
 
         try {
           const photoUrl = await handleFileUpload(file);
-
-          await customers.create({
-            ...data,
-            photoUrl,
-          });
+          if (photoUrl) {
+            await customers.create({
+              ...data,
+              photoUrl,
+            });
+          }
 
           onSuccess(data);
 

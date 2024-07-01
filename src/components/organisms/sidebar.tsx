@@ -7,6 +7,7 @@ import {
   CalendarDays,
   Mail,
   Settings,
+  ReceiptText,
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { Button } from "components/atoms/button";
@@ -16,8 +17,9 @@ const navigation = [
   { name: "Home", href: "/", icon: Home },
   { name: "Customers", href: "/customers", icon: UserRound },
   { name: "Inventory", href: "/inventory", icon: Package2 },
-  { name: "Invoices", href: "/invoices", icon: Mail },
+  { name: "Invoices", href: "/invoices", icon: ReceiptText },
   { name: "Schedule", href: "/schedule", icon: CalendarDays },
+  { name: "Email templates", href: "/emails", icon: Mail },
 ];
 
 export function Sidebar() {
@@ -45,7 +47,10 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
                   {
-                    "text-primary": router.asPath === item.href,
+                    "text-primary":
+                      item.href === "/"
+                        ? router.asPath === "/"
+                        : router.asPath.startsWith(item.href),
                   },
                 )}
               >

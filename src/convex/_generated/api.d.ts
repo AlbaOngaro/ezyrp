@@ -15,14 +15,15 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as bookings from "../bookings.js";
-import type * as cloudinary from "../cloudinary.js";
 import type * as countries from "../countries.js";
 import type * as customers from "../customers.js";
+import type * as emails from "../emails.js";
 import type * as eventTypes from "../eventTypes.js";
 import type * as events from "../events.js";
 import type * as invoices from "../invoices.js";
 import type * as items from "../items.js";
 import type * as settings from "../settings.js";
+import type * as storage from "../storage.js";
 import type * as utils from "../utils.js";
 
 /**
@@ -35,14 +36,15 @@ import type * as utils from "../utils.js";
  */
 declare const fullApi: ApiFromModules<{
   bookings: typeof bookings;
-  cloudinary: typeof cloudinary;
   countries: typeof countries;
   customers: typeof customers;
+  emails: typeof emails;
   eventTypes: typeof eventTypes;
   events: typeof events;
   invoices: typeof invoices;
   items: typeof items;
   settings: typeof settings;
+  storage: typeof storage;
   utils: typeof utils;
 }>;
 export declare const api: FilterApi<

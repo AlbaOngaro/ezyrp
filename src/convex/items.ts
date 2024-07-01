@@ -79,7 +79,7 @@ export const update = mutation({
     const item = await ctx.db
       .query("items")
       .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq("_id", id as string))
+      .filter((q) => q.eq(q.field("_id"), id as string))
       .unique();
 
     if (!item) {
@@ -107,7 +107,7 @@ export const remove = mutation({
     const item = await ctx.db
       .query("items")
       .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq("_id", id as string))
+      .filter((q) => q.eq(q.field("_id"), id as string))
       .unique();
 
     if (!item) {
@@ -115,5 +115,18 @@ export const remove = mutation({
     }
 
     await ctx.db.delete(id);
+
+    const invoices = await ctx.db
+      .query("invoices")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .collect();
+
+    for (const invoice of invoices.filter((invoice) =>
+      invoice.items.includes(id),
+    )) {
+      await ctx.db.patch(invoice._id, {
+        items: invoice.items.filter((itemId) => itemId !== id),
+      });
+    }
   },
 });

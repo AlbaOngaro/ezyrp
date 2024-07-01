@@ -34,7 +34,7 @@ export function EditEventTypePage({ id }: Props) {
         throw new Error("Event type not found");
       }
 
-      const { _id, _creationTime, ...rest } = data;
+      const { _id, _creationTime, workspace: _workspace, ...rest } = data;
 
       return {
         id: _id,

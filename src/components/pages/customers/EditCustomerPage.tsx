@@ -37,7 +37,7 @@ export function EditCustomerPage({ id }: Props) {
         throw new Error("Customer not found!");
       }
 
-      const { _id, _creationTime, ...rest } = customer;
+      const { _id, _creationTime, workspace: _workspace, ...rest } = customer;
 
       return {
         id: _id,
@@ -64,11 +64,12 @@ export function EditCustomerPage({ id }: Props) {
 
         try {
           const photoUrl = await handleFileUpload(file);
-
-          await customers.update({
-            ...data,
-            photoUrl,
-          });
+          if (photoUrl) {
+            await customers.update({
+              ...data,
+              photoUrl,
+            });
+          }
 
           onSuccess(data);
 

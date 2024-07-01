@@ -89,7 +89,7 @@ export function InventoryPage() {
                 <Dialog
                   overlayClassname="!ml-0"
                   title="Do you really want to delete all the selected items?"
-                  description="This action cannot be undone"
+                  description="This action cannot be undone. This will affect the linked invoices."
                   onConfirm={() =>
                     Promise.all(
                       rows.map((row) =>
@@ -128,7 +128,7 @@ export function InventoryPage() {
         <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <Dialog
             title="Do you really want to delete this item?"
-            description="This action cannot be undone."
+            description="This action cannot be undone. This will affect the linked invoices."
             onConfirm={() => {
               if (item) {
                 return items.delete({

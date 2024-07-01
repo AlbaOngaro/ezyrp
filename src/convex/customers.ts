@@ -23,7 +23,7 @@ export const upsert = async (
   const customer = await ctx.db
     .query("customers")
     .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-    .filter((q) => q.eq("email", email))
+    .filter((q) => q.eq(q.field("email"), email))
     .unique();
 
   if (!customer) {
@@ -136,7 +136,7 @@ export const update = mutation({
     const customer = await ctx.db
       .query("customers")
       .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq("_id", id as string))
+      .filter((q) => q.eq(q.field("_id"), id as string))
       .unique();
 
     if (!customer) {
@@ -166,7 +166,7 @@ export const remove = mutation({
     const customer = await ctx.db
       .query("customers")
       .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq("_id", id as string))
+      .filter((q) => q.eq(q.field("_id"), id as string))
       .unique();
 
     if (!customer) {
@@ -174,5 +174,15 @@ export const remove = mutation({
     }
 
     await ctx.db.delete(id);
+
+    const invoices = await ctx.db
+      .query("invoices")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => q.eq(q.field("customer"), id))
+      .collect();
+
+    for (const invoice of invoices) {
+      await ctx.db.delete(invoice._id);
+    }
   },
 });
