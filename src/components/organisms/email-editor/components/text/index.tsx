@@ -1,10 +1,12 @@
 import React, { forwardRef } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
+import { Editor } from "slate";
 
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 import { withToolbar } from "../../hocs/withToolbar";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { withInsertPreview } from "../../hocs/withInsertPreview";
+import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { renderToolbar } from "./toolbar";
 import { mergeRefs } from "lib/utils/mergeRefs";
 import { ParagraphElement } from "types/slate";
@@ -25,6 +27,7 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
 ) {
   const { style } = element;
   const editor = useSlateStatic();
+  const path = useGetSlatePath(element);
   const isSelected = useGetIsSelected(element, {
     exact: true,
   });
@@ -45,11 +48,16 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
     );
   }
 
+  const content = Editor.string(editor, path);
+  const isEmpty = Editor.hasTexts(editor, element) && !content;
+
   return (
     <p
       className={cn(
         "element hover:bg-green-50 hover:outline hover:outline-2 hover:outline-green-300",
         {
+          "relative after:text-gray-300 after:absolute after:top-0 after:w-full after:content-['Something_good_here_I_hope']":
+            isEmpty,
           "hover:bg-transparent outline outline-2 outline-green-300":
             isSelected,
         },
