@@ -8,7 +8,7 @@ import {
 import { EditableProps } from "slate-react/dist/components/editable";
 import { useSlateStatic } from "slate-react";
 import { Sidebar } from "../sidebar";
-import { EditorConfigProvider } from "../providers/config";
+import { EditorConfigProvider, useEditorConfig } from "../providers/config";
 import { useOnDragEnd } from "./hooks/useOnDragEnd";
 import { useGetSortableItems } from "./hooks/useGetSortableItems";
 import { useGetSidebarContainer } from "./hooks/useGetSidebarContainer";
@@ -20,6 +20,7 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
     const key = useRef(0);
     const editor = useSlateStatic();
     const body = useRef<HTMLTableSectionElement | null>(null);
+    const { placeholder } = useEditorConfig();
 
     useClickOutsideRect(
       body,
@@ -60,7 +61,7 @@ export const Editable = forwardRef<HTMLTableElement, EditableProps>(
         <tbody ref={body}>
           <tr style={{ width: "100%" }}>
             <td ref={setNodeRef}>
-              <EditorConfigProvider>
+              <EditorConfigProvider placeholder={placeholder}>
                 <DndContext
                   onDragEnd={(e) => {
                     key.current = key.current + 1;

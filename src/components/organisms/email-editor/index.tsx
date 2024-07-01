@@ -15,12 +15,14 @@ import { useRenderLeaf } from "./hooks/useRenderLeaf";
 import { withColumns } from "./plugins/wihtColumns";
 import { withSections } from "./plugins/withSections";
 import { withLinks } from "./plugins/withLinks";
+import { EditorConfigProvider } from "./providers/config";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { cn } from "lib/utils/cn";
 
 type Props = {
   email: Doc<"emails">;
   readOnly?: boolean;
+  placeholder?: string;
 };
 
 function ViewMode({
@@ -47,10 +49,12 @@ function ViewMode({
 function EditMode({
   id,
   editor,
+  placeholder,
   initialValue,
 }: {
   id: Id<"emails">;
   editor: Editor;
+  placeholder?: string;
   initialValue: Descendant[];
 }) {
   const onKeyDown = useOnKeyDown(editor);
@@ -62,26 +66,28 @@ function EditMode({
 
   return (
     <div className={cn("grid items-start h-full grid-cols-[1fr,350px]")}>
-      <Slate
-        editor={editor}
-        initialValue={initialValue}
-        onValueChange={onValueChange}
-      >
-        <SlateEditable
-          className="focus-within:outline-none"
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
-          onKeyDown={onKeyDown}
-          as={Editable}
-        />
-      </Slate>
+      <EditorConfigProvider placeholder={placeholder}>
+        <Slate
+          editor={editor}
+          initialValue={initialValue}
+          onValueChange={onValueChange}
+        >
+          <SlateEditable
+            className="focus-within:outline-none"
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+            onKeyDown={onKeyDown}
+            as={Editable}
+          />
+        </Slate>
+      </EditorConfigProvider>
 
       <aside id="sidebar" className="border-l h-full pl-8" />
     </div>
   );
 }
 
-export function EmailEditor({ email, readOnly = false }: Props) {
+export function EmailEditor({ email, placeholder, readOnly = false }: Props) {
   const [editor] = useState(() =>
     withLinks(
       withSections(
@@ -94,5 +100,12 @@ export function EmailEditor({ email, readOnly = false }: Props) {
     return <ViewMode editor={editor} initialValue={email.body} />;
   }
 
-  return <EditMode id={email._id} editor={editor} initialValue={email.body} />;
+  return (
+    <EditMode
+      id={email._id}
+      editor={editor}
+      initialValue={email.body}
+      placeholder={placeholder}
+    />
+  );
 }

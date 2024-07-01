@@ -18,7 +18,7 @@ import { useOnKeyDown } from "../../hooks/useOnKeyDown";
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
 
-import { EditorConfigProvider } from "../../providers/config";
+import { EditorConfigProvider, useEditorConfig } from "../../providers/config";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
 import { withLinks } from "../../plugins/withLinks";
 import { isColumnElementArray, Props } from "./types";
@@ -40,6 +40,7 @@ const Row = forwardRef<any, Props>(function Row(
   const isSelected = useGetIsSelected(element, {
     exact: true,
   });
+  const { placeholder } = useEditorConfig();
 
   const renderElement = useRenderElement();
   const renderLeaf = useRenderLeaf();
@@ -108,7 +109,7 @@ const Row = forwardRef<any, Props>(function Row(
         ref={ref}
       >
         <tbody style={{ width: "100%" }} ref={tbody}>
-          <EditorConfigProvider dnd={false}>
+          <EditorConfigProvider dnd={false} placeholder={placeholder}>
             <Slate
               editor={editor}
               initialValue={initialValue}

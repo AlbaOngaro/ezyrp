@@ -27,7 +27,7 @@ import { withColumns } from "../../plugins/wihtColumns";
 import { useRenderElement } from "../../hooks/useRenderElement";
 import { useRenderLeaf } from "../../hooks/useRenderLeaf";
 import { withActionHandlers } from "../../hocs/withActionHandlers";
-import { EditorConfigProvider } from "../../providers/config";
+import { EditorConfigProvider, useEditorConfig } from "../../providers/config";
 import { ParentEditorProvider } from "../../providers/parent-editor";
 import { useOnKeyDown } from "../../hooks/useOnKeyDown";
 import { withInsertPreview } from "../../hocs/withInsertPreview";
@@ -55,6 +55,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
     const renderLeaf = useRenderLeaf();
     const path = useGetSlatePath(element);
     const renderElement = useRenderElement();
+    const { placeholder } = useEditorConfig();
     const tr = useRef<HTMLTableRowElement | null>(null);
     const isSelected = useGetIsSelected(element, {
       exact: true,
@@ -177,7 +178,7 @@ const Section = forwardRef<React.ElementRef<"table">, Readonly<Props>>(
         >
           <tbody>
             <tr ref={tr}>
-              <EditorConfigProvider>
+              <EditorConfigProvider placeholder={placeholder}>
                 <ParentEditorProvider parent={parent}>
                   <Slate
                     editor={editor}
