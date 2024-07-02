@@ -6,7 +6,6 @@ export type ActionNodeData = {
 
 export type TriggerNodeData = {
   label: string;
-  triggerSpecificKey: string;
 };
 
 export type NodeData = ActionNodeData | TriggerNodeData;

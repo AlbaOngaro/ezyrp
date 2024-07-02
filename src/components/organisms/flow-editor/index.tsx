@@ -58,6 +58,7 @@ function FlowEditor() {
           hideAttribution: true,
         }}
         fitView
+        deleteKeyCode={null}
       >
         <header className="absolute top-0 left-0 right-0 w-full flex justify-end z-30">
           <Button loading={isSavingWorkflow} onClick={onSave}>
