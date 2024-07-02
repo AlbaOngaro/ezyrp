@@ -1,4 +1,4 @@
-import { Play, Save } from "lucide-react";
+import { Play, Save, TriangleAlert } from "lucide-react";
 import { Node } from "reactflow";
 import { toast } from "sonner";
 
@@ -9,11 +9,21 @@ import { useOnSave } from "../../hooks/useOnSave";
 import { useNodes } from "../../hooks/useNodes";
 import { ActionNodeData, SelectSetting, TriggerNodeData } from "../../types";
 
+import { useFlowValidationState } from "../../hooks/useFlowValidationState";
 import { Button } from "components/atoms/button";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "components/atoms/tooltip";
+import { Badge } from "components/atoms/badge";
 
 export function Header() {
+  const { valid, error } = useFlowValidationState();
+
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
   const [nodes] = useNodes();
 
@@ -31,7 +41,7 @@ export function Header() {
       <Button
         variant="outline"
         size="icon"
-        disabled={!trigger || !action}
+        disabled={!valid || !trigger || !action}
         onClick={async () => {
           const template = get(action, "data.settings.template");
           if (!template) {
@@ -55,12 +65,35 @@ export function Header() {
       </Button>
 
       <Button
+        disabled={!valid}
         className="flex flex-row gap-2"
         loading={isSavingWorkflow}
-        onClick={onSave}
+        onClick={() => {
+          if (valid) {
+            return onSave();
+          }
+        }}
       >
         <Save className="w-4 h-4" /> Save
       </Button>
+
+      {!valid && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge
+                variant="destructive"
+                className="w-10 h-10 p-0 flex items-center justify-center"
+              >
+                <TriangleAlert className="w-4 h-4" />
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{error}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </header>
   );
 }

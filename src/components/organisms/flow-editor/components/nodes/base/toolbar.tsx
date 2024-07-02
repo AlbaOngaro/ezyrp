@@ -8,15 +8,19 @@ import { Button } from "components/atoms/button";
 import { useNodes } from "components/organisms/flow-editor/hooks/useNodes";
 import { NodeData, NodeType } from "components/organisms/flow-editor/types";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
+import { useEdges } from "components/organisms/flow-editor/hooks/useEdges";
 
 export function Toolbar(props: NodeProps<NodeData> & { type: NodeType }) {
   const { id, data } = props;
   const [, setNodes] = useNodes();
+  const [, setEdges] = useEdges();
 
-  const onRemove = useCallback(
-    () => setNodes((prev) => prev.filter((node) => node.id !== id)),
-    [setNodes, id],
-  );
+  const onRemove = useCallback(() => {
+    setNodes((prev) => prev.filter((node) => node.id !== id));
+    setEdges((prev) =>
+      prev.filter((edge) => edge.source !== id && edge.target !== id),
+    );
+  }, [setNodes, setEdges, id]);
 
   return (
     <div className="flex flex-row bg-gray-200 rounded-sm absolute -top-7 left-0 right-0 w-fit">
