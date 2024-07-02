@@ -1,8 +1,9 @@
 import { useState, DragEvent } from "react";
+import { getIconForNode } from "../nodes/utils/getIconForNode";
 import { Node as Props } from "./types";
 import { cn } from "lib/utils/cn";
 
-export function DraggableNode({ type, data, icon }: Props) {
+export function DraggableNode({ type, data }: Props) {
   const [isDragging, setIsDragging] = useState(false);
 
   const onDragStart = (event: DragEvent<HTMLDivElement>) => {
@@ -31,7 +32,12 @@ export function DraggableNode({ type, data, icon }: Props) {
       onDragEnd={onDragEnd}
       draggable
     >
-      {icon} {data.label}
+      {getIconForNode({
+        type,
+        data,
+        variant: "ghost",
+      })}
+      {data.label}
     </div>
   );
 }

@@ -6,7 +6,6 @@ export function useGetTriggers(): Node<TriggerNodeData, "trigger">[] {
   return [
     {
       type: "trigger",
-      icon: <UserPlus className="w-6 h-6" />,
       data: {
         label: "Customer Creation",
         event: "customer:created",
@@ -14,7 +13,6 @@ export function useGetTriggers(): Node<TriggerNodeData, "trigger">[] {
     },
     {
       type: "trigger",
-      icon: <Cake className="w-6 h-6" />,
       data: {
         label: "Customer's Birthday",
         event: "customer:birthday",
@@ -22,7 +20,6 @@ export function useGetTriggers(): Node<TriggerNodeData, "trigger">[] {
     },
     {
       type: "trigger",
-      icon: <CalendarClock className="w-6 h-6" />,
       data: {
         label: "Upcoming Event",
         event: "event:upcoming",
@@ -30,7 +27,6 @@ export function useGetTriggers(): Node<TriggerNodeData, "trigger">[] {
     },
     {
       type: "trigger",
-      icon: <CalendarRange className="w-6 h-6" />,
       data: {
         label: "Days passed since event",
         event: "event:days-passed",

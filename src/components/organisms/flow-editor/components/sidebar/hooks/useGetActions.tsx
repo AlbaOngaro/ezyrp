@@ -1,5 +1,3 @@
-import { Send } from "lucide-react";
-
 import { Node } from "../types";
 
 import { api } from "convex/_generated/api";
@@ -12,7 +10,6 @@ export function useGetAction(): Node<ActionNodeData, "action">[] {
   return [
     {
       type: "action",
-      icon: <Send className="w-6 h-6" />,
       data: {
         label: "Email",
         settings: {
