@@ -40,7 +40,7 @@ export function FlowPage({ id }: Props) {
         <Heading title={id} />
       </Container>
       <Container className="h-[calc(100vh-104px-60px)]">
-        <FlowEditor workflow={workflow} />
+        <FlowEditor workflow={workflow} mode="view" />
       </Container>
     </>
   );

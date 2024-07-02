@@ -34,6 +34,7 @@ export const create = mutation({
     const id = await ctx.db.insert("workflows", {
       title,
       workspace,
+      status: "inactive",
       nodes: [],
       edges: [],
     });
@@ -45,11 +46,12 @@ export const create = mutation({
 export const update = mutation({
   args: {
     id: v.id("workflows"),
+    status: v.optional(v.union(v.literal("active"), v.literal("inactive"))),
     title: v.optional(v.string()),
     nodes: v.optional(v.array(v.any())),
     edges: v.optional(v.array(v.any())),
   },
-  handler: async (ctx, { id, title, nodes, edges }) => {
+  handler: async (ctx, { id, status, title, nodes, edges }) => {
     const workflow = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "workflows",
@@ -59,6 +61,7 @@ export const update = mutation({
       title: title || workflow.title,
       nodes: nodes || workflow.nodes,
       edges: edges || workflow.edges,
+      status: status || workflow.status,
     });
   },
 });

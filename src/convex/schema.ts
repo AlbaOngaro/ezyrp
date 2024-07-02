@@ -59,6 +59,7 @@ export default defineSchema({
   }).index("by_workspace", ["workspace"]),
   workflows: defineTable({
     title: v.string(),
+    status: v.union(v.literal("active"), v.literal("inactive")),
     workspace: v.string(),
     nodes: v.array(v.any()),
     edges: v.array(v.any()),

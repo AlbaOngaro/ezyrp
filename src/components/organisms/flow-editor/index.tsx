@@ -5,6 +5,7 @@ import ReactFlow, {
   ReactFlowProvider,
 } from "reactflow";
 
+import { Save } from "lucide-react";
 import { edgeTypes, nodeTypes } from "./constants";
 import { Sidebar } from "./components/sidebar";
 import { useOnNodeDrag } from "./hooks/useOnNodeDrag";
@@ -19,14 +20,17 @@ import { useOnNodesChange } from "./hooks/useOnNodesChange";
 import { useOnEdgesChange } from "./hooks/useOnEdgesChange";
 import { useOnConnect } from "./hooks/useOnConnect";
 
+import { useGetInteractionProps } from "./hooks/useGetInteractionProps";
 import { Button } from "components/atoms/button";
 import { Doc } from "convex/_generated/dataModel";
+import { cn } from "lib/utils/cn";
 
 type Props = {
   workflow: Doc<"workflows">;
+  mode?: "edit" | "view";
 };
 
-function FlowEditor() {
+function FlowEditor({ mode = "edit" }: Pick<Props, "mode">) {
   const [nodes] = useNodes();
   const [edges] = useEdges();
   const onDrop = useOnDrop();
@@ -36,11 +40,16 @@ function FlowEditor() {
   const onNodesChange = useOnNodesChange();
   const onEdgesChange = useOnEdgesChange();
   const onNodeDragStop = useOnNodeDragStop();
+  const interactionProps = useGetInteractionProps(mode);
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
 
   return (
-    <div className="grid grid-cols-3 gap-4 h-full w-full">
-      <Sidebar />
+    <div
+      className={cn("grid gap-4 h-full w-full", {
+        "grid-cols-3": mode === "edit",
+      })}
+    >
+      {mode === "edit" && <Sidebar />}
       <ReactFlow
         className="col-span-2"
         edgeTypes={edgeTypes}
@@ -59,12 +68,19 @@ function FlowEditor() {
         }}
         fitView
         deleteKeyCode={null}
+        {...interactionProps}
       >
-        <header className="absolute top-0 left-0 right-0 w-full flex justify-end z-30">
-          <Button loading={isSavingWorkflow} onClick={onSave}>
-            Save
-          </Button>
-        </header>
+        {mode === "edit" && (
+          <header className="absolute top-0 left-0 right-0 w-full p-4 flex justify-end z-30">
+            <Button
+              className="flex flex-row gap-2"
+              loading={isSavingWorkflow}
+              onClick={onSave}
+            >
+              <Save className="w-4 h-4" /> Save
+            </Button>
+          </header>
+        )}
         <Controls />
         <Background
           className="bg-gray-50"
@@ -77,10 +93,10 @@ function FlowEditor() {
   );
 }
 
-const EnhancedFlowEditor = ({ workflow }: Props) => (
+const EnhancedFlowEditor = ({ workflow, mode = "edit" }: Props) => (
   <WorkflowProvider workflow={workflow}>
     <ReactFlowProvider>
-      <FlowEditor />
+      <FlowEditor mode={mode} />
     </ReactFlowProvider>
   </WorkflowProvider>
 );
