@@ -5,7 +5,7 @@ import ReactFlow, {
   ReactFlowProvider,
 } from "reactflow";
 
-import { Save } from "lucide-react";
+import { Header } from "./components/header";
 import { edgeTypes, nodeTypes } from "./constants";
 import { Sidebar } from "./components/sidebar";
 import { useOnNodeDrag } from "./hooks/useOnNodeDrag";
@@ -13,7 +13,6 @@ import { useOnNodeDragStop } from "./hooks/useOnNodeDragStop";
 import { useNodes } from "./hooks/useNodes";
 import { useEdges } from "./hooks/useEdges";
 import { WorkflowProvider } from "./context";
-import { useOnSave } from "./hooks/useOnSave";
 import { useOnDrop } from "./hooks/useOnDrop";
 import { useOnDragOver } from "./hooks/useOnDragOver";
 import { useOnNodesChange } from "./hooks/useOnNodesChange";
@@ -21,7 +20,6 @@ import { useOnEdgesChange } from "./hooks/useOnEdgesChange";
 import { useOnConnect } from "./hooks/useOnConnect";
 
 import { useGetInteractionProps } from "./hooks/useGetInteractionProps";
-import { Button } from "components/atoms/button";
 import { Doc } from "convex/_generated/dataModel";
 import { cn } from "lib/utils/cn";
 
@@ -41,7 +39,6 @@ function FlowEditor({ mode = "edit" }: Pick<Props, "mode">) {
   const onEdgesChange = useOnEdgesChange();
   const onNodeDragStop = useOnNodeDragStop();
   const interactionProps = useGetInteractionProps(mode);
-  const [onSave, { loading: isSavingWorkflow }] = useOnSave();
 
   return (
     <div
@@ -70,17 +67,7 @@ function FlowEditor({ mode = "edit" }: Pick<Props, "mode">) {
         deleteKeyCode={null}
         {...interactionProps}
       >
-        {mode === "edit" && (
-          <header className="absolute top-0 left-0 right-0 w-full p-4 flex justify-end z-30">
-            <Button
-              className="flex flex-row gap-2"
-              loading={isSavingWorkflow}
-              onClick={onSave}
-            >
-              <Save className="w-4 h-4" /> Save
-            </Button>
-          </header>
-        )}
+        {mode === "edit" && <Header />}
         <Controls />
         <Background
           className="bg-gray-50"
