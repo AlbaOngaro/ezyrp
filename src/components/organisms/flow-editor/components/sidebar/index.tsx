@@ -13,7 +13,7 @@ export function Sidebar() {
   return (
     <aside className="flex flex-col gap-4">
       <Heading
-        title="Actions"
+        title="Nodes"
         description="You can drag these nodes to the pane on the right."
         className="sm:flex-none"
       />
