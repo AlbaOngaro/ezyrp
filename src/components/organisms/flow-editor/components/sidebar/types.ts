@@ -1,12 +1,11 @@
-import { PropsWithChildren, ReactElement } from "react";
+import { ReactElement } from "react";
+import { Node as RFNode } from "reactflow";
 
-import { NodeData } from "../../types";
-import { nodeTypes } from "../../constants";
+import { NodeData, NodeType } from "../../types";
 
-type NodeTypes = typeof nodeTypes;
-
-export type Node = {
-  type?: keyof NodeTypes;
+export type Node<D extends NodeData, T extends NodeType> = Omit<
+  RFNode<D, T>,
+  "id" | "position"
+> & {
   icon: ReactElement;
-  data: NodeData;
 };

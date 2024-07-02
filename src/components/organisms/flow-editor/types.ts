@@ -7,7 +7,13 @@ type SelectSetting = {
   defaultValue?: { label: string; value: string };
 };
 
-export type Setting = SelectSetting;
+type InputSettings = {
+  type: "input";
+  value: string;
+  disabled?: boolean;
+};
+
+export type Setting = InputSettings | SelectSetting;
 
 type Settings = Record<string, Setting>;
 
@@ -18,6 +24,12 @@ interface BaseNodeData {
 
 export interface ActionNodeData extends BaseNodeData { }
 
-export interface TriggerNodeData extends BaseNodeData { }
+export interface TriggerNodeData extends BaseNodeData {
+  event:
+  | "customer:created"
+  | "customer:birthday"
+  | "event:upcoming"
+  | "event:days-passed";
+}
 
 export type NodeData = ActionNodeData | TriggerNodeData;

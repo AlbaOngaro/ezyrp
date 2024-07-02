@@ -4,8 +4,9 @@ import { Node } from "../types";
 
 import { api } from "convex/_generated/api";
 import { useQuery } from "lib/hooks/useQuery";
+import { ActionNodeData } from "components/organisms/flow-editor/types";
 
-export function useGetAction(): Node[] {
+export function useGetAction(): Node<ActionNodeData, "action">[] {
   const { data: emails = [] } = useQuery(api.emails.list);
 
   return [
@@ -25,6 +26,11 @@ export function useGetAction(): Node[] {
               label: "Chose",
               value: "chose",
             },
+          },
+          to: {
+            type: "input",
+            value: "{{ customer.email }}",
+            disabled: true,
           },
         },
       },
