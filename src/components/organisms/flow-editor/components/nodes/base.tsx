@@ -2,13 +2,18 @@ import { NodeProps, Position } from "reactflow";
 
 import { useCallback } from "react";
 import { Settings, Trash } from "lucide-react";
+import { Form } from "@radix-ui/react-form";
+import { capitalize, get, set } from "lodash";
+
 import { Handle } from "../handle";
 import { NodeData, NodeType } from "../../types";
 
 import { useNodes } from "../../hooks/useNodes";
+
 import { cn } from "lib/utils/cn";
 import { Button } from "components/atoms/button";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
+import { Select } from "components/atoms/select";
 
 export function BaseNode({
   type,
@@ -52,7 +57,45 @@ export function BaseNode({
                 <Settings className="w-3 h-3" />
               </Button>
             </ModalTrigger>
-            <Modal title={`${data.label} Settings`}></Modal>
+            <Modal title={`${data.label} Settings`}>
+              <Form
+                className="mt-4 flex flex-col gap-2"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                {Object.entries(data.settings || {}).map(([key, setting]) => {
+                  if (setting.type === "select") {
+                    return (
+                      <Select
+                        label={capitalize(key)}
+                        key={key}
+                        name={key}
+                        options={setting.options}
+                        defaultValue={setting.value}
+                        onChange={(option) =>
+                          setNodes((prev) =>
+                            prev.map((node) => {
+                              if (node.id !== id) {
+                                return node;
+                              }
+
+                              const settings = get(node, "data.settings", {});
+
+                              return set(
+                                node,
+                                "data.settings",
+                                set(settings, `${key}.value`, option),
+                              );
+                            }),
+                          )
+                        }
+                      />
+                    );
+                  }
+
+                  return null;
+                })}
+              </Form>
+            </Modal>
           </ModalRoot>
         </div>
       )}

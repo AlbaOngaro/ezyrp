@@ -1,6 +1,7 @@
 import { Minus } from "lucide-react";
-import { ACTIONS, TRIGGERS } from "./constants";
+import { useGetAction } from "./hooks/useGetActions";
 import { DraggableNode } from "./draggable-node";
+import { useGetTriggers } from "./hooks/useGetTriggers";
 import { Heading } from "components/atoms/heading";
 import {
   Collapsible,
@@ -10,6 +11,9 @@ import {
 import { Button } from "components/atoms/button";
 
 export function Sidebar() {
+  const actions = useGetAction();
+  const triggers = useGetTriggers();
+
   return (
     <aside className="flex flex-col gap-4">
       <Heading
@@ -30,7 +34,7 @@ export function Sidebar() {
         </strong>
 
         <CollapsibleContent className="grid grid-cols-2 auto-rows-fr gap-2">
-          {TRIGGERS.map((trigger, i) => (
+          {triggers.map((trigger, i) => (
             <DraggableNode key={`trigger-${i}`} {...trigger} />
           ))}
         </CollapsibleContent>
@@ -48,7 +52,7 @@ export function Sidebar() {
         </strong>
 
         <CollapsibleContent className="grid grid-cols-2 auto-rows-fr gap-2">
-          {ACTIONS.map((action, i) => (
+          {actions.map((action, i) => (
             <DraggableNode key={`trigger-${i}`} {...action} />
           ))}
         </CollapsibleContent>
