@@ -2,7 +2,7 @@ import { useState, DragEvent } from "react";
 import { Node as Props } from "./types";
 import { cn } from "lib/utils/cn";
 
-export function DraggableNode({ type = "default", data, icon }: Props) {
+export function DraggableNode({ type, data, icon }: Props) {
   const [isDragging, setIsDragging] = useState(false);
 
   const onDragStart = (event: DragEvent<HTMLDivElement>) => {

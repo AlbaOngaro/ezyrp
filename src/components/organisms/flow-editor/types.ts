@@ -1,6 +1,6 @@
 export type NodeType = "trigger" | "action";
 
-type SelectSetting = {
+export type SelectSetting = {
   type: "select";
   options: { label: string; value: string }[];
   value: { label: string; value: string };

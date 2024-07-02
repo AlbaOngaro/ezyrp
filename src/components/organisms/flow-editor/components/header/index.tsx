@@ -4,12 +4,14 @@ import { Node } from "reactflow";
 import { useAction } from "convex/react";
 import { useState } from "react";
 
+import { get } from "lodash";
 import { useOnSave } from "../../hooks/useOnSave";
 import { useNodes } from "../../hooks/useNodes";
-import { ActionNodeData, TriggerNodeData } from "../../types";
+import { ActionNodeData, SelectSetting, TriggerNodeData } from "../../types";
 
 import { Button } from "components/atoms/button";
 import { api } from "convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
 
 export function Header() {
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
@@ -30,14 +32,19 @@ export function Header() {
       <Button
         variant="outline"
         size="icon"
-        disabled={!trigger || !action}
-        loading={isSendingEmail}
+        disabled={isSendingEmail || !trigger || !action}
         onClick={async () => {
+          const template = get(action, "data.settings.template");
+          if (!template) {
+            return;
+          }
+
           try {
             setIsSendingEmail(true);
 
             await sendEmail({
               to: "dolcebunny15@gmail.com",
+              template: (template as SelectSetting).value.value as Id<"emails">,
             });
           } catch (error) {
             console.error(error);

@@ -56,6 +56,7 @@ export default defineSchema({
     body: v.any(),
     workspace: v.string(),
     title: v.optional(v.string()),
+    html: v.optional(v.id("_storage")),
   }).index("by_workspace", ["workspace"]),
   workflows: defineTable({
     title: v.string(),

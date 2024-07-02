@@ -67,8 +67,9 @@ export const update = mutation({
     id: v.id("emails"),
     title: v.optional(v.string()),
     body: v.optional(v.any()),
+    html: v.optional(v.id("_storage")),
   },
-  handler: async (ctx, { id, title, body }) => {
+  handler: async (ctx, { id, title, body, html }) => {
     const email = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "emails",
@@ -77,6 +78,12 @@ export const update = mutation({
     await ctx.db.patch(email._id, {
       body: body || email.body,
       title: title || email.title,
+      html: html || email.html,
+    });
+
+    return await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "emails",
     });
   },
 });
