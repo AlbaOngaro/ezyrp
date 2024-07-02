@@ -2,6 +2,7 @@ import { ReactElement, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { Form } from "@radix-ui/react-form";
+import { FunctionReturnType } from "convex/server";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Heading } from "components/atoms/heading";
@@ -14,12 +15,20 @@ import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
+import { Badge } from "components/atoms/badge";
+
+type Workflow = FunctionReturnType<typeof api.workflows.get>;
 
 export function FlowsPage() {
   const router = useRouter();
   const { data: workflows = [], status } = useQuery(api.workflows.list);
+
   const deleteWorkflow = useMutation(api.workflows.remove);
   const creatWorkflow = useMutation(api.workflows.create);
+  const updateWorkflow = useMutation(api.workflows.update);
+
+  const [workflow, setWorkflow] = useState<Workflow | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false);
 
@@ -86,6 +95,13 @@ export function FlowsPage() {
                 field: "title",
                 headerName: "Title",
               },
+              {
+                id: "status",
+                field: "status",
+                headerName: "Status",
+                sortable: true,
+                render: (invoice) => <Badge>{invoice.status}</Badge>,
+              },
             ]}
             withContextMenu
             contextMenuItems={[
@@ -98,6 +114,32 @@ export function FlowsPage() {
                 type: "item",
                 label: "Edit",
                 onClick: (row) => router.push(`/flows/${row._id}/edit`),
+              },
+              {
+                type: "sub",
+                label: "Quick actions",
+                children: [
+                  {
+                    type: "item",
+                    label: "Toggle status",
+                    onClick: (row) =>
+                      updateWorkflow({
+                        id: row._id,
+                        status: row.status === "active" ? "inactive" : "active",
+                      }),
+                  },
+                ],
+              },
+              {
+                type: "separator",
+              },
+              {
+                type: "item",
+                label: "Delete",
+                onClick: (row) => {
+                  setWorkflow(row as Workflow);
+                  setIsDialogOpen(true);
+                },
               },
             ]}
             withMultiSelect
@@ -124,6 +166,20 @@ export function FlowsPage() {
               </DialogRoot>
             )}
           />
+
+          <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog
+              title="Do you really want to delete this workflow?"
+              description="This action cannot be undone"
+              onConfirm={() => {
+                if (workflow) {
+                  return deleteWorkflow({
+                    id: workflow._id,
+                  });
+                }
+              }}
+            />
+          </DialogRoot>
         </Card>
       </Container>
     </>
