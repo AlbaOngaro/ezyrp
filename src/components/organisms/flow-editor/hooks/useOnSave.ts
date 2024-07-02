@@ -22,10 +22,11 @@ export function useOnSave(): [SaveFn, SaveState] {
     try {
       setLoading(true);
       const flow = toObject();
+
       await updateWorfklow({
         id,
-        nodes: flow.nodes,
-        edges: flow.edges,
+        nodes: flow.nodes.map(({ selected: _selected, ...node }) => node),
+        edges: flow.edges.map(({ selected: _selected, ...edge }) => edge),
       });
     } catch (error) {
       console.error(error);
