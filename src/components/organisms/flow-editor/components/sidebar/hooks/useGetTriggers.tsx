@@ -1,4 +1,3 @@
-import { Cake, CalendarClock, CalendarRange, UserPlus } from "lucide-react";
 import { Node } from "../types";
 import { TriggerNodeData } from "components/organisms/flow-editor/types";
 

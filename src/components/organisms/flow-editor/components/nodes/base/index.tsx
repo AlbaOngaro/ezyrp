@@ -20,7 +20,7 @@ export function BaseNode(props: NodeProps<NodeData> & { type: NodeType }) {
       default:
         return null;
     }
-  }, []);
+  }, [type]);
 
   return (
     <div
