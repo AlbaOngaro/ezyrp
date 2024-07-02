@@ -4,6 +4,7 @@ import { NextPage } from "next";
 import Head from "next/head";
 import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { Toaster } from "components/atoms/sonner";
 
 import "reactflow/dist/base.css";
 import "styles/globals.css";
@@ -37,6 +38,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           <UserProvider>
             <OrganisationProvider>
               {getLayout(<Component {...pageProps} />)}
+              <Toaster />
             </OrganisationProvider>
           </UserProvider>
         </ConvexCacheProvider>

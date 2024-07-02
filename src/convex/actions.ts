@@ -15,12 +15,12 @@ export const email = action({
       id: template,
     });
     if (!storageId) {
-      return;
+      return null;
     }
 
     const blob = await ctx.storage.get(storageId);
     if (!blob) {
-      return;
+      return null;
     }
 
     const html = await blob.text();
@@ -40,7 +40,7 @@ export const email = action({
 
       await transporter.sendMail({
         to,
-        html: html.toString(),
+        html,
         from: "info@nimblerp.com",
         subject: "New invoice",
       });

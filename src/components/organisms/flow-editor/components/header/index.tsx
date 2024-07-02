@@ -1,8 +1,8 @@
 import { Play, Save } from "lucide-react";
 import { Node } from "reactflow";
+import { toast } from "sonner";
 
 import { useAction } from "convex/react";
-import { useState } from "react";
 
 import { get } from "lodash";
 import { useOnSave } from "../../hooks/useOnSave";
@@ -24,7 +24,6 @@ export function Header() {
     | Node<ActionNodeData, "action">
     | undefined;
 
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const sendEmail = useAction(api.actions.email);
 
   return (
@@ -32,25 +31,24 @@ export function Header() {
       <Button
         variant="outline"
         size="icon"
-        disabled={isSendingEmail || !trigger || !action}
+        disabled={!trigger || !action}
         onClick={async () => {
           const template = get(action, "data.settings.template");
           if (!template) {
             return;
           }
 
-          try {
-            setIsSendingEmail(true);
-
-            await sendEmail({
+          toast.promise(
+            sendEmail({
               to: "dolcebunny15@gmail.com",
               template: (template as SelectSetting).value.value as Id<"emails">,
-            });
-          } catch (error) {
-            console.error(error);
-          } finally {
-            setIsSendingEmail(false);
-          }
+            }),
+            {
+              loading: "Running flow...",
+              success: "Test run completeded sucessfully.",
+              error: "There was an error running the flow.",
+            },
+          );
         }}
       >
         <Play className="w-4 h-4" />

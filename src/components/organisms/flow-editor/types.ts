@@ -22,14 +22,14 @@ interface BaseNodeData {
   settings?: Settings;
 }
 
-export interface ActionNodeData extends BaseNodeData { }
+export interface ActionNodeData extends BaseNodeData {}
 
 export interface TriggerNodeData extends BaseNodeData {
   event:
-  | "customer:created"
-  | "customer:birthday"
-  | "event:upcoming"
-  | "event:days-passed";
+    | "customer:created"
+    | "customer:birthday"
+    | "event:upcoming"
+    | "event:days-passed";
 }
 
 export type NodeData = ActionNodeData | TriggerNodeData;
