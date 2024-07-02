@@ -6,13 +6,13 @@ import {
   useState,
 } from "react";
 import { Node, Edge } from "reactflow";
-import { NodeData } from "./types";
+import { NodeData, NodeType } from "./types";
 import { Doc, Id } from "convex/_generated/dataModel";
 
 type WorkflowContextValue = {
   id: Id<"workflows">;
-  nodes: Node<NodeData>[];
-  setNodes: Dispatch<SetStateAction<Node<NodeData>[]>>;
+  nodes: Node<NodeData, NodeType>[];
+  setNodes: Dispatch<SetStateAction<Node<NodeData, NodeType>[]>>;
   edges: Edge[];
   setEdges: Dispatch<SetStateAction<Edge[]>>;
 };
@@ -31,7 +31,9 @@ export function WorkflowProvider({
 }: PropsWithChildren<{
   workflow: Doc<"workflows">;
 }>) {
-  const [nodes, setNodes] = useState<Node<NodeData>[]>(workflow.nodes);
+  const [nodes, setNodes] = useState<Node<NodeData, NodeType>[]>(
+    workflow.nodes,
+  );
   const [edges, setEdges] = useState<Edge[]>(workflow.edges);
 
   return (
