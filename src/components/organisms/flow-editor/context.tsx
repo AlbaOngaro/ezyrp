@@ -3,9 +3,12 @@ import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
+  useEffect,
   useState,
 } from "react";
 import { Node, Edge } from "reactflow";
+import { isEqual, difference } from "lodash";
+
 import { NodeData, NodeType } from "./types";
 import { Doc, Id } from "convex/_generated/dataModel";
 
@@ -15,6 +18,7 @@ type WorkflowContextValue = {
   setNodes: Dispatch<SetStateAction<Node<NodeData, NodeType>[]>>;
   edges: Edge[];
   setEdges: Dispatch<SetStateAction<Edge[]>>;
+  hasChanges: boolean;
 };
 
 export const WorkflowContext = createContext<WorkflowContextValue>({
@@ -23,6 +27,7 @@ export const WorkflowContext = createContext<WorkflowContextValue>({
   setNodes: () => [],
   edges: [],
   setEdges: () => [],
+  hasChanges: false,
 });
 
 export function WorkflowProvider({
@@ -31,10 +36,13 @@ export function WorkflowProvider({
 }: PropsWithChildren<{
   workflow: Doc<"workflows">;
 }>) {
-  const [nodes, setNodes] = useState<Node<NodeData, NodeType>[]>(
-    workflow.nodes,
-  );
-  const [edges, setEdges] = useState<Edge[]>(workflow.edges);
+  const [nodes, setNodes] = useState<Node<NodeData, NodeType>[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+
+  useEffect(() => {
+    setEdges(workflow.edges);
+    setNodes(workflow.nodes);
+  }, [workflow]);
 
   return (
     <WorkflowContext.Provider
@@ -44,6 +52,8 @@ export function WorkflowProvider({
         setNodes,
         edges,
         setEdges,
+        hasChanges:
+          !isEqual(workflow.nodes, nodes) || !isEqual(workflow.edges, edges),
       }}
     >
       {children}

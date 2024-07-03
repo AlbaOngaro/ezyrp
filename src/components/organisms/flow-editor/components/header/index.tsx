@@ -10,6 +10,7 @@ import { useNodes } from "../../hooks/useNodes";
 import { ActionNodeData, SelectSetting, TriggerNodeData } from "../../types";
 
 import { useFlowValidationState } from "../../hooks/useFlowValidationState";
+import { useHasChanges } from "../../hooks/useHasChanges";
 import { Button } from "components/atoms/button";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
@@ -20,8 +21,10 @@ import {
   TooltipTrigger,
 } from "components/atoms/tooltip";
 import { Badge } from "components/atoms/badge";
+import { Notification } from "components/atoms/notification";
 
 export function Header() {
+  const hasChanges = useHasChanges();
   const { valid, errors } = useFlowValidationState();
 
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
@@ -65,8 +68,8 @@ export function Header() {
       </Button>
 
       <Button
-        disabled={!valid}
-        className="flex flex-row gap-2"
+        disabled={!hasChanges || !valid}
+        className="flex flex-row gap-2 relative"
         loading={isSavingWorkflow}
         onClick={() => {
           if (valid) {
@@ -74,6 +77,7 @@ export function Header() {
           }
         }}
       >
+        {hasChanges && <Notification />}
         <Save className="w-4 h-4" /> Save
       </Button>
 

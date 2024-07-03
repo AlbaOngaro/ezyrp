@@ -18,7 +18,6 @@ function getIsDraggable(type?: NodeType, errors: Error[] = []) {
         (error) => error.code === ErrorCode.MissingTriggerNode,
       );
     case "action": {
-      debugger;
       return errors.some((error) => error.code === ErrorCode.MissingActionNode);
     }
     default:
