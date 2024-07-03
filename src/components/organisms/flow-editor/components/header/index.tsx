@@ -1,4 +1,12 @@
-import { Play, Save, TriangleAlert } from "lucide-react";
+import {
+  EllipsisVertical,
+  Pencil,
+  Play,
+  Save,
+  ToggleLeft,
+  Trash,
+  TriangleAlert,
+} from "lucide-react";
 import { Node } from "reactflow";
 import { toast } from "sonner";
 
@@ -11,6 +19,7 @@ import { ActionNodeData, SelectSetting, TriggerNodeData } from "../../types";
 
 import { useFlowValidationState } from "../../hooks/useFlowValidationState";
 import { useHasChanges } from "../../hooks/useHasChanges";
+import { useGetMenuItems } from "./hooks/useGetMenuItems";
 import { Button } from "components/atoms/button";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
@@ -22,9 +31,18 @@ import {
 } from "components/atoms/tooltip";
 import { Badge } from "components/atoms/badge";
 import { Notification } from "components/atoms/notification";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "components/atoms/menubar";
+import { cn } from "lib/utils/cn";
 
 export function Header() {
   const hasChanges = useHasChanges();
+  const menuItems = useGetMenuItems();
   const { valid, errors } = useFlowValidationState();
 
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
@@ -66,6 +84,30 @@ export function Header() {
       >
         <Play className="w-4 h-4" />
       </Button>
+
+      <Menubar className="bg-transparent border-none p-0 h-fit w-fit cursor-pointer">
+        <MenubarMenu>
+          <MenubarTrigger asChild>
+            <Button size="icon" variant="outline" className="cursor-pointer">
+              <EllipsisVertical className="w-4 h-4" />
+            </Button>
+          </MenubarTrigger>
+          <MenubarContent align="center">
+            {menuItems.map((item) => (
+              <MenubarItem
+                key={item.id}
+                className={cn(
+                  "cursor-pointer text-base flex justify-start gap-2",
+                  item.className,
+                )}
+                onClick={item.onClick}
+              >
+                {item.icon} {item.label}
+              </MenubarItem>
+            ))}
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>
 
       <Button
         disabled={!hasChanges || !valid}
