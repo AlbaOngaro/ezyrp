@@ -22,7 +22,7 @@ import {
 import { Badge } from "components/atoms/badge";
 
 export function Header() {
-  const { valid, error } = useFlowValidationState();
+  const { valid, errors } = useFlowValidationState();
 
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
   const [nodes] = useNodes();
@@ -89,7 +89,7 @@ export function Header() {
               </Badge>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{error}</p>
+              <p>{errors[0].message}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
