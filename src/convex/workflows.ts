@@ -6,9 +6,11 @@ import {
   getEntityByIdInWorkspace,
 } from "./utils";
 
-import { event, action, settings } from "./schema";
+import { event, delayableEvents, action, settings } from "./schema";
 
-export type Event = typeof event.type;
+export type DefaultEvent = typeof event.type;
+export type DelayableEvent = typeof delayableEvents.type;
+export type Event = DefaultEvent | DelayableEvent;
 export type Action = typeof action.type;
 export type Settings = typeof settings.type;
 

@@ -9,7 +9,7 @@ import { v4 as uuid, validate } from "uuid";
 import { capitalize } from "lodash";
 import { DataModel, Doc, Id, TableNames } from "./_generated/dataModel";
 
-import { Event } from "./workflows";
+import { DefaultEvent, DelayableEvent, Event, Settings } from "./workflows";
 
 /**
  * Extracts the user_id and workspace from the auth object. Throws an error if the user is not authenticated or if the workspace is not found.
@@ -101,10 +101,36 @@ export function getValidUuid(): string {
   return getValidUuid();
 }
 
-export async function getWorkflowForEvent(
+type DefaultSettings = Extract<Settings, { event: DefaultEvent }>;
+type DefaultWorkflow = Omit<Doc<"workflows">, "settings"> & {
+  settings: DefaultSettings;
+};
+
+type DelayableSettings = Extract<Settings, { event: DelayableEvent }>;
+type DelayableWorkflow = Omit<Doc<"workflows">, "settings"> & {
+  settings: DelayableSettings;
+};
+
+export async function getWorkflowForEvent<E extends DelayableEvent>(
   ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
-  event: Event,
-) {
+  event: E,
+): Promise<DelayableWorkflow>;
+export async function getWorkflowForEvent<E extends DefaultEvent>(
+  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
+  event: E,
+): Promise<DefaultWorkflow>;
+export async function getWorkflowForEvent<E extends Event>(
+  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
+  event: E,
+): Promise<Doc<"workflows"> | null> {
   const workflows = await getEntitiesInWorkspace(ctx, "workflows");
-  return workflows.find((workflow) => workflow?.settings?.event === event);
+  const workflow = workflows.find(
+    (workflow) => workflow?.settings?.event === event,
+  );
+
+  if (!workflow) {
+    return null;
+  }
+
+  return workflow;
 }

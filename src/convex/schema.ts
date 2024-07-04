@@ -9,23 +9,41 @@ export const action = v.union(email, sms);
 export const event = v.union(
   v.literal("customer:created"),
   v.literal("customer:birthday"),
-  v.literal("event:upcoming"),
-  v.literal("event:days-passed"),
   v.literal("invoice:created"),
   v.literal("invoice:paid"),
   v.literal("invoice:overdue"),
 );
 
+export const delayableEvents = v.union(
+  v.literal("event:upcoming"),
+  v.literal("event:days-passed"),
+);
+
 export const settings = v.union(
-  v.object({
-    action: email,
-    event,
-    template: v.id("emails"),
-  }),
-  v.object({
-    action: sms,
-    event,
-  }),
+  v.union(
+    v.object({
+      action: email,
+      event,
+      template: v.id("emails"),
+    }),
+    v.object({
+      action: email,
+      event: delayableEvents,
+      delay: v.number(),
+      template: v.id("emails"),
+    }),
+  ),
+  v.union(
+    v.object({
+      action: sms,
+      event,
+    }),
+    v.object({
+      action: sms,
+      event: delayableEvents,
+      delay: v.number(),
+    }),
+  ),
 );
 
 export default defineSchema({

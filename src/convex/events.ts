@@ -50,14 +50,16 @@ export const create = mutation({
 
     const workflow = await getWorkflowForEvent(ctx, "event:upcoming");
     if (workflow) {
-      const settings = workflow.settings;
-      if (workflow.status !== "active" || !settings) {
+      const { settings, status } = workflow;
+      if (status !== "active" || !settings) {
         return;
       }
 
-      switch (settings.action) {
+      const { action } = settings;
+
+      switch (action) {
         case "email": {
-          const template = settings.template;
+          const { template } = settings;
           const emails = await Promise.all(
             guests.map((guest) =>
               getEntityByIdInWorkspace(ctx, {
