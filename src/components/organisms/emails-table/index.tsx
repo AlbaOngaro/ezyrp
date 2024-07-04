@@ -1,6 +1,6 @@
 import { useMutation } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
-import { Doc } from "convex/_generated/dataModel";
+import { Doc, Id } from "convex/_generated/dataModel";
 import { Table } from "components/atoms/table";
 import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
@@ -38,7 +38,9 @@ export function EmailsTable() {
             title="Do you really want to delete all the selected email templates?"
             description="This action cannot be undone."
             onConfirm={() =>
-              Promise.all(rows.map((row) => deleteEmail({ id: row._id })))
+              Promise.all(
+                rows.map((row) => deleteEmail({ id: row._id as Id<"emails"> })),
+              )
             }
           />
         </DialogRoot>

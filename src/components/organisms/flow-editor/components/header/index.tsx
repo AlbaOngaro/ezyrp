@@ -1,12 +1,4 @@
-import {
-  EllipsisVertical,
-  Pencil,
-  Play,
-  Save,
-  ToggleLeft,
-  Trash,
-  TriangleAlert,
-} from "lucide-react";
+import { EllipsisVertical, Play, Save, TriangleAlert } from "lucide-react";
 import { Node } from "reactflow";
 import { toast } from "sonner";
 

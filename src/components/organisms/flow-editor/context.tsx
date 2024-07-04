@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { Node, Edge } from "reactflow";
-import { isEqual, difference } from "lodash";
+import { isEqual } from "lodash";
 
 import { NodeData, NodeType } from "./types";
 import { Doc, Id } from "convex/_generated/dataModel";
