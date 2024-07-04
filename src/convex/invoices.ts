@@ -90,7 +90,6 @@ export const create = mutation({
     });
 
     const workflow = await getWorkflowForEvent(ctx, "invoice:created");
-    console.log("workflow", workflow);
     if (workflow && workflow.status === "active") {
       const { email } = await getEntityByIdInWorkspace(ctx, {
         id: customer,
