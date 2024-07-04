@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { useAction } from "convex/react";
 import { useContext } from "react";
 
+import { useUser } from "@clerk/clerk-react";
 import { useOnSave } from "../../hooks/useOnSave";
 import { useFlowValidationState } from "../../hooks/useFlowValidationState";
 import { WorkflowContext } from "../../context";
@@ -27,11 +28,12 @@ import { Notification } from "components/atoms/notification";
 import { api } from "convex/_generated/api";
 
 export function Header() {
-  const { hasChanges, settings } = useContext(WorkflowContext);
+  const { user } = useUser();
   const menuItems = useGetMenuItems();
   const sendSms = useAction(api.actions.sms);
   const sendEmail = useAction(api.actions.email);
   const { success, error } = useFlowValidationState();
+  const { hasChanges, settings } = useContext(WorkflowContext);
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
 
   return (
@@ -42,10 +44,14 @@ export function Header() {
         disabled={!success}
         onClick={async () => {
           switch (settings?.action) {
-            case "email":
-              return toast.promise(
+            case "email": {
+              const to =
+                user?.primaryEmailAddress?.emailAddress ||
+                "alba.ongaro@outlook.com";
+
+              toast.promise(
                 sendEmail({
-                  to: "dolcebunny15@gmail.com",
+                  to,
                   template: settings.template,
                 }),
                 {
@@ -54,8 +60,10 @@ export function Header() {
                   error: "There was an error running the flow.",
                 },
               );
+              break;
+            }
             case "sms": {
-              return toast.promise(
+              toast.promise(
                 sendSms({
                   to: "+14155552671",
                   message: "Hello, World!",
@@ -66,9 +74,10 @@ export function Header() {
                   error: "There was an error running the flow.",
                 },
               );
+              break;
             }
             default:
-              return;
+              break;
           }
         }}
       >
