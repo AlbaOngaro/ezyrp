@@ -15,17 +15,12 @@ import { Table } from "components/atoms/table";
 import { Button } from "components/atoms/button";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Dialog } from "components/atoms/dialog";
-import { Doc, Id } from "convex/_generated/dataModel";
-
-type Item = Doc<"items">;
+import { Dialog, dialogs } from "components/atoms/dialog";
+import { Id } from "convex/_generated/dataModel";
 
 export function InventoryPage() {
   const items = useItems();
   const router = useRouter();
-
-  const [item, setItem] = useState<Item | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <>
@@ -116,28 +111,17 @@ export function InventoryPage() {
               {
                 type: "item",
                 label: "Delete",
-                onClick: (row) => {
-                  setItem(row);
-                  setIsDialogOpen(true);
-                },
+                onClick: (row) =>
+                  dialogs.warning({
+                    title: "Do you really want to delete this item?",
+                    description:
+                      "This action cannot be undone. This will affect the linked invoices.",
+                    onConfirm: () => items.delete({ id: row._id }),
+                  }),
               },
             ]}
           />
         </Card>
-
-        <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <Dialog
-            title="Do you really want to delete this item?"
-            description="This action cannot be undone. This will affect the linked invoices."
-            onConfirm={() => {
-              if (item) {
-                return items.delete({
-                  id: item._id,
-                });
-              }
-            }}
-          />
-        </DialogRoot>
       </Container>
     </>
   );

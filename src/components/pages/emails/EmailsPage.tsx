@@ -14,7 +14,12 @@ import { Card } from "components/atoms/card";
 import { useQuery } from "lib/hooks/useQuery";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { useDownloadEmailHtml } from "components/organisms/email-editor/hooks/useDownloadEmailHtml";
-import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
+import {
+  Dialog,
+  DialogRoot,
+  dialogs,
+  DialogTrigger,
+} from "components/atoms/dialog";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
 import { UpdateEmailModal } from "components/organisms/update-email-modal";
@@ -30,7 +35,6 @@ export function EmailsPage() {
 
   const [isCreatingEmail, setIsCreatingEmail] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const [email, setEmail] = useState<Email | null>(null);
 
@@ -136,10 +140,12 @@ export function EmailsPage() {
               {
                 type: "item",
                 label: "Delete",
-                onClick: (row) => {
-                  setEmail(row as Email);
-                  setIsDeleteDialogOpen(true);
-                },
+                onClick: (row) =>
+                  dialogs.warning({
+                    title: "Do you really want to delete this email template?",
+                    description: "This action cannot be undone.",
+                    onConfirm: () => deleteEmail({ id: row._id }),
+                  }),
               },
             ]}
             withMultiSelect
@@ -168,23 +174,6 @@ export function EmailsPage() {
           />
         </Card>
       </Container>
-
-      <DialogRoot
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
-        <Dialog
-          title="Do you really want to delete this email template?"
-          description="This action cannot be undone"
-          onConfirm={() => {
-            if (email) {
-              return deleteEmail({
-                id: email._id,
-              });
-            }
-          }}
-        />
-      </DialogRoot>
 
       <ModalRoot open={isRenameModalOpen} onOpenChange={setIsRenameModalOpen}>
         <UpdateEmailModal

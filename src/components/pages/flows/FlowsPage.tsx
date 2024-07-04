@@ -2,7 +2,6 @@ import { ReactElement, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { Form } from "@radix-ui/react-form";
-import { FunctionReturnType } from "convex/server";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Heading } from "components/atoms/heading";
@@ -10,14 +9,17 @@ import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 import { Card } from "components/atoms/card";
 import { Table } from "components/atoms/table";
-import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
+import {
+  Dialog,
+  DialogRoot,
+  dialogs,
+  DialogTrigger,
+} from "components/atoms/dialog";
 import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
 import { Badge } from "components/atoms/badge";
-
-type Workflow = FunctionReturnType<typeof api.workflows.get>;
 
 export function FlowsPage() {
   const router = useRouter();
@@ -26,9 +28,6 @@ export function FlowsPage() {
   const deleteWorkflow = useMutation(api.workflows.remove);
   const creatWorkflow = useMutation(api.workflows.create);
   const updateWorkflow = useMutation(api.workflows.update);
-
-  const [workflow, setWorkflow] = useState<Workflow | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false);
 
@@ -136,10 +135,12 @@ export function FlowsPage() {
               {
                 type: "item",
                 label: "Delete",
-                onClick: (row) => {
-                  setWorkflow(row as Workflow);
-                  setIsDialogOpen(true);
-                },
+                onClick: (row) =>
+                  dialogs.warning({
+                    title: "Do you really want to delete this workflow?",
+                    description: "This action cannot be undone",
+                    onConfirm: () => deleteWorkflow({ id: row._id }),
+                  }),
               },
             ]}
             withMultiSelect
@@ -166,20 +167,6 @@ export function FlowsPage() {
               </DialogRoot>
             )}
           />
-
-          <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <Dialog
-              title="Do you really want to delete this workflow?"
-              description="This action cannot be undone"
-              onConfirm={() => {
-                if (workflow) {
-                  return deleteWorkflow({
-                    id: workflow._id,
-                  });
-                }
-              }}
-            />
-          </DialogRoot>
         </Card>
       </Container>
     </>

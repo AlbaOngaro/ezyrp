@@ -1,25 +1,19 @@
-import { useState } from "react";
 import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { useRouter } from "next/router";
 
-import { Dialog } from "components/atoms/dialog";
+import { Dialog, dialogs } from "components/atoms/dialog";
 import { Table } from "components/atoms/table";
 import { Button } from "components/atoms/button";
 
 import { useCustomers } from "hooks/useCustomers";
-import { Doc, Id } from "convex/_generated/dataModel";
-
-type Customer = Doc<"customers">;
+import { Id } from "convex/_generated/dataModel";
 
 export function CustomersTable() {
   const router = useRouter();
   const customers = useCustomers();
-
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <>
@@ -85,27 +79,16 @@ export function CustomersTable() {
           {
             type: "item",
             label: "Delete",
-            onClick: (row) => {
-              setCustomer(row);
-              setIsDialogOpen(true);
-            },
+            onClick: (row) =>
+              dialogs.warning({
+                title: "Do you really want to delete this customer?",
+                description:
+                  "This action cannot be undone. All invoices linked to this customer will also be deleted.",
+                onConfirm: () => customers.delete({ id: row._id }),
+              }),
           },
         ]}
       />
-
-      <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <Dialog
-          title="Do you really want to delete this customer?"
-          description="All invoices related to this customer will also be deleted. This action cannot be undone."
-          onConfirm={() => {
-            if (customer) {
-              return customers.delete({
-                id: customer._id,
-              });
-            }
-          }}
-        />
-      </DialogRoot>
     </>
   );
 }

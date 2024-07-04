@@ -2,7 +2,6 @@ import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
-import { useState } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Link2Icon } from "@radix-ui/react-icons";
@@ -13,7 +12,7 @@ import { FunctionReturnType } from "convex/server";
 import { useInvoices } from "hooks/useInvoices";
 
 import { Table } from "components/atoms/table";
-import { Dialog } from "components/atoms/dialog";
+import { Dialog, dialogs } from "components/atoms/dialog";
 
 import { Badge } from "components/atoms/badge";
 import { Button } from "components/atoms/button";
@@ -25,8 +24,6 @@ type Invoice = FunctionReturnType<typeof api.invoices.get>;
 export function InvoicesTable() {
   const router = useRouter();
   const invoices = useInvoices();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
 
   return (
     <>
@@ -137,27 +134,15 @@ export function InvoicesTable() {
           {
             type: "item",
             label: "Delete",
-            onClick: (row) => {
-              setInvoice(row as Invoice);
-              setIsDialogOpen(true);
-            },
+            onClick: (row) =>
+              dialogs.warning({
+                title: "Do you really want to delete this invoice?",
+                description: "This action cannot be undone",
+                onConfirm: () => invoices.delete({ id: row._id }),
+              }),
           },
         ]}
       />
-
-      <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <Dialog
-          title="Do you really want to delete this invoice?"
-          description="This action cannot be undone"
-          onConfirm={() => {
-            if (invoice) {
-              return invoices.delete({
-                id: invoice._id,
-              });
-            }
-          }}
-        />
-      </DialogRoot>
     </>
   );
 }
