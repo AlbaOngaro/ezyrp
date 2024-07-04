@@ -31,5 +31,26 @@ export function useGetTriggers(): Node<TriggerNodeData, "trigger">[] {
         event: "event:days-passed",
       },
     },
+    {
+      type: "trigger",
+      data: {
+        label: "Invoice paid",
+        event: "invoice:paid",
+      },
+    },
+    {
+      type: "trigger",
+      data: {
+        label: "Invoice created",
+        event: "invoice:created",
+      },
+    },
+    {
+      type: "trigger",
+      data: {
+        label: "Invoice overdue",
+        event: "invoice:overdue",
+      },
+    },
   ];
 }

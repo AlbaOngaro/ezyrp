@@ -2,8 +2,11 @@ import {
   Cake,
   CalendarClock,
   CalendarRange,
+  HandCoins,
+  ReceiptText,
   Send,
   UserPlus,
+  WalletCards,
 } from "lucide-react";
 import { Node } from "reactflow";
 import {
@@ -38,6 +41,12 @@ export function getIconForNode({ type, data, variant = "default" }: Props) {
       return <CalendarClock className={className} />;
     case "event:days-passed":
       return <CalendarRange className={className} />;
+    case "invoice:created":
+      return <ReceiptText className={className} />;
+    case "invoice:overdue":
+      return <WalletCards className={className} />;
+    case "invoice:paid":
+      return <HandCoins className={className} />;
     default:
       return null;
   }

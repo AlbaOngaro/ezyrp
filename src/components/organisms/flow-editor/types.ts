@@ -29,7 +29,10 @@ export interface TriggerNodeData extends BaseNodeData {
     | "customer:created"
     | "customer:birthday"
     | "event:upcoming"
-    | "event:days-passed";
+    | "event:days-passed"
+    | "invoice:created"
+    | "invoice:paid"
+    | "invoice:overdue";
 }
 
 export type NodeData = ActionNodeData | TriggerNodeData;

@@ -41,7 +41,7 @@ export function WorkflowsPage() {
                     const _id = await creatWorkflow({
                       title: (formData.get("title") || "") as string,
                     });
-                    return router.push(`/flows/${_id}/edit`);
+                    return router.push(`/workflows/${_id}/edit`);
                   } catch (error) {
                     console.error(error);
                   } finally {
