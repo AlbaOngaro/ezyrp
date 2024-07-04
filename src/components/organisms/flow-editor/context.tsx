@@ -3,26 +3,36 @@ import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
+  useCallback,
   useEffect,
   useState,
 } from "react";
 import { Node, Edge } from "reactflow";
 import { isEqual } from "lodash";
 
-import { NodeData, NodeType } from "./types";
+import {
+  isActionNode,
+  isEmailActionNode,
+  isSmsActionNode,
+  isTriggerNode,
+  NodeData,
+  NodeType,
+} from "./types";
 import { Doc, Id } from "convex/_generated/dataModel";
+import { Settings } from "convex/workflows";
 
-type WorkflowContextValue = {
-  id: Id<"workflows">;
-  nodes: Node<NodeData, NodeType>[];
+type WorkflowContextValue = Doc<"workflows"> & {
   setNodes: Dispatch<SetStateAction<Node<NodeData, NodeType>[]>>;
-  edges: Edge[];
   setEdges: Dispatch<SetStateAction<Edge[]>>;
   hasChanges: boolean;
 };
 
 export const WorkflowContext = createContext<WorkflowContextValue>({
-  id: "" as Id<"workflows">,
+  _id: "" as Id<"workflows">,
+  _creationTime: 0,
+  title: "",
+  // @ts-ignore
+  settings: {},
   nodes: [],
   setNodes: () => [],
   edges: [],
@@ -30,30 +40,87 @@ export const WorkflowContext = createContext<WorkflowContextValue>({
   hasChanges: false,
 });
 
+function getSettings(nodes: Node[]): Settings | undefined {
+  const trigger = nodes.find((node) => isTriggerNode(node));
+  const action = nodes.find((node) => isActionNode(node));
+
+  if (!trigger || !action) {
+    return undefined;
+  }
+
+  if (isEmailActionNode(action)) {
+    return {
+      event: trigger.data.event,
+      action: action.data.action,
+      template: action.data.template,
+    };
+  }
+
+  if (isSmsActionNode(action)) {
+    return {
+      event: trigger.data.event,
+      action: action.data.action,
+    };
+  }
+
+  return undefined;
+}
+
 export function WorkflowProvider({
   children,
   workflow,
 }: PropsWithChildren<{
   workflow: Doc<"workflows">;
 }>) {
-  const [nodes, setNodes] = useState<Node<NodeData, NodeType>[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const [nodes, setNodesInternal] = useState<Node<NodeData, NodeType>[]>([]);
+  const [edges, setEdgesInternal] = useState<Edge[]>([]);
+  const [settings, setSettings] = useState<Doc<"workflows">["settings"]>();
 
   useEffect(() => {
-    setEdges(workflow.edges);
-    setNodes(workflow.nodes);
+    setEdgesInternal(workflow.edges);
+    setNodesInternal(workflow.nodes);
+    setSettings(workflow.settings);
   }, [workflow]);
+
+  useEffect(() => {
+    setSettings(getSettings(nodes));
+  }, [nodes]);
+
+  const setNodes = useCallback(
+    (nodes: SetStateAction<Node<NodeData, NodeType>[]>) => {
+      setNodesInternal(nodes);
+    },
+    [],
+  );
+
+  const setEdges = useCallback((edges: SetStateAction<Edge[]>) => {
+    setEdgesInternal(edges);
+  }, []);
+
+  const hasChanges =
+    !isEqual(
+      edges.map(({ selected: _selected, ...edge }) => edge),
+      workflow.edges.map(({ selected: _selected, ...edge }) => edge),
+    ) ||
+    !isEqual(
+      nodes.map(
+        ({ selected: _selected, dragging: _dragging, ...node }) => node,
+      ),
+      workflow.nodes.map(
+        ({ selected: _selected, dragging: _dragging, ...node }) => node,
+      ),
+    );
 
   return (
     <WorkflowContext.Provider
       value={{
-        id: workflow._id,
+        ...workflow,
+        settings,
         nodes,
         setNodes,
         edges,
         setEdges,
-        hasChanges:
-          !isEqual(workflow.nodes, nodes) || !isEqual(workflow.edges, edges),
+        hasChanges,
       }}
     >
       {children}

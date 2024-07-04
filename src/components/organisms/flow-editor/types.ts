@@ -47,3 +47,9 @@ export function isEmailActionNode(
 ): node is Node<EmailActionNodeData, "action"> {
   return isActionNode(node) && node.data.action === "email";
 }
+
+export function isSmsActionNode(
+  node: Pick<Node, "type" | "data">,
+): node is Node<SmsActionNodeData, "action"> {
+  return isActionNode(node) && node.data.action === "sms";
+}

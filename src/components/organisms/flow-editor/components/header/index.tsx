@@ -13,7 +13,6 @@ import {
   TooltipTrigger,
 } from "components/atoms/tooltip";
 import { Badge } from "components/atoms/badge";
-import { Notification } from "components/atoms/notification";
 import {
   Menubar,
   MenubarContent,
@@ -22,12 +21,12 @@ import {
   MenubarTrigger,
 } from "components/atoms/menubar";
 import { cn } from "lib/utils/cn";
+import { Notification } from "components/atoms/notification";
 
 export function Header() {
   const hasChanges = useHasChanges();
   const menuItems = useGetMenuItems();
-  const { valid, errors } = useFlowValidationState();
-
+  const { success, error } = useFlowValidationState();
   const [onSave, { loading: isSavingWorkflow }] = useOnSave();
 
   return (
@@ -57,20 +56,16 @@ export function Header() {
       </Menubar>
 
       <Button
-        disabled={!hasChanges || !valid}
+        disabled={!hasChanges || !success}
         className="flex flex-row gap-2 relative"
         loading={isSavingWorkflow}
-        onClick={() => {
-          if (valid) {
-            return onSave();
-          }
-        }}
+        onClick={onSave}
       >
-        {hasChanges && <Notification />}
+        {hasChanges && success && <Notification />}
         <Save className="w-4 h-4" /> Save
       </Button>
 
-      {!valid && (
+      {!success && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -82,7 +77,7 @@ export function Header() {
               </Badge>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{errors[0].message}</p>
+              <p>{error.issues[0].message}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

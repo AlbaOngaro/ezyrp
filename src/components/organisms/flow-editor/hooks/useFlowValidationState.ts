@@ -1,73 +1,43 @@
-import { getConnectedEdges } from "reactflow";
-import { useEdges } from "./useEdges";
-import { useNodes } from "./useNodes";
+import { z } from "zod";
+import { useContext } from "react";
+import { WorkflowContext } from "../context";
 
-type ValidState = {
-  valid: true;
-  errors: never[];
-};
+const event = z.union([
+  z.literal("customer:created"),
+  z.literal("customer:birthday"),
+  z.literal("event:upcoming"),
+  z.literal("event:days-passed"),
+  z.literal("invoice:created"),
+  z.literal("invoice:paid"),
+  z.literal("invoice:overdue"),
+]);
 
-export enum ErrorCode {
-  MissingConnection = "MISSING_CONNECTION",
-  MissingTriggerNode = "MISSING_TRIGGER_NODE",
-  MissingActionNode = "MISSING_ACTION_NODE",
-}
+const flowSchema = z.object({
+  _id: z.string(),
+  title: z.string().optional(),
+  status: z.enum(["active", "inactive"]),
+  workspace: z.string(),
+  nodes: z.array(z.any()).length(2, "There must be exactly 2 nodes"),
+  edges: z.array(z.any()).length(1, "There must be exactly 1 edge"),
+  settings: z.union([
+    z.object({
+      action: z.literal("email"),
+      event,
+      template: z.string(),
+    }),
+    z.object({
+      action: z.literal("sms"),
+      event,
+    }),
+  ]),
+});
 
-export type Error = {
-  message: string;
-  code: ErrorCode;
-};
+export function useFlowValidationState() {
+  const {
+    setEdges: _setEdges,
+    setNodes: _setNodes,
+    ...workflow
+  } = useContext(WorkflowContext);
 
-type ErrorState = {
-  valid: false;
-  errors: Error[];
-};
-
-type ReturnType = ValidState | ErrorState;
-
-export function useFlowValidationState(): ReturnType {
-  const [edges] = useEdges();
-  const [nodes] = useNodes();
-
-  let valid = true;
-  const errors = [];
-
-  const connections = getConnectedEdges(nodes, edges);
-
-  if (nodes.every((node) => node.type === "action")) {
-    valid = false;
-    errors.push({
-      code: ErrorCode.MissingTriggerNode,
-      message: "You need to have at least one trigger node.",
-    });
-  }
-
-  if (nodes.every((node) => node.type === "trigger")) {
-    valid = false;
-    errors.push({
-      code: ErrorCode.MissingActionNode,
-      message: "You need to have at least one action node.",
-    });
-  }
-
-  if (connections.length === 0) {
-    valid = false;
-
-    errors.push({
-      code: ErrorCode.MissingConnection,
-      message: "You need to connect the nodes to each other.",
-    });
-  }
-
-  if (valid) {
-    return {
-      valid: true,
-      errors: [],
-    };
-  }
-
-  return {
-    valid,
-    errors,
-  };
+  return flowSchema.safeParse(workflow);
 }
