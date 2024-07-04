@@ -15,7 +15,7 @@ interface BaseActionNodeData extends BaseNodeData {
 
 interface EmailActionNodeData extends BaseActionNodeData {
   action: "email";
-  template: Id<"emails"> | undefined;
+  template: Id<"emails">;
 }
 
 interface SmsActionNodeData extends BaseActionNodeData {
