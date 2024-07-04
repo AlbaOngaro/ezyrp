@@ -3,18 +3,19 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
+import { Heading } from "components/atoms/heading";
 import { Id } from "convex/_generated/dataModel";
 
 import { FlowEditor } from "components/organisms/flow-editor";
+import { Loader } from "components/atoms/loader";
 import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
-import { Loader } from "components/atoms/loader";
 
 type Props = {
   id: Id<"workflows">;
 };
 
-export function EditFlowPage({ id }: Props) {
+export function WorkflowPage({ id }: Props) {
   const { data: workflow, status } = useQuery(api.workflows.get, { id });
 
   if (status === "pending") {
@@ -34,9 +35,14 @@ export function EditFlowPage({ id }: Props) {
   }
 
   return (
-    <Container className="h-[calc(100vh-60px)]">
-      <FlowEditor workflow={workflow} />
-    </Container>
+    <>
+      <Container as="section" className="py-10 sm:flex sm:items-center">
+        <Heading title={id} />
+      </Container>
+      <Container className="h-[calc(100vh-104px-60px)]">
+        <FlowEditor workflow={workflow} mode="view" />
+      </Container>
+    </>
   );
 }
 
@@ -58,6 +64,6 @@ export async function getServerSideProps({
   };
 }
 
-EditFlowPage.getLayout = (page: ReactElement) => (
+WorkflowPage.getLayout = (page: ReactElement) => (
   <SidebarLayout>{page}</SidebarLayout>
 );
