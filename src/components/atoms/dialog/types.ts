@@ -12,4 +12,5 @@ export interface Props {
   confirmText?: string;
   onConfirm?: () => void;
   onOpenAutoFocus?: (e: Event) => void;
+  forceMount?: true;
 }
