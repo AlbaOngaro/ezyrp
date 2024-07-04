@@ -63,7 +63,7 @@ export const create = mutation({
   args: {
     customer: v.id("customers"),
     description: v.string(),
-    status: v.string(),
+    status: v.union(v.literal("due"), v.literal("paid"), v.literal("overdue")),
     items: v.array(v.id("items")),
     amount: v.number(),
     due: v.string(),
@@ -93,7 +93,7 @@ export const update = mutation({
     id: v.id("invoices"),
     customer: v.optional(v.id("customers")),
     description: v.optional(v.string()),
-    status: v.optional(v.string()),
+    status: v.union(v.literal("due"), v.literal("paid"), v.literal("overdue")),
     items: v.optional(v.array(v.id("items"))),
     amount: v.optional(v.number()),
     due: v.optional(v.string()),

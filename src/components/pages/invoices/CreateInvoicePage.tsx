@@ -23,7 +23,7 @@ export function CreateInvoicePage() {
   >({
     defaultValues: {
       description: "",
-      status: "pending",
+      status: "due",
       customer: customers?.data?.at(0),
       items: [],
       due: new Date().toISOString(),

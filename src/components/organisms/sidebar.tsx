@@ -21,7 +21,7 @@ const navigation = [
   { name: "Invoices", href: "/invoices", icon: ReceiptText },
   { name: "Schedule", href: "/schedule", icon: CalendarDays },
   { name: "Email templates", href: "/emails", icon: Mail },
-  { name: "Workflows", href: "/flows", icon: Workflow },
+  { name: "Workflows", href: "/workflows", icon: Workflow },
 ];
 
 export function Sidebar() {

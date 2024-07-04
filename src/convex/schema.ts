@@ -30,7 +30,7 @@ export default defineSchema({
     workspace: v.string(),
     customer: v.id("customers"),
     description: v.string(),
-    status: v.string(),
+    status: v.union(v.literal("due"), v.literal("paid"), v.literal("overdue")),
     items: v.array(v.id("items")),
     amount: v.number(),
     due: v.string(),
