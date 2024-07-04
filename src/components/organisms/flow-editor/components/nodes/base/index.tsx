@@ -38,7 +38,7 @@ export function BaseNode(props: NodeProps<NodeData> & { type: NodeType }) {
         "relative bg-white border-2 border-white rounded-sm px-4 py-2 flex flex-row items-center gap-2",
         {
           "border-black": selected,
-          "pr-6": !success,
+          "pr-8": !success,
         },
       )}
     >
@@ -54,7 +54,7 @@ export function BaseNode(props: NodeProps<NodeData> & { type: NodeType }) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <TriangleAlert className="w-3 h-3 text-red-500 absolute top-1 right-1" />
+              <TriangleAlert className="w-4 h-4 text-red-500 absolute top-1 right-1" />
             </TooltipTrigger>
             <TooltipContent className="text-xs">
               {error?.issues.map((issue) => issue.message)}
