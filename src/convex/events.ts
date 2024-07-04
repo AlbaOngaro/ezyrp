@@ -4,7 +4,9 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
+  getWorkflowForEvent,
 } from "./utils";
+import { api } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -45,6 +47,49 @@ export const create = mutation({
       variant,
       guests,
     });
+
+    const workflow = await getWorkflowForEvent(ctx, "event:upcoming");
+    if (workflow) {
+      const settings = workflow.settings;
+      if (workflow.status !== "active" || !settings) {
+        return;
+      }
+
+      switch (settings.action) {
+        case "email": {
+          const template = settings.template;
+          const emails = await Promise.all(
+            guests.map((guest) =>
+              getEntityByIdInWorkspace(ctx, {
+                id: guest,
+                table: "customers",
+              }).then(({ email }) => email),
+            ),
+          );
+
+          if (template && emails) {
+            await Promise.all(
+              emails.map((email) =>
+                ctx.scheduler.runAt(new Date(start), api.actions.email, {
+                  template,
+                  to: email,
+                }),
+              ),
+            );
+          }
+          break;
+        }
+        case "sms": {
+          await ctx.scheduler.runAfter(0, api.actions.sms, {
+            to: "+1234567890",
+            message: "Invoice created",
+          });
+          break;
+        }
+        default:
+          break;
+      }
+    }
 
     return await ctx.db.get(id);
   },

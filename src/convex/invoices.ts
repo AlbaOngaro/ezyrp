@@ -5,7 +5,9 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
+  getWorkflowForEvent,
 } from "./utils";
+import { api } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -86,28 +88,40 @@ export const create = mutation({
       description,
     });
 
-    // const workflow = await getWorkflowForEvent(ctx, "invoice:created");
-    // if (workflow && workflow.status === "active") {
-    //   const { email } = await getEntityByIdInWorkspace(ctx, {
-    //     id: customer,
-    //     table: "customers",
-    //   });
+    const workflow = await getWorkflowForEvent(ctx, "invoice:created");
+    if (workflow) {
+      const settings = workflow.settings;
+      if (workflow.status !== "active" || !settings) {
+        return;
+      }
 
-    //   const action = workflow.nodes.find((node) => node.type === "action");
+      switch (settings.action) {
+        case "email": {
+          const template = settings.template;
+          const { email } = await getEntityByIdInWorkspace(ctx, {
+            id: customer,
+            table: "customers",
+          });
 
-    //   const template = getValue(
-    //     action,
-    //     "data.settings.template.value.value",
-    //     null,
-    //   );
-
-    //   if (template && email) {
-    //     await ctx.scheduler.runAfter(0, api.actions.email, {
-    //       template,
-    //       to: email,
-    //     });
-    //   }
-    // }
+          if (template && email) {
+            await ctx.scheduler.runAfter(0, api.actions.email, {
+              template,
+              to: email,
+            });
+          }
+          break;
+        }
+        case "sms": {
+          await ctx.scheduler.runAfter(0, api.actions.sms, {
+            to: "+1234567890",
+            message: "Invoice created",
+          });
+          break;
+        }
+        default:
+          break;
+      }
+    }
   },
 });
 
@@ -140,6 +154,81 @@ export const update = mutation({
       customer: customer || invoice.customer,
       description: description || invoice.description,
     });
+
+    switch (status) {
+      case "paid": {
+        const workflow = await getWorkflowForEvent(ctx, "invoice:paid");
+        if (workflow) {
+          const settings = workflow.settings;
+          if (workflow.status !== "active" || !settings) {
+            return;
+          }
+
+          switch (settings.action) {
+            case "email": {
+              const template = settings.template;
+              const { email } = await getEntityByIdInWorkspace(ctx, {
+                id: customer || invoice.customer,
+                table: "customers",
+              });
+
+              if (template && email) {
+                await ctx.scheduler.runAfter(0, api.actions.email, {
+                  template,
+                  to: email,
+                });
+              }
+              break;
+            }
+            case "sms": {
+              await ctx.scheduler.runAfter(0, api.actions.sms, {
+                to: "+1234567890",
+                message: "Invoice created",
+              });
+              break;
+            }
+            default:
+              break;
+          }
+        }
+      }
+      case "overdue": {
+        const workflow = await getWorkflowForEvent(ctx, "invoice:overdue");
+        if (workflow) {
+          const settings = workflow.settings;
+          if (workflow.status !== "active" || !settings) {
+            return;
+          }
+
+          switch (settings.action) {
+            case "email": {
+              const template = settings.template;
+              const { email } = await getEntityByIdInWorkspace(ctx, {
+                id: customer || invoice.customer,
+                table: "customers",
+              });
+
+              if (template && email) {
+                await ctx.scheduler.runAfter(0, api.actions.email, {
+                  template,
+                  to: email,
+                });
+              }
+              break;
+            }
+            case "sms": {
+              await ctx.scheduler.runAfter(0, api.actions.sms, {
+                to: "+1234567890",
+                message: "Invoice created",
+              });
+              break;
+            }
+            default:
+              break;
+          }
+        }
+      }
+    }
   },
 });
 

@@ -6,7 +6,9 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
+  getWorkflowForEvent,
 } from "./utils";
+import { api } from "./_generated/api";
 
 type UpsertArgs = {
   name: string;
@@ -16,11 +18,12 @@ type UpsertArgs = {
   code?: string;
   country?: string;
   photoUrl?: string;
+  birthday?: string;
 };
 
 export const upsert = async (
   ctx: GenericMutationCtx<DataModel>,
-  { email, name, address, city, code, country, photoUrl }: UpsertArgs,
+  { email, name, address, city, code, country, photoUrl, birthday }: UpsertArgs,
 ) => {
   const { workspace } = await getAuthData(ctx);
 
@@ -40,6 +43,7 @@ export const upsert = async (
       code,
       country,
       photoUrl,
+      birthday,
     });
 
     return await ctx.db.get(id);
@@ -54,6 +58,7 @@ export const upsert = async (
     code: code || customer.code,
     country: country || customer.country,
     photoUrl: photoUrl || customer.photoUrl,
+    birthday: birthday || customer.birthday,
   });
 
   return await ctx.db.get(customer._id);
@@ -86,14 +91,15 @@ export const create = mutation({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
+    birthday: v.optional(v.string()),
   },
   handler: async (
     ctx,
-    { name, email, address, city, code, country, photoUrl },
+    { name, email, address, city, code, country, photoUrl, birthday },
   ) => {
     const { workspace } = await getAuthData(ctx);
 
-    await ctx.db.insert("customers", {
+    const id = await ctx.db.insert("customers", {
       workspace,
       name,
       email,
@@ -102,7 +108,88 @@ export const create = mutation({
       code,
       country,
       photoUrl,
+      birthday,
     });
+
+    const customer_created_workflow = await getWorkflowForEvent(
+      ctx,
+      "customer:created",
+    );
+    if (customer_created_workflow) {
+      const settings = customer_created_workflow.settings;
+      if (customer_created_workflow.status !== "active" || !settings) {
+        return;
+      }
+
+      switch (settings.action) {
+        case "email": {
+          const template = settings.template;
+          const { email } = await getEntityByIdInWorkspace(ctx, {
+            id,
+            table: "customers",
+          });
+
+          if (template && email) {
+            await ctx.scheduler.runAfter(0, api.actions.email, {
+              template,
+              to: email,
+            });
+          }
+          break;
+        }
+        case "sms": {
+          await ctx.scheduler.runAfter(0, api.actions.sms, {
+            to: "+1234567890",
+            message: "Invoice created",
+          });
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
+    const customer_birthday_workflow = await getWorkflowForEvent(
+      ctx,
+      "customer:birthday",
+    );
+    if (customer_birthday_workflow) {
+      const settings = customer_birthday_workflow.settings;
+      if (
+        customer_birthday_workflow.status !== "active" ||
+        !settings ||
+        !birthday
+      ) {
+        return;
+      }
+
+      switch (settings.action) {
+        case "email": {
+          const template = settings.template;
+          const { email } = await getEntityByIdInWorkspace(ctx, {
+            id,
+            table: "customers",
+          });
+
+          if (template && email) {
+            await ctx.scheduler.runAt(new Date(birthday), api.actions.email, {
+              template,
+              to: email,
+            });
+          }
+          break;
+        }
+        case "sms": {
+          await ctx.scheduler.runAfter(0, api.actions.sms, {
+            to: "+1234567890",
+            message: "Invoice created",
+          });
+          break;
+        }
+        default:
+          break;
+      }
+    }
   },
 });
 
