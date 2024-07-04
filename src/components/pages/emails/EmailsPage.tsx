@@ -1,28 +1,21 @@
 import { ReactElement, useState } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "convex/react";
-
 import { Form } from "@radix-ui/react-form";
-import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
+
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Heading } from "components/atoms/heading";
 import { Button } from "components/atoms/button";
-import { Table } from "components/atoms/table";
 import { api } from "convex/_generated/api";
 import { Card } from "components/atoms/card";
-import { useQuery } from "lib/hooks/useQuery";
-import { Doc, Id } from "convex/_generated/dataModel";
-import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
+import { EmailsTable } from "components/organisms/emails-table";
 
 export function EmailsPage() {
   const router = useRouter();
-  const contextMenuItems = useGetContextMenuItems();
   const createEmail = useMutation(api.emails.create);
-  const deleteEmail = useMutation(api.emails.remove);
-  const { data: emails = [] } = useQuery(api.emails.list);
 
   const [isCreatingEmail, setIsCreatingEmail] = useState(false);
 
@@ -82,41 +75,7 @@ export function EmailsPage() {
       </Container>
       <Container as="section">
         <Card>
-          <Table<Omit<Doc<"emails">, "body">>
-            rows={emails}
-            columns={[
-              {
-                id: "title",
-                field: "title",
-                headerName: "Title",
-              },
-            ]}
-            withContextMenu
-            contextMenuItems={contextMenuItems}
-            withMultiSelect
-            renderSelectedActions={(rows) => (
-              <DialogRoot>
-                <DialogTrigger asChild>
-                  <Button variant="destructive" size="sm">
-                    Delete all
-                  </Button>
-                </DialogTrigger>
-
-                <Dialog
-                  overlayClassname="!ml-0"
-                  title="Do you really want to delete all the selected email templates?"
-                  description="This action cannot be undone."
-                  onConfirm={() =>
-                    Promise.all(
-                      rows.map((row) =>
-                        deleteEmail({ id: row._id as Id<"emails"> }),
-                      ),
-                    )
-                  }
-                />
-              </DialogRoot>
-            )}
-          />
+          <EmailsTable />
         </Card>
       </Container>
     </>
