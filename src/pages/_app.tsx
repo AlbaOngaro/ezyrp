@@ -39,7 +39,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
             <OrganisationProvider>
               {getLayout(<Component {...pageProps} />)}
               <Toaster />
-              <div id="dialog-root" />
             </OrganisationProvider>
           </UserProvider>
         </ConvexCacheProvider>

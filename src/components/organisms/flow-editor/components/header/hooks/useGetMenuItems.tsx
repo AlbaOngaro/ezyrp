@@ -1,10 +1,11 @@
 import { useMutation } from "convex/react";
-import { Pencil, ToggleLeft, Trash } from "lucide-react";
+import { Pencil, ToggleLeft, ToggleRight, Trash } from "lucide-react";
 import { useRouter } from "next/router";
 import { useWorkflowId } from "components/organisms/flow-editor/hooks/useWorkflowId";
 import { api } from "convex/_generated/api";
 import { useQuery } from "lib/hooks/useQuery";
 import { dialogs } from "components/atoms/dialog";
+import { modals } from "components/atoms/modal";
 
 export function useGetMenuItems() {
   const id = useWorkflowId();
@@ -17,7 +18,12 @@ export function useGetMenuItems() {
     {
       id: "status",
       label: workflow?.status === "inactive" ? "Enable" : "Disable",
-      icon: <ToggleLeft className="w-4 h-4" />,
+      icon:
+        workflow?.status == "inactive" ? (
+          <ToggleLeft className="w-4 h-4" />
+        ) : (
+          <ToggleRight className="w-4 h-4" />
+        ),
       onClick: () =>
         updateWorkflow({
           id,
@@ -29,9 +35,23 @@ export function useGetMenuItems() {
       label: "Rename",
       icon: <Pencil className="w-4 h-4" />,
       onClick: () =>
-        updateWorkflow({
-          id,
-          title: "A new title",
+        modals.input({
+          title: "Rename workflow",
+          onSubmit: async (e) => {
+            const formData = new FormData(e.currentTarget);
+            const title = formData.get("title");
+            if (title && typeof title === "string") {
+              await updateWorkflow({ id, title });
+            }
+          },
+          inputProps: {
+            name: "title",
+            label: "Workflow name",
+            defaultValue: workflow?.title,
+          },
+          submitButtonProps: {
+            children: "Confirm",
+          },
         }),
     },
     {
