@@ -10,8 +10,8 @@ import {
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 import { createRoot, Root } from "react-dom/client";
+import { useState } from "react";
 
-import { useEffect, useState } from "react";
 import { Props } from "./types";
 import { cn } from "lib/utils/cn";
 import { Button } from "components/atoms/button";
@@ -140,7 +140,35 @@ const dialogs = {
     }
 
     const key = keyGenerator.next().value as number;
-    root.render(<Wrapper {...props} key={key} />);
+    root.render(
+      <Wrapper
+        {...props}
+        confirmButtonProps={{ variant: "destructive" }}
+        key={key}
+      />,
+    );
+  },
+  info: (props: Props) => {
+    const container = document.getElementById("dialog-root");
+    if (!container) {
+      return;
+    }
+
+    if (!root) {
+      root = createRoot(container);
+    }
+
+    const key = keyGenerator.next().value as number;
+    root.render(
+      <Wrapper
+        {...props}
+        confirmButtonProps={{
+          variant: "default",
+          className: "bg-blue-500 hover:bg-blue-600",
+        }}
+        key={key}
+      />,
+    );
   },
 };
 
