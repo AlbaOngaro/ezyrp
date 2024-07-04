@@ -1,7 +1,6 @@
 import { ReactElement, useState } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "convex/react";
-import { FunctionReturnType } from "convex/server";
 
 import { Form } from "@radix-ui/react-form";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
@@ -20,23 +19,18 @@ import {
   dialogs,
   DialogTrigger,
 } from "components/atoms/dialog";
-import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
+import { Modal, ModalRoot, modals, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
-import { UpdateEmailModal } from "components/organisms/update-email-modal";
-
-type Email = FunctionReturnType<typeof api.emails.get>;
 
 export function EmailsPage() {
   const router = useRouter();
   const createEmail = useMutation(api.emails.create);
   const deleteEmail = useMutation(api.emails.remove);
+  const updateEmail = useMutation(api.emails.update);
   const [downloadEmailHhtml] = useDownloadEmailHtml();
   const { data: emails = [] } = useQuery(api.emails.list);
 
   const [isCreatingEmail, setIsCreatingEmail] = useState(false);
-  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
-
-  const [email, setEmail] = useState<Email | null>(null);
 
   return (
     <>
@@ -122,10 +116,26 @@ export function EmailsPage() {
                   {
                     type: "item",
                     label: "Rename",
-                    onClick: (row) => {
-                      setEmail(row as Email);
-                      setIsRenameModalOpen(true);
-                    },
+                    onClick: (row) =>
+                      modals.input({
+                        title: "Rename email template",
+                        inputProps: {
+                          name: "title",
+                          label: "Template title",
+                          defaultValue: row.title,
+                        },
+                        onSubmit: async (e) => {
+                          e.preventDefault();
+                          const formData = new FormData(e.currentTarget);
+                          const title = formData.get("title");
+                          if (title && typeof title === "string") {
+                            await updateEmail({
+                              id: row._id,
+                              title,
+                            });
+                          }
+                        },
+                      }),
                   },
                   {
                     type: "item",
@@ -174,16 +184,6 @@ export function EmailsPage() {
           />
         </Card>
       </Container>
-
-      <ModalRoot open={isRenameModalOpen} onOpenChange={setIsRenameModalOpen}>
-        <UpdateEmailModal
-          email={email}
-          onSuccess={() => {
-            setTimeout(() => (document.body.style.pointerEvents = ""), 0);
-            setIsRenameModalOpen(false);
-          }}
-        />
-      </ModalRoot>
     </>
   );
 }

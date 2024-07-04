@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { Form } from "@radix-ui/react-form";
 import { Input } from "../input";
@@ -17,6 +17,12 @@ function InputModal({
 }: InputModalProps) {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => (document.body.style.pointerEvents = ""), 0);
+    }
+  }, [isOpen]);
 
   return (
     <ModalRoot open={isOpen} onOpenChange={setIsOpen}>
