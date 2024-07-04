@@ -1,6 +1,8 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+export const action = v.union(v.literal("email"), v.literal("sms"));
+
 export const event = v.union(
   v.literal("customer:created"),
   v.literal("customer:birthday"),
@@ -71,7 +73,12 @@ export default defineSchema({
   workflows: defineTable({
     title: v.string(),
     status: v.union(v.literal("active"), v.literal("inactive")),
-    event: v.optional(event),
+    settings: v.optional(
+      v.object({
+        event: v.optional(event),
+        action: v.optional(action),
+      }),
+    ),
     workspace: v.string(),
     // Used in FE to render the graph
     nodes: v.array(v.any()),

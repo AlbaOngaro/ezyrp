@@ -6,6 +6,11 @@ import {
   getEntityByIdInWorkspace,
 } from "./utils";
 
+import { event, action } from "./schema";
+
+export type Event = typeof event.type;
+export type Action = typeof action.type;
+
 export const get = query({
   args: {
     id: v.id("workflows"),
@@ -37,6 +42,7 @@ export const create = mutation({
       status: "inactive",
       nodes: [],
       edges: [],
+      settings: {},
     });
 
     return id;
@@ -50,8 +56,16 @@ export const update = mutation({
     title: v.optional(v.string()),
     nodes: v.optional(v.array(v.any())),
     edges: v.optional(v.array(v.any())),
+    settings: v.optional(
+      v.object({
+        action: v.optional(action),
+        event: v.optional(event),
+      }),
+    ),
   },
-  handler: async (ctx, { id, status, title, nodes, edges }) => {
+  handler: async (ctx, { id, status, title, nodes, edges, settings }) => {
+    console.log(settings);
+
     const workflow = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "workflows",
@@ -62,9 +76,7 @@ export const update = mutation({
       nodes: nodes || workflow.nodes,
       edges: edges || workflow.edges,
       status: status || workflow.status,
-      event:
-        nodes?.find((node) => node.type === "trigger")?.data?.event ||
-        workflow.event,
+      settings: settings || workflow.settings,
     });
   },
 });

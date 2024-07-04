@@ -1,33 +1,31 @@
+import { Node } from "reactflow";
+
 export type NodeType = "trigger" | "action";
 
-import { Event } from "convex/utils";
-
-export type SelectSetting = {
-  type: "select";
-  options: { label: string; value: string }[];
-  value: { label: string; value: string };
-  defaultValue?: { label: string; value: string };
-};
-
-type InputSettings = {
-  type: "input";
-  value: string;
-  disabled?: boolean;
-};
-
-export type Setting = InputSettings | SelectSetting;
-
-type Settings = Record<string, Setting>;
+import { Event, Action } from "convex/workflows";
 
 interface BaseNodeData {
   label: string;
-  settings?: Settings;
 }
 
-export interface ActionNodeData extends BaseNodeData { }
+export interface ActionNodeData extends BaseNodeData {
+  action: Action;
+}
 
 export interface TriggerNodeData extends BaseNodeData {
   event: Event;
 }
 
 export type NodeData = ActionNodeData | TriggerNodeData;
+
+export function isActionNode(
+  node: Pick<Node, "type">,
+): node is Node<ActionNodeData, "action"> {
+  return node.type === "action";
+}
+
+export function isTriggerNode(
+  node: Pick<Node, "type">,
+): node is Node<TriggerNodeData, "trigger"> {
+  return node.type === "trigger";
+}

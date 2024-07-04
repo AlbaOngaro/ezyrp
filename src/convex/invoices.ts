@@ -1,14 +1,11 @@
 import { ConvexError, v } from "convex/values";
-import { get as getValue } from "lodash";
 import { mutation, query } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
-  getWorkflowForEvent,
 } from "./utils";
-import { api } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -89,28 +86,28 @@ export const create = mutation({
       description,
     });
 
-    const workflow = await getWorkflowForEvent(ctx, "invoice:created");
-    if (workflow && workflow.status === "active") {
-      const { email } = await getEntityByIdInWorkspace(ctx, {
-        id: customer,
-        table: "customers",
-      });
+    // const workflow = await getWorkflowForEvent(ctx, "invoice:created");
+    // if (workflow && workflow.status === "active") {
+    //   const { email } = await getEntityByIdInWorkspace(ctx, {
+    //     id: customer,
+    //     table: "customers",
+    //   });
 
-      const action = workflow.nodes.find((node) => node.type === "action");
+    //   const action = workflow.nodes.find((node) => node.type === "action");
 
-      const template = getValue(
-        action,
-        "data.settings.template.value.value",
-        null,
-      );
+    //   const template = getValue(
+    //     action,
+    //     "data.settings.template.value.value",
+    //     null,
+    //   );
 
-      if (template && email) {
-        await ctx.scheduler.runAfter(0, api.actions.email, {
-          template,
-          to: email,
-        });
-      }
-    }
+    //   if (template && email) {
+    //     await ctx.scheduler.runAfter(0, api.actions.email, {
+    //       template,
+    //       to: email,
+    //     });
+    //   }
+    // }
   },
 });
 
