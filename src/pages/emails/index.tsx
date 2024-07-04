@@ -1,3 +1,3 @@
-import { EmailsPage } from "components/pages/emails/EmailsPage";
+import { EmailsPage } from "components/pages/emails/list";
 
 export default EmailsPage;

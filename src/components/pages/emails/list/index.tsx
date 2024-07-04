@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useMutation } from "convex/react";
 
 import { Form } from "@radix-ui/react-form";
+import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Heading } from "components/atoms/heading";
@@ -12,22 +13,15 @@ import { api } from "convex/_generated/api";
 import { Card } from "components/atoms/card";
 import { useQuery } from "lib/hooks/useQuery";
 import { Doc, Id } from "convex/_generated/dataModel";
-import { useDownloadEmailHtml } from "components/organisms/email-editor/hooks/useDownloadEmailHtml";
-import {
-  Dialog,
-  DialogRoot,
-  dialogs,
-  DialogTrigger,
-} from "components/atoms/dialog";
-import { Modal, ModalRoot, modals, ModalTrigger } from "components/atoms/modal";
+import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
+import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
 
 export function EmailsPage() {
   const router = useRouter();
+  const contextMenuItems = useGetContextMenuItems();
   const createEmail = useMutation(api.emails.create);
   const deleteEmail = useMutation(api.emails.remove);
-  const updateEmail = useMutation(api.emails.update);
-  const [downloadEmailHhtml] = useDownloadEmailHtml();
   const { data: emails = [] } = useQuery(api.emails.list);
 
   const [isCreatingEmail, setIsCreatingEmail] = useState(false);
@@ -98,66 +92,7 @@ export function EmailsPage() {
               },
             ]}
             withContextMenu
-            contextMenuItems={[
-              {
-                type: "item",
-                label: "View",
-                onClick: (row) => router.push(`/emails/${row._id}`),
-              },
-              {
-                type: "item",
-                label: "Edit",
-                onClick: (row) => router.push(`/emails/${row._id}/edit`),
-              },
-              {
-                type: "sub",
-                label: "Quick actions",
-                children: [
-                  {
-                    type: "item",
-                    label: "Rename",
-                    onClick: (row) =>
-                      modals.input({
-                        title: "Rename email template",
-                        inputProps: {
-                          name: "title",
-                          label: "Template title",
-                          defaultValue: row.title,
-                        },
-                        onSubmit: async (e) => {
-                          e.preventDefault();
-                          const formData = new FormData(e.currentTarget);
-                          const title = formData.get("title");
-                          if (title && typeof title === "string") {
-                            await updateEmail({
-                              id: row._id,
-                              title,
-                            });
-                          }
-                        },
-                      }),
-                  },
-                  {
-                    type: "item",
-                    label: "Download",
-                    onClick: (row) => downloadEmailHhtml(row._id),
-                  },
-                ],
-              },
-              {
-                type: "separator",
-              },
-              {
-                type: "item",
-                label: "Delete",
-                onClick: (row) =>
-                  dialogs.warning({
-                    title: "Do you really want to delete this email template?",
-                    description: "This action cannot be undone.",
-                    onConfirm: () => deleteEmail({ id: row._id }),
-                  }),
-              },
-            ]}
+            contextMenuItems={contextMenuItems}
             withMultiSelect
             renderSelectedActions={(rows) => (
               <DialogRoot>
