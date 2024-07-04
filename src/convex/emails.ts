@@ -1,11 +1,20 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
   getValidUuid,
 } from "./utils";
+
+export const getInternal = internalQuery({
+  args: {
+    id: v.id("emails"),
+  },
+  handler: async (ctx, { id }) => {
+    return await ctx.db.get(id);
+  },
+});
 
 export const get = query({
   args: {

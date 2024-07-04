@@ -9,6 +9,11 @@ import { v4 as uuid, validate } from "uuid";
 import { capitalize } from "lodash";
 import { DataModel, Doc, Id, TableNames } from "./_generated/dataModel";
 
+import { event } from "./schema";
+
+/**
+ * Extracts the user_id and workspace from the auth object. Throws an error if the user is not authenticated or if the workspace is not found.
+ **/
 export async function getAuthData(
   ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
 ) {
@@ -94,4 +99,14 @@ export function getValidUuid(): string {
   }
 
   return getValidUuid();
+}
+
+export type Event = typeof event.type;
+
+export async function getWorkflowForEvent(
+  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
+  event: Event,
+) {
+  const workflows = await getEntitiesInWorkspace(ctx, "workflows");
+  return workflows.find((workflow) => workflow.event === event);
 }

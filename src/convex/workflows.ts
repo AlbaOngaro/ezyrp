@@ -62,6 +62,9 @@ export const update = mutation({
       nodes: nodes || workflow.nodes,
       edges: edges || workflow.edges,
       status: status || workflow.status,
+      event:
+        nodes?.find((node) => node.type === "trigger")?.data?.event ||
+        workflow.event,
     });
   },
 });

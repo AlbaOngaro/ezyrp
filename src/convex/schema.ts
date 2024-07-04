@@ -1,6 +1,16 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+export const event = v.union(
+  v.literal("customer:created"),
+  v.literal("customer:birthday"),
+  v.literal("event:upcoming"),
+  v.literal("event:days-passed"),
+  v.literal("invoice:created"),
+  v.literal("invoice:paid"),
+  v.literal("invoice:overdue"),
+);
+
 export default defineSchema({
   settings: defineTable({
     user_id: v.string(),
@@ -61,7 +71,9 @@ export default defineSchema({
   workflows: defineTable({
     title: v.string(),
     status: v.union(v.literal("active"), v.literal("inactive")),
+    event: v.optional(event),
     workspace: v.string(),
+    // Used in FE to render the graph
     nodes: v.array(v.any()),
     edges: v.array(v.any()),
   }).index("by_workspace", ["workspace"]),

@@ -1,5 +1,7 @@
 export type NodeType = "trigger" | "action";
 
+import { Event } from "convex/utils";
+
 export type SelectSetting = {
   type: "select";
   options: { label: string; value: string }[];
@@ -22,17 +24,10 @@ interface BaseNodeData {
   settings?: Settings;
 }
 
-export interface ActionNodeData extends BaseNodeData {}
+export interface ActionNodeData extends BaseNodeData { }
 
 export interface TriggerNodeData extends BaseNodeData {
-  event:
-    | "customer:created"
-    | "customer:birthday"
-    | "event:upcoming"
-    | "event:days-passed"
-    | "invoice:created"
-    | "invoice:paid"
-    | "invoice:overdue";
+  event: Event;
 }
 
 export type NodeData = ActionNodeData | TriggerNodeData;
