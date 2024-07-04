@@ -100,6 +100,7 @@ export function Header() {
                   item.className,
                 )}
                 onClick={item.onClick}
+                disabled={!success && item.id === "status"}
               >
                 {item.icon} {item.label}
               </MenubarItem>

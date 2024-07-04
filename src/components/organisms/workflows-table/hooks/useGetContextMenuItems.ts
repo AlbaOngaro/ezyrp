@@ -10,7 +10,6 @@ export function useGetContextMenuItems(): TableContextMenuItem<
 >[] {
   const router = useRouter();
   const deleteWorkflow = useMutation(api.workflows.remove);
-  const updateWorkflow = useMutation(api.workflows.update);
 
   return [
     {
@@ -23,21 +22,7 @@ export function useGetContextMenuItems(): TableContextMenuItem<
       label: "Edit",
       onClick: (row) => router.push(`/workflows/${row._id}/edit`),
     },
-    {
-      type: "sub",
-      label: "Quick actions",
-      children: [
-        {
-          type: "item",
-          label: "Toggle status",
-          onClick: (row) =>
-            updateWorkflow({
-              id: row._id,
-              status: row.status === "active" ? "inactive" : "active",
-            }),
-        },
-      ],
-    },
+
     {
       type: "separator",
     },
