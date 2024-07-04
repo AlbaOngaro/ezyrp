@@ -3,14 +3,26 @@ import { Node } from "reactflow";
 export type NodeType = "trigger" | "action";
 
 import { Event, Action } from "convex/workflows";
+import { Id } from "convex/_generated/dataModel";
 
 interface BaseNodeData {
   label: string;
 }
 
-export interface ActionNodeData extends BaseNodeData {
+interface BaseActionNodeData extends BaseNodeData {
   action: Action;
 }
+
+interface EmailActionNodeData extends BaseActionNodeData {
+  action: "email";
+  template: Id<"emails"> | undefined;
+}
+
+interface SmsActionNodeData extends BaseActionNodeData {
+  action: "sms";
+}
+
+export type ActionNodeData = EmailActionNodeData | SmsActionNodeData;
 
 export interface TriggerNodeData extends BaseNodeData {
   event: Event;
@@ -28,4 +40,10 @@ export function isTriggerNode(
   node: Pick<Node, "type">,
 ): node is Node<TriggerNodeData, "trigger"> {
   return node.type === "trigger";
+}
+
+export function isEmailActionNode(
+  node: Pick<Node, "type" | "data">,
+): node is Node<EmailActionNodeData, "action"> {
+  return isActionNode(node) && node.data.action === "email";
 }

@@ -1,15 +1,36 @@
 import { useMutation } from "convex/react";
 import { useCallback, useState } from "react";
-import { useReactFlow } from "reactflow";
+import { useReactFlow, Node } from "reactflow";
 
-import { isActionNode, isTriggerNode } from "../types";
+import { isActionNode, isEmailActionNode, isTriggerNode } from "../types";
 import { useWorkflowId } from "./useWorkflowId";
 import { api } from "convex/_generated/api";
+
+import { Settings } from "convex/workflows";
 
 type SaveFn = () => Promise<void>;
 type SaveState = {
   loading: boolean;
 };
+
+function getSettings(nodes: Node[]): Settings | undefined {
+  const trigger = nodes.find((node) => isTriggerNode(node));
+  const action = nodes.find((node) => isActionNode(node));
+
+  if (!trigger || !action) {
+    return undefined;
+  }
+
+  if (isEmailActionNode(action)) {
+    return {
+      event: trigger.data.event,
+      action: action.data.action,
+      template: action.data.template,
+    };
+  }
+
+  return undefined;
+}
 
 export function useOnSave(): [SaveFn, SaveState] {
   const id = useWorkflowId();
@@ -24,17 +45,11 @@ export function useOnSave(): [SaveFn, SaveState] {
       setLoading(true);
       const flow = toObject();
 
-      const trigger = flow.nodes.find((node) => isTriggerNode(node));
-      const action = flow.nodes.find((node) => isActionNode(node));
-
       await updateWorfklow({
         id,
         nodes: flow.nodes.map(({ selected: _selected, ...node }) => node),
         edges: flow.edges.map(({ selected: _selected, ...edge }) => edge),
-        settings: {
-          action: action?.data?.action,
-          event: trigger?.data?.event,
-        },
+        settings: getSettings(flow.nodes),
       });
     } catch (error) {
       console.error(error);

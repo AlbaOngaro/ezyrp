@@ -1,7 +1,10 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-export const action = v.union(v.literal("email"), v.literal("sms"));
+const email = v.literal("email");
+const sms = v.literal("sms");
+
+export const action = v.union(email, sms);
 
 export const event = v.union(
   v.literal("customer:created"),
@@ -11,6 +14,18 @@ export const event = v.union(
   v.literal("invoice:created"),
   v.literal("invoice:paid"),
   v.literal("invoice:overdue"),
+);
+
+export const settings = v.union(
+  v.object({
+    action: email,
+    event,
+    template: v.id("emails"),
+  }),
+  v.object({
+    action: sms,
+    event,
+  }),
 );
 
 export default defineSchema({
@@ -73,12 +88,7 @@ export default defineSchema({
   workflows: defineTable({
     title: v.string(),
     status: v.union(v.literal("active"), v.literal("inactive")),
-    settings: v.optional(
-      v.object({
-        event: v.optional(event),
-        action: v.optional(action),
-      }),
-    ),
+    settings: v.optional(settings),
     workspace: v.string(),
     // Used in FE to render the graph
     nodes: v.array(v.any()),

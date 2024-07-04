@@ -9,6 +9,14 @@ export function useGetAction(): Node<ActionNodeData, "action">[] {
       data: {
         label: "Email",
         action: "email",
+        template: undefined,
+      },
+    },
+    {
+      type: "action",
+      data: {
+        label: "SMS",
+        action: "sms",
       },
     },
   ];

@@ -6,10 +6,11 @@ import {
   getEntityByIdInWorkspace,
 } from "./utils";
 
-import { event, action } from "./schema";
+import { event, action, settings } from "./schema";
 
 export type Event = typeof event.type;
 export type Action = typeof action.type;
+export type Settings = typeof settings.type;
 
 export const get = query({
   args: {
@@ -42,7 +43,6 @@ export const create = mutation({
       status: "inactive",
       nodes: [],
       edges: [],
-      settings: {},
     });
 
     return id;
@@ -56,12 +56,7 @@ export const update = mutation({
     title: v.optional(v.string()),
     nodes: v.optional(v.array(v.any())),
     edges: v.optional(v.array(v.any())),
-    settings: v.optional(
-      v.object({
-        action: v.optional(action),
-        event: v.optional(event),
-      }),
-    ),
+    settings: v.optional(settings),
   },
   handler: async (ctx, { id, status, title, nodes, edges, settings }) => {
     console.log(settings);
