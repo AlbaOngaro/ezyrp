@@ -2,7 +2,7 @@ import { Node } from "reactflow";
 
 export type NodeType = "trigger" | "action";
 
-import { Event, Action } from "convex/workflows";
+import { Event, Action, DelayableEvent, DefaultEvent } from "convex/workflows";
 import { Id } from "convex/_generated/dataModel";
 
 interface BaseNodeData {
@@ -24,9 +24,20 @@ interface SmsActionNodeData extends BaseActionNodeData {
 
 export type ActionNodeData = EmailActionNodeData | SmsActionNodeData;
 
-export interface TriggerNodeData extends BaseNodeData {
+export interface TriggerNodeBaseData extends BaseNodeData {
   event: Event;
 }
+
+export interface DelayableTriggerNodeData extends TriggerNodeBaseData {
+  event: DelayableEvent;
+  delay: number;
+}
+
+export interface DefaultTriggerNodeData extends TriggerNodeBaseData {
+  event: DefaultEvent;
+}
+
+export type TriggerNodeData = DelayableTriggerNodeData | DefaultTriggerNodeData;
 
 export type NodeData = ActionNodeData | TriggerNodeData;
 
@@ -52,4 +63,13 @@ export function isSmsActionNode(
   node: Pick<Node, "type" | "data">,
 ): node is Node<SmsActionNodeData, "action"> {
   return isActionNode(node) && node.data.action === "sms";
+}
+
+export function isDelayableTriggerNode(
+  node: Pick<Node, "type" | "data">,
+): node is Node<DelayableTriggerNodeData, "trigger"> {
+  return (
+    isTriggerNode(node) &&
+    ["event:upcoming", "event:days-passed"].includes(node.data.event)
+  );
 }

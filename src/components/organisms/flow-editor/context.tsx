@@ -12,6 +12,7 @@ import { isEqual } from "lodash";
 
 import {
   isActionNode,
+  isDelayableTriggerNode,
   isEmailActionNode,
   isSmsActionNode,
   isTriggerNode,
@@ -49,6 +50,15 @@ function getSettings(nodes: Node[]): Settings | undefined {
   }
 
   if (isEmailActionNode(action)) {
+    if (isDelayableTriggerNode(trigger)) {
+      return {
+        event: trigger.data.event,
+        action: action.data.action,
+        template: action.data.template,
+        delay: trigger.data.delay,
+      };
+    }
+
     return {
       event: trigger.data.event,
       action: action.data.action,
@@ -57,6 +67,14 @@ function getSettings(nodes: Node[]): Settings | undefined {
   }
 
   if (isSmsActionNode(action)) {
+    if (isDelayableTriggerNode(trigger)) {
+      return {
+        event: trigger.data.event,
+        action: action.data.action,
+        delay: trigger.data.delay,
+      };
+    }
+
     return {
       event: trigger.data.event,
       action: action.data.action,
