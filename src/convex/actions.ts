@@ -54,3 +54,13 @@ export const email = action({
     }
   },
 });
+
+export const sms = action({
+  args: {
+    to: v.string(),
+    message: v.string(),
+  },
+  handler: async (_, { to, message }) => {
+    console.log(`Sending SMS to ${to}: ${message}`);
+  },
+});
