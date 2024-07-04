@@ -1,8 +1,12 @@
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
 import { GenericMutationCtx } from "convex/server";
 import { mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
-import { getAuthData } from "./utils";
+import {
+  getAuthData,
+  getEntitiesInWorkspace,
+  getEntityByIdInWorkspace,
+} from "./utils";
 
 type UpsertArgs = {
   name: string;
@@ -60,30 +64,16 @@ export const get = query({
     id: v.id("customers"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const customer = await ctx.db
-      .query("customers")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id))
-      .unique();
-
-    if (!customer) {
-      throw new ConvexError("Customer not found");
-    }
-
-    return customer;
+    return await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "customers",
+    });
   },
 });
 
 export const list = query({
   handler: async (ctx) => {
-    const { workspace } = await getAuthData(ctx);
-
-    return await ctx.db
-      .query("customers")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .collect();
+    return await getEntitiesInWorkspace(ctx, "customers");
   },
 });
 
@@ -131,20 +121,12 @@ export const update = mutation({
     ctx,
     { id, name, email, address, city, code, country, photoUrl },
   ) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const customer = await ctx.db
-      .query("customers")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!customer) {
-      throw new ConvexError("Item not found");
-    }
+    const customer = await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "customers",
+    });
 
     await ctx.db.patch(id, {
-      workspace,
       name: name || customer.name,
       email: email || customer.email,
       address: address || customer.address,
@@ -161,25 +143,14 @@ export const remove = mutation({
     id: v.id("customers"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const customer = await ctx.db
-      .query("customers")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!customer) {
-      throw new ConvexError("Customer not found in this workspace");
-    }
+    await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "customers",
+    });
 
     await ctx.db.delete(id);
 
-    const invoices = await ctx.db
-      .query("invoices")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("customer"), id))
-      .collect();
+    const invoices = await getEntitiesInWorkspace(ctx, "invoices");
 
     for (const invoice of invoices) {
       await ctx.db.delete(invoice._id);

@@ -30,7 +30,7 @@ export default defineSchema({
     workspace: v.string(),
     customer: v.id("customers"),
     description: v.string(),
-    status: v.string(),
+    status: v.union(v.literal("due"), v.literal("paid"), v.literal("overdue")),
     items: v.array(v.id("items")),
     amount: v.number(),
     due: v.string(),
@@ -56,5 +56,13 @@ export default defineSchema({
     body: v.any(),
     workspace: v.string(),
     title: v.optional(v.string()),
+    html: v.optional(v.id("_storage")),
+  }).index("by_workspace", ["workspace"]),
+  workflows: defineTable({
+    title: v.string(),
+    status: v.union(v.literal("active"), v.literal("inactive")),
+    workspace: v.string(),
+    nodes: v.array(v.any()),
+    edges: v.array(v.any()),
   }).index("by_workspace", ["workspace"]),
 });

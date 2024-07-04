@@ -117,9 +117,9 @@ const Img = forwardRef<any, Props>(function Img(
             Transforms.setNodes(editor, { src }, { at: path });
 
             try {
-              const url = await uploadFile(file);
-              if (url) {
-                Transforms.setNodes(editor, { src: url }, { at: path });
+              const { storageUrl } = await uploadFile(file);
+              if (storageUrl) {
+                Transforms.setNodes(editor, { src: storageUrl }, { at: path });
               }
             } catch (e) {
               console.error(e);

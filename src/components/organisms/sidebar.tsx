@@ -8,6 +8,7 @@ import {
   Mail,
   Settings,
   ReceiptText,
+  Workflow,
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { Button } from "components/atoms/button";
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Invoices", href: "/invoices", icon: ReceiptText },
   { name: "Schedule", href: "/schedule", icon: CalendarDays },
   { name: "Email templates", href: "/emails", icon: Mail },
+  { name: "Workflows", href: "/workflows", icon: Workflow },
 ];
 
 export function Sidebar() {

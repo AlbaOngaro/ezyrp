@@ -63,11 +63,11 @@ export function EditCustomerPage({ id }: Props) {
           );
 
         try {
-          const photoUrl = await handleFileUpload(file);
-          if (photoUrl) {
+          const { storageUrl } = await handleFileUpload(file);
+          if (storageUrl) {
             await customers.update({
               ...data,
-              photoUrl,
+              photoUrl: storageUrl,
             });
           }
 

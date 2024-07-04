@@ -8,7 +8,7 @@ export function getBadgeVariantFromStatus(status?: Invoice["status"]) {
       return "danger";
     case "paid":
       return "success";
-    case "pending":
+    case "due":
     default:
       return "info";
   }

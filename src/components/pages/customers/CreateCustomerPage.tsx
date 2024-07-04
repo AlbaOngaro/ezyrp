@@ -49,11 +49,11 @@ export function CreateCustomerPage() {
           );
 
         try {
-          const photoUrl = await handleFileUpload(file);
-          if (photoUrl) {
+          const { storageUrl } = await handleFileUpload(file);
+          if (storageUrl) {
             await customers.create({
               ...data,
-              photoUrl,
+              photoUrl: storageUrl,
             });
           }
 

@@ -1,25 +1,19 @@
-import { useState } from "react";
 import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
-import { useRouter } from "next/router";
 
+import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
 import { Dialog } from "components/atoms/dialog";
 import { Table } from "components/atoms/table";
 import { Button } from "components/atoms/button";
 
 import { useCustomers } from "hooks/useCustomers";
-import { Doc, Id } from "convex/_generated/dataModel";
-
-type Customer = Doc<"customers">;
+import { Id } from "convex/_generated/dataModel";
 
 export function CustomersTable() {
-  const router = useRouter();
   const customers = useCustomers();
-
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const contextMenuItems = useGetContextMenuItems();
 
   return (
     <>
@@ -68,44 +62,8 @@ export function CustomersTable() {
           </DialogRoot>
         )}
         withContextMenu
-        contextMenuItems={[
-          {
-            type: "item",
-            label: "View",
-            onClick: (row) => router.push(`/customers/${row._id}`),
-          },
-          {
-            type: "item",
-            label: "Edit",
-            onClick: (row) => router.push(`/customers/${row._id}/edit`),
-          },
-          {
-            type: "separator",
-          },
-          {
-            type: "item",
-            label: "Delete",
-            onClick: (row) => {
-              setCustomer(row);
-              setIsDialogOpen(true);
-            },
-          },
-        ]}
+        contextMenuItems={contextMenuItems}
       />
-
-      <DialogRoot open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <Dialog
-          title="Do you really want to delete this customer?"
-          description="All invoices related to this customer will also be deleted. This action cannot be undone."
-          onConfirm={() => {
-            if (customer) {
-              return customers.delete({
-                id: customer._id,
-              });
-            }
-          }}
-        />
-      </DialogRoot>
     </>
   );
 }

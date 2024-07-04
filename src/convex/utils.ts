@@ -1,10 +1,13 @@
 import {
   GenericMutationCtx,
   GenericQueryCtx,
+  TableNamesInDataModel,
   UserIdentity,
 } from "convex/server";
 import { ConvexError } from "convex/values";
 import { v4 as uuid, validate } from "uuid";
+import { capitalize } from "lodash";
+import { DataModel, Doc, Id, TableNames } from "./_generated/dataModel";
 
 export async function getAuthData(
   ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
@@ -31,6 +34,56 @@ export async function getAuthData(
     user_id: identity.tokenIdentifier,
     workspace: identity.websiteUrl,
   };
+}
+
+type GetEntityByIdInWorkspaceArgs<
+  I extends TableNames,
+  N extends TableNamesInDataModel<DataModel>,
+> = {
+  id: Id<I>;
+  table: N;
+};
+
+/**
+ * Tries to get an entity by its id in the current auth workspace. Throws an error if not found.
+ */
+export async function getEntityByIdInWorkspace<
+  I extends TableNames,
+  N extends TableNamesInDataModel<DataModel>,
+>(
+  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
+  { id, table }: GetEntityByIdInWorkspaceArgs<I, N>,
+): Promise<Doc<N>> {
+  const { workspace } = await getAuthData(ctx);
+
+  const entity = await ctx.db
+    .query(table)
+    .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+    .filter((q) => q.eq(q.field("_id"), id))
+    .unique();
+
+  if (!entity) {
+    throw new ConvexError(`${capitalize(table)} not found in workspace`);
+  }
+
+  return entity;
+}
+
+/**
+ * Gets all entities of the required type in the current auth workspace.
+ */
+export async function getEntitiesInWorkspace<
+  N extends TableNamesInDataModel<DataModel>,
+>(
+  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
+  table: N,
+): Promise<Doc<N>[]> {
+  const { workspace } = await getAuthData(ctx);
+
+  return await ctx.db
+    .query(table)
+    .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+    .collect();
 }
 
 export function getValidUuid(): string {

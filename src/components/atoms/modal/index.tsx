@@ -1,17 +1,12 @@
 import * as RUIModal from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { PropsWithChildren } from "react";
+import * as modals from "./modals";
+import { Props } from "./types";
 import { cn } from "lib/utils/cn";
 
-export interface Props extends PropsWithChildren {
-  title?: string;
-  description?: string;
-  className?: string;
-}
-
-export function Modal({ title, description, children, className }: Props) {
+function Modal({ title, description, children, forceMount, className }: Props) {
   return (
-    <RUIModal.Portal>
+    <RUIModal.Portal forceMount={forceMount}>
       <RUIModal.Overlay className="bg-black opacity-40 fixed inset-0 z-40" />
       <RUIModal.Content
         onInteractOutside={() => {
@@ -50,7 +45,7 @@ export function Modal({ title, description, children, className }: Props) {
   );
 }
 
-export const ModalRoot = ({ onOpenChange, ...props }: RUIModal.DialogProps) => (
+const ModalRoot = ({ onOpenChange, ...props }: RUIModal.DialogProps) => (
   <RUIModal.Root
     {...props}
     onOpenChange={(open) => {
@@ -65,4 +60,6 @@ export const ModalRoot = ({ onOpenChange, ...props }: RUIModal.DialogProps) => (
   />
 );
 
-export const ModalTrigger = RUIModal.Trigger;
+const ModalTrigger = RUIModal.Trigger;
+
+export { modals, Modal, ModalRoot, ModalTrigger };

@@ -7,6 +7,8 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
+        <div id="dialog-root" />
+        <div id="modal-root" />
       </body>
     </Html>
   );

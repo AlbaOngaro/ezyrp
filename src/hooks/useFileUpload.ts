@@ -16,8 +16,13 @@ export function useFileUpload() {
     });
     const { storageId } = await result.json();
 
-    return await getStorageUrl({
+    const storageUrl = await getStorageUrl({
       id: storageId as Id<"_storage">,
     });
+
+    return {
+      storageId: storageId as Id<"_storage">,
+      storageUrl,
+    };
   };
 }

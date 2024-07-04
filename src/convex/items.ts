@@ -1,36 +1,26 @@
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthData } from "./utils";
+import {
+  getAuthData,
+  getEntitiesInWorkspace,
+  getEntityByIdInWorkspace,
+} from "./utils";
 
 export const get = query({
   args: {
     id: v.id("items"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const item = await ctx.db
-      .query("items")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id))
-      .unique();
-
-    if (!item) {
-      throw new ConvexError("Item not found");
-    }
-
-    return item;
+    return await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "items",
+    });
   },
 });
 
 export const list = query({
   handler: async (ctx) => {
-    const { workspace } = await getAuthData(ctx);
-
-    return await ctx.db
-      .query("items")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .collect();
+    return await getEntitiesInWorkspace(ctx, "items");
   },
 });
 
@@ -74,20 +64,12 @@ export const update = mutation({
     ctx,
     { id, name, description, price, quantity, onetime = false },
   ) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const item = await ctx.db
-      .query("items")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!item) {
-      throw new ConvexError("Item not found");
-    }
+    const item = await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "items",
+    });
 
     await ctx.db.patch(id, {
-      workspace,
       name: name || item.name,
       price: price || item.price,
       onetime: onetime || item.onetime,
@@ -102,24 +84,14 @@ export const remove = mutation({
     id: v.id("items"),
   },
   handler: async (ctx, { id }) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const item = await ctx.db
-      .query("items")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("_id"), id as string))
-      .unique();
-
-    if (!item) {
-      throw new ConvexError("Item not found in this workspace");
-    }
+    await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "items",
+    });
 
     await ctx.db.delete(id);
 
-    const invoices = await ctx.db
-      .query("invoices")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .collect();
+    const invoices = await getEntitiesInWorkspace(ctx, "invoices");
 
     for (const invoice of invoices.filter((invoice) =>
       invoice.items.includes(id),
