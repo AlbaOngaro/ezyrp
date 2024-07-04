@@ -19,11 +19,13 @@ const flowSchema = z.object({
   workspace: z.string(),
   nodes: z.array(z.any()).length(2, "There must be exactly 2 nodes"),
   edges: z.array(z.any()).length(1, "There must be exactly 1 edge"),
-  settings: z.union([
+  settings: z.discriminatedUnion("action", [
     z.object({
       action: z.literal("email"),
       event,
-      template: z.string(),
+      template: z.string({
+        required_error: "Template is required",
+      }),
     }),
     z.object({
       action: z.literal("sms"),
