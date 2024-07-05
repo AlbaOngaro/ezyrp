@@ -1,4 +1,4 @@
-import { useMutation } from "convex/react";
+import { useMutation } from "lib/hooks/useMutation";
 import { api } from "convex/_generated/api";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { Id } from "convex/_generated/dataModel";

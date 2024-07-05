@@ -15,6 +15,8 @@ export function CustomersTable() {
   const customers = useCustomers();
   const contextMenuItems = useGetContextMenuItems();
 
+  console.log(customers.data);
+
   return (
     <>
       <Table
@@ -52,6 +54,7 @@ export function CustomersTable() {
             </DialogTrigger>
 
             <Dialog
+              data-testid="customers__delete-dialog"
               overlayClassname="!ml-0"
               title="Do you really want to delete all the selected customers?"
               description="This action cannot be undone. All invoices linked to this customer will also be deleted."
@@ -62,6 +65,14 @@ export function CustomersTable() {
                   ),
                 )
               }
+              cancelButtonProps={{
+                // @ts-ignore
+                "data-testid": "customers__delete-dialog__cancel-btn",
+              }}
+              confirmButtonProps={{
+                // @ts-ignore
+                "data-testid": "customers__delete-dialog__confirm-btn",
+              }}
             />
           </DialogRoot>
         )}

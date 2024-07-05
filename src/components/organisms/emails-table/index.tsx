@@ -1,5 +1,5 @@
-import { useMutation } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
+import { useMutation } from "lib/hooks/useMutation";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { Table } from "components/atoms/table";
 import { useQuery } from "lib/hooks/useQuery";

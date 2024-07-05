@@ -1,9 +1,10 @@
+import { FunctionReference } from "convex/server";
 import { PropsWithChildren, createContext } from "react";
 
 export const ConvexMocksContext = createContext<{
-  cache: Map<string, any>;
+  mocks: Map<string | FunctionReference<"mutation">, any>;
 }>({
-  cache: new Map(),
+  mocks: new Map(),
 });
 
 export function ConvexMocksProvider({
@@ -13,7 +14,7 @@ export function ConvexMocksProvider({
   mocks: Map<string, any>;
 }>) {
   return (
-    <ConvexMocksContext.Provider value={{ cache: mocks }}>
+    <ConvexMocksContext.Provider value={{ mocks }}>
       {children}
     </ConvexMocksContext.Provider>
   );

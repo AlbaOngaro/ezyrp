@@ -81,7 +81,7 @@ describe("Customers page", () => {
   });
 
   test("Renders delete button when checkboxes are checked", async () => {
-    const mocks = new Map();
+    let mocks = new Map();
     mocks.set("customers:list:{}", [
       {
         _creationTime: 1720191604136.1406,
@@ -120,6 +120,17 @@ describe("Customers page", () => {
     await userEvent.click(checkbox);
     expect(checkbox.checked).toBe(true);
 
-    expect(screen.getByTestId("customers-table__delete-all-btn")).toBeDefined();
+    const deleteButton = screen.getByTestId("customers-table__delete-all-btn");
+    expect(deleteButton).toBeDefined();
+    await userEvent.click(deleteButton);
+
+    expect(screen.getByTestId("customers__delete-dialog")).toBeDefined();
+    const confirmButton = screen.getByTestId(
+      "customers__delete-dialog__confirm-btn",
+    );
+    expect(confirmButton).toBeDefined();
+    await userEvent.click(confirmButton);
+
+    // expect(screen.getByTestId("table-body--empty")).toBeDefined();
   });
 });

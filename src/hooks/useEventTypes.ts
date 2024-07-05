@@ -1,4 +1,4 @@
-import { useMutation } from "convex/react";
+import { useMutation } from "lib/hooks/useMutation";
 import { useQuery } from "lib/hooks/useQuery";
 
 import { api } from "convex/_generated/api";

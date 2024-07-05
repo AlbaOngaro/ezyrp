@@ -1,8 +1,8 @@
 import { OptionalRestArgsOrSkip, usePreloadedQuery } from "convex/react";
 import { FunctionReference, getFunctionName } from "convex/server";
-
 import { convexToJson } from "convex/values";
 import { useContext } from "react";
+
 import { ReturnType } from "./types";
 
 import { ConvexCacheContext } from "providers/convex-cache";
@@ -12,10 +12,11 @@ export function useQuery<Query extends FunctionReference<"query">>(
   query: Query,
   args?: OptionalRestArgsOrSkip<Query>[0],
 ): ReturnType<Query> {
-  const { cache: defaultCache } = useContext(ConvexCacheContext);
-  const { cache: mockedCache } = useContext(ConvexMocksContext);
+  const cacheContext = useContext(ConvexCacheContext);
+  const mocksContext = useContext(ConvexMocksContext);
 
-  const cache = process.env.NODE_ENV === "test" ? mockedCache : defaultCache;
+  const cache =
+    process.env.NODE_ENV === "test" ? mocksContext.mocks : cacheContext.cache;
 
   const key = `${getFunctionName(query)}:${JSON.stringify(args || {})}`;
   const value = cache.get(key) || null;
