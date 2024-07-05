@@ -1,6 +1,7 @@
 import { Form } from "@radix-ui/react-form";
 import { Controller, useFormContext } from "react-hook-form";
 
+import { formatISO } from "date-fns";
 import { Button } from "components/atoms/button";
 import { Input } from "components/atoms/input";
 import { Select } from "components/atoms/select";
@@ -107,8 +108,14 @@ export function CustomerForm({ disabled }: Props) {
             validations={{
               valueMissing: "This field is required",
             }}
-            value={value ? new Date(value).toISOString() : undefined}
-            onChange={(date) => onChange(date.getTime())}
+            value={value}
+            onChange={(date) =>
+              onChange(
+                formatISO(date, {
+                  representation: "date",
+                }),
+              )
+            }
           />
         )}
       />

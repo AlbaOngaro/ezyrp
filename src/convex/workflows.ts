@@ -1,5 +1,12 @@
 import { v } from "convex/values";
-import { internalMutation, mutation, query } from "./_generated/server";
+import { getYear, isSameDay, parseISO, setYear } from "date-fns";
+import {
+  internalAction,
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from "./_generated/server";
 import {
   getAuthData,
   getEntitiesInWorkspace,
@@ -16,9 +23,10 @@ import {
   eventEvents,
   action,
   settings,
+  recurringCustomerEvents,
 } from "./schema";
 import { Id } from "./_generated/dataModel";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -98,11 +106,17 @@ export const remove = mutation({
   },
 });
 
-const event = v.union(invoiceEvents, customerEvents, eventEvents);
+const event = v.union(
+  invoiceEvents,
+  customerEvents,
+  eventEvents,
+  recurringCustomerEvents,
+);
 
 export type InvoiceEvents = typeof invoiceEvents.type;
 export type EventEvents = typeof eventEvents.type;
 export type CustomerEvents = typeof customerEvents.type;
+export type RecurringEvents = typeof recurringCustomerEvents.type;
 export type AnyEvent = typeof event.type;
 export type Action = typeof action.type;
 export type Settings = typeof settings.type;
@@ -280,5 +294,68 @@ export const trigger = internalMutation({
     }
 
     console.log("Could not find a matching workflow.");
+  },
+});
+
+export const getActiveWorkflowsByEvent = internalQuery({
+  args: {
+    event,
+  },
+  handler: async (ctx, { event }) => {
+    return await ctx.db
+      .query("workflows")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("settings.event"), event),
+          q.eq(q.field("status"), "active"),
+        ),
+      )
+      .collect();
+  },
+});
+
+export const recurringtrigger = internalAction({
+  args: {
+    event: recurringCustomerEvents,
+  },
+  handler: async (ctx, { event }) => {
+    const workflows = await ctx.runQuery(
+      internal.workflows.getActiveWorkflowsByEvent,
+      {
+        event,
+      },
+    );
+
+    for (const workflow of workflows) {
+      console.log("Running workflow", workflow._id);
+      const customers = await ctx.runQuery(internal.customers.listInternal, {
+        workspace: workflow.workspace,
+      });
+
+      console.log("Found customers", customers.length);
+
+      for (const customer of customers) {
+        if (!customer.birthday) {
+          console.log("Customer does not have birthday, abort.", customer._id);
+          continue;
+        }
+
+        const now = new Date().toISOString();
+        let birthday = parseISO(customer.birthday);
+        birthday = setYear(birthday, getYear(parseISO(now)));
+
+        if (isSameDay(birthday, parseISO(now))) {
+          console.log("Sending birthday email to", customer.email);
+
+          await ctx.runMutation(internal.workflows.trigger, {
+            args: {
+              event: "customer:birthday",
+              entityId: customer._id,
+              workspace: workflow.workspace,
+            },
+          });
+        }
+      }
+    }
   },
 });

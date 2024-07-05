@@ -6,9 +6,11 @@ const sms = v.literal("sms");
 
 export const action = v.union(email, sms);
 
+export const recurringCustomerEvents = v.literal("customer:birthday");
+
 export const customerEvents = v.union(
   v.literal("customer:created"),
-  v.literal("customer:birthday"),
+  recurringCustomerEvents,
 );
 
 export const invoiceEvents = v.union(
@@ -74,7 +76,7 @@ export default defineSchema({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
-    birthday: v.optional(v.number()),
+    birthday: v.optional(v.string()),
   }).index("by_workspace", ["workspace"]),
   items: defineTable({
     workspace: v.string(),

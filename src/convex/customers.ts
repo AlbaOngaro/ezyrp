@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { GenericMutationCtx } from "convex/server";
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
 import {
   getAuthData,
@@ -17,7 +17,7 @@ type UpsertArgs = {
   code?: string;
   country?: string;
   photoUrl?: string;
-  birthday?: number;
+  birthday?: string;
 };
 
 export const upsert = async (
@@ -75,6 +75,18 @@ export const get = query({
   },
 });
 
+export const listInternal = internalQuery({
+  args: {
+    workspace: v.string(),
+  },
+  handler: async (ctx, { workspace }) => {
+    return await ctx.db
+      .query("customers")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .collect();
+  },
+});
+
 export const list = query({
   handler: async (ctx) => {
     return await getEntitiesInWorkspace(ctx, "customers");
@@ -90,7 +102,7 @@ export const create = mutation({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
-    birthday: v.optional(v.number()),
+    birthday: v.optional(v.string()),
   },
   handler: async (
     ctx,
@@ -117,14 +129,6 @@ export const create = mutation({
         entityId: id,
       },
     });
-
-    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-      args: {
-        event: "customer:birthday",
-        workspace,
-        entityId: id,
-      },
-    });
   },
 });
 
@@ -138,7 +142,7 @@ export const update = mutation({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
-    birthday: v.optional(v.number()),
+    birthday: v.optional(v.string()),
   },
   handler: async (
     ctx,
