@@ -1,20 +1,14 @@
 import { EllipsisVertical, Play, Save, TriangleAlert } from "lucide-react";
-import { Node } from "reactflow";
 import { toast } from "sonner";
-
 import { useAction } from "convex/react";
+import { useContext } from "react";
 
-import { get } from "lodash";
+import { useUser } from "@clerk/clerk-react";
 import { useOnSave } from "../../hooks/useOnSave";
-import { useNodes } from "../../hooks/useNodes";
-import { ActionNodeData, SelectSetting, TriggerNodeData } from "../../types";
-
 import { useFlowValidationState } from "../../hooks/useFlowValidationState";
-import { useHasChanges } from "../../hooks/useHasChanges";
+import { WorkflowContext } from "../../context";
 import { useGetMenuItems } from "./hooks/useGetMenuItems";
 import { Button } from "components/atoms/button";
-import { api } from "convex/_generated/api";
-import { Id } from "convex/_generated/dataModel";
 import {
   Tooltip,
   TooltipContent,
@@ -22,7 +16,6 @@ import {
   TooltipTrigger,
 } from "components/atoms/tooltip";
 import { Badge } from "components/atoms/badge";
-import { Notification } from "components/atoms/notification";
 import {
   Menubar,
   MenubarContent,
@@ -31,47 +24,63 @@ import {
   MenubarTrigger,
 } from "components/atoms/menubar";
 import { cn } from "lib/utils/cn";
+import { Notification } from "components/atoms/notification";
+import { api } from "convex/_generated/api";
 
 export function Header() {
-  const hasChanges = useHasChanges();
+  const { user } = useUser();
   const menuItems = useGetMenuItems();
-  const { valid, errors } = useFlowValidationState();
-
-  const [onSave, { loading: isSavingWorkflow }] = useOnSave();
-  const [nodes] = useNodes();
-
-  const trigger = nodes.find((node) => node.type === "trigger") as
-    | Node<TriggerNodeData, "trigger">
-    | undefined;
-  const action = nodes.find((node) => node.type === "action") as
-    | Node<ActionNodeData, "action">
-    | undefined;
-
+  const sendSms = useAction(api.actions.sms);
   const sendEmail = useAction(api.actions.email);
+  const { success, error } = useFlowValidationState();
+  const { hasChanges, settings } = useContext(WorkflowContext);
+  const [onSave, { loading: isSavingWorkflow }] = useOnSave();
 
   return (
     <header className="absolute top-0 left-0 right-0 w-full p-4 flex justify-end gap-4 z-30">
       <Button
         variant="outline"
         size="icon"
-        disabled={!valid || !trigger || !action}
+        disabled={!success}
         onClick={async () => {
-          const template = get(action, "data.settings.template");
-          if (!template) {
-            return;
-          }
+          switch (settings?.action) {
+            case "email": {
+              if (settings.template) {
+                const to =
+                  user?.primaryEmailAddress?.emailAddress ||
+                  "alba.ongaro@outlook.com";
 
-          toast.promise(
-            sendEmail({
-              to: "dolcebunny15@gmail.com",
-              template: (template as SelectSetting).value.value as Id<"emails">,
-            }),
-            {
-              loading: "Running flow...",
-              success: "Test run completeded sucessfully.",
-              error: "There was an error running the flow.",
-            },
-          );
+                toast.promise(
+                  sendEmail({
+                    to,
+                    template: settings.template,
+                  }),
+                  {
+                    loading: "Running flow...",
+                    success: "Test run completeded sucessfully.",
+                    error: "There was an error running the flow.",
+                  },
+                );
+              }
+              break;
+            }
+            case "sms": {
+              toast.promise(
+                sendSms({
+                  to: "+14155552671",
+                  message: "Hello, World!",
+                }),
+                {
+                  loading: "Running flow...",
+                  success: "Test run completeded sucessfully.",
+                  error: "There was an error running the flow.",
+                },
+              );
+              break;
+            }
+            default:
+              break;
+          }
         }}
       >
         <Play className="w-4 h-4" />
@@ -93,6 +102,7 @@ export function Header() {
                   item.className,
                 )}
                 onClick={item.onClick}
+                disabled={!success && item.id === "status"}
               >
                 {item.icon} {item.label}
               </MenubarItem>
@@ -102,20 +112,16 @@ export function Header() {
       </Menubar>
 
       <Button
-        disabled={!hasChanges || !valid}
+        disabled={!hasChanges || !success}
         className="flex flex-row gap-2 relative"
         loading={isSavingWorkflow}
-        onClick={() => {
-          if (valid) {
-            return onSave();
-          }
-        }}
+        onClick={onSave}
       >
-        {hasChanges && <Notification />}
+        {hasChanges && success && <Notification />}
         <Save className="w-4 h-4" /> Save
       </Button>
 
-      {!valid && (
+      {!success && (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -127,7 +133,7 @@ export function Header() {
               </Badge>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{errors[0].message}</p>
+              <p>{error.issues[0].message}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

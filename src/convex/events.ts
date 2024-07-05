@@ -5,6 +5,7 @@ import {
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
 } from "./utils";
+import { internal } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -44,6 +45,22 @@ export const create = mutation({
       notes,
       variant,
       guests,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      args: {
+        event: "event:upcoming",
+        workspace,
+        entityId: id,
+      },
+    });
+
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      args: {
+        event: "event:days-passed",
+        workspace,
+        entityId: id,
+      },
     });
 
     return await ctx.db.get(id);

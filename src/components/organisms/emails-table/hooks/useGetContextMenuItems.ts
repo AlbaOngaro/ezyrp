@@ -39,6 +39,8 @@ export function useGetContextMenuItems(): TableContextMenuItem<
               inputProps: {
                 name: "title",
                 label: "Template title",
+                description:
+                  "This will be the subject of the email when sending this template.",
                 defaultValue: row.title,
               },
               onSubmit: async (e) => {

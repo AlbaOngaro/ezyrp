@@ -15,7 +15,7 @@ export function Sidebar() {
   const triggers = useGetTriggers();
 
   return (
-    <aside className="flex flex-col gap-4">
+    <aside className="flex flex-col gap-4 h-full overflow-scroll">
       <Heading
         title="Nodes"
         description="You can drag these nodes to the pane on the right."

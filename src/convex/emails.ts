@@ -1,11 +1,20 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
   getValidUuid,
 } from "./utils";
+
+export const getInternal = internalQuery({
+  args: {
+    id: v.id("emails"),
+  },
+  handler: async (ctx, { id }) => {
+    return await ctx.db.get(id);
+  },
+});
 
 export const get = query({
   args: {
@@ -27,7 +36,7 @@ export const list = query({
 
 export const create = mutation({
   args: {
-    title: v.optional(v.string()),
+    title: v.string(),
   },
   handler: async (ctx, { title }) => {
     const { workspace } = await getAuthData(ctx);
@@ -93,10 +102,28 @@ export const remove = mutation({
     id: v.id("emails"),
   },
   handler: async (ctx, { id }) => {
+    const { workspace } = await getAuthData(ctx);
     await getEntityByIdInWorkspace(ctx, {
       id,
       table: "emails",
     });
+
+    const workflows = await ctx.db
+      .query("workflows")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("settings.template"), id),
+          q.eq(q.field("status"), "active"),
+        ),
+      )
+      .collect();
+
+    for (const workflow of workflows) {
+      await ctx.db.patch(workflow._id, {
+        status: "inactive",
+      });
+    }
 
     await ctx.db.delete(id);
   },

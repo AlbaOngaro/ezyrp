@@ -1,39 +1,43 @@
 import { useMutation } from "convex/react";
-import { useCallback, useState } from "react";
-import { useReactFlow } from "reactflow";
+import { useCallback, useContext, useState } from "react";
 
-import { useWorkflowId } from "./useWorkflowId";
+import { WorkflowContext } from "../context";
 import { api } from "convex/_generated/api";
 
 type SaveFn = () => Promise<void>;
 type SaveState = {
   loading: boolean;
+  error: Error | null;
 };
 
 export function useOnSave(): [SaveFn, SaveState] {
-  const id = useWorkflowId();
-  const { toObject } = useReactFlow();
-
-  const updateWorfklow = useMutation(api.workflows.update);
-
+  const {
+    setEdges: _setEdges,
+    setNodes: _setNodes,
+    workspace: _workspace,
+    _creationTime,
+    _id: id,
+    hasChanges: _hasChanges,
+    ...workflow
+  } = useContext(WorkflowContext);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const updateWorfklow = useMutation(api.workflows.update);
 
   const onSave = useCallback(async () => {
     try {
       setLoading(true);
-      const flow = toObject();
 
       await updateWorfklow({
         id,
-        nodes: flow.nodes.map(({ selected: _selected, ...node }) => node),
-        edges: flow.edges.map(({ selected: _selected, ...edge }) => edge),
+        ...workflow,
       });
     } catch (error) {
-      console.error(error);
+      setError(error as Error);
     } finally {
       setLoading(false);
     }
-  }, [id, updateWorfklow, toObject]);
+  }, [id, updateWorfklow, workflow]);
 
-  return [onSave, { loading }];
+  return [onSave, { loading, error }];
 }

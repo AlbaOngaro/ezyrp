@@ -1,35 +1,23 @@
 import { Node } from "../types";
+import { Id } from "convex/_generated/dataModel";
 
-import { api } from "convex/_generated/api";
-import { useQuery } from "lib/hooks/useQuery";
 import { ActionNodeData } from "components/organisms/flow-editor/types";
 
 export function useGetAction(): Node<ActionNodeData, "action">[] {
-  const { data: emails = [] } = useQuery(api.emails.list);
-
   return [
     {
       type: "action",
       data: {
         label: "Email",
-        settings: {
-          template: {
-            type: "select",
-            options: emails.map((email) => ({
-              label: email.title || "Unknown email",
-              value: email._id,
-            })),
-            value: {
-              label: "Chose",
-              value: "chose",
-            },
-          },
-          to: {
-            type: "input",
-            value: "{{ customer.email }}",
-            disabled: true,
-          },
-        },
+        action: "email",
+        template: undefined as unknown as Id<"emails">,
+      },
+    },
+    {
+      type: "action",
+      data: {
+        label: "SMS",
+        action: "sms",
       },
     },
   ];

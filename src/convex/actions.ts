@@ -1,9 +1,9 @@
 "use node";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import nodemailer from "nodemailer";
 
 import { action } from "./_generated/server";
-import { api } from "./_generated/api";
+import { internal } from "./_generated/api";
 
 export const email = action({
   args: {
@@ -11,16 +11,21 @@ export const email = action({
     to: v.string(),
   },
   handler: async (ctx, { to, template }) => {
-    const { html: storageId } = await ctx.runQuery(api.emails.get, {
+    const email = await ctx.runQuery(internal.emails.getInternal, {
       id: template,
     });
+    if (!email) {
+      throw new ConvexError("Email template not found, aborting.");
+    }
+
+    const { html: storageId } = email;
     if (!storageId) {
-      return null;
+      throw new ConvexError("Email template is missing HTML, aborting.");
     }
 
     const blob = await ctx.storage.get(storageId);
     if (!blob) {
-      return null;
+      throw new ConvexError("Failed to get html from storage, aborting.");
     }
 
     const html = await blob.text();
@@ -47,5 +52,15 @@ export const email = action({
     } catch (error: unknown) {
       console.error(error);
     }
+  },
+});
+
+export const sms = action({
+  args: {
+    to: v.string(),
+    message: v.string(),
+  },
+  handler: async (_, { to, message }) => {
+    console.log(`Sending SMS to ${to}: ${message}`);
   },
 });

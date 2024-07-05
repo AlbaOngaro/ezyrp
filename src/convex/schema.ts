@@ -1,6 +1,65 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+const email = v.literal("email");
+const sms = v.literal("sms");
+
+export const action = v.union(email, sms);
+
+export const recurringCustomerEvents = v.literal("customer:birthday");
+
+export const customerEvents = v.union(
+  v.literal("customer:created"),
+  recurringCustomerEvents,
+);
+
+export const invoiceEvents = v.union(
+  v.literal("invoice:created"),
+  v.literal("invoice:paid"),
+  v.literal("invoice:overdue"),
+);
+
+export const eventEvents = v.union(
+  v.literal("event:upcoming"),
+  v.literal("event:days-passed"),
+);
+
+export const settings = v.union(
+  v.union(
+    v.object({
+      action: email,
+      event: customerEvents,
+      template: v.id("emails"),
+    }),
+    v.object({
+      action: email,
+      event: invoiceEvents,
+      template: v.id("emails"),
+    }),
+    v.object({
+      action: email,
+      event: eventEvents,
+      delay: v.number(),
+      template: v.id("emails"),
+    }),
+  ),
+  v.union(
+    v.object({
+      action: sms,
+      event: customerEvents,
+    }),
+    v.object({
+      action: sms,
+      event: invoiceEvents,
+    }),
+    v.object({
+      action: sms,
+      event: eventEvents,
+      delay: v.number(),
+    }),
+  ),
+);
+
 export default defineSchema({
   settings: defineTable({
     user_id: v.string(),
@@ -17,6 +76,7 @@ export default defineSchema({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
+    birthday: v.optional(v.string()),
   }).index("by_workspace", ["workspace"]),
   items: defineTable({
     workspace: v.string(),
@@ -54,14 +114,16 @@ export default defineSchema({
   }).index("by_workspace", ["workspace"]),
   emails: defineTable({
     body: v.any(),
+    title: v.string(),
     workspace: v.string(),
-    title: v.optional(v.string()),
     html: v.optional(v.id("_storage")),
   }).index("by_workspace", ["workspace"]),
   workflows: defineTable({
     title: v.string(),
     status: v.union(v.literal("active"), v.literal("inactive")),
+    settings: v.optional(settings),
     workspace: v.string(),
+    // Used in FE to render the graph
     nodes: v.array(v.any()),
     edges: v.array(v.any()),
   }).index("by_workspace", ["workspace"]),

@@ -56,6 +56,7 @@ export function EmailsPage() {
                 <Input
                   required
                   label="Choose a name for your new template"
+                  description="This will be the subject of the email when sending this template."
                   name="title"
                   validations={{
                     valueMissing: "Please enter a title",

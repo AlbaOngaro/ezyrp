@@ -1,32 +1,14 @@
 import { useState, DragEvent } from "react";
 
 import { getIconForNode } from "../nodes/utils/getIconForNode";
-import {
-  Error,
-  ErrorCode,
-  useFlowValidationState,
-} from "../../hooks/useFlowValidationState";
-import { NodeType } from "../../types";
+import { useNodes } from "../../hooks/useNodes";
 import { Node as Props } from "./types";
 
 import { cn } from "lib/utils/cn";
 
-function getIsDraggable(type?: NodeType, errors: Error[] = []) {
-  switch (type) {
-    case "trigger":
-      return errors.some(
-        (error) => error.code === ErrorCode.MissingTriggerNode,
-      );
-    case "action": {
-      return errors.some((error) => error.code === ErrorCode.MissingActionNode);
-    }
-    default:
-      return false;
-  }
-}
-
 export function DraggableNode({ type, data }: Props) {
-  const { errors } = useFlowValidationState();
+  const [nodes] = useNodes();
+
   const [isDragging, setIsDragging] = useState(false);
 
   const onDragStart = (event: DragEvent<HTMLDivElement>) => {
@@ -43,16 +25,15 @@ export function DraggableNode({ type, data }: Props) {
     setIsDragging(false);
   };
 
-  const draggable = getIsDraggable(type, errors);
+  const draggable = !nodes.some((node) => node.type === type);
 
   return (
     <div
       className={cn(
-        "bg-gray-100 rounded-sm p-4 flex flex-col gap-2 justify-start items-start",
+        "bg-gray-100 rounded-sm p-4 flex flex-col gap-2 justify-start items-start cursor-pointer",
         {
           "cursor-grabbing": isDragging,
-          "cursor-pointer": draggable,
-          "cursor-not-allowed text-gray-400": !draggable,
+          "text-gray-400 cursor-not-allowed": !draggable,
         },
       )}
       onDragStart={onDragStart}

@@ -6,6 +6,7 @@ import {
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
 } from "./utils";
+import { internal } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -75,7 +76,7 @@ export const create = mutation({
   ) => {
     const { workspace } = await getAuthData(ctx);
 
-    await ctx.db.insert("invoices", {
+    const id = await ctx.db.insert("invoices", {
       workspace,
       due,
       items,
@@ -84,6 +85,14 @@ export const create = mutation({
       emitted,
       customer,
       description,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      args: {
+        event: "invoice:created",
+        workspace,
+        entityId: id,
+      },
     });
   },
 });
@@ -117,6 +126,27 @@ export const update = mutation({
       customer: customer || invoice.customer,
       description: description || invoice.description,
     });
+
+    switch (status) {
+      case "paid": {
+        await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+          args: {
+            entityId: id,
+            event: "invoice:paid",
+            workspace: invoice.workspace,
+          },
+        });
+      }
+      case "overdue": {
+        await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+          args: {
+            entityId: id,
+            event: "invoice:overdue",
+            workspace: invoice.workspace,
+          },
+        });
+      }
+    }
   },
 });
 

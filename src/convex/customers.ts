@@ -1,12 +1,13 @@
 import { v } from "convex/values";
 import { GenericMutationCtx } from "convex/server";
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
 import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
 } from "./utils";
+import { internal } from "./_generated/api";
 
 type UpsertArgs = {
   name: string;
@@ -16,11 +17,12 @@ type UpsertArgs = {
   code?: string;
   country?: string;
   photoUrl?: string;
+  birthday?: string;
 };
 
 export const upsert = async (
   ctx: GenericMutationCtx<DataModel>,
-  { email, name, address, city, code, country, photoUrl }: UpsertArgs,
+  { email, name, address, city, code, country, photoUrl, birthday }: UpsertArgs,
 ) => {
   const { workspace } = await getAuthData(ctx);
 
@@ -40,6 +42,7 @@ export const upsert = async (
       code,
       country,
       photoUrl,
+      birthday,
     });
 
     return await ctx.db.get(id);
@@ -54,6 +57,7 @@ export const upsert = async (
     code: code || customer.code,
     country: country || customer.country,
     photoUrl: photoUrl || customer.photoUrl,
+    birthday: birthday || customer.birthday,
   });
 
   return await ctx.db.get(customer._id);
@@ -68,6 +72,18 @@ export const get = query({
       id,
       table: "customers",
     });
+  },
+});
+
+export const listInternal = internalQuery({
+  args: {
+    workspace: v.string(),
+  },
+  handler: async (ctx, { workspace }) => {
+    return await ctx.db
+      .query("customers")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .collect();
   },
 });
 
@@ -86,14 +102,15 @@ export const create = mutation({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
+    birthday: v.optional(v.string()),
   },
   handler: async (
     ctx,
-    { name, email, address, city, code, country, photoUrl },
+    { name, email, address, city, code, country, photoUrl, birthday },
   ) => {
     const { workspace } = await getAuthData(ctx);
 
-    await ctx.db.insert("customers", {
+    const id = await ctx.db.insert("customers", {
       workspace,
       name,
       email,
@@ -102,6 +119,15 @@ export const create = mutation({
       code,
       country,
       photoUrl,
+      birthday,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      args: {
+        event: "customer:created",
+        workspace,
+        entityId: id,
+      },
     });
   },
 });
@@ -116,10 +142,11 @@ export const update = mutation({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
+    birthday: v.optional(v.string()),
   },
   handler: async (
     ctx,
-    { id, name, email, address, city, code, country, photoUrl },
+    { id, name, email, address, city, code, country, photoUrl, birthday },
   ) => {
     const customer = await getEntityByIdInWorkspace(ctx, {
       id,
@@ -134,6 +161,7 @@ export const update = mutation({
       code: code || customer.code,
       country: country || customer.country,
       photoUrl: photoUrl || customer.photoUrl,
+      birthday: birthday || customer.birthday,
     });
   },
 });
