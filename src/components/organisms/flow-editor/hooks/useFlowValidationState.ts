@@ -12,7 +12,7 @@ export const event = z.union([
   z.literal("invoice:overdue"),
 ]);
 
-const flowSchema = z.object({
+export const flowSchema = z.object({
   _id: z.string(),
   title: z.string().optional(),
   status: z.enum(["active", "inactive"]),

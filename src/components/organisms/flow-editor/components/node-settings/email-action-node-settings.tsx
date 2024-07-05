@@ -2,6 +2,7 @@ import { Settings } from "lucide-react";
 import { Form } from "@radix-ui/react-form";
 import { Node } from "reactflow";
 
+import { useEffect } from "react";
 import { useNodes } from "../../hooks/useNodes";
 import { EmailActionNodeData } from "../../types";
 
@@ -23,6 +24,27 @@ export function EmailActionNodeSettings(props: Props) {
   }));
 
   const value = options.find((option) => option.value === props.data.template);
+
+  useEffect(() => {
+    if (props.data.template && !value) {
+      setNodes((prev) =>
+        prev.map((n) => {
+          if (n.id === props.id) {
+            return {
+              ...n,
+              data: {
+                ...n.data,
+                template: undefined,
+              },
+            };
+          }
+
+          return n;
+        }),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, props.data.template]);
 
   return (
     <ModalRoot>

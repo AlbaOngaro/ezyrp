@@ -45,21 +45,23 @@ export function Header() {
         onClick={async () => {
           switch (settings?.action) {
             case "email": {
-              const to =
-                user?.primaryEmailAddress?.emailAddress ||
-                "alba.ongaro@outlook.com";
+              if (settings.template) {
+                const to =
+                  user?.primaryEmailAddress?.emailAddress ||
+                  "alba.ongaro@outlook.com";
 
-              toast.promise(
-                sendEmail({
-                  to,
-                  template: settings.template,
-                }),
-                {
-                  loading: "Running flow...",
-                  success: "Test run completeded sucessfully.",
-                  error: "There was an error running the flow.",
-                },
-              );
+                toast.promise(
+                  sendEmail({
+                    to,
+                    template: settings.template,
+                  }),
+                  {
+                    loading: "Running flow...",
+                    success: "Test run completeded sucessfully.",
+                    error: "There was an error running the flow.",
+                  },
+                );
+              }
               break;
             }
             case "sms": {

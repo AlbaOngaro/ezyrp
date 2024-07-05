@@ -102,10 +102,28 @@ export const remove = mutation({
     id: v.id("emails"),
   },
   handler: async (ctx, { id }) => {
+    const { workspace } = await getAuthData(ctx);
     await getEntityByIdInWorkspace(ctx, {
       id,
       table: "emails",
     });
+
+    const workflows = await ctx.db
+      .query("workflows")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("settings.template"), id),
+          q.eq(q.field("status"), "active"),
+        ),
+      )
+      .collect();
+
+    for (const workflow of workflows) {
+      await ctx.db.patch(workflow._id, {
+        status: "inactive",
+      });
+    }
 
     await ctx.db.delete(id);
   },

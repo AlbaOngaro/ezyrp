@@ -19,6 +19,7 @@ import {
   NodeData,
   NodeType,
 } from "./types";
+
 import { Doc, Id } from "convex/_generated/dataModel";
 import { Settings } from "convex/workflows";
 
@@ -54,6 +55,7 @@ function getSettings(nodes: Node[]): Settings | undefined {
       return {
         event: trigger.data.event,
         action: action.data.action,
+        // @ts-ignore
         template: action.data.template,
         delay: trigger.data.delay,
       };
@@ -62,6 +64,7 @@ function getSettings(nodes: Node[]): Settings | undefined {
     return {
       event: trigger.data.event,
       action: action.data.action,
+      // @ts-ignore
       template: action.data.template,
     };
   }
