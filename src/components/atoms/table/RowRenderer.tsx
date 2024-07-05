@@ -36,10 +36,12 @@ export function TableRowRenderer<R extends Row = Row>({
           className={cn("hover:bg-gray-50 group", {
             "bg-gray-50": selectedRows.includes(row),
           })}
+          data-testid="table-row"
         >
           {withMultiSelect && (
-            <td className="relative w-12">
+            <td className="relative w-12" data-testid="table-cell__checkbox">
               <Checkbox
+                data-testid="table-cell__checkbox-input"
                 checked={selectedRows.includes(row)}
                 onChange={(e) =>
                   setSelectedRows(
@@ -56,6 +58,7 @@ export function TableRowRenderer<R extends Row = Row>({
             <td
               key={field}
               className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+              data-testid={`table-cell__${field}`}
             >
               {typeof render === "function"
                 ? render(row, index)

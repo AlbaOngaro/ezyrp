@@ -1,6 +1,9 @@
 import { defineWorkspace } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { loadEnvConfig } from "@next/env";
+
+loadEnvConfig(process.cwd());
 
 export default defineWorkspace([
   {

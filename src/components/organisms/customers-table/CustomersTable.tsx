@@ -42,7 +42,11 @@ export function CustomersTable() {
         renderSelectedActions={(rows) => (
           <DialogRoot>
             <DialogTrigger asChild>
-              <Button variant="destructive" size="sm">
+              <Button
+                variant="destructive"
+                size="sm"
+                data-testid="customers-table__delete-all-btn"
+              >
                 Delete all
               </Button>
             </DialogTrigger>
