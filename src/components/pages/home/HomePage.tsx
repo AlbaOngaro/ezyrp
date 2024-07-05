@@ -16,7 +16,7 @@ export function HomePage() {
   return (
     <>
       {/* Secondary navigation */}
-      <header className="pb-4 pt-6 bg-white sm:pb-6">
+      <header className="pb-4 pt-6 bg-white sm:pb-6" data-testid="home__header">
         <Container className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
           <h1 className="text-base font-semibold leading-7 text-gray-900">
             Cashflow
