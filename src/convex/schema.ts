@@ -114,8 +114,8 @@ export default defineSchema({
   }).index("by_workspace", ["workspace"]),
   emails: defineTable({
     body: v.any(),
+    title: v.string(),
     workspace: v.string(),
-    title: v.optional(v.string()),
     html: v.optional(v.id("_storage")),
   }).index("by_workspace", ["workspace"]),
   workflows: defineTable({
