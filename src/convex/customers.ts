@@ -17,7 +17,7 @@ type UpsertArgs = {
   code?: string;
   country?: string;
   photoUrl?: string;
-  birthday?: string;
+  birthday?: number;
 };
 
 export const upsert = async (
@@ -90,7 +90,7 @@ export const create = mutation({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
-    birthday: v.optional(v.string()),
+    birthday: v.optional(v.number()),
   },
   handler: async (
     ctx,
@@ -138,10 +138,11 @@ export const update = mutation({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
+    birthday: v.optional(v.number()),
   },
   handler: async (
     ctx,
-    { id, name, email, address, city, code, country, photoUrl },
+    { id, name, email, address, city, code, country, photoUrl, birthday },
   ) => {
     const customer = await getEntityByIdInWorkspace(ctx, {
       id,
@@ -156,6 +157,7 @@ export const update = mutation({
       code: code || customer.code,
       country: country || customer.country,
       photoUrl: photoUrl || customer.photoUrl,
+      birthday: birthday || customer.birthday,
     });
   },
 });

@@ -74,7 +74,7 @@ export default defineSchema({
     code: v.optional(v.string()),
     country: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
-    birthday: v.optional(v.string()),
+    birthday: v.optional(v.number()),
   }).index("by_workspace", ["workspace"]),
   items: defineTable({
     workspace: v.string(),

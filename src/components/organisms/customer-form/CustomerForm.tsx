@@ -94,6 +94,25 @@ export function CustomerForm({ disabled }: Props) {
         {...register("email", { required: true })}
       />
 
+      <Controller
+        name="birthday"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            disabled={disabled}
+            className="col-span-6 row-start-3"
+            label="Birthday"
+            name="birthday"
+            type="datetime-local"
+            validations={{
+              valueMissing: "This field is required",
+            }}
+            value={value ? new Date(value).toISOString() : undefined}
+            onChange={(date) => onChange(date.getTime())}
+          />
+        )}
+      />
+
       <Input
         disabled={disabled}
         label="Address"
