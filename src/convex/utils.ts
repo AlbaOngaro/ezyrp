@@ -7,16 +7,16 @@ import {
 import { ConvexError } from "convex/values";
 import { v4 as uuid, validate } from "uuid";
 import { capitalize } from "lodash";
-import { DataModel, Doc, Id, TableNames } from "./_generated/dataModel";
 
-import { DefaultEvent, DelayableEvent, Event, Settings } from "./workflows";
+import { DataModel, Doc, Id, TableNames } from "./_generated/dataModel";
+import { Event } from "./workflows";
+
+type Ctx = GenericQueryCtx<any> | GenericMutationCtx<any>;
 
 /**
  * Extracts the user_id and workspace from the auth object. Throws an error if the user is not authenticated or if the workspace is not found.
  **/
-export async function getAuthData(
-  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
-) {
+export async function getAuthData(ctx: Ctx) {
   const identity = (await ctx.auth.getUserIdentity()) as UserIdentity & {
     websiteUrl?: string;
   };
@@ -56,7 +56,7 @@ export async function getEntityByIdInWorkspace<
   I extends TableNames,
   N extends TableNamesInDataModel<DataModel>,
 >(
-  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
+  ctx: Ctx,
   { id, table }: GetEntityByIdInWorkspaceArgs<I, N>,
 ): Promise<Doc<N>> {
   const { workspace } = await getAuthData(ctx);
@@ -79,10 +79,7 @@ export async function getEntityByIdInWorkspace<
  */
 export async function getEntitiesInWorkspace<
   N extends TableNamesInDataModel<DataModel>,
->(
-  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
-  table: N,
-): Promise<Doc<N>[]> {
+>(ctx: Ctx, table: N): Promise<Doc<N>[]> {
   const { workspace } = await getAuthData(ctx);
 
   return await ctx.db
@@ -101,27 +98,9 @@ export function getValidUuid(): string {
   return getValidUuid();
 }
 
-type DefaultSettings = Extract<Settings, { event: DefaultEvent }>;
-type DefaultWorkflow = Omit<Doc<"workflows">, "settings"> & {
-  settings: DefaultSettings;
-};
-
-type DelayableSettings = Extract<Settings, { event: DelayableEvent }>;
-type DelayableWorkflow = Omit<Doc<"workflows">, "settings"> & {
-  settings: DelayableSettings;
-};
-
-export async function getWorkflowForEvent<E extends DelayableEvent>(
-  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
-  event: E,
-): Promise<DelayableWorkflow>;
-export async function getWorkflowForEvent<E extends DefaultEvent>(
-  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
-  event: E,
-): Promise<DefaultWorkflow>;
-export async function getWorkflowForEvent<E extends Event>(
-  ctx: GenericQueryCtx<any> | GenericMutationCtx<any>,
-  event: E,
+export async function getWorkflowForEvent(
+  ctx: Ctx,
+  event: Event,
 ): Promise<Doc<"workflows"> | null> {
   const workflows = await getEntitiesInWorkspace(ctx, "workflows");
   const workflow = workflows.find(

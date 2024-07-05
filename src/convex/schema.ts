@@ -6,7 +6,7 @@ const sms = v.literal("sms");
 
 export const action = v.union(email, sms);
 
-export const event = v.union(
+export const defaultEvents = v.union(
   v.literal("customer:created"),
   v.literal("customer:birthday"),
   v.literal("invoice:created"),
@@ -23,7 +23,7 @@ export const settings = v.union(
   v.union(
     v.object({
       action: email,
-      event,
+      event: defaultEvents,
       template: v.id("emails"),
     }),
     v.object({
@@ -36,7 +36,7 @@ export const settings = v.union(
   v.union(
     v.object({
       action: sms,
-      event,
+      event: defaultEvents,
     }),
     v.object({
       action: sms,

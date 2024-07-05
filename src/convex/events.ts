@@ -4,9 +4,8 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
-  getWorkflowForEvent,
 } from "./utils";
-import { api } from "./_generated/api";
+import { internal } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -48,50 +47,121 @@ export const create = mutation({
       guests,
     });
 
-    const workflow = await getWorkflowForEvent(ctx, "event:upcoming");
-    if (workflow) {
-      const { settings, status } = workflow;
-      if (status !== "active" || !settings) {
-        return;
-      }
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      event: "event:upcoming",
+      entityId: id,
+    });
 
-      const { action } = settings;
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      event: "event:days-passed",
+      entityId: id,
+    });
 
-      switch (action) {
-        case "email": {
-          const { template } = settings;
-          const emails = await Promise.all(
-            guests.map((guest) =>
-              getEntityByIdInWorkspace(ctx, {
-                id: guest,
-                table: "customers",
-              }).then(({ email }) => email),
-            ),
-          );
+    // try {
+    //   const workflow = await getWorkflowForEvent(ctx, "event:upcoming");
+    //   if (workflow) {
+    //     const { settings, status } = workflow;
+    //     if (status !== "active" || !settings) {
+    //       return;
+    //     }
 
-          if (template && emails) {
-            await Promise.all(
-              emails.map((email) =>
-                ctx.scheduler.runAt(new Date(start), api.actions.email, {
-                  template,
-                  to: email,
-                }),
-              ),
-            );
-          }
-          break;
-        }
-        case "sms": {
-          await ctx.scheduler.runAfter(0, api.actions.sms, {
-            to: "+1234567890",
-            message: "Invoice created",
-          });
-          break;
-        }
-        default:
-          break;
-      }
-    }
+    //     const { action } = settings;
+
+    //     switch (action) {
+    //       case "email": {
+    //         const { template, delay } = settings;
+    //         const emails = await Promise.all(
+    //           guests.map((guest) =>
+    //             getEntityByIdInWorkspace(ctx, {
+    //               id: guest,
+    //               table: "customers",
+    //             }).then(({ email }) => email),
+    //           ),
+    //         );
+
+    //         if (template && emails) {
+    //           await Promise.all(
+    //             emails.map((email) =>
+    //               ctx.scheduler.runAt(
+    //                 new Date(start).getTime() - delay,
+    //                 api.actions.email,
+    //                 {
+    //                   template,
+    //                   to: email,
+    //                 },
+    //               ),
+    //             ),
+    //           );
+    //         }
+    //         break;
+    //       }
+    //       case "sms": {
+    //         await ctx.scheduler.runAfter(0, api.actions.sms, {
+    //           to: "+1234567890",
+    //           message: "Invoice created",
+    //         });
+    //         break;
+    //       }
+    //       default:
+    //         break;
+    //     }
+    //   }
+    // } catch (error: unknown) {
+    //   console.error(error);
+    // }
+
+    // try {
+    //   const workflow = await getWorkflowForEvent(ctx, "event:days-passed");
+    //   if (workflow) {
+    //     const { settings, status } = workflow;
+    //     if (status !== "active" || !settings) {
+    //       return;
+    //     }
+
+    //     const { action } = settings;
+
+    //     switch (action) {
+    //       case "email": {
+    //         const { template, delay } = settings;
+    //         const emails = await Promise.all(
+    //           guests.map((guest) =>
+    //             getEntityByIdInWorkspace(ctx, {
+    //               id: guest,
+    //               table: "customers",
+    //             }).then(({ email }) => email),
+    //           ),
+    //         );
+
+    //         if (template && emails) {
+    //           await Promise.all(
+    //             emails.map((email) =>
+    //               ctx.scheduler.runAt(
+    //                 new Date(end).getTime() + delay,
+    //                 api.actions.email,
+    //                 {
+    //                   template,
+    //                   to: email,
+    //                 },
+    //               ),
+    //             ),
+    //           );
+    //         }
+    //         break;
+    //       }
+    //       case "sms": {
+    //         await ctx.scheduler.runAfter(0, api.actions.sms, {
+    //           to: "+1234567890",
+    //           message: "Invoice created",
+    //         });
+    //         break;
+    //       }
+    //       default:
+    //         break;
+    //     }
+    //   }
+    // } catch (error: unknown) {
+    //   console.error(error);
+    // }
 
     return await ctx.db.get(id);
   },

@@ -5,9 +5,8 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
-  getWorkflowForEvent,
 } from "./utils";
-import { api } from "./_generated/api";
+import { internal } from "./_generated/api";
 
 export const get = query({
   args: {
@@ -77,7 +76,7 @@ export const create = mutation({
   ) => {
     const { workspace } = await getAuthData(ctx);
 
-    await ctx.db.insert("invoices", {
+    const id = await ctx.db.insert("invoices", {
       workspace,
       due,
       items,
@@ -88,40 +87,10 @@ export const create = mutation({
       description,
     });
 
-    const workflow = await getWorkflowForEvent(ctx, "invoice:created");
-    if (workflow) {
-      const settings = workflow.settings;
-      if (workflow.status !== "active" || !settings) {
-        return;
-      }
-
-      switch (settings.action) {
-        case "email": {
-          const template = settings.template;
-          const { email } = await getEntityByIdInWorkspace(ctx, {
-            id: customer,
-            table: "customers",
-          });
-
-          if (template && email) {
-            await ctx.scheduler.runAfter(0, api.actions.email, {
-              template,
-              to: email,
-            });
-          }
-          break;
-        }
-        case "sms": {
-          await ctx.scheduler.runAfter(0, api.actions.sms, {
-            to: "+1234567890",
-            message: "Invoice created",
-          });
-          break;
-        }
-        default:
-          break;
-      }
-    }
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      event: "invoice:created",
+      entityId: id,
+    });
   },
 });
 
@@ -157,76 +126,16 @@ export const update = mutation({
 
     switch (status) {
       case "paid": {
-        const workflow = await getWorkflowForEvent(ctx, "invoice:paid");
-        if (workflow) {
-          const settings = workflow.settings;
-          if (workflow.status !== "active" || !settings) {
-            return;
-          }
-
-          switch (settings.action) {
-            case "email": {
-              const template = settings.template;
-              const { email } = await getEntityByIdInWorkspace(ctx, {
-                id: customer || invoice.customer,
-                table: "customers",
-              });
-
-              if (template && email) {
-                await ctx.scheduler.runAfter(0, api.actions.email, {
-                  template,
-                  to: email,
-                });
-              }
-              break;
-            }
-            case "sms": {
-              await ctx.scheduler.runAfter(0, api.actions.sms, {
-                to: "+1234567890",
-                message: "Invoice created",
-              });
-              break;
-            }
-            default:
-              break;
-          }
-        }
+        await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+          event: "invoice:paid",
+          entityId: id,
+        });
       }
       case "overdue": {
-        const workflow = await getWorkflowForEvent(ctx, "invoice:overdue");
-        if (workflow) {
-          const settings = workflow.settings;
-          if (workflow.status !== "active" || !settings) {
-            return;
-          }
-
-          switch (settings.action) {
-            case "email": {
-              const template = settings.template;
-              const { email } = await getEntityByIdInWorkspace(ctx, {
-                id: customer || invoice.customer,
-                table: "customers",
-              });
-
-              if (template && email) {
-                await ctx.scheduler.runAfter(0, api.actions.email, {
-                  template,
-                  to: email,
-                });
-              }
-              break;
-            }
-            case "sms": {
-              await ctx.scheduler.runAfter(0, api.actions.sms, {
-                to: "+1234567890",
-                message: "Invoice created",
-              });
-              break;
-            }
-            default:
-              break;
-          }
-        }
+        await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+          event: "invoice:overdue",
+          entityId: id,
+        });
       }
     }
   },

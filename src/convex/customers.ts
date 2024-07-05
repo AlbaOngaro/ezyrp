@@ -8,7 +8,7 @@ import {
   getEntityByIdInWorkspace,
   getWorkflowForEvent,
 } from "./utils";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 type UpsertArgs = {
   name: string;
@@ -111,85 +111,15 @@ export const create = mutation({
       birthday,
     });
 
-    const customer_created_workflow = await getWorkflowForEvent(
-      ctx,
-      "customer:created",
-    );
-    if (customer_created_workflow) {
-      const settings = customer_created_workflow.settings;
-      if (customer_created_workflow.status !== "active" || !settings) {
-        return;
-      }
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      event: "customer:created",
+      entityId: id,
+    });
 
-      switch (settings.action) {
-        case "email": {
-          const template = settings.template;
-          const { email } = await getEntityByIdInWorkspace(ctx, {
-            id,
-            table: "customers",
-          });
-
-          if (template && email) {
-            await ctx.scheduler.runAfter(0, api.actions.email, {
-              template,
-              to: email,
-            });
-          }
-          break;
-        }
-        case "sms": {
-          await ctx.scheduler.runAfter(0, api.actions.sms, {
-            to: "+1234567890",
-            message: "Invoice created",
-          });
-          break;
-        }
-        default:
-          break;
-      }
-    }
-
-    const customer_birthday_workflow = await getWorkflowForEvent(
-      ctx,
-      "customer:birthday",
-    );
-    if (customer_birthday_workflow) {
-      const settings = customer_birthday_workflow.settings;
-      if (
-        customer_birthday_workflow.status !== "active" ||
-        !settings ||
-        !birthday
-      ) {
-        return;
-      }
-
-      switch (settings.action) {
-        case "email": {
-          const template = settings.template;
-          const { email } = await getEntityByIdInWorkspace(ctx, {
-            id,
-            table: "customers",
-          });
-
-          if (template && email) {
-            await ctx.scheduler.runAt(new Date(birthday), api.actions.email, {
-              template,
-              to: email,
-            });
-          }
-          break;
-        }
-        case "sms": {
-          await ctx.scheduler.runAfter(0, api.actions.sms, {
-            to: "+1234567890",
-            message: "Invoice created",
-          });
-          break;
-        }
-        default:
-          break;
-      }
-    }
+    await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
+      event: "customer:birthday",
+      entityId: id,
+    });
   },
 });
 
