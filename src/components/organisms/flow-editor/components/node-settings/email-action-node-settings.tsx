@@ -36,7 +36,7 @@ export function EmailActionNodeSettings(props: Props) {
         </Button>
       </ModalTrigger>
       <Modal title={`${props.data.label} Settings`}>
-        <Form>
+        <Form className="mt-4">
           <Select
             label="Template"
             name="template"
