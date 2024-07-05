@@ -76,7 +76,10 @@ export function EventTriggerNodeSettings(props: Props) {
             ...n,
             data: {
               ...n.data,
-              delay: convertDelayToMs(delay, unit),
+              delay:
+                props.data.event === "event:upcoming"
+                  ? convertDelayToMs(delay, unit) * -1
+                  : convertDelayToMs(delay, unit),
             },
           };
         }
@@ -105,7 +108,11 @@ export function EventTriggerNodeSettings(props: Props) {
             type="number"
             name="delay"
             className="col-span-2"
-            defaultValue={getDelayInSelectedUnit(props.data.delay, unit)}
+            defaultValue={
+              props.data.event === "event:upcoming"
+                ? getDelayInSelectedUnit(props.data.delay, unit) * -1
+                : getDelayInSelectedUnit(props.data.delay, unit)
+            }
             min={0}
             max={60}
             onChange={onInputChange}

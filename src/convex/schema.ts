@@ -26,7 +26,12 @@ export const settings = v.union(
   v.union(
     v.object({
       action: email,
-      event: v.union(customerEvents, invoiceEvents),
+      event: customerEvents,
+      template: v.id("emails"),
+    }),
+    v.object({
+      action: email,
+      event: invoiceEvents,
       template: v.id("emails"),
     }),
     v.object({
@@ -39,7 +44,11 @@ export const settings = v.union(
   v.union(
     v.object({
       action: sms,
-      event: v.union(customerEvents, invoiceEvents),
+      event: customerEvents,
+    }),
+    v.object({
+      action: sms,
+      event: invoiceEvents,
     }),
     v.object({
       action: sms,

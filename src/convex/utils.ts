@@ -9,7 +9,16 @@ import { v4 as uuid, validate } from "uuid";
 import { capitalize } from "lodash";
 
 import { DataModel, Doc, Id, TableNames } from "./_generated/dataModel";
-import { AnyEvent } from "./workflows";
+import {
+  AnyEvent,
+  CustomerEvents,
+  EventEvents,
+  InvoiceEvents,
+  isCustomerEvent,
+  isEventEvent,
+  isInvoiceEvent,
+  Settings,
+} from "./workflows";
 
 type Ctx = GenericQueryCtx<any> | GenericMutationCtx<any>;
 
@@ -98,11 +107,48 @@ export function getValidUuid(): string {
   return getValidUuid();
 }
 
-export async function getWorkflowForEvent(
+type BaseWorkflow = Omit<Doc<"workflows">, "settings">;
+
+type CustomerSettings = Extract<Settings, { event: CustomerEvents }>;
+type CustomerWorkflow = BaseWorkflow & {
+  settings: CustomerSettings;
+};
+
+type InvoiceSettings = Extract<Settings, { event: InvoiceEvents }>;
+type InvoiceWorkflow = BaseWorkflow & {
+  settings: InvoiceSettings;
+};
+
+type EventSettings = Extract<Settings, { event: EventEvents }>;
+type EventWorkflow = BaseWorkflow & {
+  settings: EventSettings;
+};
+
+type AnyWorkflow = CustomerWorkflow | InvoiceWorkflow | EventWorkflow;
+
+export function isCustomerWorkflow(
+  workflow: AnyWorkflow,
+): workflow is CustomerWorkflow {
+  return isCustomerEvent(workflow.settings.event);
+}
+
+export function isInvoiceWorkflow(
+  workflow: AnyWorkflow,
+): workflow is InvoiceWorkflow {
+  return isInvoiceEvent(workflow.settings.event);
+}
+
+export function isEventWorkflow(
+  workflow: AnyWorkflow,
+): workflow is EventWorkflow {
+  return isEventEvent(workflow.settings.event);
+}
+
+export async function getWorkflowForEvent<E extends AnyEvent>(
   ctx: Ctx,
-  event: AnyEvent,
-): Promise<Doc<"workflows"> | null> {
-  const workflows = await getEntitiesInWorkspace(ctx, "workflows");
+  event: E,
+): Promise<AnyWorkflow | null> {
+  const workflows = await ctx.db.query("workflows").collect();
   const workflow = workflows.find(
     (workflow) => workflow?.settings?.event === event,
   );

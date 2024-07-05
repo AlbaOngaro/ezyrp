@@ -6,9 +6,8 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
-  getWorkflowForEvent,
 } from "./utils";
-import { api, internal } from "./_generated/api";
+import { internal } from "./_generated/api";
 
 type UpsertArgs = {
   name: string;
