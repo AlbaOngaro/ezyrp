@@ -38,7 +38,7 @@ const flowSchema = z.object({
     .refine(
       (data) =>
         !["event:upcoming", "event:days-passed"].includes(data.event) ||
-        !!data.delay,
+        typeof data.delay === "number",
       {
         message: "Delay is required for this event",
         path: ["delay"],
