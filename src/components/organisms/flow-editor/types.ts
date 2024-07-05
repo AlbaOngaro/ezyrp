@@ -13,7 +13,7 @@ interface BaseActionNodeData extends BaseNodeData {
   action: Action;
 }
 
-interface EmailActionNodeData extends BaseActionNodeData {
+export interface EmailActionNodeData extends BaseActionNodeData {
   action: "email";
   template: Id<"emails">;
 }
