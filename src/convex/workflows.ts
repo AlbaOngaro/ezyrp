@@ -153,20 +153,23 @@ export const trigger = internalMutation({
     args: v.union(
       v.object({
         event: eventEvents,
+        workspace: v.string(),
         entityId: v.id("events"),
       }),
       v.object({
         event: customerEvents,
+        workspace: v.string(),
         entityId: v.id("customers"),
       }),
       v.object({
         event: invoiceEvents,
+        workspace: v.string(),
         entityId: v.id("invoices"),
       }),
     ),
   },
   handler: async (ctx, { args }) => {
-    const workflow = await getWorkflowForEvent(ctx, args.event);
+    const workflow = await getWorkflowForEvent(ctx, args.event, args.workspace);
     if (!workflow || workflow.status !== "active" || !workflow.settings) {
       console.log("No active workflow found for event.");
       return;

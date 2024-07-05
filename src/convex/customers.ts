@@ -113,6 +113,7 @@ export const create = mutation({
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
       args: {
         event: "customer:created",
+        workspace,
         entityId: id,
       },
     });
@@ -120,6 +121,7 @@ export const create = mutation({
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
       args: {
         event: "customer:birthday",
+        workspace,
         entityId: id,
       },
     });

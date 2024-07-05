@@ -147,8 +147,14 @@ export function isEventWorkflow(
 export async function getWorkflowForEvent<E extends AnyEvent>(
   ctx: Ctx,
   event: E,
+  workspace: string,
 ): Promise<AnyWorkflow | null> {
-  const workflows = await ctx.db.query("workflows").collect();
+  const workflows = await ctx.db
+    .query("workflows")
+    .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+    .filter((q) => q.eq(q.field("settings.event"), event))
+    .collect();
+
   const workflow = workflows.find(
     (workflow) => workflow?.settings?.event === event,
   );

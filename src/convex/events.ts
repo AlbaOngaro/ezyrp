@@ -50,6 +50,7 @@ export const create = mutation({
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
       args: {
         event: "event:upcoming",
+        workspace,
         entityId: id,
       },
     });
@@ -57,6 +58,7 @@ export const create = mutation({
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
       args: {
         event: "event:days-passed",
+        workspace,
         entityId: id,
       },
     });
