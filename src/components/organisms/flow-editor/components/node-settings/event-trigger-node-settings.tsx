@@ -3,7 +3,7 @@ import { Settings } from "lucide-react";
 import { Form } from "@radix-ui/react-form";
 import { useState, ChangeEvent } from "react";
 
-import { DelayableTriggerNodeData } from "../../types";
+import { EventTriggerNodeData } from "../../types";
 import { useNodes } from "../../hooks/useNodes";
 
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
@@ -11,7 +11,7 @@ import { Button } from "components/atoms/button";
 import { Input } from "components/atoms/input";
 import { Select } from "components/atoms/select";
 
-type Props = Node<DelayableTriggerNodeData, "trigger">;
+type Props = Node<EventTriggerNodeData, "trigger">;
 
 type Unit = "minutes" | "hours" | "days";
 
@@ -43,7 +43,7 @@ function convertDelayToMs(delayInUnit: number, unit: Unit): number {
   }
 }
 
-export function DelayableTriggerNodeSettings(props: Props) {
+export function EventTriggerNodeSettings(props: Props) {
   const [_, setNodes] = useNodes();
   const [unit, setUnit] = useState<Unit>("minutes");
 

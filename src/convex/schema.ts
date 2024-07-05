@@ -6,15 +6,18 @@ const sms = v.literal("sms");
 
 export const action = v.union(email, sms);
 
-export const defaultEvents = v.union(
+export const customerEvents = v.union(
   v.literal("customer:created"),
   v.literal("customer:birthday"),
+);
+
+export const invoiceEvents = v.union(
   v.literal("invoice:created"),
   v.literal("invoice:paid"),
   v.literal("invoice:overdue"),
 );
 
-export const delayableEvents = v.union(
+export const eventEvents = v.union(
   v.literal("event:upcoming"),
   v.literal("event:days-passed"),
 );
@@ -23,12 +26,12 @@ export const settings = v.union(
   v.union(
     v.object({
       action: email,
-      event: defaultEvents,
+      event: v.union(customerEvents, invoiceEvents),
       template: v.id("emails"),
     }),
     v.object({
       action: email,
-      event: delayableEvents,
+      event: eventEvents,
       delay: v.number(),
       template: v.id("emails"),
     }),
@@ -36,11 +39,11 @@ export const settings = v.union(
   v.union(
     v.object({
       action: sms,
-      event: defaultEvents,
+      event: v.union(customerEvents, invoiceEvents),
     }),
     v.object({
       action: sms,
-      event: delayableEvents,
+      event: eventEvents,
       delay: v.number(),
     }),
   ),

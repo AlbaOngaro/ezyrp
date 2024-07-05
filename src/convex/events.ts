@@ -48,13 +48,17 @@ export const create = mutation({
     });
 
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-      event: "event:upcoming",
-      entityId: id,
+      args: {
+        event: "event:upcoming",
+        entityId: id,
+      },
     });
 
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-      event: "event:days-passed",
-      entityId: id,
+      args: {
+        event: "event:days-passed",
+        entityId: id,
+      },
     });
 
     // try {

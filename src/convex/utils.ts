@@ -9,7 +9,7 @@ import { v4 as uuid, validate } from "uuid";
 import { capitalize } from "lodash";
 
 import { DataModel, Doc, Id, TableNames } from "./_generated/dataModel";
-import { Event } from "./workflows";
+import { AnyEvent } from "./workflows";
 
 type Ctx = GenericQueryCtx<any> | GenericMutationCtx<any>;
 
@@ -100,7 +100,7 @@ export function getValidUuid(): string {
 
 export async function getWorkflowForEvent(
   ctx: Ctx,
-  event: Event,
+  event: AnyEvent,
 ): Promise<Doc<"workflows"> | null> {
   const workflows = await getEntitiesInWorkspace(ctx, "workflows");
   const workflow = workflows.find(

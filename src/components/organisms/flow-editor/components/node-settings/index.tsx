@@ -1,16 +1,16 @@
-import { isDelayableTriggerNode, isEmailActionNode } from "../../types";
+import { isEventTriggerNode, isEmailActionNode } from "../../types";
 import { Props } from "./types";
 
 import { EmailActionNodeSettings } from "./email-action-node-settings";
-import { DelayableTriggerNodeSettings } from "./delayable-trigger-node-settings";
+import { EventTriggerNodeSettings } from "./event-trigger-node-settings";
 
 export function NodeSettings(props: Props) {
   if (isEmailActionNode(props)) {
     return <EmailActionNodeSettings {...props} />;
   }
 
-  if (isDelayableTriggerNode(props)) {
-    return <DelayableTriggerNodeSettings {...props} />;
+  if (isEventTriggerNode(props)) {
+    return <EventTriggerNodeSettings {...props} />;
   }
 
   return null;

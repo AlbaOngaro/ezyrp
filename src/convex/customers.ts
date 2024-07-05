@@ -112,13 +112,17 @@ export const create = mutation({
     });
 
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-      event: "customer:created",
-      entityId: id,
+      args: {
+        event: "customer:created",
+        entityId: id,
+      },
     });
 
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-      event: "customer:birthday",
-      entityId: id,
+      args: {
+        event: "customer:birthday",
+        entityId: id,
+      },
     });
   },
 });

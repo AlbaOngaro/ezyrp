@@ -88,8 +88,10 @@ export const create = mutation({
     });
 
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-      event: "invoice:created",
-      entityId: id,
+      args: {
+        event: "invoice:created",
+        entityId: id,
+      },
     });
   },
 });
@@ -127,14 +129,18 @@ export const update = mutation({
     switch (status) {
       case "paid": {
         await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-          event: "invoice:paid",
-          entityId: id,
+          args: {
+            event: "invoice:paid",
+            entityId: id,
+          },
         });
       }
       case "overdue": {
         await ctx.scheduler.runAfter(0, internal.workflows.trigger, {
-          event: "invoice:overdue",
-          entityId: id,
+          args: {
+            event: "invoice:overdue",
+            entityId: id,
+          },
         });
       }
     }

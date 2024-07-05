@@ -1,10 +1,5 @@
 import { v } from "convex/values";
-import {
-  internalAction,
-  internalMutation,
-  mutation,
-  query,
-} from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import {
   getAuthData,
   getEntitiesInWorkspace,
@@ -12,13 +7,21 @@ import {
   getWorkflowForEvent,
 } from "./utils";
 
-import { defaultEvents, delayableEvents, action, settings } from "./schema";
+import {
+  invoiceEvents,
+  customerEvents,
+  eventEvents,
+  action,
+  settings,
+} from "./schema";
 
-const event = v.union(defaultEvents, delayableEvents);
+const event = v.union(invoiceEvents, customerEvents, eventEvents);
 
-export type DefaultEvent = typeof defaultEvents.type;
-export type DelayableEvent = typeof delayableEvents.type;
-export type Event = typeof event.type;
+export type InvoiceEvents = typeof invoiceEvents.type;
+export type EventEvents = typeof eventEvents.type;
+export type CustomerEvents = typeof customerEvents.type;
+export type AnyEvent = typeof event.type;
+
 export type Action = typeof action.type;
 export type Settings = typeof settings.type;
 
@@ -102,10 +105,22 @@ export const remove = mutation({
 
 export const trigger = internalMutation({
   args: {
-    event,
-    entityId: v.union(v.id("events"), v.id("customers"), v.id("invoices")),
+    args: v.union(
+      v.object({
+        event: eventEvents,
+        entityId: v.id("events"),
+      }),
+      v.object({
+        event: customerEvents,
+        entityId: v.id("customers"),
+      }),
+      v.object({
+        event: invoiceEvents,
+        entityId: v.id("invoices"),
+      }),
+    ),
   },
-  handler: async (ctx, { event, entityId }) => {
+  handler: async (ctx, { args: { event, entityId } }) => {
     console.log({ event, entityId });
 
     const workflow = await getWorkflowForEvent(ctx, event);

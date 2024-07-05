@@ -2,7 +2,13 @@ import { Node } from "reactflow";
 
 export type NodeType = "trigger" | "action";
 
-import { Event, Action, DelayableEvent, DefaultEvent } from "convex/workflows";
+import {
+  AnyEvent,
+  Action,
+  EventEvents,
+  InvoiceEvents,
+  CustomerEvents,
+} from "convex/workflows";
 import { Id } from "convex/_generated/dataModel";
 
 interface BaseNodeData {
@@ -25,19 +31,26 @@ interface SmsActionNodeData extends BaseActionNodeData {
 export type ActionNodeData = EmailActionNodeData | SmsActionNodeData;
 
 export interface TriggerNodeBaseData extends BaseNodeData {
-  event: Event;
+  event: AnyEvent;
 }
 
-export interface DelayableTriggerNodeData extends TriggerNodeBaseData {
-  event: DelayableEvent;
+export interface EventTriggerNodeData extends TriggerNodeBaseData {
+  event: EventEvents;
   delay: number;
 }
 
-export interface DefaultTriggerNodeData extends TriggerNodeBaseData {
-  event: DefaultEvent;
+export interface CustomerTriggerNodeData extends TriggerNodeBaseData {
+  event: CustomerEvents;
 }
 
-export type TriggerNodeData = DelayableTriggerNodeData | DefaultTriggerNodeData;
+export interface InvoiceTriggerNodeData extends TriggerNodeBaseData {
+  event: InvoiceEvents;
+}
+
+export type TriggerNodeData =
+  | EventTriggerNodeData
+  | CustomerTriggerNodeData
+  | InvoiceTriggerNodeData;
 
 export type NodeData = ActionNodeData | TriggerNodeData;
 
@@ -65,9 +78,9 @@ export function isSmsActionNode(
   return isActionNode(node) && node.data.action === "sms";
 }
 
-export function isDelayableTriggerNode(
+export function isEventTriggerNode(
   node: Pick<Node, "type" | "data">,
-): node is Node<DelayableTriggerNodeData, "trigger"> {
+): node is Node<EventTriggerNodeData, "trigger"> {
   return (
     isTriggerNode(node) &&
     ["event:upcoming", "event:days-passed"].includes(node.data.event)
