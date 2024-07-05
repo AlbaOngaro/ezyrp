@@ -22,7 +22,7 @@ export function useGetTriggers(): Node<TriggerNodeData, "trigger">[] {
       data: {
         label: "Upcoming Event",
         event: "event:upcoming",
-        delay: 0,
+        delay: 15,
       },
     },
     {
@@ -30,7 +30,7 @@ export function useGetTriggers(): Node<TriggerNodeData, "trigger">[] {
       data: {
         label: "Days passed since event",
         event: "event:days-passed",
-        delay: 0,
+        delay: 15,
       },
     },
     {
