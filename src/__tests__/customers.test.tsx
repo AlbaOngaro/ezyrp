@@ -23,12 +23,19 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
-  console.log("Cleaning up");
   container.remove();
   await convexMockServer.mutation(internal.tests.cleardb);
 });
 
-describe("Customers page", () => {
+describe.sequential("Customers page", () => {
+  test("Renders empty table when there are no customers", () => {
+    render(<CustomersPage />, {
+      container,
+    });
+
+    expect(screen.getByTestId("table-body--empty")).toBeDefined();
+  });
+
   test("Renders table rows when there are customers", async () => {
     await convexMockServer.mutation(api.customers.create, {
       name: "Alba",
@@ -50,27 +57,24 @@ describe("Customers page", () => {
     });
   });
 
-  test("Renders empty table when there are no customers", () => {
-    render(<CustomersPage />, {
+  test("Correctly deletes selected customers", async () => {
+    await convexMockServer.mutation(api.customers.create, {
+      name: "Alba",
+      email: "alba_ongaro@hotmail.com",
+    });
+
+    const page = render(<CustomersPage />, {
       container,
     });
 
-    screen.debug();
-
-    // expect(screen.getByTestId("table-body--empty")).toBeDefined();
-  });
-
-  test.skip("Renders delete button when checkboxes are checked", async () => {
-    render(<CustomersPage />, {
-      container,
+    await waitFor(() => {
+      expect(screen.getByTestId("table-cell__checkbox")).toBeDefined();
     });
 
-    expect(screen.getByTestId("table-cell__checkbox")).toBeDefined();
     const checkbox = screen.getByTestId<HTMLInputElement>(
       "table-cell__checkbox-input",
     );
     expect(checkbox).toBeDefined();
-
     expect(checkbox.checked).toBe(false);
     await userEvent.click(checkbox);
     expect(checkbox.checked).toBe(true);
@@ -86,6 +90,9 @@ describe("Customers page", () => {
     expect(confirmButton).toBeDefined();
     await userEvent.click(confirmButton);
 
-    // expect(screen.getByTestId("table-body--empty")).toBeDefined();
+    // note: forcing rerender to update the table
+    // since mocks queries are not re-fetched automatically
+    page.rerender(<CustomersPage />);
+    expect(screen.getByTestId("table-body--empty")).toBeDefined();
   });
 });

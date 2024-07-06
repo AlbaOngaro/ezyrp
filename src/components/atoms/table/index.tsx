@@ -39,12 +39,6 @@ export function Table<R extends Row = Row>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRows]);
 
-  useEffect(() => {
-    setSelectedRows([]);
-    setChecked(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows]);
-
   const setSelectedRows = (rows: R[]) => {
     _setSelectedRows(rows);
     if (typeof onSelect === "function") {

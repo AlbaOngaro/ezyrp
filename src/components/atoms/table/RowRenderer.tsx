@@ -25,8 +25,9 @@ export function TableRowRenderer<R extends Row = Row>({
   selectedRows: R[];
   setSelectedRows: (rows: R[]) => void;
 }) {
-  const button = useRef<HTMLButtonElement | null>(null);
   const tr = useRef<HTMLTableRowElement | null>(null);
+  const button = useRef<HTMLButtonElement | null>(null);
+  const selected = selectedRows.some((r) => r._id === row._id);
 
   return (
     <Root>
@@ -42,14 +43,14 @@ export function TableRowRenderer<R extends Row = Row>({
             <td className="relative w-12" data-testid="table-cell__checkbox">
               <Checkbox
                 data-testid="table-cell__checkbox-input"
-                checked={selectedRows.includes(row)}
-                onChange={(e) =>
-                  setSelectedRows(
-                    e.target.checked
-                      ? [...selectedRows, row]
-                      : selectedRows.filter((r) => r !== row),
-                  )
-                }
+                checked={selected}
+                onChange={() => {
+                  const newRows = selected
+                    ? selectedRows.filter((r) => r !== row)
+                    : [...selectedRows, row];
+
+                  setSelectedRows(newRows);
+                }}
               />
             </td>
           )}
