@@ -14,7 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as __test_____mocks___convex from "../__test__/__mocks__/convex.js";
+import type * as __tests_____mocks___convex from "../__tests__/__mocks__/convex.js";
 import type * as actions from "../actions.js";
 import type * as bookings from "../bookings.js";
 import type * as countries from "../countries.js";
@@ -40,7 +40,7 @@ import type * as workflows from "../workflows.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "__test__/__mocks__/convex": typeof __test_____mocks___convex;
+  "__tests__/__mocks__/convex": typeof __tests_____mocks___convex;
   actions: typeof actions;
   bookings: typeof bookings;
   countries: typeof countries;
