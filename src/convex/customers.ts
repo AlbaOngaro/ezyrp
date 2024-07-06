@@ -129,6 +129,8 @@ export const create = mutation({
         entityId: id,
       },
     });
+
+    return id;
   },
 });
 
