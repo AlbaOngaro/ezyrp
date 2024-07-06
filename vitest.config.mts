@@ -5,6 +5,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
+    setupFiles: ["./vitest.globals.ts"],
     environmentMatchGlobs: [
       // all tests in convex/ will run in edge-runtime
       ["src/convex/**", "edge-runtime"],

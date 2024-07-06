@@ -42,7 +42,7 @@ export const WorkflowContext = createContext<WorkflowContextValue>({
   hasChanges: false,
 });
 
-function getSettings(nodes: Node[]): Settings | undefined {
+export function getSettings(nodes: Node[]): Settings | undefined {
   const trigger = nodes.find((node) => isTriggerNode(node));
   const action = nodes.find((node) => isActionNode(node));
 
@@ -103,15 +103,16 @@ export function WorkflowProvider({
     setSettings(workflow.settings);
   }, [workflow]);
 
-  useEffect(() => {
-    setSettings(getSettings(nodes));
-  }, [nodes]);
-
   const setNodes = useCallback(
-    (nodes: SetStateAction<Node<NodeData, NodeType>[]>) => {
-      setNodesInternal(nodes);
+    (newNodes: SetStateAction<Node<NodeData, NodeType>[]>) => {
+      setNodesInternal(newNodes);
+      if (typeof newNodes == "function") {
+        setSettings(getSettings(newNodes(nodes)));
+      } else {
+        setSettings(getSettings(newNodes));
+      }
     },
-    [],
+    [nodes],
   );
 
   const setEdges = useCallback((edges: SetStateAction<Edge[]>) => {

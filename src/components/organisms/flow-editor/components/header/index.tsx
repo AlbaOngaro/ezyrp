@@ -82,6 +82,7 @@ export function Header() {
               break;
           }
         }}
+        data-testid="workflows__run-flow-btn"
       >
         <Play className="w-4 h-4" />
       </Button>
