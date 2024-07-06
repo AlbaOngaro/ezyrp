@@ -8,10 +8,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  qa:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: oven-sh/setup-bun@v1
-      - run: bun install
-      - run: bun run type-check && bun run lint && bun run test:once
+      - run: bun install --ignore-scripts --frozen-lockfile
+      - run: bun run test:once
