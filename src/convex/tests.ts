@@ -1,6 +1,6 @@
 import { internalMutation } from "./_generated/server";
 
-export const clear = internalMutation({
+export const cleardb = internalMutation({
   handler: async (ctx) => {
     if (process.env.NODE_ENV !== "test") {
       return;

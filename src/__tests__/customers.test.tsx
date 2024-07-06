@@ -2,16 +2,18 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { usePreloadedQuery, useMutation, tAuth } from "./mocks.setup";
+import { useMutation } from "./__mocks__/convex/react";
+import { convexMockServer } from "./__mocks__/convex/server";
 import CustomersPage from "pages/customers";
 import { api, internal } from "convex/_generated/api";
 
 vi.mock("next/router", () => require("next-router-mock"));
 
 vi.mock("convex/react", () => ({
-  usePreloadedQuery,
   useMutation,
 }));
+
+vi.mock("lib/hooks/useQuery");
 
 let container: HTMLElement;
 
@@ -23,12 +25,12 @@ beforeEach(() => {
 afterEach(async () => {
   console.log("Cleaning up");
   container.remove();
-  await tAuth.mutation(internal.tests.clear);
+  await convexMockServer.mutation(internal.tests.cleardb);
 });
 
 describe("Customers page", () => {
   test("Renders table rows when there are customers", async () => {
-    await tAuth.mutation(api.customers.create, {
+    await convexMockServer.mutation(api.customers.create, {
       name: "Alba",
       email: "alba_ongaro@hotmail.com",
     });
