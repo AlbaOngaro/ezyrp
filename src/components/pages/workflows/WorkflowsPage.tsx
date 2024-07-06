@@ -1,5 +1,5 @@
 import { ReactElement, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { Form } from "@radix-ui/react-form";
 import { useMutation } from "lib/hooks/useMutation";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";

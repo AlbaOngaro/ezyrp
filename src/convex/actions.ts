@@ -5,12 +5,19 @@ import nodemailer from "nodemailer";
 import { action } from "./_generated/server";
 import { internal } from "./_generated/api";
 
+type EmailReturnType = {
+  to: string;
+  html: string;
+  from: string;
+  subject: string;
+};
+
 export const email = action({
   args: {
     template: v.id("emails"),
     to: v.string(),
   },
-  handler: async (ctx, { to, template }) => {
+  handler: async (ctx, { to, template }): Promise<EmailReturnType | void> => {
     const email = await ctx.runQuery(internal.emails.getInternal, {
       id: template,
     });
@@ -29,6 +36,17 @@ export const email = action({
     }
 
     const html = await blob.text();
+
+    if (process.env.NODE_ENV === "test") {
+      console.warn("Email not sent in test environment");
+
+      return {
+        to,
+        html,
+        from: "info@nimblerp.com",
+        subject: "New invoice",
+      };
+    }
 
     try {
       const transporter = nodemailer.createTransport({

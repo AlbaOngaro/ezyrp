@@ -1,16 +1,18 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { useMutation } from "./__mocks__/convex/react";
+import { useAction, useMutation } from "./__mocks__/convex/react";
 import { convexMockServer } from "./__mocks__/convex/server";
-import CustomersPage from "pages/customers";
+
 import { api, internal } from "convex/_generated/api";
+import WorkflowsPage from "pages/workflows";
 
 vi.mock("next/router", () => require("next-router-mock"));
 
 vi.mock("convex/react", () => ({
   useMutation,
+  useAction,
 }));
 
 vi.mock("lib/hooks/useQuery");
@@ -27,14 +29,13 @@ afterEach(async () => {
   await convexMockServer.mutation(internal.tests.cleardb);
 });
 
-describe("Customers", () => {
-  test("Correctly deletes selected customers", async () => {
-    await convexMockServer.mutation(api.customers.create, {
-      name: "Alba",
-      email: "alba_ongaro@hotmail.com",
+describe("Workflows", () => {
+  test("Correctly deletes selected workflows", async () => {
+    await convexMockServer.mutation(api.workflows.create, {
+      title: "Test workflow",
     });
 
-    const page = render(<CustomersPage />, {
+    const page = render(<WorkflowsPage />, {
       container,
     });
 
@@ -50,20 +51,20 @@ describe("Customers", () => {
     await userEvent.click(checkbox);
     expect(checkbox.checked).toBe(true);
 
-    const deleteButton = screen.getByTestId("customers-table__delete-all-btn");
+    const deleteButton = screen.getByTestId("workflows-table__delete-all-btn");
     expect(deleteButton).toBeDefined();
     await userEvent.click(deleteButton);
 
-    expect(screen.getByTestId("customers__delete-dialog")).toBeDefined();
+    expect(screen.getByTestId("workflows__delete-dialog")).toBeDefined();
     const confirmButton = screen.getByTestId(
-      "customers__delete-dialog__confirm-btn",
+      "workflows__delete-dialog__confirm-btn",
     );
     expect(confirmButton).toBeDefined();
     await userEvent.click(confirmButton);
 
     // note: forcing rerender to update the table
     // since mocks queries are not re-fetched automatically
-    page.rerender(<CustomersPage />);
+    page.rerender(<WorkflowsPage />);
     expect(screen.getByTestId("table-body--empty")).toBeDefined();
   });
 });
