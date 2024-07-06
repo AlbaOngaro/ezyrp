@@ -20,13 +20,13 @@ beforeEach(() => {
   document.body.appendChild(container);
 });
 
-describe.sequential("Customers page", () => {
-  afterEach(async () => {
-    console.log("Cleaning up");
-    container.remove();
-    await tAuth.mutation(internal.tests.clear);
-  });
+afterEach(async () => {
+  console.log("Cleaning up");
+  container.remove();
+  await tAuth.mutation(internal.tests.clear);
+});
 
+describe("Customers page", () => {
   test("Renders table rows when there are customers", async () => {
     await tAuth.mutation(api.customers.create, {
       name: "Alba",
