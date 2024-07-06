@@ -39,11 +39,6 @@ export async function getAuthData(ctx: Ctx) {
     throw new ConvexError("Cannot get workspace from user identity; Aborting.");
   }
 
-  console.log({
-    user_id: identity.tokenIdentifier,
-    workspace: identity.websiteUrl,
-  });
-
   return {
     user_id: identity.tokenIdentifier,
     workspace: identity.websiteUrl,

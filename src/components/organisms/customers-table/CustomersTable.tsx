@@ -15,7 +15,7 @@ export function CustomersTable() {
   const customers = useCustomers();
   const contextMenuItems = useGetContextMenuItems();
 
-  console.log(customers.data);
+  console.log(customers);
 
   return (
     <>
