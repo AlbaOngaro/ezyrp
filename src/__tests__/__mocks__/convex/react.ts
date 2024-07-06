@@ -1,5 +1,5 @@
 import { OptimisticUpdate } from "convex/browser";
-import { ReactMutation } from "convex/react";
+import { ReactAction, ReactMutation } from "convex/react";
 import {
   FunctionArgs,
   FunctionReference,
@@ -14,11 +14,18 @@ export function useMutation<Mutation extends FunctionReference<"mutation">>(
   const fn = (...args: OptionalRestArgs<Mutation>) => {
     return convexMockServer.mutation(mutation, ...args);
   };
-  fn.withOptimisticUpdate = (
-    _optimisticUpdate: OptimisticUpdate<FunctionArgs<Mutation>>,
-  ) => {
+
+  fn.withOptimisticUpdate = (_: OptimisticUpdate<FunctionArgs<Mutation>>) => {
+    console.warn("withOptimisticUpdate is  not supported in mock server");
     return fn;
   };
 
   return fn;
+}
+
+export function useAction<Action extends FunctionReference<"action">>(
+  action: Action,
+): ReactAction<Action> {
+  return (...args: OptionalRestArgs<Action>) =>
+    convexMockServer.action(action, ...args);
 }
