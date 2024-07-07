@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "vitest";
 
 import { api, internal } from "../_generated/api";
-import { t } from "./__mocks__/convex";
+import { t } from "./__mocks__/convex.mock";
 
 afterEach(async () => {
   await t.mutation(internal.tests.cleardb);

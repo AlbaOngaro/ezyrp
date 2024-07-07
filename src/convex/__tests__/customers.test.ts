@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { api } from "../_generated/api";
-import { t } from "./__mocks__/convex";
+import { t } from "./__mocks__/convex.mock";
 
 describe("Customers", () => {
   test("User can only get customers in his workspace", async () => {
