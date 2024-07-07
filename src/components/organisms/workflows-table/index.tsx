@@ -1,5 +1,5 @@
-import { useMutation } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
+import { useMutation } from "lib/hooks/useMutation";
 import { Table } from "components/atoms/table";
 import { api } from "convex/_generated/api";
 import { useQuery } from "lib/hooks/useQuery";
@@ -17,7 +17,7 @@ export function WorkflowsTable() {
   return (
     <Table
       loading={status === "pending"}
-      rows={workflows}
+      rows={workflows || []}
       columns={[
         {
           id: "title",
@@ -38,12 +38,17 @@ export function WorkflowsTable() {
       renderSelectedActions={(rows) => (
         <DialogRoot>
           <DialogTrigger asChild>
-            <Button variant="destructive" size="sm">
+            <Button
+              variant="destructive"
+              size="sm"
+              data-testid="workflows-table__delete-all-btn"
+            >
               Delete all
             </Button>
           </DialogTrigger>
 
           <Dialog
+            data-testid="workflows__delete-dialog"
             overlayClassname="!ml-0"
             title="Do you really want to delete all the selected workflows?"
             description="This action cannot be undone."
@@ -54,6 +59,14 @@ export function WorkflowsTable() {
                 ),
               )
             }
+            cancelButtonProps={{
+              // @ts-ignore
+              "data-testid": "workflows__delete-dialog__cancel-btn",
+            }}
+            confirmButtonProps={{
+              // @ts-ignore
+              "data-testid": "workflows__delete-dialog__confirm-btn",
+            }}
           />
         </DialogRoot>
       )}

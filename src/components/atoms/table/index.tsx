@@ -39,12 +39,6 @@ export function Table<R extends Row = Row>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRows]);
 
-  useEffect(() => {
-    setSelectedRows([]);
-    setChecked(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows]);
-
   const setSelectedRows = (rows: R[]) => {
     _setSelectedRows(rows);
     if (typeof onSelect === "function") {
@@ -80,8 +74,12 @@ export function Table<R extends Row = Row>({
         <thead>
           <tr>
             {withMultiSelect && (
-              <th className="relative px-7 sm:w-12 sm:px-6">
+              <th
+                className="relative px-7 sm:w-12 sm:px-6"
+                data-testid="table-head__checkbox"
+              >
                 <Checkbox
+                  data-testid="table-head__checkbox-input"
                   ref={checkbox}
                   checked={checked}
                   onChange={toggleAll}
@@ -137,6 +135,7 @@ export function Table<R extends Row = Row>({
             "relative after:content-[''] after:bg-[url('/images/loader.svg')] after:bg-no-repeat after:bg-center after:bg-[size:30px_30px] after:absolute after:flex after:justify-center after:items-center after:w-full after:h-full after:inset-0 after:bg-white/70":
               loading,
           })}
+          data-testid={rows.length === 0 ? "table-body--empty" : "table-body"}
         >
           {rows
             .sort((a, b) => {

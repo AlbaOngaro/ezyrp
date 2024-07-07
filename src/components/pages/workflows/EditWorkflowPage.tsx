@@ -34,7 +34,10 @@ export function EditWorkflowPage({ id }: Props) {
   }
 
   return (
-    <Container className="h-[calc(100vh-60px)]">
+    <Container
+      className="h-[calc(100vh-60px)]"
+      data-testid="workflow__container"
+    >
       <FlowEditor workflow={workflow} />
     </Container>
   );

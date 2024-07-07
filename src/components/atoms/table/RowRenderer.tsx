@@ -25,8 +25,9 @@ export function TableRowRenderer<R extends Row = Row>({
   selectedRows: R[];
   setSelectedRows: (rows: R[]) => void;
 }) {
-  const button = useRef<HTMLButtonElement | null>(null);
   const tr = useRef<HTMLTableRowElement | null>(null);
+  const button = useRef<HTMLButtonElement | null>(null);
+  const selected = selectedRows.some((r) => r._id === row._id);
 
   return (
     <Root>
@@ -36,18 +37,20 @@ export function TableRowRenderer<R extends Row = Row>({
           className={cn("hover:bg-gray-50 group", {
             "bg-gray-50": selectedRows.includes(row),
           })}
+          data-testid="table-row"
         >
           {withMultiSelect && (
-            <td className="relative w-12">
+            <td className="relative w-12" data-testid="table-cell__checkbox">
               <Checkbox
-                checked={selectedRows.includes(row)}
-                onChange={(e) =>
-                  setSelectedRows(
-                    e.target.checked
-                      ? [...selectedRows, row]
-                      : selectedRows.filter((r) => r !== row),
-                  )
-                }
+                data-testid="table-cell__checkbox-input"
+                checked={selected}
+                onChange={() => {
+                  const newRows = selected
+                    ? selectedRows.filter((r) => r !== row)
+                    : [...selectedRows, row];
+
+                  setSelectedRows(newRows);
+                }}
               />
             </td>
           )}
@@ -56,6 +59,7 @@ export function TableRowRenderer<R extends Row = Row>({
             <td
               key={field}
               className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+              data-testid={`table-cell__${field}`}
             >
               {typeof render === "function"
                 ? render(row, index)

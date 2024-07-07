@@ -23,7 +23,8 @@ import {
 type Ctx = GenericQueryCtx<any> | GenericMutationCtx<any>;
 
 /**
- * Extracts the user_id and workspace from the auth object. Throws an error if the user is not authenticated or if the workspace is not found.
+ * Extracts the user_id and workspace from the auth object.
+ * Throws an error if the user is not authenticated or if the workspace is not found.
  **/
 export async function getAuthData(ctx: Ctx) {
   const identity = (await ctx.auth.getUserIdentity()) as UserIdentity & {
@@ -38,11 +39,6 @@ export async function getAuthData(ctx: Ctx) {
   if (!identity.websiteUrl) {
     throw new ConvexError("Cannot get workspace from user identity; Aborting.");
   }
-
-  console.log({
-    user_id: identity.tokenIdentifier,
-    workspace: identity.websiteUrl,
-  });
 
   return {
     user_id: identity.tokenIdentifier,
@@ -59,7 +55,8 @@ type GetEntityByIdInWorkspaceArgs<
 };
 
 /**
- * Tries to get an entity by its id in the current auth workspace. Throws an error if not found.
+ * Tries to get an entity by its id in the current auth workspace.
+ * Throws an error if not found.
  */
 export async function getEntityByIdInWorkspace<
   I extends TableNames,

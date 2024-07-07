@@ -1,6 +1,6 @@
-import { useMutation } from "convex/react";
 import { Pencil, ToggleLeft, ToggleRight, Trash } from "lucide-react";
 import { useRouter } from "next/router";
+import { useMutation } from "lib/hooks/useMutation";
 import { useWorkflowId } from "components/organisms/flow-editor/hooks/useWorkflowId";
 import { api } from "convex/_generated/api";
 import { useQuery } from "lib/hooks/useQuery";

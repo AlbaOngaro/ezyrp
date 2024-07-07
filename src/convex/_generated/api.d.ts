@@ -26,6 +26,7 @@ import type * as invoices from "../invoices.js";
 import type * as items from "../items.js";
 import type * as settings from "../settings.js";
 import type * as storage from "../storage.js";
+import type * as tests from "../tests.js";
 import type * as utils from "../utils.js";
 import type * as workflows from "../workflows.js";
 
@@ -50,6 +51,7 @@ declare const fullApi: ApiFromModules<{
   items: typeof items;
   settings: typeof settings;
   storage: typeof storage;
+  tests: typeof tests;
   utils: typeof utils;
   workflows: typeof workflows;
 }>;

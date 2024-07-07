@@ -1,5 +1,5 @@
-import { useMutation } from "convex/react";
 import { useRouter } from "next/router";
+import { useMutation } from "lib/hooks/useMutation";
 import { api } from "convex/_generated/api";
 import { TableContextMenuItem } from "components/atoms/table/types";
 import { Doc } from "convex/_generated/dataModel";

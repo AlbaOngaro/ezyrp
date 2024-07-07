@@ -18,7 +18,7 @@ export function EmailActionNodeSettings(props: Props) {
   const [_, setNodes] = useNodes();
   const { data: emails = [] } = useQuery(api.emails.list);
 
-  const options = emails.map((email) => ({
+  const options = (emails || []).map((email) => ({
     label: email.title || "[Untitled]",
     value: email._id,
   }));

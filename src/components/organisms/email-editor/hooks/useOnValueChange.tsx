@@ -1,4 +1,4 @@
-import { ConvexProvider, useMutation } from "convex/react";
+import { ConvexProvider } from "convex/react";
 import { Descendant } from "slate";
 import debounce from "debounce-promise";
 import { render } from "@react-email/render";
@@ -9,6 +9,7 @@ import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { useFileUpload } from "hooks/useFileUpload";
 import { convex } from "lib/external/convex";
+import { useMutation } from "lib/hooks/useMutation";
 
 type OnValueChangeOptions = { autoSave?: boolean };
 type OnValueChangeArgs = [id: Id<"emails">, options?: OnValueChangeOptions];

@@ -1,7 +1,7 @@
-import { useMutation } from "convex/react";
 import { useCallback, useContext, useState } from "react";
 
 import { WorkflowContext } from "../context";
+import { useMutation } from "lib/hooks/useMutation";
 import { api } from "convex/_generated/api";
 
 type SaveFn = () => Promise<void>;
