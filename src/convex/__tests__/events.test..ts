@@ -69,13 +69,13 @@ describe("Events", () => {
       status: "approved",
     });
 
-    const workspace_1_emails = await tAuth1.query(api.events.list);
+    const workspace_1_emails = await tAuth1.query(api.events.list, {});
     expect(workspace_1_emails.length).toBe(2);
     expect(
       workspace_1_emails.every((email) => email.workspace === "workspace1"),
     ).toBe(true);
 
-    const workspace_2_emails = await tAuth2.query(api.events.list);
+    const workspace_2_emails = await tAuth2.query(api.events.list, {});
     expect(workspace_2_emails.length).toBe(2);
     expect(
       workspace_2_emails.every((email) => email.workspace === "workspace2"),

@@ -53,19 +53,26 @@ export const search = query({
 });
 
 export const list = query({
-  handler: async (ctx) => {
+  args: {
+    status: v.optional(v.union(v.literal("approved"), v.literal("unapproved"))),
+  },
+  handler: async (ctx, { status }) => {
+    console.log("status", status);
+
     const events = await getEntitiesInWorkspace(ctx, "events");
 
     return Promise.all(
-      events.map((event) =>
-        getEntityByIdInWorkspace(ctx, {
-          id: event.type,
-          table: "eventTypes",
-        }).then(({ _id, _creationTime, ...eventType }) => ({
-          ...event,
-          ...eventType,
-        })),
-      ),
+      events
+        .filter((event) => !status || event.status === status)
+        .map((event) =>
+          getEntityByIdInWorkspace(ctx, {
+            id: event.type,
+            table: "eventTypes",
+          }).then(({ _id, _creationTime, ...eventType }) => ({
+            ...event,
+            ...eventType,
+          })),
+        ),
     );
   },
 });
@@ -124,8 +131,9 @@ export const update = mutation({
     start: v.optional(v.string()),
     notes: v.optional(v.string()),
     guests: v.optional(v.array(v.id("customers"))),
+    status: v.optional(v.union(v.literal("approved"), v.literal("unapproved"))),
   },
-  handler: async (ctx, { id, end, start, notes, guests }) => {
+  handler: async (ctx, { id, end, start, notes, guests, status }) => {
     const event = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "events",
@@ -136,6 +144,7 @@ export const update = mutation({
       start: start || event.start,
       notes: notes || event.notes,
       guests: guests || event.guests,
+      status: status || event.status,
     });
   },
 });
