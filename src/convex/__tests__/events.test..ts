@@ -28,6 +28,7 @@ describe("Events", () => {
       guests: [],
       organizer: "",
       type: event_type_1,
+      status: "approved",
     });
     expect(workspace_1_event_1?._id).toBeDefined();
     await tAuth1.mutation(api.events.create, {
@@ -36,6 +37,7 @@ describe("Events", () => {
       type: event_type_1,
       organizer: "",
       guests: [],
+      status: "approved",
     });
 
     const tAuth2 = t.withIdentity({
@@ -55,6 +57,7 @@ describe("Events", () => {
       guests: [],
       organizer: "",
       type: event_type_2,
+      status: "approved",
     });
     expect(workspace_2_event_1?._id).toBeDefined();
     tAuth2.mutation(api.events.create, {
@@ -63,6 +66,7 @@ describe("Events", () => {
       guests: [],
       organizer: "",
       type: event_type_2,
+      status: "approved",
     });
 
     const workspace_1_emails = await tAuth1.query(api.events.list);

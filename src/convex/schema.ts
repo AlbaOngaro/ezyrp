@@ -112,6 +112,7 @@ export default defineSchema({
     type: v.id("eventTypes"),
     guests: v.array(v.id("customers")),
     organizer: v.string(),
+    status: v.union(v.literal("approved"), v.literal("unapproved")),
   }).index("by_workspace", ["workspace"]),
   emails: defineTable({
     body: v.any(),

@@ -1,16 +1,16 @@
 import { ReactElement } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 
-import { ScheduleContents } from "./ScheduleContents";
-import { EventTypesContents } from "./EventTypesContents";
+import { CalendarContents } from "./calendar-contents";
+import { EventTypesContents } from "./eventTypes-contents";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 const nav = [
   {
-    value: "schedule",
-    label: "Schedule",
-    content: <ScheduleContents />,
+    value: "calendar",
+    label: "Calendar",
+    content: <CalendarContents />,
   },
   {
     value: "event-types",

@@ -3,7 +3,7 @@ import { useEvents } from "hooks/useEvents";
 
 import { EventsCalendar } from "components/organisms/events-calendar";
 
-export function ScheduleContents() {
+export function CalendarContents() {
   const events = useEvents();
 
   return (

@@ -78,6 +78,7 @@ export const slots = query({
 
         return (
           isSameDay(eventDate, dayDate) &&
+          e.status === "approved" &&
           e.type === id &&
           e.organizer === user_id
         );
@@ -120,6 +121,7 @@ export const create = mutation({
     );
 
     await ctx.db.insert("events", {
+      status: "unapproved",
       organizer: eventtype.user_id,
       workspace: eventtype.workspace,
       end,
