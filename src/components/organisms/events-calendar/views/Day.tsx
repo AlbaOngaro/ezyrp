@@ -4,6 +4,7 @@ import { EventItem } from "../components/EventItem";
 import { useCalendarContext } from "../hooks/useCalendarContext";
 import { Indicator } from "../components/Indicator";
 
+import { useGetDayStartAndEnd } from "../hooks/useGetDayStartAndEnd";
 import { MonthWidget } from "components/atoms/month-widget";
 
 import { useSettings } from "hooks/useSettings";
@@ -13,12 +14,9 @@ export function Body() {
     state: { selected, days },
     dispatch,
   } = useCalendarContext();
-
-  const { data } = useSettings();
+  const { data: settings } = useSettings();
+  const { dayStartsAt, dayEndsAt } = useGetDayStartAndEnd();
   const weekDay = selected.getDay() === 0 ? 6 : selected.getDay() - 1;
-
-  const dayStartsAt = (data?.start || 0) - new Date().getTimezoneOffset() / 60;
-  const dayEndsAt = (data?.end || 0) - new Date().getTimezoneOffset() / 60;
 
   return (
     <div className="isolate flex flex-auto overflow-hidden bg-white">
@@ -253,7 +251,7 @@ export function Body() {
               }}
               id="grid"
             >
-              {data?.days?.includes(weekDay) ? (
+              {settings?.days?.includes(weekDay) ? (
                 <>
                   <div
                     className="bg-gray-100/30 pointer-events-none"

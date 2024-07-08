@@ -63,8 +63,8 @@ export const settings = v.union(
 export default defineSchema({
   settings: defineTable({
     user_id: v.string(),
-    start: v.number(),
-    end: v.number(),
+    start: v.string(),
+    end: v.string(),
     days: v.array(v.number()),
   }).index("by_user", ["user_id"]),
   customers: defineTable({
@@ -110,7 +110,8 @@ export default defineSchema({
     start: v.string(),
     notes: v.optional(v.string()),
     type: v.id("eventTypes"),
-    guests: v.array(v.union(v.id("customers"), v.string())),
+    guests: v.array(v.id("customers")),
+    organizer: v.string(),
   }).index("by_workspace", ["workspace"]),
   emails: defineTable({
     body: v.any(),

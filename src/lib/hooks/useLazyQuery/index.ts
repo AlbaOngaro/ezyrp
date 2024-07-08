@@ -24,12 +24,10 @@ export function useLazyQuery<Query extends FunctionReference<"query">>(
     switch (status) {
       case "success": {
         promiseResolve?.current?.call(undefined, data);
-        setArgs("skip");
         break;
       }
       case "error": {
         promiseReject?.current?.call(undefined, error as Error);
-        setArgs("skip");
         break;
       }
     }

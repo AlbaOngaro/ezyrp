@@ -48,7 +48,7 @@ export function EventTypeForm({ className }: Props) {
         render={({ field: { value, onChange } }) => {
           const options = memberships?.data?.map((membership) => ({
             label: membership.publicUserData.identifier,
-            value: membership.publicUserData.userId,
+            value: `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${membership.publicUserData.userId}`,
           }));
 
           const defaultValue = options?.find(

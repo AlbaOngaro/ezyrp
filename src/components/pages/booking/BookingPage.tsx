@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { CalendarIcon, ClockIcon } from "@radix-ui/react-icons";
 import { FormEvent, createContext, useContext, useMemo, useState } from "react";
-import { format } from "date-fns";
+import { addMinutes, format, formatISO, parseISO } from "date-fns";
 import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@radix-ui/react-form";
 
@@ -19,6 +19,7 @@ import {
 } from "components/pages/booking/types";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
+import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { useQuery } from "lib/hooks/useQuery";
 
 const BookingContext = createContext<BookingContextValue>({
@@ -37,22 +38,43 @@ export function BookingPage({ eventtype }: Props) {
   const today = useMemo(() => new Date(), []);
   const [view, setView] = useState(View.Time);
 
-  const { data, error, status } = useQuery(api.bookings.get, {
-    id: eventtype,
-  });
-
   const bookEvent = useMutation(api.bookings.create);
+  const [loadEventType, { data, loading }] = useLazyQuery(api.bookings.get);
 
   const { handleSubmit, ...methods } = useForm<BookEventFn["_args"]>({
     defaultValues: async () => {
+      const data = await loadEventType({
+        id: eventtype,
+      });
+
+      if (!data) {
+        throw new Error("Event type not found");
+      }
+
       return {
         type: eventtype,
-        start: new Date().getTime(),
+        start: formatISO(today),
+        end: formatISO(addMinutes(today, data.duration)),
         guests: [],
         notes: "",
       };
     },
   });
+
+  const start = methods.watch("start");
+
+  const day = useMemo(() => {
+    if (!start) {
+      return;
+    }
+
+    return formatISO(parseISO(start), { representation: "date" });
+  }, [start]);
+
+  const { data: slots = [] } = useQuery(
+    api.bookings.slots,
+    day ? { id: eventtype, day } : "skip",
+  );
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) =>
     handleSubmit(async (bookEventInput) => {
@@ -64,15 +86,9 @@ export function BookingPage({ eventtype }: Props) {
       }
     })(e);
 
-  if (status === "pending" || methods.formState.isLoading) {
-    return null;
+  if (loading) {
+    return <p>Loading...</p>;
   }
-
-  if (error) {
-    return <p>{error.message}</p>;
-  }
-
-  console.log(data);
 
   return (
     <BookingContext.Provider value={{ today, view, setView }}>
@@ -109,7 +125,7 @@ export function BookingPage({ eventtype }: Props) {
               {(() => {
                 switch (view) {
                   case View.Time:
-                    return <TimeView />;
+                    return <TimeView slots={slots} eventType={data} />;
                   case View.Details:
                     return <DetailsView />;
                   case View.Success:

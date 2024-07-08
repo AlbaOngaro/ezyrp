@@ -75,10 +75,11 @@ export const create = mutation({
     end: v.string(),
     start: v.string(),
     notes: v.optional(v.string()),
-    guests: v.array(v.union(v.id("customers"), v.string())),
+    guests: v.array(v.id("customers")),
+    organizer: v.string(),
     type: v.id("eventTypes"),
   },
-  handler: async (ctx, { end, start, notes, type, guests }) => {
+  handler: async (ctx, { end, start, notes, type, guests, organizer }) => {
     const { workspace } = await getAuthData(ctx);
 
     const id = await ctx.db.insert("events", {
@@ -88,6 +89,7 @@ export const create = mutation({
       notes,
       guests,
       type,
+      organizer,
     });
 
     await ctx.scheduler.runAfter(0, internal.workflows.trigger, {

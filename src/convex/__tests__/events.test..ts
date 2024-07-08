@@ -26,6 +26,7 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
+      organizer: "",
       type: event_type_1,
     });
     expect(workspace_1_event_1?._id).toBeDefined();
@@ -33,6 +34,7 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       type: event_type_1,
+      organizer: "",
       guests: [],
     });
 
@@ -51,6 +53,7 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
+      organizer: "",
       type: event_type_2,
     });
     expect(workspace_2_event_1?._id).toBeDefined();
@@ -58,6 +61,7 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
+      organizer: "",
       type: event_type_2,
     });
 

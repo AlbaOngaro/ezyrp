@@ -19,8 +19,8 @@ export const get = query({
 
 export const update = mutation({
   args: {
-    start: v.number(),
-    end: v.number(),
+    end: v.string(),
+    start: v.string(),
     days: v.array(v.number()),
   },
   handler: async (ctx, { start, end, days }) => {
