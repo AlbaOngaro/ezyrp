@@ -15,19 +15,24 @@ describe("Events", () => {
       websiteUrl: "workspace1",
     });
 
+    const event_type_1 = await tAuth1.mutation(api.eventTypes.create, {
+      variant: "test",
+      name: "Event Type 1",
+      user_id: "user1",
+      duration: 30,
+    });
+
     const workspace_1_event_1 = await tAuth1.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 1",
       guests: [],
+      type: event_type_1,
     });
     expect(workspace_1_event_1?._id).toBeDefined();
     await tAuth1.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 2",
+      type: event_type_1,
       guests: [],
     });
 
@@ -36,20 +41,24 @@ describe("Events", () => {
       websiteUrl: "workspace2",
     });
 
+    const event_type_2 = await tAuth2.mutation(api.eventTypes.create, {
+      variant: "test",
+      name: "Event Type 2",
+      user_id: "user1",
+      duration: 30,
+    });
     const workspace_2_event_1 = await tAuth2.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 1",
       guests: [],
+      type: event_type_2,
     });
     expect(workspace_2_event_1?._id).toBeDefined();
     tAuth2.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 2",
       guests: [],
+      type: event_type_2,
     });
 
     const workspace_1_emails = await tAuth1.query(api.events.list);

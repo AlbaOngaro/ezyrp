@@ -1,6 +1,7 @@
 import {
   differenceInDays,
   format,
+  formatISO,
   isAfter,
   isSameDay,
   subMonths,
@@ -9,10 +10,18 @@ import { Controller, useFormContext } from "react-hook-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { MonthWidget } from "components/atoms/month-widget";
 import { useBookingContext } from "components/pages/booking/BookingPage";
+import { useQuery } from "lib/hooks/useQuery";
+import { api } from "convex/_generated/api";
 
 export function TimeView() {
   const { today } = useBookingContext();
   const { control } = useFormContext();
+
+  const { data: events = [] } = useQuery(api.events.search, {
+    day: today.toISOString(),
+  });
+
+  console.log(events, formatISO(today));
 
   return (
     <Controller
@@ -21,7 +30,7 @@ export function TimeView() {
       render={({ field: { value = new Date().toISOString(), onChange } }) => (
         <>
           <h3 className="text-lg font-bold col-span-6 self-end">
-            Select a Date & Time
+            Select a Date and Time
           </h3>
 
           <time

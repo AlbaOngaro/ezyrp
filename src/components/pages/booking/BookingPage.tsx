@@ -37,7 +37,7 @@ export function BookingPage({ eventtype }: Props) {
   const today = useMemo(() => new Date(), []);
   const [view, setView] = useState(View.Time);
 
-  const { data, status, error } = useQuery(api.bookings.get, {
+  const { data, error, status } = useQuery(api.bookings.get, {
     id: eventtype,
   });
 
@@ -71,6 +71,8 @@ export function BookingPage({ eventtype }: Props) {
   if (error) {
     return <p>{error.message}</p>;
   }
+
+  console.log(data);
 
   return (
     <BookingContext.Provider value={{ today, view, setView }}>

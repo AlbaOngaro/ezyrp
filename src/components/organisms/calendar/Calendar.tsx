@@ -16,9 +16,10 @@ import * as MonthView from "./views/Month";
 import * as WeekView from "./views/Week";
 import * as DayView from "./views/Day";
 import * as YearView from "./views/Year";
+import { Event } from "./types";
+
 import { cn } from "lib/utils/cn";
 import { Select } from "components/atoms/select";
-import { Doc } from "convex/_generated/dataModel";
 
 const CalendarContext = createContext<{
   state: State;
@@ -31,8 +32,6 @@ const CalendarContext = createContext<{
 export function useCalendarContext() {
   return useContext(CalendarContext);
 }
-
-type Event = Doc<"events">;
 
 interface Props {
   className?: string;

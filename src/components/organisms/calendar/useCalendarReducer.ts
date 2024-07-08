@@ -7,10 +7,7 @@ import {
   isWithinInterval,
 } from "date-fns";
 
-import { Day, View } from "./types";
-import { Doc } from "convex/_generated/dataModel";
-
-type Event = Doc<"events">;
+import { Day, View, Event } from "./types";
 
 export type State = {
   selected: Date;

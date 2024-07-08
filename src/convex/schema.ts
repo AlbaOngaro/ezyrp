@@ -102,15 +102,15 @@ export default defineSchema({
     variant: v.string(),
     description: v.optional(v.string()),
     duration: v.number(),
+    user_id: v.string(),
   }).index("by_workspace", ["workspace"]),
   events: defineTable({
     workspace: v.string(),
     end: v.string(),
     start: v.string(),
-    title: v.string(),
     notes: v.optional(v.string()),
-    variant: v.string(),
-    guests: v.array(v.id("customers")),
+    type: v.id("eventTypes"),
+    guests: v.array(v.union(v.id("customers"), v.string())),
   }).index("by_workspace", ["workspace"]),
   emails: defineTable({
     body: v.any(),

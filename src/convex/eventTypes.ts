@@ -30,16 +30,18 @@ export const create = mutation({
     variant: v.string(),
     description: v.optional(v.string()),
     duration: v.number(),
+    user_id: v.string(),
   },
-  handler: async (ctx, { name, variant, description, duration }) => {
+  handler: async (ctx, { name, variant, description, duration, user_id }) => {
     const { workspace } = await getAuthData(ctx);
 
-    await ctx.db.insert("eventTypes", {
+    return await ctx.db.insert("eventTypes", {
       workspace,
       name,
       variant,
       description,
       duration,
+      user_id,
     });
   },
 });
@@ -51,8 +53,12 @@ export const update = mutation({
     variant: v.optional(v.string()),
     description: v.optional(v.string()),
     duration: v.optional(v.number()),
+    user_id: v.optional(v.string()),
   },
-  handler: async (ctx, { id, name, variant, description, duration }) => {
+  handler: async (
+    ctx,
+    { id, name, variant, description, duration, user_id },
+  ) => {
     const eventType = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "eventTypes",
@@ -63,6 +69,7 @@ export const update = mutation({
       variant: variant || eventType.variant,
       description: description || eventType.description,
       duration: duration || eventType.duration,
+      user_id: user_id || eventType.user_id,
     });
   },
 });

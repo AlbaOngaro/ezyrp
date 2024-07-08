@@ -4,12 +4,10 @@ import { Root, Trigger } from "@radix-ui/react-popover";
 
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../utils";
 import { useCalendarContext } from "../Calendar";
+import { Event } from "../types";
+
 import { cn } from "lib/utils/cn";
-
 import { EventPopover } from "components/organisms/calendar/components/EventPopover";
-import { Doc } from "convex/_generated/dataModel";
-
-type Event = Doc<"events">;
 
 interface Props {
   event: Event;
@@ -118,7 +116,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
               "text-rose-500": event.variant === "rose",
             })}
           >
-            {event.title}
+            {event.name}
           </p>
           {(!isLongerThan24Hours || view === "month") && (
             <p
