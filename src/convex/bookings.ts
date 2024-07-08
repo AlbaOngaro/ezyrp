@@ -5,7 +5,10 @@ import {
   setHours,
   setMinutes,
   format,
+  parseISO,
+  isSameDay,
 } from "date-fns";
+import { filter } from "convex-helpers/server/filter";
 
 import { mutation, query } from "./_generated/server";
 import { upsert } from "./customers";
@@ -31,7 +34,7 @@ export const slots = query({
     id: v.id("eventTypes"),
     day: v.string(),
   },
-  handler: async (ctx, { id }) => {
+  handler: async (ctx, { id, day }) => {
     const eventType = await ctx.db.get(id);
     if (!eventType) {
       return [];
@@ -69,18 +72,23 @@ export const slots = query({
         length: how_many_events_in_hours + how_many_events_in_minutes,
       }).map((_, i) => format(addMinutes(start, i * duration), "HH:mm"));
 
-      // const events = await filter(ctx.db.query("events"), (e) => {
-      //   const dayDate = parseISO(day);
-      //   const eventDate = parseISO(e.start);
+      const events = await filter(ctx.db.query("events"), (e) => {
+        const dayDate = parseISO(day);
+        const eventDate = parseISO(e.start);
 
-      //   return (
-      //     isSameDay(eventDate, dayDate) &&
-      //     e.type === id &&
-      //     e.guests.includes(user_id)
-      //   );
-      // }).collect();
+        return (
+          isSameDay(eventDate, dayDate) &&
+          e.type === id &&
+          e.organizer === user_id
+        );
+      }).collect();
 
-      return slots;
+      const booked_slots = events.map((e) => {
+        const result = /T(\d{2}:\d{2})/.exec(e.start);
+        return result ? result[1] : "";
+      });
+
+      return slots.filter((slot) => !booked_slots.includes(slot));
     } catch (e) {
       console.error(e);
       return [];
