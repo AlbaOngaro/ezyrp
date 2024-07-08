@@ -26,9 +26,13 @@ import { cn } from "lib/utils/cn";
 type Props = {
   workflow: Doc<"workflows">;
   mode?: "edit" | "view";
+  sidebarClassName?: string;
 };
 
-function FlowEditor({ mode = "edit" }: Pick<Props, "mode">) {
+function FlowEditor({
+  mode = "edit",
+  sidebarClassName,
+}: Pick<Props, "mode" | "sidebarClassName">) {
   const [nodes] = useNodes();
   const [edges] = useEdges();
   const onDrop = useOnDrop();
@@ -42,11 +46,11 @@ function FlowEditor({ mode = "edit" }: Pick<Props, "mode">) {
 
   return (
     <div
-      className={cn("grid gap-4 h-full w-full", {
+      className={cn("grid h-full w-full", {
         "grid-cols-3": mode === "edit",
       })}
     >
-      {mode === "edit" && <Sidebar />}
+      {mode === "edit" && <Sidebar className={sidebarClassName} />}
       <ReactFlow
         className="col-span-2"
         edgeTypes={edgeTypes}
@@ -80,10 +84,14 @@ function FlowEditor({ mode = "edit" }: Pick<Props, "mode">) {
   );
 }
 
-const EnhancedFlowEditor = ({ workflow, mode = "edit" }: Props) => (
+const EnhancedFlowEditor = ({
+  workflow,
+  sidebarClassName,
+  mode = "edit",
+}: Props) => (
   <WorkflowProvider workflow={workflow}>
     <ReactFlowProvider>
-      <FlowEditor mode={mode} />
+      <FlowEditor mode={mode} sidebarClassName={sidebarClassName} />
     </ReactFlowProvider>
   </WorkflowProvider>
 );

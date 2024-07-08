@@ -35,10 +35,11 @@ export function EditWorkflowPage({ id }: Props) {
 
   return (
     <Container
-      className="h-[calc(100vh-60px)]"
+      className="h-[calc(100vh-60px)] p-0 lg:px-0"
       data-testid="workflow__container"
+      as="section"
     >
-      <FlowEditor workflow={workflow} />
+      <FlowEditor workflow={workflow} sidebarClassName="px-8 py-4" />
     </Container>
   );
 }
