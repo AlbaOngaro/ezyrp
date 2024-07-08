@@ -8,14 +8,14 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 const nav = [
   {
-    value: "event-types",
-    label: "Event Types",
-    content: <EventTypesContents />,
-  },
-  {
     value: "schedule",
     label: "Schedule",
     content: <ScheduleContents />,
+  },
+  {
+    value: "event-types",
+    label: "Event Types",
+    content: <EventTypesContents />,
   },
 ];
 
