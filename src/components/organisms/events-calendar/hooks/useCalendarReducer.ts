@@ -7,7 +7,7 @@ import {
   isWithinInterval,
 } from "date-fns";
 
-import { Day, View, Event } from "./types";
+import { Day, View, Event } from "../types";
 
 export type State = {
   selected: Date;

@@ -2,12 +2,12 @@ import { forwardRef, useState } from "react";
 import { format, getWeekOfMonth, isSameDay } from "date-fns";
 import { Root, Trigger } from "@radix-ui/react-popover";
 
+import { EventPopover } from "../components/EventPopover";
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../utils";
-import { useCalendarContext } from "../Calendar";
+import { useCalendarContext } from "../hooks/useCalendarContext";
 import { Event } from "../types";
 
 import { cn } from "lib/utils/cn";
-import { EventPopover } from "components/organisms/calendar/components/EventPopover";
 
 interface Props {
   event: Event;

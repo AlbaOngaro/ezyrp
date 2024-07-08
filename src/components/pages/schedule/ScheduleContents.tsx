@@ -1,7 +1,7 @@
 import { Container } from "components/atoms/container";
 import { useEvents } from "hooks/useEvents";
 
-import { Calendar } from "components/organisms/calendar/Calendar";
+import { EventsCalendar } from "components/organisms/events-calendar";
 
 export function ScheduleContents() {
   const events = useEvents();
@@ -11,7 +11,7 @@ export function ScheduleContents() {
       as="section"
       className="lg:h-[calc(100vh_-_124px)] overflow-hidden"
     >
-      <Calendar events={events?.data} />
+      <EventsCalendar events={events?.data} />
     </Container>
   );
 }

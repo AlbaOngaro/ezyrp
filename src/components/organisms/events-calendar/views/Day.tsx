@@ -1,7 +1,7 @@
 import { format, isSameDay } from "date-fns";
 
 import { EventItem } from "../components/EventItem";
-import { useCalendarContext } from "../Calendar";
+import { useCalendarContext } from "../hooks/useCalendarContext";
 import { Indicator } from "../components/Indicator";
 
 import { MonthWidget } from "components/atoms/month-widget";

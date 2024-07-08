@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { Fragment } from "react";
 
-import { useCalendarContext } from "../Calendar";
+import { useCalendarContext } from "../hooks/useCalendarContext";
 import { EventItem } from "../components/EventItem";
 
 import { Indicator } from "../components/Indicator";

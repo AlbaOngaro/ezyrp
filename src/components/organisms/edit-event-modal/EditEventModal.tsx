@@ -3,7 +3,7 @@ import { Root as Form } from "@radix-ui/react-form";
 
 import { format } from "date-fns";
 
-import { Event } from "../calendar/types";
+import { Event } from "../events-calendar/types";
 
 import { Modal } from "components/atoms/modal";
 import { useEvents } from "hooks/useEvents";

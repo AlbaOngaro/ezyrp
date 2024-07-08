@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import {
   generateMonth,
   useCalendarReducer,
-} from "../../organisms/calendar/useCalendarReducer";
+} from "../../organisms/events-calendar/hooks/useCalendarReducer";
 import { cn } from "lib/utils/cn";
 
 interface Props {

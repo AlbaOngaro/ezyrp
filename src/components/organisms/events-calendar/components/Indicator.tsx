@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { isSameDay } from "date-fns";
 import { convertRemToPx } from "../../../../lib/utils/convertRemToPx";
-import { useCalendarContext } from "../Calendar";
+import { useCalendarContext } from "../hooks/useCalendarContext";
 
 function getIndicatorTopValue(): string {
   const HALF_HOUR_CELL = 3.5; // cells are set to 3.5rem

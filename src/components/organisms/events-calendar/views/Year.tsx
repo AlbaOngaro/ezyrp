@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { useCalendarContext } from "../Calendar";
+import { useCalendarContext } from "../hooks/useCalendarContext";
 import { MonthWidget } from "components/atoms/month-widget";
 
 export function Body() {
