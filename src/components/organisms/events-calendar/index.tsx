@@ -1,38 +1,30 @@
-import {
-  Dispatch,
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-} from "react";
+import { Dispatch, ReactNode, createContext, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
 import { View } from "./types";
-import { State, defaultInitialState, Action } from "./useCalendarReducer";
-
-import { useCalendarReducer } from "./useCalendarReducer";
+import {
+  State,
+  defaultInitialState,
+  Action,
+  useCalendarReducer,
+} from "./hooks/useCalendarReducer";
 
 import * as MonthView from "./views/Month";
 import * as WeekView from "./views/Week";
 import * as DayView from "./views/Day";
 import * as YearView from "./views/Year";
+import { Event } from "./types";
+
 import { cn } from "lib/utils/cn";
 import { Select } from "components/atoms/select";
-import { Doc } from "convex/_generated/dataModel";
 
-const CalendarContext = createContext<{
+export const CalendarContext = createContext<{
   state: State;
   dispatch: Dispatch<Action>;
 }>({
   state: defaultInitialState,
   dispatch: () => undefined,
 });
-
-export function useCalendarContext() {
-  return useContext(CalendarContext);
-}
-
-type Event = Doc<"events">;
 
 interface Props {
   className?: string;
@@ -67,7 +59,7 @@ const views = [
   },
 ];
 
-export function Calendar({
+export function EventsCalendar({
   className,
   actions,
   events,

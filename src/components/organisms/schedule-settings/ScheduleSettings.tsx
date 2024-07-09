@@ -20,7 +20,7 @@ const HOURS = Array.from({ length: 48 }, (_, i) => {
 
   return {
     label: format(date, "HH:mm"),
-    value: i * 0.5,
+    value: format(date, "HH:mm"),
   };
 });
 
@@ -40,15 +40,15 @@ export function ScheduleSettings() {
 
       if (!settings) {
         return {
-          start: 0,
-          end: 0,
+          start: "09:00",
+          end: "17:00",
           days: [],
         };
       }
 
       return {
-        start: settings?.start || 0,
-        end: settings?.end || 0,
+        start: settings?.start || "09:00",
+        end: settings?.end || "17:00",
         days: settings?.days || [],
       };
     },
@@ -73,28 +73,27 @@ export function ScheduleSettings() {
           rules={{
             required: true,
           }}
-          render={({ field: { value = 0, onChange } }) => (
-            <Select
-              name="start"
-              label="Work day starts at"
-              // @ts-ignore
-              options={HOURS}
-              // @ts-ignore
-              value={{
-                value: value - new Date().getTimezoneOffset() / 60 || 0,
-                label:
-                  HOURS.find(
-                    (h) =>
-                      h.value === value - new Date().getTimezoneOffset() / 60,
-                  )?.label || "",
-              }}
-              onChange={(option) =>
-                onChange(
-                  Number(option?.value) + new Date().getTimezoneOffset() / 60,
-                )
-              }
-            />
-          )}
+          render={({ field: { value, onChange } }) => {
+            const selected = HOURS.find((hour) => hour.value === value);
+
+            return (
+              <Select
+                name="start"
+                label="Work day starts at"
+                value={selected}
+                options={HOURS}
+                defaultValue={{
+                  label: "09:00",
+                  value: "09:00",
+                }}
+                onChange={(option) => {
+                  if (option) {
+                    onChange(option.value);
+                  }
+                }}
+              />
+            );
+          }}
         />
 
         <Controller
@@ -103,28 +102,26 @@ export function ScheduleSettings() {
           rules={{
             required: true,
           }}
-          render={({ field: { value = 0, onChange } }) => (
-            <Select
-              name="end"
-              label="Work day ends at"
-              // @ts-ignore
-              options={HOURS}
-              // @ts-ignore
-              value={{
-                value: value - new Date().getTimezoneOffset() / 60 || 0,
-                label:
-                  HOURS.find(
-                    (h) =>
-                      h.value === value - new Date().getTimezoneOffset() / 60,
-                  )?.label || "",
-              }}
-              onChange={(option) =>
-                onChange(
-                  Number(option?.value) + new Date().getTimezoneOffset() / 60,
-                )
-              }
-            />
-          )}
+          render={({ field: { value, onChange } }) => {
+            const selected = HOURS.find((hour) => hour.value === value);
+            return (
+              <Select
+                name="end"
+                label="Work day ends at"
+                options={HOURS}
+                value={selected}
+                defaultValue={{
+                  label: "17:00",
+                  value: "17:00",
+                }}
+                onChange={(option) => {
+                  if (option) {
+                    onChange(option.value);
+                  }
+                }}
+              />
+            );
+          }}
         />
 
         <Controller

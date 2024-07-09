@@ -5,9 +5,8 @@ import {
   isSameDay,
   isSameWeek,
 } from "date-fns";
-import { Doc } from "convex/_generated/dataModel";
 
-type Event = Doc<"events">;
+import { Event } from "./types";
 
 export function getEventStartRow(
   startDate: Date,

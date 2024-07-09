@@ -19,6 +19,7 @@ export function CreateEventTypePage() {
     defaultValues: {
       variant: VARIANTS[0],
       name: "",
+      user_id: "",
     },
   });
 

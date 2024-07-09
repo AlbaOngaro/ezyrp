@@ -1,5 +1,6 @@
 import { Pencil, ToggleLeft, ToggleRight, Trash } from "lucide-react";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 import { useMutation } from "lib/hooks/useMutation";
 import { useWorkflowId } from "components/organisms/flow-editor/hooks/useWorkflowId";
 import { api } from "convex/_generated/api";
@@ -24,11 +25,28 @@ export function useGetMenuItems() {
         ) : (
           <ToggleRight className="w-4 h-4" />
         ),
-      onClick: () =>
-        updateWorkflow({
-          id,
-          status: workflow?.status == "inactive" ? "active" : "inactive",
-        }),
+      onClick: () => {
+        const messages =
+          workflow?.status === "inactive"
+            ? {
+                loading: "Activating workflow...",
+                success: "Workflow activated successfully.",
+                error: "Failed to activate workflow.",
+              }
+            : {
+                loading: "Deactivating workflow...",
+                success: "Workflow deactivated successfully.",
+                error: "Failed to deactivated workflow.",
+              };
+
+        return toast.promise(
+          updateWorkflow({
+            id,
+            status: workflow?.status == "inactive" ? "active" : "inactive",
+          }),
+          messages,
+        );
+      },
     },
     {
       id: "rename",

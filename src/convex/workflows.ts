@@ -200,14 +200,16 @@ export const trigger = internalMutation({
       switch (action) {
         case "email": {
           const { template, delay } = workflow.settings;
-          const emails = await Promise.all(
-            event.guests.map((guest) =>
-              getEntityByIdInWorkspace(ctx, {
-                id: guest,
-                table: "customers",
-              }).then(({ email }) => email),
-            ),
-          );
+          const emails: string[] = [];
+
+          // const emails = await Promise.all(
+          //   event.guests.map((guest) =>
+          //     getEntityByIdInWorkspace(ctx, {
+          //       id: guest,
+          //       table: "customers",
+          //     }).then(({ email }) => email),
+          //   ),
+          // );
           if (template && emails) {
             await Promise.all(
               emails.map((email) =>

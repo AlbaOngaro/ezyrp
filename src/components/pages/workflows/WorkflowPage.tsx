@@ -3,7 +3,6 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
-import { Heading } from "components/atoms/heading";
 import { Id } from "convex/_generated/dataModel";
 
 import { FlowEditor } from "components/organisms/flow-editor";
@@ -35,14 +34,9 @@ export function WorkflowPage({ id }: Props) {
   }
 
   return (
-    <>
-      <Container as="section" className="py-10 sm:flex sm:items-center">
-        <Heading title={id} />
-      </Container>
-      <Container className="h-[calc(100vh-104px-60px)]">
-        <FlowEditor workflow={workflow} mode="view" />
-      </Container>
-    </>
+    <Container className="h-[calc(100vh-60px)] p-0 lg:p-0">
+      <FlowEditor workflow={workflow} mode="view" />
+    </Container>
   );
 }
 

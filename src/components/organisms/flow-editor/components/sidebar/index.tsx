@@ -9,13 +9,20 @@ import {
   CollapsibleTrigger,
 } from "components/atoms/collapsible";
 import { Button } from "components/atoms/button";
+import { cn } from "lib/utils/cn";
 
-export function Sidebar() {
+type Props = {
+  className?: string;
+};
+
+export function Sidebar({ className }: Props) {
   const actions = useGetAction();
   const triggers = useGetTriggers();
 
   return (
-    <aside className="flex flex-col gap-4 h-full overflow-scroll">
+    <aside
+      className={cn("flex flex-col gap-4 h-full overflow-scroll", className)}
+    >
       <Heading
         title="Nodes"
         description="You can drag these nodes to the pane on the right."

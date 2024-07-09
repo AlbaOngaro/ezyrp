@@ -1,10 +1,11 @@
 import { format } from "date-fns";
 import { Fragment } from "react";
 
-import { useCalendarContext } from "../Calendar";
 import { EventItem } from "../components/EventItem";
-
 import { Indicator } from "../components/Indicator";
+import { useCalendarContext } from "../hooks/useCalendarContext";
+import { useGetDayStartAndEnd } from "../hooks/useGetDayStartAndEnd";
+
 import { cn } from "lib/utils/cn";
 
 import { useSettings } from "hooks/useSettings";
@@ -13,8 +14,8 @@ export function Body() {
   const {
     state: { days },
   } = useCalendarContext();
-
-  const { data } = useSettings();
+  const { data: settings } = useSettings();
+  const { dayStartsAt, dayEndsAt } = useGetDayStartAndEnd();
 
   return (
     <div className="isolate flex flex-auto flex-col overflow-auto bg-white">
@@ -248,14 +249,9 @@ export function Body() {
               <Indicator />
 
               {days.map((day, i) => {
-                const dayStartsAt =
-                  (data?.start || 0) - new Date().getTimezoneOffset() / 60;
-                const dayEndsAt =
-                  (data?.end || 0) - new Date().getTimezoneOffset() / 60;
-
                 return (
                   <Fragment key={day.date.toISOString()}>
-                    {data?.days?.includes(i) ? (
+                    {settings?.days?.includes(i) ? (
                       <>
                         <div
                           className="bg-gray-100/30 pointer-events-none"

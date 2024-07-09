@@ -2,7 +2,7 @@ import { eachDayOfInterval, format } from "date-fns";
 
 import { EventItem } from "../components/EventItem";
 
-import { useCalendarContext } from "../Calendar";
+import { useCalendarContext } from "../hooks/useCalendarContext";
 
 import { cn } from "lib/utils/cn";
 

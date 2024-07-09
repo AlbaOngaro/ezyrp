@@ -15,15 +15,15 @@ import {
 } from "@radix-ui/react-dialog";
 import { format } from "date-fns";
 import { useState } from "react";
+
 import { useEvents } from "../../../../hooks/useEvents";
+import { Event } from "../types";
+
 import { cn } from "lib/utils/cn";
 
 import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
 
 import { Dialog } from "components/atoms/dialog";
-import { Doc } from "convex/_generated/dataModel";
-
-type Event = Doc<"events">;
 
 interface Props {
   event: Event;
@@ -97,7 +97,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
               "bg-rose-500": event.variant === "rose",
             })}
           />
-          <h6 className="font-bold">{event.title}</h6>
+          <h6 className="font-bold">{event.name}</h6>
           <p className="col-start-2 flex flex-row gap-2 text-sm text-gray-500">
             <time dateTime={event.start}>
               {format(new Date(event.start), "dd MMMM yyyy, HH:mm")}

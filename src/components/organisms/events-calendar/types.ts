@@ -1,6 +1,7 @@
-import { Doc } from "convex/_generated/dataModel";
+import { FunctionReturnType } from "convex/server";
+import { api } from "convex/_generated/api";
 
-type Event = Doc<"events">;
+export type Event = FunctionReturnType<typeof api.events.list>[number];
 
 export type Day = {
   date: Date;

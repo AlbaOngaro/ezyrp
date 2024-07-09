@@ -3,18 +3,17 @@ import { Root as Form } from "@radix-ui/react-form";
 
 import { format } from "date-fns";
 
+import { Event } from "../events-calendar/types";
+
 import { Modal } from "components/atoms/modal";
 import { useEvents } from "hooks/useEvents";
 import { Input } from "components/atoms/input";
 import { Button } from "components/atoms/button";
-import { Doc } from "convex/_generated/dataModel";
 
 interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   event: Event;
 }
-
-type Event = Doc<"events">;
 
 export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
   const events = useEvents();
@@ -43,7 +42,7 @@ export function EditEventModal({ setIsOpen, event: initialEvent }: Props) {
           label="Title"
           name="title"
           required
-          value={event.title || ""}
+          value={event.name || ""}
           onChange={(e) =>
             setEvent((curr) => ({
               ...curr,

@@ -15,20 +15,29 @@ describe("Events", () => {
       websiteUrl: "workspace1",
     });
 
+    const event_type_1 = await tAuth1.mutation(api.eventTypes.create, {
+      variant: "test",
+      name: "Event Type 1",
+      user_id: "user1",
+      duration: 30,
+    });
+
     const workspace_1_event_1 = await tAuth1.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 1",
       guests: [],
+      organizer: "",
+      type: event_type_1,
+      status: "approved",
     });
     expect(workspace_1_event_1?._id).toBeDefined();
     await tAuth1.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 2",
+      type: event_type_1,
+      organizer: "",
       guests: [],
+      status: "approved",
     });
 
     const tAuth2 = t.withIdentity({
@@ -36,29 +45,37 @@ describe("Events", () => {
       websiteUrl: "workspace2",
     });
 
+    const event_type_2 = await tAuth2.mutation(api.eventTypes.create, {
+      variant: "test",
+      name: "Event Type 2",
+      user_id: "user1",
+      duration: 30,
+    });
     const workspace_2_event_1 = await tAuth2.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 1",
       guests: [],
+      organizer: "",
+      type: event_type_2,
+      status: "approved",
     });
     expect(workspace_2_event_1?._id).toBeDefined();
     tAuth2.mutation(api.events.create, {
       start: "2021-01-01",
       end: "2021-01-02",
-      variant: "test",
-      title: "Event 2",
       guests: [],
+      organizer: "",
+      type: event_type_2,
+      status: "approved",
     });
 
-    const workspace_1_emails = await tAuth1.query(api.events.list);
+    const workspace_1_emails = await tAuth1.query(api.events.list, {});
     expect(workspace_1_emails.length).toBe(2);
     expect(
       workspace_1_emails.every((email) => email.workspace === "workspace1"),
     ).toBe(true);
 
-    const workspace_2_emails = await tAuth2.query(api.events.list);
+    const workspace_2_emails = await tAuth2.query(api.events.list, {});
     expect(workspace_2_emails.length).toBe(2);
     expect(
       workspace_2_emails.every((email) => email.workspace === "workspace2"),
