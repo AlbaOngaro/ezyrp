@@ -1,6 +1,2 @@
 [phases.setup]
-cmds = [
-    "find . -maxdepth 1 -name '.env-pr-*' -exec sed -n '4p' {} +",
-    "export $(find . -maxdepth 1 -name '.env-pr-*' -exec sed -n '4p' {} +)",
-    "echo COOLIFY_BRANCH: $COOLIFY_BRANCH",
-]
+cmds = ["printenv"]
