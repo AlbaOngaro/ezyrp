@@ -1,5 +1,5 @@
 [variables]
-COOLIFY_BRANCH
+COOLIFY_BRANCH=
 
 [phases.build]
 cmds = ['bun run build:ci']
