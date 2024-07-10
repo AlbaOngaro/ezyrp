@@ -1,2 +1,2 @@
 [phases.build]
-cmds = ["echo first", "...", "echo last"]
+cmds = ["echo first", "bun run build", "echo last"]
