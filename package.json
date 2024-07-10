@@ -12,7 +12,7 @@
     "test:once": "vitest run",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
-    "build:ci": "bunx convex deploy --preview-create $COOLIFY_BRANCH --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL --cmd \"bun run build\""
+    "build:ci": "bunx convex deploy --preview-create $SOURCE_COMMIT --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL --cmd \"bun run build\""
   },
   "dependencies": {
     "@clerk/clerk-react": "5.2.4",
