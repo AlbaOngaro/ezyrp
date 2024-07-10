@@ -1,6 +1,5 @@
 [phases.setup]
 cmds = [
-    "cat $(find . -maxdepth 1 -name '.env-pr-*')",
-    "export $(find . -maxdepth 1 -name '.env-pr-*' -exec grep -v '^#' {} + | xargs)",
+    "export $(find . -maxdepth 1 -name '.env-pr-*' -exec sed -n '4p' {} +)",
     "printenv",
 ]
