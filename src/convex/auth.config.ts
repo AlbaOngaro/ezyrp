@@ -1,7 +1,7 @@
 const config = {
   providers: [
     {
-      domain: "https://renewed-monster-51.clerk.accounts.dev/",
+      domain: process.env.NEXT_PUBLIC_CLERK_ISSUER,
       applicationID: "convex",
     },
   ],
