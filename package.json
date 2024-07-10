@@ -12,9 +12,8 @@
     "test:once": "vitest run",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
-    "debug": "bun run debug.js",
     "deploy": "bunx convex deploy --preview-create $COOLIFY_BRANCH --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL --cmd \"bun run build\"",
-    "build:ci": "env-cmd -f $(find . -maxdepth 1 -name '.env-pr-*') --use-shell \"bun run debug && bun run deploy\""
+    "build:ci": "env-cmd -f $(glob .env-pr-*) --silent --use-shell \"bun run deploy\""
   },
   "dependencies": {
     "@clerk/clerk-react": "5.2.4",
@@ -56,6 +55,7 @@
     "embla-carousel-react": "8.1.5",
     "env-cmd": "10.1.0",
     "framer-motion": "10.16.4",
+    "glob": "11.0.0",
     "is-hotkey": "0.2.0",
     "jwt-decode": "4.0.0",
     "lodash": "4.17.21",
