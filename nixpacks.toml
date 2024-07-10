@@ -1,2 +1,1 @@
-[phases.setup]
-cmds = ["bun run setup"]
+
