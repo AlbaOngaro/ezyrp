@@ -12,7 +12,7 @@
     "test:once": "vitest run",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
-    "debug": "ls -la && bun run debug.js",
+    "debug": "bun run debug.js",
     "deploy": "bunx convex deploy --preview-create $COOLIFY_BRANCH --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL --cmd \"bun run build\"",
     "build:ci": "env-cmd -f $(find . -maxdepth 1 -name '.env-pr-*') --use-shell \"bun run debug && bun run deploy\""
   },
