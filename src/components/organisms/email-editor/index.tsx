@@ -65,24 +65,29 @@ function EditMode({
   });
 
   return (
-    <div className={cn("grid items-start h-full grid-cols-[1fr,350px]")}>
-      <EditorConfigProvider placeholder={placeholder}>
-        <Slate
-          editor={editor}
-          initialValue={initialValue}
-          onValueChange={onValueChange}
-        >
-          <SlateEditable
-            className="focus-within:outline-none"
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-            onKeyDown={onKeyDown}
-            as={Editable}
-          />
-        </Slate>
-      </EditorConfigProvider>
+    <div className="grid items-start h-full grid-cols-3 bg-gray-50">
+      <aside
+        id="sidebar"
+        className="h-full px-8 py-4 flex flex-col gap-4 bg-white"
+      />
 
-      <aside id="sidebar" className="border-l h-full pl-8" />
+      <div className="col-span-2 h-full py-4 bg-transparent">
+        <EditorConfigProvider placeholder={placeholder}>
+          <Slate
+            editor={editor}
+            initialValue={initialValue}
+            onValueChange={onValueChange}
+          >
+            <SlateEditable
+              className="focus-within:outline-none"
+              renderElement={renderElement}
+              renderLeaf={renderLeaf}
+              onKeyDown={onKeyDown}
+              as={Editable}
+            />
+          </Slate>
+        </EditorConfigProvider>
+      </div>
     </div>
   );
 }

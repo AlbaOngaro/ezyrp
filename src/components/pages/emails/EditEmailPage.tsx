@@ -32,7 +32,10 @@ export function EditEmailPage({ id }: Props) {
   }
 
   return (
-    <Container as="section" className="h-[calc(100vh-3.5rem)] overflow-scroll">
+    <Container
+      as="section"
+      className="h-[calc(100vh-3.5rem)] overflow-scroll p-0 lg:p-0"
+    >
       <EmailEditor email={email} />
     </Container>
   );
