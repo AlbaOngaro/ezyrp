@@ -1,2 +1,2 @@
 [phases.build]
-cmds = ["echo first", "bun run build", "echo last"]
+cmds = ["echo COOLIFY_BRANCH $COOLIFY_BRANCH", "bun run build"]
