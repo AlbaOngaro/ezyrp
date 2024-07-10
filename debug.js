@@ -1,1 +1,1 @@
-console.log(process.env.COOLIFY_BRANCH);
+console.log(process.env);
