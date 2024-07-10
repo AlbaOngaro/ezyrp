@@ -30,7 +30,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <Head>
-        <title>Nimblerp</title>
+        <title>Ezyrp</title>
       </Head>
 
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>

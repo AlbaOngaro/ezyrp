@@ -43,8 +43,8 @@ export const email = action({
       return {
         to,
         html,
-        from: "info@nimblerp.com",
-        subject: "New invoice",
+        from: "Ezyrp info@ezyrp.com",
+        subject: `[TEST] ${email.title}`,
       };
     }
 
@@ -64,8 +64,8 @@ export const email = action({
       await transporter.sendMail({
         to,
         html,
-        from: "info@nimblerp.com",
-        subject: "New invoice",
+        from: "Ezyrp info@ezyrp.com",
+        subject: email.title,
       });
     } catch (error: unknown) {
       console.error(error);
