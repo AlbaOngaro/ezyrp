@@ -44,11 +44,6 @@ export function InventoryPage() {
             rows={items.data || []}
             columns={[
               {
-                id: "id",
-                field: "_id",
-                headerName: "ID",
-              },
-              {
                 id: "name",
                 field: "name",
                 headerName: "Name",
