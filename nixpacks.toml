@@ -1,2 +1,2 @@
 [phases.setup]
-cmds = ["find . -maxdepth 1 -name '.env-pr-*'"]
+cmds = [". $(find . -maxdepth 1 -name '.env-pr-*')", "printenv"]
