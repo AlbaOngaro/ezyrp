@@ -1,4 +1,5 @@
 [phases.setup]
 cmds = [
     "echo $(find . -maxdepth 1 -name '.env-pr-*' -exec sed -n '4p' {} +) >> /etc/environment",
+    "printenv",
 ]
