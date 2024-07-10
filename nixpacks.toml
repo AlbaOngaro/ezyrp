@@ -1,7 +1,2 @@
 [phases.setup]
-nixPkgs = ['nodejs_18', 'bun', 'git']
-nixOverlays = [
-    'https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz',
-]
-nixpkgsArchive = 'bdd2f439c62aa0b8aa97f5c784a965c23f968fe6'
-cmds = ["git --version"]
+cmds = ["git branch --show-current"]
