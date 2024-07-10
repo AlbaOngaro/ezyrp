@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  Bell,
   Package2,
   Home,
   UserRound,
@@ -9,10 +8,8 @@ import {
   Settings,
   ReceiptText,
   Workflow,
-  Lightbulb,
 } from "lucide-react";
 import { useRouter } from "next/router";
-import { Button } from "components/atoms/button";
 import { cn } from "lib/utils/cn";
 
 const navigation = [
@@ -36,10 +33,6 @@ export function Sidebar() {
             <img src="/images/logo.svg" className="h-8 w-8" alt="logo" />
             <span className="">Ezyrp</span>
           </Link>
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-            <Bell className="h-4 w-4" />
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
         </header>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">

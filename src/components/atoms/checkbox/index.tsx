@@ -9,7 +9,7 @@ export const Checkbox = forwardRef<
     <input
       type="checkbox"
       className={cn(
-        "absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded cursor-pointer border-gray-300 text-orange-500 focus:ring-orange-500",
+        "absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded cursor-pointer border-gray-300 text-black focus:ring-orange-500",
         className,
       )}
       ref={ref}

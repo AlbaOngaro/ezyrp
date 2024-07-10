@@ -36,7 +36,7 @@ export function Body() {
             className="flex flex-col items-center pb-1.5 pt-3"
           >
             <span>T</span>
-            <span className="mt-3 flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold text-orange-500">
+            <span className="mt-3 flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold text-blue-500">
               20
             </span>
           </button>

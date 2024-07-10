@@ -138,14 +138,14 @@ export function MonthWidget({
               (day.isSelected || day.isToday) && "font-semibold",
               day.isSelected && "text-white",
               !day.isSelected &&
-                day.isCurrentMonth &&
-                !day.isToday &&
-                "text-gray-900",
+              day.isCurrentMonth &&
+              !day.isToday &&
+              "text-gray-900",
               !day.isSelected &&
-                !day.isCurrentMonth &&
-                !day.isToday &&
-                "text-gray-400",
-              day.isToday && !day.isSelected && "text-orange-500",
+              !day.isCurrentMonth &&
+              !day.isToday &&
+              "text-gray-400",
+              day.isToday && !day.isSelected && "text-blue-500",
               dayIdx === 0 && "rounded-tl-lg",
               dayIdx === 6 && "rounded-tr-lg",
               dayIdx === days.length - 7 && "rounded-bl-lg",
