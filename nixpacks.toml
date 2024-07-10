@@ -1,2 +1,2 @@
 [phases.setup]
-cmds = ["ls -la", "echo $(find . -maxdepth 1 -name '.env-pr-*')"]
+cmds = ["bun run setup"]
