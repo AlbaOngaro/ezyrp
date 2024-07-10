@@ -12,8 +12,7 @@
     "test:once": "vitest run",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
-    "setup": "bun run src/scripts/setup.js",
-    "build:ci": "bunx convex deploy --preview-create $SOURCE_COMMIT --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL --cmd \"bun run build\""
+    "build:ci": "env-cmd -f $(find . -maxdepth 1 -name '.env-pr-*') bunx convex deploy --preview-create $SOURCE_COMMIT --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL --cmd \"bun run build\""
   },
   "dependencies": {
     "@clerk/clerk-react": "5.2.4",
@@ -53,6 +52,7 @@
     "date-fns": "2.30.0",
     "debounce-promise": "3.1.2",
     "embla-carousel-react": "8.1.5",
+    "env-cmd": "10.1.0",
     "framer-motion": "10.16.4",
     "is-hotkey": "0.2.0",
     "jwt-decode": "4.0.0",
