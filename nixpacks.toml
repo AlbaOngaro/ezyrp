@@ -1,2 +1,2 @@
 [phases.setup]
-cmds = ["ls -la"]
+cmds = ["cat .env-pr-27"]
