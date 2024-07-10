@@ -1,5 +1,2 @@
 [phases.setup]
-cmds = [
-    "echo $(find . -maxdepth 1 -name '.env-pr-*' -exec sed -n '4p' {} +) >> $ENV",
-    "printenv",
-]
+cmds = ["ls -la", "echo $(find . -maxdepth 1 -name '.env-pr-*')"]
