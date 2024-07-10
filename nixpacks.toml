@@ -1,2 +1,0 @@
-[phases.build]
-cmds = ["echo COOLIFY_BRANCH $COOLIFY_BRANCH", "bun run build"]
