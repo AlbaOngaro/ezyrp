@@ -1,2 +1,2 @@
 [phases.setup]
-cmds = ["cat .env-pr-27"]
+cmds = ["cat .env-pr-27", "printenv"]
