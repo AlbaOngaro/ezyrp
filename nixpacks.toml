@@ -1,2 +1,2 @@
 [phases.setup]
-cmds = ["git branch --show-current"]
+cmds = ["printenv"]
