@@ -37,7 +37,7 @@ export function CustomersTable() {
 
   return (
     <>
-      <Form className="mb-4 grid grid-cols-3">
+      <Form className="mb-4 grid grid-cols-4">
         <Input
           label="Search by name or email"
           name="search"

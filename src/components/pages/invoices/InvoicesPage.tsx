@@ -3,7 +3,6 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { Container } from "components/atoms/container";
-import { Card } from "components/atoms/card";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { InvoicesTable } from "components/organisms/invoices-table/InvoicesTable";
 import { Heading } from "components/atoms/heading";
@@ -25,9 +24,7 @@ export function InvoicesPage() {
       </Container>
 
       <Container as="section">
-        <Card>
-          <InvoicesTable />
-        </Card>
+        <InvoicesTable />
       </Container>
     </>
   );
