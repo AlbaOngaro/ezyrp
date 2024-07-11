@@ -105,8 +105,11 @@ const Button = forwardRef<HTMLAnchorElement, Props>(function Button(
   );
 });
 
-const EnhancedButton = withToolbar(
-  withActionHandlers(Button, {
+const EnhancedButton = withActionHandlers(
+  withToolbar(Button, {
+    renderToolbar,
+  }),
+  {
     editableFields: {
       padding: {
         label: "Padding",
@@ -124,9 +127,6 @@ const EnhancedButton = withToolbar(
         defaultValue: "#000000",
       },
     },
-  }),
-  {
-    renderToolbar,
   },
 );
 
