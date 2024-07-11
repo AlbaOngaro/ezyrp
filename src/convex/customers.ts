@@ -90,9 +90,13 @@ export const listInternal = internalQuery({
 });
 
 export const list = query({
-  args: {
-    paginationOpts: paginationOptsValidator,
+  handler: async (ctx) => {
+    return await getEntitiesInWorkspace(ctx, "customers");
   },
+});
+
+export const search = query({
+  args: { paginationOpts: paginationOptsValidator },
   handler: async (ctx, { paginationOpts }) => {
     return await getPaginatedEntitiesInWorkspace(
       ctx,

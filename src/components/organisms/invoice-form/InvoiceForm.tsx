@@ -8,16 +8,15 @@ import { Select } from "components/atoms/select";
 import { TextArea } from "components/atoms/textarea";
 import { Input } from "components/atoms/input";
 import { Button } from "components/atoms/button";
-
-import { useCustomers } from "hooks/useCustomers";
+import { useQuery } from "lib/hooks/useQuery";
+import { api } from "convex/_generated/api";
 
 type Props = {
   disabled?: boolean;
 };
 
 export function InvoiceForm({ disabled }: Props) {
-  const customers = useCustomers();
-
+  const { data: customers = [] } = useQuery(api.customers.list);
   const { control, register, watch, formState, handleSubmit } =
     useFormContext();
 
@@ -37,7 +36,7 @@ export function InvoiceForm({ disabled }: Props) {
             value={value}
             getOptionLabel={(option) => option.name}
             getOptionValue={(option) => option.id}
-            options={customers?.data || []}
+            options={customers || []}
             onChange={(option) => {
               if (option) {
                 onChange(option);

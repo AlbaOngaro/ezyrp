@@ -3,26 +3,34 @@ import {
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
 
+import { useMutation, usePaginatedQuery } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
 import { Dialog } from "components/atoms/dialog";
 import { Table } from "components/atoms/table";
 import { Button } from "components/atoms/button";
 
-import { useCustomers } from "hooks/useCustomers";
 import { Id } from "convex/_generated/dataModel";
+import { api } from "convex/_generated/api";
 
 const PAGE_SIZE = 5;
 
 export function CustomersTable() {
-  const customers = useCustomers({
-    pageSize: PAGE_SIZE,
-  });
+  const { results, status, loadMore, isLoading } = usePaginatedQuery(
+    api.customers.search,
+    {},
+    {
+      initialNumItems: PAGE_SIZE,
+    },
+  );
+
+  const deleteCustomer = useMutation(api.customers.remove);
+
   const contextMenuItems = useGetContextMenuItems();
 
   return (
     <>
       <Table
-        loading={customers.isLoading}
+        loading={isLoading}
         columns={[
           {
             id: "id",
@@ -41,7 +49,7 @@ export function CustomersTable() {
             headerName: "E-mail",
           },
         ]}
-        rows={customers.data || []}
+        rows={results || []}
         withMultiSelect
         renderSelectedActions={(rows) => (
           <DialogRoot>
@@ -63,7 +71,7 @@ export function CustomersTable() {
               onConfirm={() =>
                 Promise.all(
                   rows.map((row) =>
-                    customers.delete({ id: row._id as Id<"customers"> }),
+                    deleteCustomer({ id: row._id as Id<"customers"> }),
                   ),
                 )
               }
@@ -80,9 +88,9 @@ export function CustomersTable() {
         )}
         contextMenuItems={contextMenuItems}
         pagination={{
+          status,
           pageSize: PAGE_SIZE,
-          status: customers.status,
-          loadMore: () => customers.loadMore(),
+          loadMore: () => loadMore(PAGE_SIZE),
         }}
       />
     </>
