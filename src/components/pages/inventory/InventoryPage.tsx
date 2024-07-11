@@ -57,7 +57,11 @@ export function InventoryPage() {
                 id: "price",
                 field: "price",
                 headerName: "Unitary price",
-                render: ({ price }) => CHF.format(price / 100),
+                render: ({ price }) => (
+                  <span data-testid="inventory-table__price-cell">
+                    {CHF.format(price / 100)}
+                  </span>
+                ),
                 sortable: true,
               },
               {
@@ -71,12 +75,17 @@ export function InventoryPage() {
             renderSelectedActions={(rows) => (
               <DialogRoot>
                 <DialogTrigger asChild>
-                  <Button variant="destructive" size="sm">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    data-testid="inventory-table__delete-all-btn"
+                  >
                     Delete all
                   </Button>
                 </DialogTrigger>
 
                 <Dialog
+                  data-testid="inventory__delete-dialog"
                   overlayClassname="!ml-0"
                   title="Do you really want to delete all the selected items?"
                   description="This action cannot be undone. This will affect the linked invoices."
@@ -87,6 +96,14 @@ export function InventoryPage() {
                       ),
                     )
                   }
+                  cancelButtonProps={{
+                    // @ts-ignore
+                    "data-testid": "inventory__delete-dialog__cancel-btn",
+                  }}
+                  confirmButtonProps={{
+                    // @ts-ignore
+                    "data-testid": "inventory__delete-dialog__confirm-btn",
+                  }}
                 />
               </DialogRoot>
             )}
