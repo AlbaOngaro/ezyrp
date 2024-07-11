@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { GenericMutationCtx, paginationOptsValidator } from "convex/server";
+import { filter } from "convex-helpers/server/filter";
 
 import { internalQuery, mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
@@ -7,7 +8,6 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
-  getPaginatedEntitiesInWorkspace,
 } from "./utils";
 import { internal } from "./_generated/api";
 
@@ -96,13 +96,21 @@ export const list = query({
 });
 
 export const search = query({
-  args: { paginationOpts: paginationOptsValidator },
-  handler: async (ctx, { paginationOpts }) => {
-    return await getPaginatedEntitiesInWorkspace(
-      ctx,
-      "customers",
-      paginationOpts,
-    );
+  args: {
+    query: v.optional(v.string()),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { query = "", paginationOpts }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    return await filter(
+      ctx.db
+        .query("customers")
+        .withIndex("by_workspace", (q) => q.eq("workspace", workspace)),
+      (customer) =>
+        customer.name.toLowerCase().includes(query.toLowerCase()) ||
+        customer.email.toLowerCase().includes(query.toLowerCase()),
+    ).paginate(paginationOpts);
   },
 });
 
