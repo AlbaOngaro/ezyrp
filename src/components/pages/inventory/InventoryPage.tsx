@@ -107,7 +107,6 @@ export function InventoryPage() {
                 />
               </DialogRoot>
             )}
-            withContextMenu
             contextMenuItems={[
               {
                 type: "item",

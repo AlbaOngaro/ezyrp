@@ -39,7 +39,6 @@ export function EventsTable() {
           ]}
           rows={events}
           withMultiSelect
-          withContextMenu
           contextMenuItems={[
             {
               type: "item",

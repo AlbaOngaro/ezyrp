@@ -18,9 +18,7 @@ export function Table<R extends Row = Row>({
   withMultiSelect,
   onSelect,
   renderSelectedActions,
-  withContextMenu,
   contextMenuItems,
-  withPagination,
   pagination,
   loading,
 }: Props<R>) {
@@ -31,9 +29,12 @@ export function Table<R extends Row = Row>({
   const [sort, setSort] = useState<Sort<R> | null>(null);
   const [page, setPage] = useState(1);
 
+  const withContextMenu = !!contextMenuItems && contextMenuItems.length > 0;
+  const withPagination = !!pagination;
+
   const rows = initialRows.slice(
-    withPagination && pagination ? (page - 1) * pagination.pageSize : 0,
-    withPagination && pagination
+    withPagination ? (page - 1) * pagination.pageSize : 0,
+    withPagination
       ? (page - 1) * pagination.pageSize + pagination.pageSize
       : undefined,
   );
@@ -184,7 +185,6 @@ export function Table<R extends Row = Row>({
               <TableRowRenderer
                 key={row._id}
                 row={row}
-                withContextMenu={withContextMenu}
                 withMultiSelect={withMultiSelect}
                 columns={columns}
                 selectedRows={selectedRows}
@@ -210,7 +210,7 @@ export function Table<R extends Row = Row>({
                   )}
                 </div>
 
-                {withPagination && pagination && (
+                {withPagination && (
                   <Pagination
                     page={page}
                     onPrevClick={(p) => setPage(p)}

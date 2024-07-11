@@ -78,9 +78,7 @@ export function CustomersTable() {
             />
           </DialogRoot>
         )}
-        withContextMenu
         contextMenuItems={contextMenuItems}
-        withPagination
         pagination={{
           pageSize: PAGE_SIZE,
           status: customers.status,

@@ -22,7 +22,6 @@ export function EmailsTable() {
           headerName: "Title",
         },
       ]}
-      withContextMenu
       contextMenuItems={contextMenuItems}
       withMultiSelect
       renderSelectedActions={(rows) => (

@@ -79,9 +79,7 @@ export type Props<R extends Row = Row> = {
   withMultiSelect?: boolean;
   onSelect?: (rows: R[]) => void;
   renderSelectedActions?: (rows: Row[]) => ReactNode;
-  withContextMenu?: boolean;
   contextMenuItems?: TableContextMenuItem<R>[];
-  withPagination?: boolean;
   pagination?: Pagination;
 };
 

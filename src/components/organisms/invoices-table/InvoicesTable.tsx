@@ -101,7 +101,6 @@ export function InvoicesTable() {
             />
           </DialogRoot>
         )}
-        withContextMenu
         contextMenuItems={[
           {
             type: "item",
