@@ -18,8 +18,12 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Dialog, dialogs } from "components/atoms/dialog";
 import { Id } from "convex/_generated/dataModel";
 
+const PAGE_SIZE = 5;
+
 export function InventoryPage() {
-  const items = useItems();
+  const items = useItems({
+    pageSize: PAGE_SIZE,
+  });
   const router = useRouter();
 
   return (
@@ -40,7 +44,7 @@ export function InventoryPage() {
       <Container as="section">
         <Card>
           <Table
-            loading={items.loading}
+            loading={items.isLoading}
             rows={items.data || []}
             columns={[
               {
@@ -131,6 +135,11 @@ export function InventoryPage() {
                   }),
               },
             ]}
+            pagination={{
+              pageSize: PAGE_SIZE,
+              status: items.status,
+              loadMore: () => items.loadMore(),
+            }}
           />
         </Card>
       </Container>

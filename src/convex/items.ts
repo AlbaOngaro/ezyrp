@@ -1,9 +1,11 @@
 import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 import { mutation, query } from "./_generated/server";
 import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
+  getPaginatedEntitiesInWorkspace,
 } from "./utils";
 
 export const get = query({
@@ -19,8 +21,11 @@ export const get = query({
 });
 
 export const list = query({
-  handler: async (ctx) => {
-    return await getEntitiesInWorkspace(ctx, "items");
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    return await getPaginatedEntitiesInWorkspace(ctx, "items", paginationOpts);
   },
 });
 

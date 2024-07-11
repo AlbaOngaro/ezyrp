@@ -1,20 +1,31 @@
+import { usePaginatedQuery } from "convex/react";
 import { useMutation } from "lib/hooks/useMutation";
 import { api } from "convex/_generated/api";
-import { useQuery } from "lib/hooks/useQuery";
 
-export function useItems() {
-  const { data, error, status } = useQuery(api.items.list);
+type Args = {
+  pageSize?: number;
+};
 
+export function useItems({ pageSize = 5 }: Args = {}) {
+  const { results, status, loadMore } = usePaginatedQuery(
+    api.items.list,
+    {},
+    {
+      initialNumItems: pageSize,
+    },
+  );
   const create = useMutation(api.items.create);
   const update = useMutation(api.items.update);
   const remove = useMutation(api.items.remove);
 
   return {
-    data,
-    error,
+    status,
+    data: results,
+    error: null,
+    isLoading: status === "LoadingMore" || status === "LoadingFirstPage",
     create,
-    loading: status === "pending",
     update,
     delete: remove,
+    loadMore: () => loadMore(pageSize),
   };
 }
