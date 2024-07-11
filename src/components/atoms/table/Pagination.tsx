@@ -1,65 +1,43 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-} from "@radix-ui/react-icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
+import { useEffect, useRef } from "react";
 
-import { useCallback, useState } from "react";
-import { Pagination as PaginationI } from "./types";
+type Props = {
+  page: number;
+  onNextClick: (page: number) => void;
+  onPrevClick: (page: number) => void;
+  status: "LoadingFirstPage" | "CanLoadMore" | "LoadingMore" | "Exhausted";
+};
 
-export function Pagination({
-  initialPage = 0,
-  pageSize = 10,
-  total,
-  onPageChange,
-}: PaginationI) {
-  const [page, _setPage] = useState(initialPage);
+export function Pagination({ page, onNextClick, onPrevClick, status }: Props) {
+  const map = useRef(new Map());
+  const canLoadMore = map.current.get(page) === "CanLoadMore";
 
-  const setPage = useCallback(
-    (page: number) => {
-      _setPage(page);
-
-      onPageChange({
-        start: page * pageSize,
-        limit: pageSize,
-      });
-    },
-    [onPageChange, pageSize],
-  );
+  useEffect(() => {
+    if (
+      status !== "LoadingMore" &&
+      status !== "LoadingFirstPage" &&
+      !map.current.has(page)
+    ) {
+      map.current.set(page, status);
+    }
+  }, [status, page]);
 
   return (
     <div className="flex flex-1 justify-between sm:justify-end">
       <button
-        disabled={page === 0}
-        onClick={() => setPage(0)}
-        className="relative cursor-pointer inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
-      >
-        <DoubleArrowLeftIcon className="h-5 w-5" />
-      </button>
-
-      <button
-        disabled={page - 1 < 0}
-        onClick={() => setPage(page - 1 >= 0 ? page - 1 : page)}
+        disabled={page - 1 <= 0}
+        onClick={() => onPrevClick(page - 1 >= 0 ? page - 1 : page)}
         className="relative cursor-pointer inline-flex items-center px-2 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
       >
         <ChevronLeftIcon className="h-5 w-5" />
       </button>
 
       <button
-        disabled={(page + 1) * pageSize >= total}
-        onClick={() => setPage((page + 1) * pageSize < total ? page + 1 : page)}
+        disabled={!canLoadMore}
+        onClick={() => onNextClick(page + 1)}
         className="relative cursor-pointer inline-flex items-center px-2 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
       >
         <ChevronRightIcon className="h-5 w-5" />
-      </button>
-
-      <button
-        disabled={page === Math.floor(total / pageSize)}
-        onClick={() => setPage(Math.floor(total / pageSize))}
-        className="relative cursor-pointer inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50 disabled:cursor-not-allowed"
-      >
-        <DoubleArrowRightIcon className="h-5 w-5" />
       </button>
     </div>
   );

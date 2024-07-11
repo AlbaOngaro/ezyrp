@@ -11,8 +11,12 @@ import { Button } from "components/atoms/button";
 import { useCustomers } from "hooks/useCustomers";
 import { Id } from "convex/_generated/dataModel";
 
+const PAGE_SIZE = 5;
+
 export function CustomersTable() {
-  const customers = useCustomers();
+  const customers = useCustomers({
+    pageSize: PAGE_SIZE,
+  });
   const contextMenuItems = useGetContextMenuItems();
 
   return (
@@ -37,7 +41,7 @@ export function CustomersTable() {
             headerName: "E-mail",
           },
         ]}
-        rows={customers?.data || []}
+        rows={customers.data || []}
         withMultiSelect
         renderSelectedActions={(rows) => (
           <DialogRoot>
@@ -76,6 +80,12 @@ export function CustomersTable() {
         )}
         withContextMenu
         contextMenuItems={contextMenuItems}
+        withPagination
+        pagination={{
+          pageSize: PAGE_SIZE,
+          status: customers.status,
+          loadMore: () => customers.loadMore(),
+        }}
       />
     </>
   );

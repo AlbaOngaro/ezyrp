@@ -3,7 +3,6 @@ import { PropsWithChildren } from "react";
 import { RectangleHorizontal } from "lucide-react";
 import { DraggableWrapper } from "./draggable-wrapper";
 import { ButtonElement } from "types/slate";
-import { Card } from "components/atoms/card";
 
 type Props = PropsWithChildren<{
   disabled?: boolean;

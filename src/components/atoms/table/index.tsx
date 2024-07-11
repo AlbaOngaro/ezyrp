@@ -14,7 +14,7 @@ import { Checkbox } from "components/atoms/checkbox";
 export function Table<R extends Row = Row>({
   className,
   columns,
-  rows,
+  rows: initialRows,
   withMultiSelect,
   onSelect,
   renderSelectedActions,
@@ -29,6 +29,14 @@ export function Table<R extends Row = Row>({
   const [checked, setChecked] = useState(false);
   const [selectedRows, _setSelectedRows] = useState<R[]>([]);
   const [sort, setSort] = useState<Sort<R> | null>(null);
+  const [page, setPage] = useState(1);
+
+  const rows = initialRows.slice(
+    withPagination && pagination ? (page - 1) * pagination.pageSize : 0,
+    withPagination && pagination
+      ? (page - 1) * pagination.pageSize + pagination.pageSize
+      : undefined,
+  );
 
   useEffect(() => {
     if (selectedRows.length > 0 && selectedRows.length < rows.length) {
@@ -138,6 +146,7 @@ export function Table<R extends Row = Row>({
           data-testid={rows.length === 0 ? "table-body--empty" : "table-body"}
         >
           {rows
+
             .sort((a, b) => {
               if (!sort) {
                 return 0;
@@ -193,25 +202,23 @@ export function Table<R extends Row = Row>({
                 aria-label="Pagination"
               >
                 <div className="hidden sm:block">
-                  {withMultiSelect && selectedRows.length > 0 ? (
+                  {withMultiSelect && selectedRows.length > 0 && (
                     <p className="text-sm text-gray-700">
                       <span className="font-medium">{selectedRows.length}</span>{" "}
                       rows elected
                     </p>
-                  ) : (
-                    <p className="text-sm text-gray-700">
-                      Showing <strong>{rows.length}</strong> of{" "}
-                      {pagination?.total || rows.length} results
-                    </p>
                   )}
                 </div>
 
-                {withPagination && (
+                {withPagination && pagination && (
                   <Pagination
-                    initialPage={pagination?.initialPage}
-                    pageSize={pagination?.pageSize}
-                    total={pagination?.total || 0}
-                    onPageChange={pagination?.onPageChange || console.debug}
+                    page={page}
+                    onPrevClick={(p) => setPage(p)}
+                    onNextClick={async (p) => {
+                      setPage(p);
+                      pagination.loadMore();
+                    }}
+                    status={pagination.status}
                   />
                 )}
               </nav>

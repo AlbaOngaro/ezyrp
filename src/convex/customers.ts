@@ -1,11 +1,13 @@
 import { v } from "convex/values";
-import { GenericMutationCtx } from "convex/server";
+import { GenericMutationCtx, paginationOptsValidator } from "convex/server";
+
 import { internalQuery, mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
 import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
+  getPaginatedEntitiesInWorkspace,
 } from "./utils";
 import { internal } from "./_generated/api";
 
@@ -88,8 +90,15 @@ export const listInternal = internalQuery({
 });
 
 export const list = query({
-  handler: async (ctx) => {
-    return await getEntitiesInWorkspace(ctx, "customers");
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    return await getPaginatedEntitiesInWorkspace(
+      ctx,
+      "customers",
+      paginationOpts,
+    );
   },
 });
 

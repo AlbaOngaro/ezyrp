@@ -19,10 +19,17 @@ describe("Customers", () => {
       email: "customer_2@workspace1.test",
     });
 
-    const workspace_1_customers = await tAuth1.query(api.customers.list);
-    expect(workspace_1_customers.length).toBe(2);
+    const workspace_1_customers = await tAuth1.query(api.customers.list, {
+      paginationOpts: {
+        numItems: 5,
+        cursor: null,
+      },
+    });
+    expect(workspace_1_customers.page.length).toBe(2);
     expect(
-      workspace_1_customers.every((email) => email.workspace === "workspace1"),
+      workspace_1_customers.page.every(
+        (email) => email.workspace === "workspace1",
+      ),
     ).toBe(true);
 
     const tAuth2 = t.withIdentity({
@@ -39,10 +46,17 @@ describe("Customers", () => {
       email: "customer_2@workspace2.test",
     });
 
-    const workspace_2_customers = await tAuth2.query(api.customers.list);
-    expect(workspace_2_customers.length).toBe(2);
+    const workspace_2_customers = await tAuth2.query(api.customers.list, {
+      paginationOpts: {
+        numItems: 5,
+        cursor: null,
+      },
+    });
+    expect(workspace_2_customers.page.length).toBe(2);
     expect(
-      workspace_2_customers.every((email) => email.workspace === "workspace2"),
+      workspace_2_customers.page.every(
+        (email) => email.workspace === "workspace2",
+      ),
     ).toBe(true);
 
     try {

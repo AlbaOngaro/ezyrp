@@ -25,13 +25,6 @@ export interface Column<R extends Row = Row> {
   render?: (row: R, index: number) => ReactNode;
 }
 
-export interface Pagination {
-  initialPage?: number;
-  pageSize?: number;
-  total: number;
-  onPageChange: ({ start, limit }: { start: number; limit: number }) => void;
-}
-
 type TableContextMenuBaseItem<R extends Row = Row> = Omit<
   Extract<ContextMenuItem, { type: "item" }>,
   "onClick"
@@ -72,7 +65,13 @@ export type TableContextMenuItem<R extends Row = Row> =
   | TableContextMenuRadioItem<R>
   | TableContextMenuSubItem<R>;
 
-export interface Props<R extends Row = Row> {
+type Pagination = {
+  status: "LoadingFirstPage" | "CanLoadMore" | "LoadingMore" | "Exhausted";
+  pageSize: number;
+  loadMore: () => void;
+};
+
+export type Props<R extends Row = Row> = {
   loading?: boolean;
   className?: string;
   columns: Column<R>[];
@@ -84,7 +83,7 @@ export interface Props<R extends Row = Row> {
   contextMenuItems?: TableContextMenuItem<R>[];
   withPagination?: boolean;
   pagination?: Pagination;
-}
+};
 
 export interface Sort<R extends Row = Row> {
   field: Extract<keyof R, string>;

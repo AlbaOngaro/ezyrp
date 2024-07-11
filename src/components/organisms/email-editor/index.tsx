@@ -17,7 +17,6 @@ import { withSections } from "./plugins/withSections";
 import { withLinks } from "./plugins/withLinks";
 import { EditorConfigProvider } from "./providers/config";
 import { Doc, Id } from "convex/_generated/dataModel";
-import { cn } from "lib/utils/cn";
 
 type Props = {
   email: Doc<"emails">;
