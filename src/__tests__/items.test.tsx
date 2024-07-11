@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { render, waitFor, screen } from "@testing-library/react";
 
 import userEvent from "@testing-library/user-event";
-import { useMutation } from "./__mocks__/convex/react";
+import { useMutation, usePaginatedQuery } from "./__mocks__/convex/react";
 import { convexMockServer } from "./__mocks__/convex/server";
 
 import { api, internal } from "convex/_generated/api";
@@ -13,6 +13,7 @@ vi.mock("next/router", () => require("next-router-mock"));
 
 vi.mock("convex/react", () => ({
   useMutation,
+  usePaginatedQuery,
 }));
 
 vi.mock("lib/hooks/useQuery");
