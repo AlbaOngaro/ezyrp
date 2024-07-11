@@ -39,7 +39,7 @@ describe("Inventory", () => {
       quantity: 1,
     });
 
-    const page = render(<InventoryPage />, {
+    const page = render(<InventoryPage key="full" />, {
       container,
     });
 
@@ -68,7 +68,7 @@ describe("Inventory", () => {
 
     // note: forcing rerender to update the table
     // since mocks queries are not re-fetched automatically
-    page.rerender(<InventoryPage />);
+    page.rerender(<InventoryPage key="empty" />);
     expect(screen.getByTestId("table-body--empty")).toBeDefined();
   });
 
