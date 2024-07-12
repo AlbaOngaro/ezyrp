@@ -13,7 +13,11 @@ type Range = {
   end: string;
 };
 
-export function CalendarContents() {
+type Props = {
+  selected?: Date;
+};
+
+export function CalendarContents({ selected }: Props) {
   const [range, setRange] = useState<Range | undefined>(undefined);
 
   const { results: events = [] } = usePaginatedQuery(
@@ -32,6 +36,7 @@ export function CalendarContents() {
       className="lg:h-[calc(100vh_-_124px)] overflow-hidden"
     >
       <EventsCalendar
+        selected={selected}
         events={events}
         onViewChange={(start, end) =>
           setRange({

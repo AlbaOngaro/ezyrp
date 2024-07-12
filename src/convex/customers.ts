@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { GenericMutationCtx, paginationOptsValidator } from "convex/server";
 import { filter } from "convex-helpers/server/filter";
 
@@ -47,7 +47,13 @@ export const upsert = async (
       birthday,
     });
 
-    return await ctx.db.get(id);
+    const newC = await ctx.db.get(id);
+
+    if (!newC) {
+      throw new ConvexError("Failed to create customer");
+    }
+
+    return newC;
   }
 
   await ctx.db.patch(customer._id, {
@@ -62,7 +68,13 @@ export const upsert = async (
     birthday: birthday || customer.birthday,
   });
 
-  return await ctx.db.get(customer._id);
+  const newC = await ctx.db.get(customer._id);
+
+  if (!newC) {
+    throw new ConvexError("Failed to create customer");
+  }
+
+  return newC;
 };
 
 export const get = query({

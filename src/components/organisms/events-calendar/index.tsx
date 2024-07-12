@@ -8,6 +8,7 @@ import {
   defaultInitialState,
   Action,
   useCalendarReducer,
+  getInitialStateForSelectedDate,
 } from "./hooks/useCalendarReducer";
 
 import * as MonthView from "./views/Month";
@@ -36,6 +37,7 @@ interface Props {
   onNext?: () => void;
   onChange?: (date: Date) => void;
   onViewChange?: (start: Date, end: Date) => void;
+  selected?: Date;
 }
 
 const views = [
@@ -70,8 +72,11 @@ export function EventsCalendar({
   onNext,
   onChange,
   onViewChange,
+  selected: initialSelected = new Date(),
 }: Props) {
-  const [{ selected, days, view }, dispatch] = useCalendarReducer();
+  const [{ selected, days, view }, dispatch] = useCalendarReducer(
+    getInitialStateForSelectedDate(initialSelected),
+  );
 
   useEffect(() => {
     if (events) {

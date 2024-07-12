@@ -50,7 +50,9 @@ export function Sidebar() {
         },
         action: {
           label: "View",
-          onClick: () => {
+          onClick: async () => {
+            await updateNotification({ id: notification._id, read: true });
+
             if (notification.url) {
               window.open(notification.url, "_self");
             } else {

@@ -1,10 +1,12 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useMemo, useRef } from "react";
 import { format, getWeekOfMonth, isSameDay } from "date-fns";
 import {
   Root as PopoverRoot,
   Trigger as PopoverTrigger,
 } from "@radix-ui/react-popover";
+import { useSearchParams } from "next/navigation";
 
+import { useRouter } from "next/router";
 import { EventPopover } from "../event-popover";
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../../utils";
 import { useCalendarContext } from "../../hooks/useCalendarContext";
@@ -12,6 +14,7 @@ import { Event } from "../../types";
 import { eventItemVariants } from "./styles";
 
 import { cn } from "lib/utils/cn";
+import { mergeRefs } from "lib/utils/mergeRefs";
 
 interface Props {
   event: Event;
@@ -26,16 +29,25 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
   const {
     state: { view },
   } = useCalendarContext();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const startDate = new Date(event.start);
-  const endDate = new Date(event.end);
+  const eid = searchParams.get("eid");
 
-  const gridRow =
-    view === "month"
-      ? getWeekOfMonth(currentDate, {
-          weekStartsOn: 1,
-        })
-      : getGridRow(startDate, endDate, currentDate);
+  const item = useRef<HTMLLIElement | null>(null);
+
+  const startDate = useMemo(() => new Date(event.start), [event.start]);
+  const endDate = useMemo(() => new Date(event.end), [event.end]);
+
+  const gridRow = useMemo(() => {
+    if (view === "month") {
+      return getWeekOfMonth(currentDate, {
+        weekStartsOn: 1,
+      });
+    }
+    return getGridRow(startDate, endDate, currentDate);
+  }, [currentDate, endDate, startDate, view]);
+
   const gridColumn = getGridColumn(startDate, endDate, currentDate);
 
   const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
@@ -43,8 +55,32 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
   const status = event.status;
   const variant = event.variant;
 
+  useEffect(() => {
+    if (eid === event._id && item.current) {
+      item.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
+  }, [eid, event]);
+
   return (
-    <PopoverRoot>
+    <PopoverRoot
+      defaultOpen={eid === event._id}
+      onOpenChange={() => {
+        if (eid === event._id) {
+          const newSearchParams = new URLSearchParams(searchParams.toString());
+          newSearchParams.delete("eid");
+
+          if (newSearchParams.size > 0) {
+            router.replace(`${router.pathname}?${newSearchParams.toString()}`);
+          } else {
+            router.replace(router.pathname);
+          }
+        }
+      }}
+    >
       <PopoverTrigger
         onClick={(e) => {
           e.stopPropagation();
@@ -52,7 +88,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
         asChild
       >
         <li
-          ref={ref}
+          ref={mergeRefs(ref, item)}
           className={cn(
             eventItemVariants({
               view,
@@ -71,6 +107,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
                   !isSameDay(endDate, currentDate)) ||
                 isLongerThan24Hours,
               "py-0 justify-center": isLongerThan24Hours,
+              "shadow-2xl": eid === event._id,
             },
             className,
           )}

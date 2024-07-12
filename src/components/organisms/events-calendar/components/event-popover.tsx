@@ -37,6 +37,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
         sideOffset={8}
         side={side}
         align={align}
+        collisionPadding={32}
       >
         <header className="flex flex-row justify-end gap-2">
           <ModalRoot open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
