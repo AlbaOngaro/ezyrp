@@ -1,5 +1,8 @@
 import { v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
+import { filter } from "convex-helpers/server/filter";
+import { parseISO, isWithinInterval, isSameDay } from "date-fns";
+
 import { mutation, query } from "./_generated/server";
 import {
   getAuthData,
@@ -50,10 +53,66 @@ export const list = query({
 
 export const search = query({
   args: {
-    query: v.optional(v.string()),
+    range: v.optional(v.object({ start: v.string(), end: v.string() })),
     paginationOpts: paginationOptsValidator,
   },
-  handler: async (_ctx) => {},
+  handler: async (ctx, { range, paginationOpts }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const events = await filter(
+      ctx.db
+        .query("events")
+        .withIndex("by_workspace", (q) => q.eq("workspace", workspace)),
+      (event) => {
+        if (!range) {
+          return true;
+        }
+
+        const range_start = parseISO(range.start);
+        const range_end = parseISO(range.end);
+        const event_start = parseISO(event.start);
+
+        if (isSameDay(range_start, range_end)) {
+          return isSameDay(range_start, event_start);
+        }
+
+        return isWithinInterval(event_start, {
+          start: range_start,
+          end: range_end,
+        });
+      },
+    ).paginate(paginationOpts);
+
+    const page = await Promise.all(
+      events.page.map(async (event) => {
+        const { _id, _creationTime, ...eventType } =
+          await getEntityByIdInWorkspace(ctx, {
+            id: event.type,
+            table: "eventTypes",
+          });
+
+        const guests = await Promise.all(
+          event.guests.map((guest) =>
+            getEntityByIdInWorkspace(ctx, {
+              id: guest,
+              table: "customers",
+            }),
+          ),
+        );
+
+        return {
+          ...event,
+          ...eventType,
+          guests,
+        };
+      }),
+    );
+
+    return {
+      ...events,
+      page,
+    };
+  },
 });
 
 export const create = mutation({

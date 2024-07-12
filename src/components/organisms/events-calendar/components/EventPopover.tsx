@@ -1,9 +1,3 @@
-import {
-  Cross1Icon,
-  Pencil1Icon,
-  PersonIcon,
-  TrashIcon,
-} from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
 import {
   Root as DialogRoot,
@@ -16,6 +10,7 @@ import {
 import { format } from "date-fns";
 import { useState } from "react";
 
+import { NotebookText, Pencil, TrashIcon, User, X } from "lucide-react";
 import { useEvents } from "../../../../hooks/useEvents";
 import { Event } from "../types";
 
@@ -48,7 +43,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
           <ModalRoot open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
             <ModalTrigger>
               <button className="p-2 rounded-full transition-colors duration-300 hover:bg-gray-100 active:bg-gray-200">
-                <Pencil1Icon className="h-5 w-5" />
+                <Pencil className="h-4 w-4" />
               </button>
             </ModalTrigger>
             <EditEventModal event={event} setIsOpen={setIsEditModalOpen} />
@@ -56,7 +51,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
           <DialogRoot>
             <DialogTrigger asChild>
               <button className="p-2 rounded-full transition-colors duration-300 hover:bg-gray-100 active:bg-gray-200">
-                <TrashIcon className="h-5 w-5" />
+                <TrashIcon className="h-4 w-4" />
               </button>
             </DialogTrigger>
             <Dialog
@@ -71,7 +66,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
           </DialogRoot>
           <Popover.Close asChild>
             <button className="p-2.5 rounded-full transition-colors duration-300 hover:bg-gray-100 active:bg-gray-200">
-              <Cross1Icon className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </button>
           </Popover.Close>
         </header>
@@ -110,16 +105,25 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
 
           {event?.guests?.length > 0 && (
             <>
-              <PersonIcon className="self-start mt-1" />
+              <User className="h-4 w-4 self-start mt-1" />
               <p className="text-sm self-start">
                 {event.guests.length}{" "}
                 {event.guests.length > 1 ? "Guests:" : "Guest:"}
-                <ul className="text-gray-500">
+                <ul className="text-gray-500 mt-2">
                   {event.guests.map((guest) => (
-                    <li key={guest}>{guest}</li>
+                    <li key={guest._id} className="flex flex-col">
+                      <strong>{guest.name}</strong> {guest.email}
+                    </li>
                   ))}
                 </ul>
               </p>
+            </>
+          )}
+
+          {event.notes && (
+            <>
+              <NotebookText className="h-4 w-4 self-start" />
+              <p className="text-sm self-start">{event.notes}</p>
             </>
           )}
         </section>
