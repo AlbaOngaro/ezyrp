@@ -1,6 +1,6 @@
 import { format, isSameDay } from "date-fns";
 
-import { EventItem } from "../components/EventItem";
+import { EventItem } from "../components/event-item";
 import { useCalendarContext } from "../hooks/useCalendarContext";
 import { Indicator } from "../components/Indicator";
 
