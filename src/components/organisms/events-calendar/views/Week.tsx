@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { Fragment } from "react";
 
 import { EventItem } from "../components/event-item";
-import { Indicator } from "../components/Indicator";
+import { Indicator } from "../components/indicator";
 import { useCalendarContext } from "../hooks/useCalendarContext";
 import { useGetDayStartAndEnd } from "../hooks/useGetDayStartAndEnd";
 

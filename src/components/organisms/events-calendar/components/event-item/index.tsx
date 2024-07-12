@@ -5,7 +5,7 @@ import {
   Trigger as PopoverTrigger,
 } from "@radix-ui/react-popover";
 
-import { EventPopover } from "../EventPopover";
+import { EventPopover } from "../event-popover";
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../../utils";
 import { useCalendarContext } from "../../hooks/useCalendarContext";
 import { Event } from "../../types";
