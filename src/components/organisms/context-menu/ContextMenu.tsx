@@ -27,6 +27,7 @@ export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
             case "item":
               return (
                 <RUIContextMenu.Item
+                  disabled={item.disabled}
                   key={i}
                   onClick={item.onClick}
                   className="text-sm flex flex-row justify-between px-4 py-1 text-gray-800 focus-visible:outline-none hover:bg-gray-100 hover:cursor-pointer data-[disabled]:text-gray-400 data-[disabled]:bg-gray-50 data-[disabled]:hover:bg-gray-50"
@@ -53,6 +54,7 @@ export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
             case "checkbox":
               return (
                 <RUIContextMenu.CheckboxItem
+                  disabled={item.disabled}
                   key={i}
                   className="text-sm flex flex-row justify-between items-center px-4 py-1 text-gray-800 focus-visible:outline-none hover:bg-gray-100 data-[disabled]:text-gray-400 data-[disabled]:bg-gray-50 data-[disabled]:hover:bg-gray-50"
                   checked={item.checked}
@@ -103,6 +105,7 @@ export const ContextMenu = forwardRef<HTMLElement, Props>(function ContextMenu(
                       <RUIContextMenu.Item
                         key={`${i}-${y}`}
                         onClick={child.onClick}
+                        disabled={child.disabled}
                         className="text-sm flex flex-row justify-between px-4 py-1 text-gray-800 focus-visible:outline-none hover:bg-gray-100 data-[disabled]:text-gray-400 data-[disabled]:bg-gray-50 data-[disabled]:hover:bg-gray-50"
                       >
                         {child.label}

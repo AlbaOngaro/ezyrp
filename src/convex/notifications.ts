@@ -70,3 +70,17 @@ export const update = mutation({
     });
   },
 });
+
+export const remove = mutation({
+  args: {
+    id: v.id("notifications"),
+  },
+  handler: async (ctx, { id }) => {
+    await getEntityByIdInWorkspace(ctx, {
+      id,
+      table: "notifications",
+    });
+
+    await ctx.db.delete(id);
+  },
+});

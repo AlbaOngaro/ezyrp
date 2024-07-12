@@ -3,23 +3,27 @@ import { ReactNode } from "react";
 
 interface ContextMenuLabelItem {
   type: "label";
+  disabled?: boolean;
   label: ReactNode;
 }
 
 interface ContextMenuBaseItem {
   type: "item";
+  disabled?: boolean;
   label: ReactNode;
   onClick: () => void;
 }
 
 interface ContextMenuGroupItem {
   type: "group";
+  disabled?: boolean;
   label: ReactNode;
   children: ContextMenuBaseItem[];
 }
 
 interface ContextMenuCheckboxItem {
   type: "checkbox";
+  disabled?: boolean;
   label: ReactNode;
   checked?: boolean;
   onCheckedChange?: (state: boolean) => void;
@@ -27,6 +31,7 @@ interface ContextMenuCheckboxItem {
 
 interface ContextMenuRadioItem {
   type: "radio";
+  disabled?: boolean;
   label: ReactNode;
   value: string;
   onValueChange: (value: string) => void;
@@ -42,6 +47,7 @@ interface ContextMenuSeparatorItem {
 
 interface ContextMenuSubItem {
   type: "sub";
+  disabled?: boolean;
   label: ReactNode;
   children: ContextMenuItem[];
 }

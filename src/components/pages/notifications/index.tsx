@@ -8,10 +8,13 @@ import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 import { Button } from "components/atoms/button";
 import { Card } from "components/atoms/card";
-import { cn } from "lib/utils/cn";
+import { Table } from "components/atoms/table";
+import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
+import { Id } from "convex/_generated/dataModel";
 
 export function NotificationsPage() {
   const updateNotification = useMutation(api.notifications.update);
+  const deleteNotification = useMutation(api.notifications.remove);
   const { data: notifications = [] } = useQuery(api.notifications.list);
 
   return (
@@ -41,46 +44,94 @@ export function NotificationsPage() {
         </div>
       </Container>
 
-      <Container as="section" className="flex flex-col gap-4">
-        {notifications.map((notification) => (
-          <Card
-            key={notification._id}
-            className={cn("p-4 grid grid-cols-2", {
-              "bg-gray-50": !notification.read,
-            })}
-          >
-            <div>
-              <strong>{notification.title}</strong>
-              <p>{notification.body}</p>
-              <small>
-                {formatDistance(
-                  new Date(notification._creationTime),
-                  new Date(),
-                )}{" "}
-                ago
-              </small>
-            </div>
-            <div className="flex flex-col justify-center items-end">
-              <Button
-                disabled={notification.read}
-                variant="link"
-                onClick={() =>
-                  updateNotification({ id: notification._id, read: true })
-                }
-              >
-                Mark as read
-              </Button>
-              {notification.url && (
-                <Button
-                  variant="link"
-                  onClick={() => window.open(notification.url, "_blank")}
-                >
-                  View
-                </Button>
-              )}
-            </div>
-          </Card>
-        ))}
+      <Container as="section">
+        <Card>
+          <Table
+            rows={notifications}
+            renderSelectedActions={(rows) => (
+              <DialogRoot>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    data-testid="notifications-table__delete-all-btn"
+                  >
+                    Delete all
+                  </Button>
+                </DialogTrigger>
+
+                <Dialog
+                  data-testid="notifications__delete-dialog"
+                  overlayClassname="!ml-0"
+                  title="Do you really want to delete all the selected notifications?"
+                  onConfirm={() =>
+                    Promise.all(
+                      rows.map((row) =>
+                        deleteNotification({
+                          id: row._id as Id<"notifications">,
+                        }),
+                      ),
+                    )
+                  }
+                  cancelButtonProps={{
+                    // @ts-ignore
+                    "data-testid": "notifications__delete-dialog__cancel-btn",
+                  }}
+                  confirmButtonProps={{
+                    // @ts-ignore
+                    "data-testid": "notifications__delete-dialog__confirm-btn",
+                  }}
+                />
+              </DialogRoot>
+            )}
+            withMultiSelect
+            columns={[
+              {
+                id: "title",
+                field: "title",
+                headerName: " ",
+                render: ({ title, body }) => (
+                  <p className="inline-flex flex-col">
+                    <strong>{title}</strong>
+                    {body}
+                  </p>
+                ),
+              },
+              {
+                id: "createAt",
+                field: "_creationTime",
+                headerName: "Time",
+                render: ({ _creationTime }) =>
+                  formatDistance(new Date(_creationTime), new Date(), {
+                    addSuffix: true,
+                  }),
+              },
+            ]}
+            contextMenuItems={[
+              {
+                type: "item",
+                label: "View",
+                onClick: ({ url }) => {
+                  if (url) {
+                    window.open(url, "_blank");
+                  }
+                },
+              },
+              {
+                type: "item",
+                label: "Mark as read",
+                onClick: async ({ _id, read }) => {
+                  if (read) return;
+
+                  await updateNotification({
+                    id: _id,
+                    read: true,
+                  });
+                },
+              },
+            ]}
+          />
+        </Card>
       </Container>
     </>
   );
