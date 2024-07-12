@@ -148,4 +148,11 @@ export default defineSchema({
     nodes: v.array(v.any()),
     edges: v.array(v.any()),
   }).index("by_workspace", ["workspace"]),
+  notifications: defineTable({
+    workspace: v.string(),
+    title: v.string(),
+    body: v.optional(v.string()),
+    url: v.optional(v.string()),
+    read: v.boolean(),
+  }).index("by_workspace", ["workspace"]),
 });

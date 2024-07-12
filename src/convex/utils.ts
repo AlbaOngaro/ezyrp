@@ -87,12 +87,13 @@ export async function getEntityByIdInWorkspace<
  */
 export async function getEntitiesInWorkspace<
   N extends TableNamesInDataModel<DataModel>,
->(ctx: Ctx, table: N): Promise<Doc<N>[]> {
+>(ctx: Ctx, table: N, order: "asc" | "desc" = "asc"): Promise<Doc<N>[]> {
   const { workspace } = await getAuthData(ctx);
 
   return await ctx.db
     .query(table)
     .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+    .order(order)
     .collect();
 }
 

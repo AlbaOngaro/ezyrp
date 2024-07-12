@@ -132,5 +132,12 @@ export const create = mutation({
       notes,
       type,
     });
+
+    await ctx.db.insert("notifications", {
+      title: "New booking request",
+      body: `New booking request for ${eventtype.name}`,
+      workspace: eventtype.workspace,
+      read: false,
+    });
   },
 });
