@@ -4,7 +4,11 @@ import { filter } from "convex-helpers/server/filter";
 import { parseISO, isWithinInterval, isSameDay } from "date-fns";
 
 import { mutation, query } from "./_generated/server";
-import { getAuthData, getEntityByIdInWorkspace } from "./utils";
+import {
+  getAuthData,
+  getEntitiesInWorkspace,
+  getEntityByIdInWorkspace,
+} from "./utils";
 import { internal } from "./_generated/api";
 
 export const get = query({
@@ -31,13 +35,7 @@ export const get = query({
 
 export const list = query({
   handler: async (ctx) => {
-    const { workspace } = await getAuthData(ctx);
-
-    const events = await ctx.db
-      .query("events")
-      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-      .filter((q) => q.eq(q.field("status"), "approved"))
-      .collect();
+    const events = await getEntitiesInWorkspace(ctx, "events");
 
     return Promise.all(
       events.map((event) =>
@@ -64,8 +62,7 @@ export const search = query({
     const events = await filter(
       ctx.db
         .query("events")
-        .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
-        .filter((q) => q.eq(q.field("status"), "approved")),
+        .withIndex("by_workspace", (q) => q.eq("workspace", workspace)),
       (event) => {
         if (!range) {
           return true;
