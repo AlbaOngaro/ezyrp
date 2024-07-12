@@ -9,7 +9,7 @@ import { EventPopover } from "../EventPopover";
 import { getGridColumn, getGridRow, getIsLongerThan24Hours } from "../../utils";
 import { useCalendarContext } from "../../hooks/useCalendarContext";
 import { Event } from "../../types";
-import { EventItemVariants, eventItemVariants } from "./styles";
+import { eventItemVariants } from "./styles";
 
 import { cn } from "lib/utils/cn";
 
@@ -41,7 +41,7 @@ export const EventItem = forwardRef<HTMLLIElement, Props>(function EventItem(
   const isLongerThan24Hours = getIsLongerThan24Hours(startDate, endDate);
 
   const status = event.status;
-  const variant = event.variant as EventItemVariants["variant"];
+  const variant = event.variant;
 
   return (
     <PopoverRoot>

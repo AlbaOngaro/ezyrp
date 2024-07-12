@@ -9,15 +9,14 @@ import {
 } from "@radix-ui/react-dialog";
 import { format } from "date-fns";
 import { useState } from "react";
-
 import { NotebookText, Pencil, TrashIcon, User, X } from "lucide-react";
-import { useEvents } from "../../../../hooks/useEvents";
-import { Event } from "../types";
 
-import { cn } from "lib/utils/cn";
+import { Event } from "../types";
+import { EventBadge } from "./event-badge";
+
+import { useEvents } from "hooks/useEvents";
 
 import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
-
 import { Dialog } from "components/atoms/dialog";
 
 interface Props {
@@ -72,26 +71,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
         </header>
 
         <section className="grid grid-cols-[24px_1fr] gap-2 items-center">
-          <i
-            className={cn("w-4 h-4 rounded-md", {
-              "bg-red-500": event.variant === "red",
-              "bg-orange-400": event.variant === "orange",
-              "bg-yellow-400": event.variant === "yellow",
-              "bg-lime-500": event.variant === "lime",
-              "bg-green-500": event.variant === "green",
-              "bg-emerald-500": event.variant === "emerald",
-              "bg-teal-500": event.variant === "teal",
-              "bg-cyan-500": event.variant === "cyan",
-              "bg-sky-500": event.variant === "sky",
-              "bg-blue-500": event.variant === "blue",
-              "bg-indigo-400": event.variant === "indigo",
-              "bg-violet-500": event.variant === "violet",
-              "bg-purple-500": event.variant === "purple",
-              "bg-fuchsia-500": event.variant === "fuchsia",
-              "bg-pink-500": event.variant === "pink",
-              "bg-rose-500": event.variant === "rose",
-            })}
-          />
+          <EventBadge variant={event.variant} />
           <h6 className="font-bold">{event.name}</h6>
           <p className="col-start-2 flex flex-row gap-2 text-sm text-gray-500">
             <time dateTime={event.start}>

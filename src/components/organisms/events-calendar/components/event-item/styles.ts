@@ -1,4 +1,4 @@
-import { cva, VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 
 export const eventItemVariants = cva(
   "group flex cursor-pointer leading-5 text-xs p-2",
@@ -120,5 +120,3 @@ export const eventItemVariants = cva(
     },
   },
 );
-
-export type EventItemVariants = VariantProps<typeof eventItemVariants>;

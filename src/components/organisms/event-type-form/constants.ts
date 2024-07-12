@@ -1,7 +1,11 @@
-export const VARIANTS: readonly [string, ...string[]] = [
+import { variant } from "convex/schema";
+
+type Variant = typeof variant.type;
+
+export const VARIANTS: readonly Variant[] = [
   "red",
   "orange",
-  "orange",
+  "yellow",
   "lime",
   "green",
   "emerald",

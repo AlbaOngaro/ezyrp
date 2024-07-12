@@ -60,6 +60,25 @@ export const settings = v.union(
   ),
 );
 
+export const variant = v.union(
+  v.literal("red"),
+  v.literal("orange"),
+  v.literal("yellow"),
+  v.literal("lime"),
+  v.literal("green"),
+  v.literal("emerald"),
+  v.literal("teal"),
+  v.literal("cyan"),
+  v.literal("sky"),
+  v.literal("blue"),
+  v.literal("indigo"),
+  v.literal("violet"),
+  v.literal("purple"),
+  v.literal("fuchsia"),
+  v.literal("pink"),
+  v.literal("rose"),
+);
+
 export default defineSchema({
   settings: defineTable({
     user_id: v.string(),
@@ -99,7 +118,7 @@ export default defineSchema({
   eventTypes: defineTable({
     workspace: v.string(),
     name: v.string(),
-    variant: v.string(),
+    variant,
     description: v.optional(v.string()),
     duration: v.number(),
     user_id: v.string(),

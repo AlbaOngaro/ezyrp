@@ -5,6 +5,7 @@ import {
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
 } from "./utils";
+import { variant } from "./schema";
 
 export const get = query({
   args: {
@@ -27,7 +28,7 @@ export const list = query({
 export const create = mutation({
   args: {
     name: v.string(),
-    variant: v.string(),
+    variant,
     description: v.optional(v.string()),
     duration: v.number(),
     user_id: v.string(),
@@ -50,7 +51,7 @@ export const update = mutation({
   args: {
     id: v.id("eventTypes"),
     name: v.optional(v.string()),
-    variant: v.optional(v.string()),
+    variant: v.optional(variant),
     description: v.optional(v.string()),
     duration: v.optional(v.number()),
     user_id: v.optional(v.string()),
