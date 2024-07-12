@@ -1,5 +1,5 @@
-import { isSameDay, parseISO } from "date-fns";
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 import { mutation, query } from "./_generated/server";
 import {
   getAuthData,
@@ -30,51 +30,30 @@ export const get = query({
   },
 });
 
-export const search = query({
-  args: {
-    month: v.optional(v.number()),
-    day: v.optional(v.string()),
-  },
-  handler: async (ctx, { month, day }) => {
-    if (!month && !day) {
-      throw new ConvexError("Either month or day must be provided");
-    }
-
-    if (!!day) {
-      const events = await getEntitiesInWorkspace(ctx, "events");
-      return events.filter((event) => {
-        console.log(parseISO(event.start), parseISO(day));
-        return isSameDay(parseISO(event.start), parseISO(day));
-      });
-    }
-
-    return [];
-  },
-});
-
 export const list = query({
-  args: {
-    status: v.optional(v.union(v.literal("approved"), v.literal("unapproved"))),
-  },
-  handler: async (ctx, { status }) => {
-    console.log("status", status);
-
+  handler: async (ctx) => {
     const events = await getEntitiesInWorkspace(ctx, "events");
 
     return Promise.all(
-      events
-        .filter((event) => !status || event.status === status)
-        .map((event) =>
-          getEntityByIdInWorkspace(ctx, {
-            id: event.type,
-            table: "eventTypes",
-          }).then(({ _id, _creationTime, ...eventType }) => ({
-            ...event,
-            ...eventType,
-          })),
-        ),
+      events.map((event) =>
+        getEntityByIdInWorkspace(ctx, {
+          id: event.type,
+          table: "eventTypes",
+        }).then(({ _id, _creationTime, ...eventType }) => ({
+          ...event,
+          ...eventType,
+        })),
+      ),
     );
   },
+});
+
+export const search = query({
+  args: {
+    query: v.optional(v.string()),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (_ctx) => {},
 });
 
 export const create = mutation({

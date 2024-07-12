@@ -5,9 +5,7 @@ import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 
 export function CalendarContents() {
-  const { data: events = [] } = useQuery(api.events.list, {
-    status: "approved",
-  });
+  const { data: events = [] } = useQuery(api.events.list);
 
   return (
     <Container
