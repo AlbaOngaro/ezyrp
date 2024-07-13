@@ -59,6 +59,7 @@ export function SettingsPage() {
               onClick={() => {
                 window.location.hash = item.value;
               }}
+              data-testid="settings-page__tab"
             >
               {item.label}
             </Tabs.Trigger>
