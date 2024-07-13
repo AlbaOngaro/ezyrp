@@ -3,6 +3,8 @@ import {
   GenericQueryCtx,
   TableNamesInDataModel,
   UserIdentity,
+  PaginationOptions,
+  PaginationResult,
 } from "convex/server";
 import { ConvexError } from "convex/values";
 import { v4 as uuid, validate } from "uuid";
@@ -85,13 +87,32 @@ export async function getEntityByIdInWorkspace<
  */
 export async function getEntitiesInWorkspace<
   N extends TableNamesInDataModel<DataModel>,
->(ctx: Ctx, table: N): Promise<Doc<N>[]> {
+>(ctx: Ctx, table: N, order: "asc" | "desc" = "asc"): Promise<Doc<N>[]> {
   const { workspace } = await getAuthData(ctx);
 
   return await ctx.db
     .query(table)
     .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+    .order(order)
     .collect();
+}
+
+/**
+ * Gets all entities of the required type in the current auth workspace paginated.
+ */
+export async function getPaginatedEntitiesInWorkspace<
+  N extends TableNamesInDataModel<DataModel>,
+>(
+  ctx: Ctx,
+  table: N,
+  paginationOpts: PaginationOptions,
+): Promise<PaginationResult<Doc<N>>> {
+  const { workspace } = await getAuthData(ctx);
+
+  return await ctx.db
+    .query(table)
+    .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+    .paginate(paginationOpts);
 }
 
 export function getValidUuid(): string {

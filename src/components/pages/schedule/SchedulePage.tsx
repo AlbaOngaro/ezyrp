@@ -1,31 +1,35 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
-
 import { CalendarContents } from "./calendar-contents";
 import { EventTypesContents } from "./eventTypes-contents";
-import { EventsTable } from "./events-table";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
-const nav = [
-  {
-    value: "events",
-    label: "Events",
-    content: <EventsTable />,
-  },
-  {
-    value: "calendar",
-    label: "Calendar",
-    content: <CalendarContents />,
-  },
-  {
-    value: "event-types",
-    label: "Event Types",
-    content: <EventTypesContents />,
-  },
-];
+export type Props = {
+  selected: string | null;
+};
 
-export function SchedulePage() {
+export function SchedulePage({ selected }: Props) {
+  const nav = useMemo(
+    () => [
+      {
+        value: "calendar",
+        label: "Calendar",
+        content: (
+          <CalendarContents
+            selected={selected ? new Date(selected) : new Date()}
+          />
+        ),
+      },
+      {
+        value: "event-types",
+        label: "Event Types",
+        content: <EventTypesContents />,
+      },
+    ],
+    [selected],
+  );
+
   return (
     <Tabs.Root defaultValue={nav[0].value}>
       <Tabs.List

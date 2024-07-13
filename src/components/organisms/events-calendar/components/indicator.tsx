@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 import { isSameDay } from "date-fns";
-import { convertRemToPx } from "../../../../lib/utils/convertRemToPx";
+import { useSearchParams } from "next/navigation";
+
 import { useCalendarContext } from "../hooks/useCalendarContext";
+
+import { convertRemToPx } from "lib/utils/convertRemToPx";
 
 function getIndicatorTopValue(): string {
   const HALF_HOUR_CELL = 3.5; // cells are set to 3.5rem
@@ -16,6 +19,7 @@ export function Indicator() {
   const {
     state: { view, selected },
   } = useCalendarContext();
+  const searchParams = useSearchParams();
 
   const indicator = useRef<HTMLHRElement | null>(null);
 
@@ -28,10 +32,13 @@ export function Indicator() {
       ).toString();
       indicator.current.style.gridColumnEnd = `span 1`;
       indicator.current.style.top = getIndicatorTopValue();
-      indicator.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+
+      if (!searchParams.has("eid")) {
+        indicator.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
     }
 
     const it = setInterval(() => {
@@ -43,6 +50,7 @@ export function Indicator() {
     return () => {
       clearInterval(it);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view]);
 
   if (!isSameDay(new Date(), selected)) {

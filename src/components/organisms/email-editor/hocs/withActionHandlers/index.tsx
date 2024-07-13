@@ -4,6 +4,7 @@ import {
   PropsWithoutRef,
   RefAttributes,
   forwardRef,
+  useState,
 } from "react";
 import { ReactEditor, RenderElementProps, useSlateStatic } from "slate-react";
 import { useSortable } from "@dnd-kit/sortable";
@@ -16,7 +17,7 @@ import { Form } from "@radix-ui/react-form";
 
 import { useGetSlatePath } from "../../hooks/useGetSlatePath";
 import { useGetIsSelected } from "../../hooks/useGetIsSelected";
-import { useEditorConfig } from "../../providers/config";
+import { EditorConfigProvider, useEditorConfig } from "../../providers/config";
 import { PropertiesForm } from "./poperties-form";
 import { Options } from "./types";
 
@@ -43,6 +44,8 @@ export function withActionHandlers<
     const isReadOnly = ReactEditor.isReadOnly(editor);
     const { dnd, actions } = useEditorConfig();
     const path = useGetSlatePath(props.element);
+
+    const [toolbar, setToolbar] = useState(true);
 
     const {
       attributes,
@@ -77,7 +80,9 @@ export function withActionHandlers<
           {...attributes}
         >
           <PopoverAnchor asChild>
-            <Component {...props} ref={setNodeRef} />
+            <EditorConfigProvider toolbar={toolbar}>
+              <Component {...props} ref={setNodeRef} />
+            </EditorConfigProvider>
           </PopoverAnchor>
 
           <div
@@ -147,6 +152,7 @@ export function withActionHandlers<
                   className="w-6 h-6 z-10"
                   onClick={(e) => {
                     e.stopPropagation();
+                    setToolbar(false);
                   }}
                   disabled={
                     editor.children.length === 1 && Path.equals(path, [0])
@@ -159,7 +165,11 @@ export function withActionHandlers<
               <Dialog
                 overlayClassname="!ml-0"
                 title="Do you really want to remove this item?"
-                onConfirm={() => Transforms.removeNodes(editor, { at: path })}
+                onConfirm={() => {
+                  Transforms.removeNodes(editor, { at: path });
+                  setToolbar(true);
+                }}
+                onCancel={() => setToolbar(true)}
               />
             </DialogRoot>
           </div>

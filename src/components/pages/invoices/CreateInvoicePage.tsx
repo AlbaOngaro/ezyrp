@@ -7,16 +7,16 @@ import { Container } from "components/atoms/container";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
-import { useCustomers } from "hooks/useCustomers";
 import { useInvoices } from "hooks/useInvoices";
 import { InvoiceForm } from "components/organisms/invoice-form/InvoiceForm";
 import { api } from "convex/_generated/api";
 import { Breadcrumb } from "components/atoms/breadcrumb";
+import { useQuery } from "lib/hooks/useQuery";
 
 export function CreateInvoicePage() {
   const router = useRouter();
   const invoices = useInvoices();
-  const customers = useCustomers();
+  const { data: customers = [] } = useQuery(api.customers.list);
 
   const { handleSubmit, register, control, watch, ...methods } = useForm<
     FunctionReturnType<typeof api.invoices.get>
@@ -24,7 +24,7 @@ export function CreateInvoicePage() {
     defaultValues: {
       description: "",
       status: "due",
-      customer: customers?.data?.at(0),
+      customer: customers[0],
       items: [],
       due: new Date().toISOString(),
       emitted: new Date().toISOString(),

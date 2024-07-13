@@ -21,7 +21,7 @@ export function DraggableImg({ disabled }: Props) {
     <DraggableWrapper id={DRAGGABLE_IMG_ID} disabled={disabled} data={DATA}>
       {({ ref, transform, listeners, attributes }) => (
         <Card
-          className="p-2 aspect-square w-full max-w-[12rem] flex flex-col justify-center items-center"
+          className="bg-gray-100 rounded-sm p-4 flex flex-col gap-2 justify-start items-start cursor-pointer"
           ref={ref}
           style={{
             transform,
@@ -30,7 +30,7 @@ export function DraggableImg({ disabled }: Props) {
           {...attributes}
         >
           {/* eslint-disable-next-line */}
-          <Image className="w-12 h-12" />
+          <Image className="h-6 w-6" />
           Image
         </Card>
       )}

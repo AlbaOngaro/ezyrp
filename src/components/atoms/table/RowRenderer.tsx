@@ -10,17 +10,13 @@ import { cn } from "lib/utils/cn";
 import { Checkbox } from "components/atoms/checkbox";
 
 export function TableRowRenderer<R extends Row = Row>({
-  withContextMenu,
   withMultiSelect,
   selectedRows,
   setSelectedRows,
   columns,
   row,
   contextMenuItems = [],
-}: Pick<
-  Props<R>,
-  "withContextMenu" | "withMultiSelect" | "columns" | "contextMenuItems"
-> & {
+}: Pick<Props<R>, "withMultiSelect" | "columns" | "contextMenuItems"> & {
   row: R;
   selectedRows: R[];
   setSelectedRows: (rows: R[]) => void;
@@ -28,6 +24,8 @@ export function TableRowRenderer<R extends Row = Row>({
   const tr = useRef<HTMLTableRowElement | null>(null);
   const button = useRef<HTMLButtonElement | null>(null);
   const selected = selectedRows.some((r) => r._id === row._id);
+
+  const withContextMenu = !!contextMenuItems && contextMenuItems.length > 0;
 
   return (
     <Root>

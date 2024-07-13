@@ -1,5 +1,7 @@
-import { v } from "convex/values";
-import { GenericMutationCtx } from "convex/server";
+import { ConvexError, v } from "convex/values";
+import { GenericMutationCtx, paginationOptsValidator } from "convex/server";
+import { filter } from "convex-helpers/server/filter";
+
 import { internalQuery, mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
 import {
@@ -45,7 +47,13 @@ export const upsert = async (
       birthday,
     });
 
-    return await ctx.db.get(id);
+    const newC = await ctx.db.get(id);
+
+    if (!newC) {
+      throw new ConvexError("Failed to create customer");
+    }
+
+    return newC;
   }
 
   await ctx.db.patch(customer._id, {
@@ -60,7 +68,13 @@ export const upsert = async (
     birthday: birthday || customer.birthday,
   });
 
-  return await ctx.db.get(customer._id);
+  const newC = await ctx.db.get(customer._id);
+
+  if (!newC) {
+    throw new ConvexError("Failed to create customer");
+  }
+
+  return newC;
 };
 
 export const get = query({
@@ -90,6 +104,25 @@ export const listInternal = internalQuery({
 export const list = query({
   handler: async (ctx) => {
     return await getEntitiesInWorkspace(ctx, "customers");
+  },
+});
+
+export const search = query({
+  args: {
+    query: v.optional(v.string()),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { query = "", paginationOpts }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    return await filter(
+      ctx.db
+        .query("customers")
+        .withIndex("by_workspace", (q) => q.eq("workspace", workspace)),
+      (customer) =>
+        customer.name.toLowerCase().includes(query.toLowerCase()) ||
+        customer.email.toLowerCase().includes(query.toLowerCase()),
+    ).paginate(paginationOpts);
   },
 });
 

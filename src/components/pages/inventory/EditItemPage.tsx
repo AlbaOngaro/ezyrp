@@ -56,8 +56,14 @@ export function EditItemPage({ id }: Props) {
     onError,
   ) =>
     handleSubmit(async (data) => {
-      await items.update(data);
-      onSuccess(data);
+      await items.update({
+        ...data,
+        price: (data.price || 0) * 100,
+      });
+      onSuccess({
+        ...data,
+        price: (data.price || 0) * 100,
+      });
       return router.push("/inventory");
     }, onError);
 

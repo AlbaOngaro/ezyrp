@@ -1,12 +1,14 @@
 import { Dispatch, ReactNode, createContext, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
+import { getDaysInMonth } from "date-fns";
 import { View } from "./types";
 import {
   State,
   defaultInitialState,
   Action,
   useCalendarReducer,
+  getInitialStateForSelectedDate,
 } from "./hooks/useCalendarReducer";
 
 import * as MonthView from "./views/Month";
@@ -34,6 +36,8 @@ interface Props {
   onToday?: () => void;
   onNext?: () => void;
   onChange?: (date: Date) => void;
+  onViewChange?: (start: Date, end: Date) => void;
+  selected?: Date;
 }
 
 const views = [
@@ -67,8 +71,12 @@ export function EventsCalendar({
   onToday,
   onNext,
   onChange,
+  onViewChange,
+  selected: initialSelected = new Date(),
 }: Props) {
-  const [{ selected, days, view }, dispatch] = useCalendarReducer();
+  const [{ selected, days, view }, dispatch] = useCalendarReducer(
+    getInitialStateForSelectedDate(initialSelected),
+  );
 
   useEffect(() => {
     if (events) {
@@ -88,6 +96,40 @@ export function EventsCalendar({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
+
+  useEffect(() => {
+    if (typeof onViewChange === "function") {
+      switch (view) {
+        case "day":
+          onViewChange(selected, selected);
+          break;
+        case "week":
+          onViewChange(days[0].date, days[days.length - 1].date);
+          break;
+        case "month": {
+          const total = getDaysInMonth(selected);
+          const year = selected.getFullYear();
+          const month = selected.getMonth();
+
+          const start = new Date(year, month, 1);
+          const end = new Date(year, month, total);
+
+          onViewChange(start, end);
+          break;
+        }
+        case "year": {
+          const year = selected.getFullYear();
+
+          const start = new Date(year, 0, 1);
+          const end = new Date(year, 11, 31);
+
+          onViewChange(start, end);
+          break;
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, days]);
 
   return (
     <div className={cn("lg:flex lg:h-full lg:flex-col", className)}>
@@ -181,11 +223,11 @@ export function EventsCalendar({
                   value: view,
                 }}
                 options={views}
-                onChange={(value) =>
+                onChange={(option) =>
                   dispatch({
                     type: "SET_VIEW",
                     payload: {
-                      view: value?.value as View,
+                      view: option?.value as View,
                     },
                   })
                 }

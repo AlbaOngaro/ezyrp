@@ -2,7 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { render, waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { useAction, useMutation } from "./__mocks__/convex/react";
+import {
+  useAction,
+  useMutation,
+  usePaginatedQuery,
+} from "./__mocks__/convex/react";
 import { convexMockServer } from "./__mocks__/convex/server";
 
 import { useUser } from "./__mocks__/@clerk/clerk-react";
@@ -16,8 +20,9 @@ vi.mock("@clerk/clerk-react", () => ({
 }));
 
 vi.mock("convex/react", () => ({
-  useMutation,
   useAction,
+  useMutation,
+  usePaginatedQuery,
 }));
 
 vi.mock("lib/hooks/useQuery");

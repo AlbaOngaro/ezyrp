@@ -8,8 +8,9 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { cn } from "lib/utils/cn";
+import { eventTypeItemVariants } from "./styles";
 
+import { cn } from "lib/utils/cn";
 import { Checkbox } from "components/atoms/checkbox";
 import { ContextMenu } from "components/organisms/context-menu/ContextMenu";
 import { Doc } from "convex/_generated/dataModel";
@@ -40,24 +41,7 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
 
   return (
     <article
-      className={cn("bg-white p-2 shadow-md rounded-md border-t-4", {
-        "border-red-400": event.variant === "red",
-        "border-orange-400": event.variant === "orange",
-        "border-yellow-400": event.variant === "yellow",
-        "border-lime-400": event.variant === "lime",
-        "border-green-400": event.variant === "green",
-        "border-emerald-400": event.variant === "emerald",
-        "border-teal-400": event.variant === "teal",
-        "border-cyan-400": event.variant === "cyan",
-        "border-sky-400": event.variant === "sky",
-        "border-blue-400": event.variant === "blue",
-        "border-indigo-400": event.variant === "indigo",
-        "border-violet-400": event.variant === "violet",
-        "border-purple-400": event.variant === "purple",
-        "border-fuchsia-400": event.variant === "fuchsia",
-        "border-pink-400": event.variant === "pink",
-        "border-rose-400": event.variant === "rose",
-      })}
+      className={cn(eventTypeItemVariants({ variant: event.variant }))}
       key={event._id}
     >
       <header className="relative py-2 flex items-end justify-between">

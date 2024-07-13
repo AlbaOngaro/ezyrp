@@ -1,7 +1,9 @@
 import { FunctionReturnType } from "convex/server";
 import { api } from "convex/_generated/api";
 
-export type Event = FunctionReturnType<typeof api.events.list>[number];
+export type Event = FunctionReturnType<
+  typeof api.events.search
+>["page"][number];
 
 export type Day = {
   date: Date;

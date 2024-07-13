@@ -83,9 +83,11 @@ const Text = forwardRef<HTMLParagraphElement, Props>(function Text(
 });
 
 const EnhancedText = withInsertPreview(
-  withToolbar(withActionHandlers(Text), {
-    renderToolbar,
-  }),
+  withActionHandlers(
+    withToolbar(Text, {
+      renderToolbar,
+    }),
+  ),
 );
 
 export { EnhancedText as Text };

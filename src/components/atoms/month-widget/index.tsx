@@ -145,7 +145,7 @@ export function MonthWidget({
                 !day.isCurrentMonth &&
                 !day.isToday &&
                 "text-gray-400",
-              day.isToday && !day.isSelected && "text-orange-500",
+              day.isToday && !day.isSelected && "text-blue-500",
               dayIdx === 0 && "rounded-tl-lg",
               dayIdx === 6 && "rounded-tr-lg",
               dayIdx === days.length - 7 && "rounded-bl-lg",

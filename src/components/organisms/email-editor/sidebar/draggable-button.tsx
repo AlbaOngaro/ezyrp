@@ -3,7 +3,6 @@ import { PropsWithChildren } from "react";
 import { RectangleHorizontal } from "lucide-react";
 import { DraggableWrapper } from "./draggable-wrapper";
 import { ButtonElement } from "types/slate";
-import { Card } from "components/atoms/card";
 
 type Props = PropsWithChildren<{
   disabled?: boolean;
@@ -31,8 +30,8 @@ export function DraggableButton({ disabled }: Props) {
   return (
     <DraggableWrapper id={DRAGGABLE_BUTTON_ID} disabled={disabled} data={DATA}>
       {({ transform, attributes, listeners, ref }) => (
-        <Card
-          className="p-2 aspect-square w-full max-w-[12rem] flex flex-col justify-center items-center"
+        <div
+          className="bg-gray-100 rounded-sm p-4 flex flex-col gap-2 justify-start items-start cursor-pointer"
           ref={ref}
           style={{
             transform,
@@ -40,9 +39,9 @@ export function DraggableButton({ disabled }: Props) {
           {...listeners}
           {...attributes}
         >
-          <RectangleHorizontal className="w-12 h-12" />
+          <RectangleHorizontal className="h-6 w-6" />
           Button
-        </Card>
+        </div>
       )}
     </DraggableWrapper>
   );

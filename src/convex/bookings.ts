@@ -120,7 +120,7 @@ export const create = mutation({
       args.guests.map((guest) => upsert(ctx, guest)),
     );
 
-    await ctx.db.insert("events", {
+    const eid = await ctx.db.insert("events", {
       status: "unapproved",
       organizer: eventtype.user_id,
       workspace: eventtype.workspace,
@@ -131,6 +131,14 @@ export const create = mutation({
         .filter((guest) => !!guest) as Id<"customers">[],
       notes,
       type,
+    });
+
+    await ctx.db.insert("notifications", {
+      title: "New booking request",
+      body: `New booking request for ${eventtype.name}`,
+      workspace: eventtype.workspace,
+      read: false,
+      url: `/schedule?${new URLSearchParams({ eid }).toString()}`,
     });
   },
 });

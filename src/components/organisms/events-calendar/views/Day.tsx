@@ -1,8 +1,8 @@
 import { format, isSameDay } from "date-fns";
 
-import { EventItem } from "../components/EventItem";
+import { EventItem } from "../components/event-item";
 import { useCalendarContext } from "../hooks/useCalendarContext";
-import { Indicator } from "../components/Indicator";
+import { Indicator } from "../components/indicator";
 
 import { useGetDayStartAndEnd } from "../hooks/useGetDayStartAndEnd";
 import { MonthWidget } from "components/atoms/month-widget";
@@ -36,7 +36,7 @@ export function Body() {
             className="flex flex-col items-center pb-1.5 pt-3"
           >
             <span>T</span>
-            <span className="mt-3 flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold text-orange-500">
+            <span className="mt-3 flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold text-blue-500">
               20
             </span>
           </button>

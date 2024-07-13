@@ -16,7 +16,7 @@ describe("Events", () => {
     });
 
     const event_type_1 = await tAuth1.mutation(api.eventTypes.create, {
-      variant: "test",
+      variant: "red",
       name: "Event Type 1",
       user_id: "user1",
       duration: 30,
@@ -46,7 +46,7 @@ describe("Events", () => {
     });
 
     const event_type_2 = await tAuth2.mutation(api.eventTypes.create, {
-      variant: "test",
+      variant: "red",
       name: "Event Type 2",
       user_id: "user1",
       duration: 30,

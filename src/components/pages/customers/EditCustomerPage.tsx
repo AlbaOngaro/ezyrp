@@ -2,13 +2,12 @@ import { ReactElement } from "react";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { useMutation } from "convex/react";
 
 import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-
 import { CustomerForm } from "components/organisms/customer-form/CustomerForm";
 
-import { useCustomers } from "hooks/useCustomers";
 import { useFileUpload } from "hooks/useFileUpload";
 import { Id } from "convex/_generated/dataModel";
 import { useLazyQuery } from "lib/hooks/useLazyQuery";
@@ -23,8 +22,8 @@ type Props = {
 
 export function EditCustomerPage({ id }: Props) {
   const router = useRouter();
-  const customers = useCustomers();
   const [getCustomer] = useLazyQuery(api.customers.get);
+  const updateCustomer = useMutation(api.customers.update);
   const handleFileUpload = useFileUpload();
 
   const { handleSubmit, ...methods } = useForm<UpdateCustomerFn["_args"]>({
@@ -65,7 +64,7 @@ export function EditCustomerPage({ id }: Props) {
         try {
           const { storageUrl } = await handleFileUpload(file);
           if (storageUrl) {
-            await customers.update({
+            await updateCustomer({
               ...data,
               photoUrl: storageUrl,
             });
@@ -79,7 +78,7 @@ export function EditCustomerPage({ id }: Props) {
         }
       }
 
-      await customers.update(data);
+      await updateCustomer(data);
 
       onSuccess(data);
 

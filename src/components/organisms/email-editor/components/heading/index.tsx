@@ -52,9 +52,11 @@ const Heading = forwardRef<HTMLHeadingElement, Props>(function Heading(
 });
 
 const EnhancedHeading = withInsertPreview(
-  withToolbar(withActionHandlers(Heading), {
-    renderToolbar,
-  }),
+  withActionHandlers(
+    withToolbar(Heading, {
+      renderToolbar,
+    }),
+  ),
 );
 
 export { EnhancedHeading as Heading };

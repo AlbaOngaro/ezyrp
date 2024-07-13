@@ -32,7 +32,6 @@ export function WorkflowsTable() {
           render: (invoice) => <Badge>{invoice.status}</Badge>,
         },
       ]}
-      withContextMenu
       contextMenuItems={contextMenuItems}
       withMultiSelect
       renderSelectedActions={(rows) => (

@@ -1,9 +1,3 @@
-import {
-  Cross1Icon,
-  Pencil1Icon,
-  PersonIcon,
-  TrashIcon,
-} from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
 import {
   Root as DialogRoot,
@@ -15,14 +9,14 @@ import {
 } from "@radix-ui/react-dialog";
 import { format } from "date-fns";
 import { useState } from "react";
+import { NotebookText, Pencil, TrashIcon, User, X } from "lucide-react";
 
-import { useEvents } from "../../../../hooks/useEvents";
 import { Event } from "../types";
+import { EventBadge } from "./event-badge";
 
-import { cn } from "lib/utils/cn";
+import { useEvents } from "hooks/useEvents";
 
 import { EditEventModal } from "components/organisms/edit-event-modal/EditEventModal";
-
 import { Dialog } from "components/atoms/dialog";
 
 interface Props {
@@ -43,12 +37,13 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
         sideOffset={8}
         side={side}
         align={align}
+        collisionPadding={32}
       >
         <header className="flex flex-row justify-end gap-2">
           <ModalRoot open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
             <ModalTrigger>
               <button className="p-2 rounded-full transition-colors duration-300 hover:bg-gray-100 active:bg-gray-200">
-                <Pencil1Icon className="h-5 w-5" />
+                <Pencil className="h-4 w-4" />
               </button>
             </ModalTrigger>
             <EditEventModal event={event} setIsOpen={setIsEditModalOpen} />
@@ -56,7 +51,7 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
           <DialogRoot>
             <DialogTrigger asChild>
               <button className="p-2 rounded-full transition-colors duration-300 hover:bg-gray-100 active:bg-gray-200">
-                <TrashIcon className="h-5 w-5" />
+                <TrashIcon className="h-4 w-4" />
               </button>
             </DialogTrigger>
             <Dialog
@@ -71,32 +66,13 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
           </DialogRoot>
           <Popover.Close asChild>
             <button className="p-2.5 rounded-full transition-colors duration-300 hover:bg-gray-100 active:bg-gray-200">
-              <Cross1Icon className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </button>
           </Popover.Close>
         </header>
 
         <section className="grid grid-cols-[24px_1fr] gap-2 items-center">
-          <i
-            className={cn("w-4 h-4 rounded-md", {
-              "bg-red-500": event.variant === "red",
-              "bg-orange-400": event.variant === "orange",
-              "bg-yellow-400": event.variant === "yellow",
-              "bg-lime-500": event.variant === "lime",
-              "bg-green-500": event.variant === "green",
-              "bg-emerald-500": event.variant === "emerald",
-              "bg-teal-500": event.variant === "teal",
-              "bg-cyan-500": event.variant === "cyan",
-              "bg-sky-500": event.variant === "sky",
-              "bg-blue-500": event.variant === "blue",
-              "bg-indigo-400": event.variant === "indigo",
-              "bg-violet-500": event.variant === "violet",
-              "bg-purple-500": event.variant === "purple",
-              "bg-fuchsia-500": event.variant === "fuchsia",
-              "bg-pink-500": event.variant === "pink",
-              "bg-rose-500": event.variant === "rose",
-            })}
-          />
+          <EventBadge variant={event.variant} />
           <h6 className="font-bold">{event.name}</h6>
           <p className="col-start-2 flex flex-row gap-2 text-sm text-gray-500">
             <time dateTime={event.start}>
@@ -110,16 +86,25 @@ export function EventPopover({ event, side = "left", align = "start" }: Props) {
 
           {event?.guests?.length > 0 && (
             <>
-              <PersonIcon className="self-start mt-1" />
+              <User className="h-4 w-4 self-start mt-1" />
               <p className="text-sm self-start">
                 {event.guests.length}{" "}
                 {event.guests.length > 1 ? "Guests:" : "Guest:"}
-                <ul className="text-gray-500">
+                <ul className="text-gray-500 mt-2">
                   {event.guests.map((guest) => (
-                    <li key={guest}>{guest}</li>
+                    <li key={guest._id} className="flex flex-col">
+                      <strong>{guest.name}</strong> {guest.email}
+                    </li>
                   ))}
                 </ul>
               </p>
+            </>
+          )}
+
+          {event.notes && (
+            <>
+              <NotebookText className="h-4 w-4 self-start" />
+              <p className="text-sm self-start">{event.notes}</p>
             </>
           )}
         </section>

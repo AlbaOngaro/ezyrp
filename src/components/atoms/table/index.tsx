@@ -5,6 +5,7 @@ import {
   MinusIcon,
 } from "@radix-ui/react-icons";
 
+import { Skeleton } from "../skeleton";
 import { Props, Row, Sort } from "./types";
 import { TableRowRenderer } from "./RowRenderer";
 import { Pagination } from "./Pagination";
@@ -14,13 +15,11 @@ import { Checkbox } from "components/atoms/checkbox";
 export function Table<R extends Row = Row>({
   className,
   columns,
-  rows,
+  rows: initialRows,
   withMultiSelect,
   onSelect,
   renderSelectedActions,
-  withContextMenu,
   contextMenuItems,
-  withPagination,
   pagination,
   loading,
 }: Props<R>) {
@@ -29,6 +28,17 @@ export function Table<R extends Row = Row>({
   const [checked, setChecked] = useState(false);
   const [selectedRows, _setSelectedRows] = useState<R[]>([]);
   const [sort, setSort] = useState<Sort<R> | null>(null);
+  const [page, setPage] = useState(1);
+
+  const withContextMenu = !!contextMenuItems && contextMenuItems.length > 0;
+  const withPagination = !!pagination;
+
+  const rows = initialRows.slice(
+    withPagination ? (page - 1) * pagination.pageSize : 0,
+    withPagination
+      ? (page - 1) * pagination.pageSize + pagination.pageSize
+      : undefined,
+  );
 
   useEffect(() => {
     if (selectedRows.length > 0 && selectedRows.length < rows.length) {
@@ -131,58 +141,76 @@ export function Table<R extends Row = Row>({
         </thead>
 
         <tbody
-          className={cn("divide-y divide-gray-200 bg-white", {
-            "relative after:content-[''] after:bg-[url('/images/loader.svg')] after:bg-no-repeat after:bg-center after:bg-[size:30px_30px] after:absolute after:flex after:justify-center after:items-center after:w-full after:h-full after:inset-0 after:bg-white/70":
-              loading,
-          })}
+          className="divide-y divide-gray-200 bg-white"
           data-testid={rows.length === 0 ? "table-body--empty" : "table-body"}
         >
-          {rows
-            .sort((a, b) => {
-              if (!sort) {
-                return 0;
-              }
+          {loading ? (
+            <>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <tr key={i}>
+                  {withMultiSelect && <td />}
+                  {columns.map((col) => (
+                    <td key={col.id} className="py-4 px-2">
+                      <Skeleton as="p" className="h-4 w-full" />
+                    </td>
+                  ))}
+                  {withContextMenu && <td />}
+                </tr>
+              ))}
+            </>
+          ) : (
+            <>
+              {rows
+                .sort((a, b) => {
+                  if (!sort) {
+                    return 0;
+                  }
 
-              if (
-                typeof a[sort.field] === "string" &&
-                typeof b[sort.field] === "string"
-              ) {
-                if (sort.order === "ASC") {
-                  return (a[sort.field] as string).localeCompare(
-                    b[sort.field] as string,
-                  );
-                }
+                  if (
+                    typeof a[sort.field] === "string" &&
+                    typeof b[sort.field] === "string"
+                  ) {
+                    if (sort.order === "ASC") {
+                      return (a[sort.field] as string).localeCompare(
+                        b[sort.field] as string,
+                      );
+                    }
 
-                return (b[sort.field] as string).localeCompare(
-                  a[sort.field] as string,
-                );
-              }
+                    return (b[sort.field] as string).localeCompare(
+                      a[sort.field] as string,
+                    );
+                  }
 
-              if (
-                typeof a[sort.field] === "number" &&
-                typeof b[sort.field] === "number"
-              ) {
-                if (sort.order === "ASC") {
-                  return (a[sort.field] as number) - (b[sort.field] as number);
-                }
+                  if (
+                    typeof a[sort.field] === "number" &&
+                    typeof b[sort.field] === "number"
+                  ) {
+                    if (sort.order === "ASC") {
+                      return (
+                        (a[sort.field] as number) - (b[sort.field] as number)
+                      );
+                    }
 
-                return (b[sort.field] as number) - (a[sort.field] as number);
-              }
+                    return (
+                      (b[sort.field] as number) - (a[sort.field] as number)
+                    );
+                  }
 
-              return 0;
-            })
-            .map((row) => (
-              <TableRowRenderer
-                key={row._id}
-                row={row}
-                withContextMenu={withContextMenu}
-                withMultiSelect={withMultiSelect}
-                columns={columns}
-                selectedRows={selectedRows}
-                setSelectedRows={setSelectedRows}
-                contextMenuItems={contextMenuItems}
-              />
-            ))}
+                  return 0;
+                })
+                .map((row) => (
+                  <TableRowRenderer
+                    key={row._id}
+                    row={row}
+                    withMultiSelect={withMultiSelect}
+                    columns={columns}
+                    selectedRows={selectedRows}
+                    setSelectedRows={setSelectedRows}
+                    contextMenuItems={contextMenuItems}
+                  />
+                ))}
+            </>
+          )}
         </tbody>
 
         <tfoot>
@@ -193,25 +221,23 @@ export function Table<R extends Row = Row>({
                 aria-label="Pagination"
               >
                 <div className="hidden sm:block">
-                  {withMultiSelect && selectedRows.length > 0 ? (
+                  {withMultiSelect && selectedRows.length > 0 && (
                     <p className="text-sm text-gray-700">
                       <span className="font-medium">{selectedRows.length}</span>{" "}
                       rows elected
-                    </p>
-                  ) : (
-                    <p className="text-sm text-gray-700">
-                      Showing <strong>{rows.length}</strong> of{" "}
-                      {pagination?.total || rows.length} results
                     </p>
                   )}
                 </div>
 
                 {withPagination && (
                   <Pagination
-                    initialPage={pagination?.initialPage}
-                    pageSize={pagination?.pageSize}
-                    total={pagination?.total || 0}
-                    onPageChange={pagination?.onPageChange || console.debug}
+                    page={page}
+                    onPrevClick={(p) => setPage(p)}
+                    onNextClick={async (p) => {
+                      setPage(p);
+                      pagination.loadMore();
+                    }}
+                    status={pagination.status}
                   />
                 )}
               </nav>

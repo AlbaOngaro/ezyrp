@@ -108,11 +108,17 @@ export function generateWeek(base: Date): Day[] {
   }));
 }
 
-export const defaultInitialState: State = {
-  selected: new Date(),
-  view: "week",
-  days: generateWeek(new Date()),
-};
+export function getInitialStateForSelectedDate(selected: Date): State {
+  return {
+    selected,
+    view: "week",
+    days: generateWeek(selected),
+  };
+}
+
+export const defaultInitialState: State = getInitialStateForSelectedDate(
+  new Date(),
+);
 
 const reducer: Reducer<State, Action> = (
   state = defaultInitialState,

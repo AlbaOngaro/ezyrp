@@ -152,8 +152,11 @@ const Img = forwardRef<any, Props>(function Img(
   );
 });
 
-const EnhancedImg = withToolbar(
-  withActionHandlers(Img, {
+const EnhancedImg = withActionHandlers(
+  withToolbar(Img, {
+    renderToolbar,
+  }),
+  {
     editableFields: {
       height: {
         type: "custom",
@@ -162,9 +165,6 @@ const EnhancedImg = withToolbar(
         ),
       },
     },
-  }),
-  {
-    renderToolbar,
   },
 );
 

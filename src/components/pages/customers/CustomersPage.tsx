@@ -3,10 +3,10 @@ import { ReactElement } from "react";
 import { useRouter } from "next/router";
 
 import { CustomersTable } from "../../organisms/customers-table/CustomersTable";
+
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { Heading } from "components/atoms/heading";
-import { Card } from "components/atoms/card";
 import { Button } from "components/atoms/button";
 
 export function CustomersPage() {
@@ -28,9 +28,7 @@ export function CustomersPage() {
       </Container>
 
       <Container as="section">
-        <Card>
-          <CustomersTable />
-        </Card>
+        <CustomersTable />
       </Container>
     </>
   );

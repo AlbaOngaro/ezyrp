@@ -1,4 +1,6 @@
 import { ConvexError, v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
+import { filter } from "convex-helpers/server/filter";
 import { mutation, query } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 import {
@@ -57,6 +59,54 @@ export const list = query({
     }
 
     return invoices;
+  },
+});
+
+export const search = query({
+  args: {
+    customer_id: v.optional(v.id("customers")),
+    status: v.optional(
+      v.union(v.literal("due"), v.literal("paid"), v.literal("overdue")),
+    ),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { customer_id, status, paginationOpts }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const invoices = await filter(
+      ctx.db
+        .query("invoices")
+        .withIndex("by_workspace", (q) => q.eq("workspace", workspace)),
+      (invoice) => {
+        return (
+          (!customer_id || invoice.customer === customer_id) &&
+          (!status || invoice.status === status)
+        );
+      },
+    ).paginate(paginationOpts);
+
+    const page = [];
+
+    for (const invoice of invoices.page) {
+      const items = await Promise.all(
+        invoice.items.map((id) => ctx.db.get(id)),
+      );
+      const customer = await ctx.db.get(invoice.customer);
+      if (!customer) {
+        throw new ConvexError("Customer not found");
+      }
+
+      page.push({
+        ...invoice,
+        items: items.filter((item) => item !== null) as Doc<"items">[],
+        customer,
+      });
+    }
+
+    return {
+      ...invoices,
+      page,
+    };
   },
 });
 

@@ -48,7 +48,7 @@ export function DraggableColumns({ disabled }: Props) {
     <DraggableWrapper id={DRAGGABLE_ID} disabled={disabled} data={DATA}>
       {({ transform, attributes, listeners, ref }) => (
         <Card
-          className="p-2 aspect-square w-full max-w-[12rem] flex flex-col justify-center items-center"
+          className="bg-gray-100 rounded-sm p-4 flex flex-col gap-2 justify-start items-start cursor-pointer"
           ref={ref}
           style={{
             transform,
@@ -56,7 +56,7 @@ export function DraggableColumns({ disabled }: Props) {
           {...listeners}
           {...attributes}
         >
-          <Columns2 className="w-12 h-12" />
+          <Columns2 className="w-6 h-6" />
           Columns
         </Card>
       )}
