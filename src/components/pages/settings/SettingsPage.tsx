@@ -1,31 +1,47 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
+import { useAuth } from "@clerk/clerk-react";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
-import { TeamSettings } from "components/organisms/team-settings/TeamSettings";
+import { TeamSettings } from "components/organisms/team-settings";
 import { BillingSettings } from "components/organisms/billing-settings/BillingSettings";
 import { ScheduleSettings } from "components/organisms/schedule-settings/ScheduleSettings";
 
-const nav = [
-  {
-    value: "schedule",
-    label: "Schedule",
-    content: <ScheduleSettings />,
-  },
-  {
-    value: "team",
-    label: "Team",
-    content: <TeamSettings />,
-  },
-  {
-    value: "billing",
-    label: "Billing",
-    content: <BillingSettings />,
-  },
-];
-
 export function SettingsPage() {
+  const { has } = useAuth();
+  const isAdmin = has && has({ role: "org:admin" });
+
+  const nav = useMemo(() => {
+    if (isAdmin) {
+      return [
+        {
+          value: "schedule",
+          label: "Schedule",
+          content: <ScheduleSettings />,
+        },
+        {
+          value: "team",
+          label: "Team",
+          content: <TeamSettings />,
+        },
+        {
+          value: "billing",
+          label: "Billing",
+          content: <BillingSettings />,
+        },
+      ];
+    }
+
+    return [
+      {
+        value: "schedule",
+        label: "Schedule",
+        content: <ScheduleSettings />,
+      },
+    ];
+  }, [isAdmin]);
+
   return (
     <Tabs.Root defaultValue="schedule">
       <Tabs.List

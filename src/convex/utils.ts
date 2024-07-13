@@ -5,6 +5,7 @@ import {
   UserIdentity,
   PaginationOptions,
   PaginationResult,
+  GenericActionCtx,
 } from "convex/server";
 import { ConvexError } from "convex/values";
 import { v4 as uuid, validate } from "uuid";
@@ -28,7 +29,7 @@ type Ctx = GenericQueryCtx<any> | GenericMutationCtx<any>;
  * Extracts the user_id and workspace from the auth object.
  * Throws an error if the user is not authenticated or if the workspace is not found.
  **/
-export async function getAuthData(ctx: Ctx) {
+export async function getAuthData(ctx: Ctx | GenericActionCtx<any>) {
   const identity = (await ctx.auth.getUserIdentity()) as UserIdentity & {
     websiteUrl?: string;
   };

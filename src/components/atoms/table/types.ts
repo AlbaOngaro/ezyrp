@@ -20,6 +20,7 @@ export interface Row
 export interface Column<R extends Row = Row> {
   id: string;
   field: FlattenObjectKeys<R>;
+  width?: number;
   headerName?: string;
   sortable?: boolean;
   render?: (row: R, index: number) => ReactNode;

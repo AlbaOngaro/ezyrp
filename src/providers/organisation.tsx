@@ -1,6 +1,7 @@
 import { useAuth, useOrganizationList } from "@clerk/clerk-react";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { Loader } from "components/atoms/loader";
 
 export function OrganisationProvider({ children }: PropsWithChildren) {
@@ -11,6 +12,18 @@ export function OrganisationProvider({ children }: PropsWithChildren) {
     },
   });
   const { orgId } = useAuth();
+  const searchParams = useSearchParams();
+
+  const __clerk_ticket = searchParams.get("__clerk_ticket");
+  const __clerk_status = searchParams.get("__clerk_status");
+
+  const showLoader = useMemo(() => {
+    if (!!__clerk_status && !!__clerk_ticket) {
+      return false;
+    }
+
+    return !isLoaded;
+  }, [isLoaded, __clerk_status, __clerk_ticket]);
 
   useEffect(() => {
     if (!isLoaded || !!orgId) return;
@@ -29,7 +42,7 @@ export function OrganisationProvider({ children }: PropsWithChildren) {
     })();
   }, [orgId, isLoaded, setActive, userMemberships, router]);
 
-  if (!isLoaded) {
+  if (showLoader) {
     return (
       <main className="h-screen w-screen flex justify-center items-center">
         <Loader />
