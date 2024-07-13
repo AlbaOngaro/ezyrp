@@ -29,8 +29,8 @@ import {
 } from "components/atoms/tooltip";
 
 export function TeamSettings() {
-  const [isInviteMemberOpen, setIsInviteMemberOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInviteMemberOpen, setIsInviteMemberOpen] = useState(false);
   const { isLoaded, organization, invitations, memberships } = useOrganization({
     invitations: {
       pageSize: 5,
@@ -120,6 +120,7 @@ export function TeamSettings() {
                 <Button
                   disabled={members.length === 5}
                   onClick={() => setIsInviteMemberOpen(true)}
+                  data-testid="settings-team__invite-button"
                 >
                   Invite team member
                 </Button>

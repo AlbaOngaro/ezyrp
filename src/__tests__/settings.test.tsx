@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useOrganization } from "@clerk/clerk-react";
+import userEvent from "@testing-library/user-event";
 import {
   useAction,
   useMutation,
@@ -56,5 +57,80 @@ describe("Settings", () => {
     });
 
     expect(screen.getAllByTestId("settings-page__tab")).toHaveLength(3);
+  });
+
+  test("Disables invite button if there are 5 members", async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      // @ts-ignore
+      has: ({ role }) => role === "org:admin",
+    });
+
+    vi.mocked(useOrganization).mockReturnValue({
+      isLoaded: true,
+      // @ts-ignore
+      organization: {
+        id: "org_test",
+      },
+      // @ts-ignore
+      invitations: {
+        data: [],
+      },
+      memberships: {
+        data: [
+          {
+            id: "1",
+            role: "org:member",
+            // @ts-ignore
+            publicUserData: {
+              identifier: "user1@test.com",
+            },
+          },
+          {
+            id: "2",
+            role: "org:member",
+            // @ts-ignore
+            publicUserData: {
+              identifier: "user2@test.com",
+            },
+          },
+          {
+            id: "3",
+            role: "org:member",
+            // @ts-ignore
+            publicUserData: {
+              identifier: "user3@test.com",
+            },
+          },
+          {
+            id: "4",
+            role: "org:member",
+            // @ts-ignore
+            publicUserData: {
+              identifier: "user4@test.com",
+            },
+          },
+          {
+            id: "5",
+            role: "org:member",
+            // @ts-ignore
+            publicUserData: {
+              identifier: "user5@test.com",
+            },
+          },
+        ],
+      },
+    });
+
+    render(<SettingsPage />, {
+      container,
+    });
+
+    expect(screen.getByText("Team")).toBeDefined();
+    await userEvent.click(screen.getByText("Team"));
+
+    expect(
+      screen.getByTestId<HTMLButtonElement>("settings-team__invite-button")
+        .disabled,
+    ).toBe(true);
   });
 });
