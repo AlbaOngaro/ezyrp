@@ -7,8 +7,10 @@ import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { TeamSettings } from "components/organisms/team-settings";
 import { BillingSettings } from "components/organisms/billing-settings/BillingSettings";
 import { ScheduleSettings } from "components/organisms/schedule-settings/ScheduleSettings";
+import { useHash } from "hooks/useHash";
 
 export function SettingsPage() {
+  const active = useHash();
   const { has } = useAuth();
   const isAdmin = has && has({ role: "org:admin" });
 
@@ -16,17 +18,17 @@ export function SettingsPage() {
     if (isAdmin) {
       return [
         {
-          value: "schedule",
+          value: "#schedule",
           label: "Schedule",
           content: <ScheduleSettings />,
         },
         {
-          value: "team",
+          value: "#team",
           label: "Team",
           content: <TeamSettings />,
         },
         {
-          value: "billing",
+          value: "#billing",
           label: "Billing",
           content: <BillingSettings />,
         },
@@ -35,7 +37,7 @@ export function SettingsPage() {
 
     return [
       {
-        value: "schedule",
+        value: "#schedule",
         label: "Schedule",
         content: <ScheduleSettings />,
       },
@@ -43,7 +45,7 @@ export function SettingsPage() {
   }, [isAdmin]);
 
   return (
-    <Tabs.Root defaultValue="schedule">
+    <Tabs.Root defaultValue={active || nav[0].value}>
       <Tabs.List
         asChild
         className="flex gap-x-4 overflow-x-auto py-4 px-8 border-b border-gray-200 bg-white"
@@ -54,6 +56,9 @@ export function SettingsPage() {
               key={item.value}
               className="text-muted-foreground hover:text-primary data-[state='active']:text-primary font-medium"
               value={item.value}
+              onClick={() => {
+                window.location.hash = item.value;
+              }}
             >
               {item.label}
             </Tabs.Trigger>
