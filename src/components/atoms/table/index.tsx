@@ -22,6 +22,7 @@ export function Table<R extends Row = Row>({
   contextMenuItems,
   pagination,
   loading,
+  ...rest
 }: Props<R>) {
   const checkbox = useRef<HTMLInputElement | null>(null);
 
@@ -80,7 +81,10 @@ export function Table<R extends Row = Row>({
           {renderSelectedActions(selectedRows)}
         </div>
       )}
-      <table className={cn("min-w-full table-fixed divide-y divide-gray-300")}>
+      <table
+        className={cn("min-w-full table-fixed divide-y divide-gray-300")}
+        {...rest}
+      >
         <thead>
           <tr>
             {withMultiSelect && (

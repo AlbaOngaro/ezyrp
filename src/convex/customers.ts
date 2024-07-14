@@ -113,6 +113,8 @@ export const search = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { query = "", paginationOpts }) => {
+    console.log("query:", query);
+
     const { workspace } = await getAuthData(ctx);
 
     return await filter(
@@ -216,7 +218,9 @@ export const remove = mutation({
     const invoices = await getEntitiesInWorkspace(ctx, "invoices");
 
     for (const invoice of invoices) {
-      await ctx.db.delete(invoice._id);
+      if (invoice.customer === id) {
+        await ctx.db.delete(invoice._id);
+      }
     }
   },
 });
