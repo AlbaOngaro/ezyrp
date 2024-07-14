@@ -1,10 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import {
-  getAuthData,
-  getEntitiesInWorkspace,
-  getEntityByIdInWorkspace,
-} from "./utils";
+import { getAuthData, getEntityByIdInWorkspace } from "./utils";
 import { variant } from "./schema";
 
 export const get = query({
@@ -21,7 +17,15 @@ export const get = query({
 
 export const list = query({
   handler: async (ctx) => {
-    return await getEntitiesInWorkspace(ctx, "eventTypes");
+    const { workspace, user_id, role } = await getAuthData(ctx);
+
+    return ctx.db
+      .query("eventTypes")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) =>
+        role === "org:admin" ? true : q.eq(q.field("user_id"), user_id),
+      )
+      .collect();
   },
 });
 

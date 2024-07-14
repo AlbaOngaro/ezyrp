@@ -2,7 +2,7 @@ import { Form } from "@radix-ui/react-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Controller, useFormContext } from "react-hook-form";
-import { useOrganization } from "@clerk/clerk-react";
+import { useAuth, useOrganization } from "@clerk/clerk-react";
 
 import { DURATION_OPTIONS, VARIANTS } from "./constants";
 import { cn } from "lib/utils/cn";
@@ -19,19 +19,21 @@ type Props = {
 type EventType = Doc<"eventTypes">;
 
 export function EventTypeForm({ className }: Props) {
+  const { has } = useAuth();
   const {
     register,
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
   } = useFormContext<EventType>();
-
-  const { memberships } = useOrganization({
+  const { memberships, isLoaded } = useOrganization({
     memberships: {
       pageSize: 5,
       keepPreviousData: true,
     },
   });
+
+  const isAdmin = has && has({ role: "org:admin" });
 
   return (
     <Form
@@ -42,34 +44,38 @@ export function EventTypeForm({ className }: Props) {
 
       <TextArea label="Description" {...register("description")} />
 
-      <Controller
-        control={control}
-        name="user_id"
-        render={({ field: { value, onChange } }) => {
-          const options = memberships?.data?.map((membership) => ({
-            label: membership.publicUserData.identifier,
-            value: `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${membership.publicUserData.userId}`,
-          }));
+      {isAdmin && (
+        <Controller
+          control={control}
+          name="user_id"
+          render={({ field: { value, onChange } }) => {
+            const options = memberships?.data?.map((membership) => ({
+              label: membership.publicUserData.identifier,
+              value: `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${membership.publicUserData.userId}`,
+            }));
 
-          const defaultValue = options?.find(
-            (option) => option.value === value,
-          );
+            const defaultValue = options?.find(
+              (option) => option.value === value,
+            );
 
-          return (
-            <Select
-              name="user_id"
-              options={options}
-              defaultValue={defaultValue}
-              label="User"
-              onChange={(option) => {
-                if (option) {
-                  onChange(option.value);
-                }
-              }}
-            />
-          );
-        }}
-      />
+            return (
+              <Select
+                isLoading={!isLoaded}
+                name="user_id"
+                options={options}
+                value={defaultValue}
+                defaultValue={defaultValue}
+                label="User"
+                onChange={(option) => {
+                  if (option) {
+                    onChange(option.value);
+                  }
+                }}
+              />
+            );
+          }}
+        />
+      )}
 
       <Controller
         control={control}

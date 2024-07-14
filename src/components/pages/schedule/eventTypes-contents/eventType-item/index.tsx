@@ -8,6 +8,7 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
+import { useOrganization } from "@clerk/clerk-react";
 import { eventTypeItemVariants } from "./styles";
 
 import { cn } from "lib/utils/cn";
@@ -26,6 +27,12 @@ type Props = {
 export function EventTypeItem({ event, setSelected, selected }: Props) {
   const router = useRouter();
   const [isCopySuccesful, setIsCopySuccesful] = useState(false);
+  const { memberships } = useOrganization({
+    memberships: {
+      pageSize: 5,
+      keepPreviousData: true,
+    },
+  });
 
   useEffect(() => {
     if (isCopySuccesful) {
@@ -38,6 +45,12 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
       };
     }
   }, [isCopySuccesful]);
+
+  const member = memberships?.data?.find(
+    (membership) =>
+      !!membership?.publicUserData?.userId &&
+      event.user_id.endsWith(membership?.publicUserData?.userId),
+  );
 
   return (
     <article
@@ -94,7 +107,7 @@ export function EventTypeItem({ event, setSelected, selected }: Props) {
         </ContextRoot>
       </header>
       <h6 className="font-bold text-lg">{event.name}</h6>
-      <p className="text-gray-500">{event.description}</p>
+      <p className="text-gray-500">{member?.publicUserData?.identifier}</p>
       <span className="text-gray-500">{event.duration} mins</span>
       <footer className="border-t border-gray-100 w-[calc(100%_+_1rem)] p-2 mt-2 -ml-2 -mb-2">
         <Tooltip.Provider>

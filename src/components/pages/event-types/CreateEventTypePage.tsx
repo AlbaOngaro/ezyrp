@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Heading } from "components/atoms/heading";
@@ -14,12 +15,18 @@ type CreateEventTypeFn = typeof api.eventTypes.create;
 export function CreateEventTypePage() {
   const router = useRouter();
   const eventTypes = useEventTypes();
+  const { has } = useAuth();
+  const { user } = useUser();
+
+  const isAdmin = has && has({ role: "org:admin" });
 
   const { handleSubmit, ...methods } = useForm<CreateEventTypeFn["_args"]>({
     defaultValues: {
       variant: VARIANTS[0],
       name: "",
-      user_id: "",
+      user_id: isAdmin
+        ? ""
+        : `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${user?.id}`,
     },
   });
 
