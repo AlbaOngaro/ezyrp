@@ -14,7 +14,6 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
     "deploy": "bunx convex deploy --preview-create $COOLIFY_BRANCH --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL --cmd \"bun run build\"",
-    "postdeploy": "bunx convex env set WEB_URL $COOLIFY_URL",
     "build:ci": "env-cmd -f $(glob .env-pr-*) --silent --use-shell \"bun run deploy\""
   },
   "dependencies": {
