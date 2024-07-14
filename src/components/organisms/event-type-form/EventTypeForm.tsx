@@ -2,7 +2,7 @@ import { Form } from "@radix-ui/react-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { Controller, useFormContext } from "react-hook-form";
-import { useAuth, useOrganization } from "@clerk/clerk-react";
+import { useOrganization } from "@clerk/clerk-react";
 
 import { DURATION_OPTIONS, VARIANTS } from "./constants";
 import { cn } from "lib/utils/cn";
@@ -11,6 +11,7 @@ import { Input } from "components/atoms/input";
 import { TextArea } from "components/atoms/textarea";
 import { Select } from "components/atoms/select";
 import { Doc } from "convex/_generated/dataModel";
+import { useGetIsAdmin } from "lib/hooks/useGetIsAdmin";
 
 type Props = {
   className?: string;
@@ -19,7 +20,6 @@ type Props = {
 type EventType = Doc<"eventTypes">;
 
 export function EventTypeForm({ className }: Props) {
-  const { has } = useAuth();
   const {
     register,
     control,
@@ -33,7 +33,7 @@ export function EventTypeForm({ className }: Props) {
     },
   });
 
-  const isAdmin = has && has({ role: "org:admin" });
+  const isAdmin = useGetIsAdmin();
 
   return (
     <Form

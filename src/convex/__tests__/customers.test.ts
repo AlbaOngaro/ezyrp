@@ -8,6 +8,7 @@ describe("Customers", () => {
     const tAuth1 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
+      gender: "org:admin",
     });
 
     const workspace_1_customer_1 = await tAuth1.mutation(api.customers.create, {
@@ -28,6 +29,7 @@ describe("Customers", () => {
     const tAuth2 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace2",
+      gender: "org:admin",
     });
 
     const workspace_2_customer_1 = await tAuth2.mutation(api.customers.create, {
@@ -78,6 +80,7 @@ describe("Customers", () => {
     const tAuth1 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
+      gender: "org:admin",
     });
 
     const c1 = await tAuth1.mutation(api.customers.create, {

@@ -4,5 +4,8 @@ import schema from "convex/schema";
 const modules = import.meta.glob("../../../convex/**/!(*.*.*)*.*s");
 
 const t = convexTest(schema, modules);
-// @ts-ignore
-export const convexMockServer = t.withIdentity({ websiteUrl: "test" });
+export const convexMockServer = t.withIdentity({
+  // @ts-ignore
+  websiteUrl: "test",
+  gender: "org:admin",
+});

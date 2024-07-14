@@ -1,6 +1,5 @@
 import { ReactElement, useMemo } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
-import { useAuth } from "@clerk/clerk-react";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
@@ -8,11 +7,11 @@ import { TeamSettings } from "components/organisms/team-settings";
 import { BillingSettings } from "components/organisms/billing-settings/BillingSettings";
 import { ScheduleSettings } from "components/organisms/schedule-settings/ScheduleSettings";
 import { useHash } from "hooks/useHash";
+import { useGetIsAdmin } from "lib/hooks/useGetIsAdmin";
 
 export function SettingsPage() {
   const active = useHash();
-  const { has } = useAuth();
-  const isAdmin = has && has({ role: "org:admin" });
+  const isAdmin = useGetIsAdmin();
 
   const nav = useMemo(() => {
     if (isAdmin) {
