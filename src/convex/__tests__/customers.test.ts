@@ -8,6 +8,7 @@ describe("Customers", () => {
     const tAuth1 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
+      gender: "org:admin",
     });
 
     const workspace_1_customer_1 = await tAuth1.mutation(api.customers.create, {
@@ -28,6 +29,7 @@ describe("Customers", () => {
     const tAuth2 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace2",
+      gender: "org:admin",
     });
 
     const workspace_2_customer_1 = await tAuth2.mutation(api.customers.create, {
@@ -72,5 +74,51 @@ describe("Customers", () => {
     } catch (error) {
       expect(true).toBe(true);
     }
+  });
+
+  test("Deletes customer's invoices when customer is deleted", async () => {
+    const tAuth1 = t.withIdentity({
+      // @ts-ignore
+      websiteUrl: "workspace1",
+      gender: "org:admin",
+    });
+
+    const c1 = await tAuth1.mutation(api.customers.create, {
+      name: "Customer 1",
+      email: "customer1@example.com",
+    });
+
+    const c2 = await tAuth1.mutation(api.customers.create, {
+      name: "Customer 2",
+      email: "customer2@example.com",
+    });
+
+    await tAuth1.mutation(api.invoices.create, {
+      items: [],
+      description: "Invoice 1",
+      customer: c1,
+      status: "due",
+      amount: 100,
+      due: "",
+      emitted: "",
+    });
+
+    await tAuth1.mutation(api.invoices.create, {
+      items: [],
+      description: "Invoice 2",
+      customer: c2,
+      status: "due",
+      amount: 100,
+      due: "",
+      emitted: "",
+    });
+
+    const invoices = await tAuth1.query(api.invoices.list);
+    expect(invoices.length).toBe(2);
+
+    await tAuth1.mutation(api.customers.remove, { id: c1 });
+    const invoicesAfterDelete = await tAuth1.query(api.invoices.list);
+    expect(invoicesAfterDelete.length).toBe(1);
+    expect(invoicesAfterDelete[0].customer._id).toBe(c2);
   });
 });

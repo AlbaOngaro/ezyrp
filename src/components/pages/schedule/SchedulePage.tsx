@@ -4,16 +4,19 @@ import { CalendarContents } from "./calendar-contents";
 import { EventTypesContents } from "./eventTypes-contents";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { useHash } from "hooks/useHash";
 
 export type Props = {
   selected: string | null;
 };
 
 export function SchedulePage({ selected }: Props) {
+  const active = useHash();
+
   const nav = useMemo(
     () => [
       {
-        value: "calendar",
+        value: "#calendar",
         label: "Calendar",
         content: (
           <CalendarContents
@@ -22,7 +25,7 @@ export function SchedulePage({ selected }: Props) {
         ),
       },
       {
-        value: "event-types",
+        value: "#event-types",
         label: "Event Types",
         content: <EventTypesContents />,
       },
@@ -31,7 +34,7 @@ export function SchedulePage({ selected }: Props) {
   );
 
   return (
-    <Tabs.Root defaultValue={nav[0].value}>
+    <Tabs.Root defaultValue={active || nav[0].value}>
       <Tabs.List
         asChild
         className="flex gap-x-4 overflow-x-auto py-4 px-8 border-b border-gray-200 bg-white"
@@ -42,6 +45,9 @@ export function SchedulePage({ selected }: Props) {
               key={item.value}
               className="text-muted-foreground hover:text-primary data-[state='active']:text-primary font-medium"
               value={item.value}
+              onClick={() => {
+                window.location.hash = item.value;
+              }}
             >
               {item.label}
             </Tabs.Trigger>

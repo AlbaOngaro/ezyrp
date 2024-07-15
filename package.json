@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "5.2.4",
+    "@clerk/clerk-sdk-node": "5.0.15",
     "@clerk/nextjs": "5.1.5",
     "@dicebear/collection": "7.0.0",
     "@dicebear/core": "7.0.0",

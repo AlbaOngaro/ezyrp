@@ -113,4 +113,82 @@ describe("Customers", () => {
       ).toBe(false);
     });
   });
+
+  test("Can search by email", async () => {
+    await convexMockServer.mutation(api.customers.create, {
+      name: "Alba",
+      email: "jane.doe@example.com",
+    });
+
+    await convexMockServer.mutation(api.customers.create, {
+      name: "Alba",
+      email: "john.doe@example.com",
+    });
+
+    render(<CustomersPage />, {
+      container,
+    });
+
+    expect(screen.getByTestId("customers-table__search-input")).toBeDefined();
+
+    await userEvent.type(
+      screen.getByTestId("customers-table__search-input"),
+      "jane",
+    );
+
+    expect(
+      screen.getByTestId<HTMLInputElement>("customers-table__search-input")
+        .value,
+    ).toBe("jane");
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("customers-table").querySelectorAll("tbody tr"),
+      ).toHaveLength(1);
+    });
+
+    expect(
+      screen.getByTestId("customers-table").querySelector("tbody tr")
+        ?.textContent,
+    ).toContain("jane.doe@example.com");
+  });
+
+  test("Can search by name", async () => {
+    await convexMockServer.mutation(api.customers.create, {
+      name: "Jane",
+      email: "jane.doe@example.com",
+    });
+
+    await convexMockServer.mutation(api.customers.create, {
+      name: "John",
+      email: "completely-different-email@example.com",
+    });
+
+    render(<CustomersPage />, {
+      container,
+    });
+
+    expect(screen.getByTestId("customers-table__search-input")).toBeDefined();
+
+    await userEvent.type(
+      screen.getByTestId("customers-table__search-input"),
+      "John",
+    );
+
+    expect(
+      screen.getByTestId<HTMLInputElement>("customers-table__search-input")
+        .value,
+    ).toBe("John");
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("customers-table").querySelectorAll("tbody tr"),
+      ).toHaveLength(1);
+    });
+
+    expect(
+      screen.getByTestId("customers-table").querySelector("tbody tr")
+        ?.textContent,
+    ).toContain("John");
+  });
 });

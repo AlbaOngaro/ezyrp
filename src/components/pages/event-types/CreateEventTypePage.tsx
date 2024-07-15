@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { FormProvider, UseFormHandleSubmit, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { useUser } from "@clerk/clerk-react";
 import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Heading } from "components/atoms/heading";
@@ -8,18 +9,23 @@ import { EventTypeForm } from "components/organisms/event-type-form/EventTypeFor
 import { useEventTypes } from "hooks/useEventTypes";
 import { api } from "convex/_generated/api";
 import { VARIANTS } from "components/organisms/event-type-form/constants";
+import { useGetIsAdmin } from "lib/hooks/useGetIsAdmin";
 
 type CreateEventTypeFn = typeof api.eventTypes.create;
 
 export function CreateEventTypePage() {
   const router = useRouter();
+  const { user } = useUser();
+  const isAdmin = useGetIsAdmin();
   const eventTypes = useEventTypes();
 
   const { handleSubmit, ...methods } = useForm<CreateEventTypeFn["_args"]>({
     defaultValues: {
       variant: VARIANTS[0],
       name: "",
-      user_id: "",
+      user_id: isAdmin
+        ? ""
+        : `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${user?.id}`,
     },
   });
 

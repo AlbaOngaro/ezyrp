@@ -42,6 +42,7 @@ export function CustomersTable() {
           label="Search by name or email"
           name="search"
           type="search"
+          data-testid="customers-table__search-input"
           onChange={debounce(
             (e: ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
             250,
@@ -51,6 +52,7 @@ export function CustomersTable() {
 
       <Card>
         <Table
+          data-testid="customers-table"
           loading={isLoading}
           columns={[
             {

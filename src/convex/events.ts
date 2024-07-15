@@ -57,12 +57,15 @@ export const search = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { range, paginationOpts }) => {
-    const { workspace } = await getAuthData(ctx);
+    const { workspace, user_id, role } = await getAuthData(ctx);
 
     const events = await filter(
       ctx.db
         .query("events")
-        .withIndex("by_workspace", (q) => q.eq("workspace", workspace)),
+        .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+        .filter((q) =>
+          role === "org:admin" ? true : q.eq(q.field("organizer"), user_id),
+        ),
       (event) => {
         if (!range) {
           return true;

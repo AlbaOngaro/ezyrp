@@ -15,7 +15,7 @@ import { Id } from "convex/_generated/dataModel";
 export function NotificationsPage() {
   const updateNotification = useMutation(api.notifications.update);
   const deleteNotification = useMutation(api.notifications.remove);
-  const { data: notifications = [] } = useQuery(api.notifications.list);
+  const { data: notifications = [], status } = useQuery(api.notifications.list);
 
   return (
     <>
@@ -47,6 +47,7 @@ export function NotificationsPage() {
       <Container as="section">
         <Card>
           <Table
+            loading={status === "pending"}
             rows={notifications}
             renderSelectedActions={(rows) => (
               <DialogRoot>

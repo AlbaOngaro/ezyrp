@@ -12,6 +12,7 @@ describe("Emails", () => {
     const tAuth1 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
+      gender: "org:admin",
     });
 
     const w1e1 = await tAuth1.mutation(api.emails.create, {
@@ -24,6 +25,7 @@ describe("Emails", () => {
     const tAuth2 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace2",
+      gender: "org:admin",
     });
 
     const w2e1 = await tAuth2.mutation(api.emails.create, {
@@ -76,6 +78,7 @@ describe("Emails", () => {
     const tAuth = t.withIdentity({
       // @ts-ignore
       websiteUrl: "test",
+      gender: "org:admin",
     });
 
     const email_id = await tAuth.mutation(api.emails.create, { title: "Test" });

@@ -5,6 +5,7 @@ import {
   UserIdentity,
   PaginationOptions,
   PaginationResult,
+  GenericActionCtx,
 } from "convex/server";
 import { ConvexError } from "convex/values";
 import { v4 as uuid, validate } from "uuid";
@@ -28,7 +29,11 @@ type Ctx = GenericQueryCtx<any> | GenericMutationCtx<any>;
  * Extracts the user_id and workspace from the auth object.
  * Throws an error if the user is not authenticated or if the workspace is not found.
  **/
-export async function getAuthData(ctx: Ctx) {
+export async function getAuthData(ctx: Ctx | GenericActionCtx<any>): Promise<{
+  role: "org:admin" | "org:member";
+  user_id: string;
+  workspace: string;
+}> {
   const identity = (await ctx.auth.getUserIdentity()) as UserIdentity & {
     websiteUrl?: string;
   };
@@ -42,7 +47,12 @@ export async function getAuthData(ctx: Ctx) {
     throw new ConvexError("Cannot get workspace from user identity; Aborting.");
   }
 
+  if (identity.gender !== "org:admin" && identity.gender !== "org:member") {
+    throw new ConvexError("Invalid role; Aborting.");
+  }
+
   return {
+    role: identity.gender,
     user_id: identity.tokenIdentifier,
     workspace: identity.websiteUrl,
   };

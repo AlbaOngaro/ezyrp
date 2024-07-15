@@ -11,6 +11,7 @@ import { Input } from "components/atoms/input";
 import { TextArea } from "components/atoms/textarea";
 import { Select } from "components/atoms/select";
 import { Doc } from "convex/_generated/dataModel";
+import { useGetIsAdmin } from "lib/hooks/useGetIsAdmin";
 
 type Props = {
   className?: string;
@@ -25,13 +26,14 @@ export function EventTypeForm({ className }: Props) {
     handleSubmit,
     formState: { isValid, isSubmitting },
   } = useFormContext<EventType>();
-
-  const { memberships } = useOrganization({
+  const { memberships, isLoaded } = useOrganization({
     memberships: {
       pageSize: 5,
       keepPreviousData: true,
     },
   });
+
+  const isAdmin = useGetIsAdmin();
 
   return (
     <Form
@@ -42,34 +44,38 @@ export function EventTypeForm({ className }: Props) {
 
       <TextArea label="Description" {...register("description")} />
 
-      <Controller
-        control={control}
-        name="user_id"
-        render={({ field: { value, onChange } }) => {
-          const options = memberships?.data?.map((membership) => ({
-            label: membership.publicUserData.identifier,
-            value: `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${membership.publicUserData.userId}`,
-          }));
+      {isAdmin && (
+        <Controller
+          control={control}
+          name="user_id"
+          render={({ field: { value, onChange } }) => {
+            const options = memberships?.data?.map((membership) => ({
+              label: membership.publicUserData.identifier,
+              value: `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${membership.publicUserData.userId}`,
+            }));
 
-          const defaultValue = options?.find(
-            (option) => option.value === value,
-          );
+            const defaultValue = options?.find(
+              (option) => option.value === value,
+            );
 
-          return (
-            <Select
-              name="user_id"
-              options={options}
-              defaultValue={defaultValue}
-              label="User"
-              onChange={(option) => {
-                if (option) {
-                  onChange(option.value);
-                }
-              }}
-            />
-          );
-        }}
-      />
+            return (
+              <Select
+                isLoading={!isLoaded}
+                name="user_id"
+                options={options}
+                value={defaultValue}
+                defaultValue={defaultValue}
+                label="User"
+                onChange={(option) => {
+                  if (option) {
+                    onChange(option.value);
+                  }
+                }}
+              />
+            );
+          }}
+        />
+      )}
 
       <Controller
         control={control}

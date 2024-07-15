@@ -88,6 +88,11 @@ export function usePaginatedQuery<Query extends PaginatedQueryReference>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numItems, status]);
 
+  useEffect(() => {
+    setStatus("LoadingFirstPage");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(args)]);
+
   switch (status) {
     case "LoadingMore":
     case "LoadingFirstPage":

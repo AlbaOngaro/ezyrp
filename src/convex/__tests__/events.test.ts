@@ -9,10 +9,11 @@ afterEach(async () => {
 });
 
 describe("Events", () => {
-  test("User can only get emails in his workspace", async () => {
+  test("User can only get events in his workspace", async () => {
     const tAuth1 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
+      gender: "org:admin",
     });
 
     const event_type_1 = await tAuth1.mutation(api.eventTypes.create, {
@@ -43,6 +44,7 @@ describe("Events", () => {
     const tAuth2 = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace2",
+      gender: "org:admin",
     });
 
     const event_type_2 = await tAuth2.mutation(api.eventTypes.create, {
@@ -116,5 +118,78 @@ describe("Events", () => {
     } catch (error) {
       expect(true).toBe(true);
     }
+  });
+
+  test("Admin can get all events, Member can only get his", async () => {
+    const admin = t.withIdentity({
+      // @ts-ignore
+      websiteUrl: "workspace1",
+      gender: "org:admin",
+      tokenIdentifier: "user1",
+    });
+
+    const member = t.withIdentity({
+      // @ts-ignore
+      websiteUrl: "workspace1",
+      gender: "org:member",
+      tokenIdentifier: "user2",
+    });
+
+    const event_type_1 = await admin.mutation(api.eventTypes.create, {
+      variant: "red",
+      name: "Event Type 1",
+      user_id: "user1",
+      duration: 30,
+    });
+
+    await admin.mutation(api.events.create, {
+      start: "2021-01-01",
+      end: "2021-01-02",
+      guests: [],
+      organizer: "user1",
+      type: event_type_1,
+      status: "approved",
+    });
+
+    await admin.mutation(api.events.create, {
+      start: "2021-01-01",
+      end: "2021-01-02",
+      guests: [],
+      organizer: "user1",
+      type: event_type_1,
+      status: "approved",
+    });
+
+    const event_type_2 = await member.mutation(api.eventTypes.create, {
+      variant: "red",
+      name: "Event Type 2",
+      user_id: "user2",
+      duration: 30,
+    });
+
+    await member.mutation(api.events.create, {
+      start: "2021-01-01",
+      end: "2021-01-02",
+      guests: [],
+      organizer: "user2",
+      type: event_type_2,
+      status: "approved",
+    });
+
+    const adminEvents = await admin.query(api.events.search, {
+      paginationOpts: {
+        cursor: null,
+        numItems: 5,
+      },
+    });
+    expect(adminEvents.page.length).toBe(3);
+
+    const memberEvents = await member.query(api.events.search, {
+      paginationOpts: {
+        cursor: null,
+        numItems: 5,
+      },
+    });
+    expect(memberEvents.page.length).toBe(1);
   });
 });
