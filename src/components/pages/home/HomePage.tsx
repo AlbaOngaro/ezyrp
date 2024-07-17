@@ -1,42 +1,62 @@
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
+import { formatISO, subDays } from "date-fns";
+
+import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { Container } from "components/atoms/container";
-import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { cn } from "lib/utils/cn";
-
-const secondaryNavigation = [
-  { name: "Last 7 days", value: 7 },
-  { name: "Last 30 days", value: 30 },
-  { name: "All-time", value: -1 },
-];
+import { Card } from "components/atoms/card";
+import { api } from "convex/_generated/api";
+import { useQuery } from "lib/hooks/useQuery";
+import { Loader } from "components/atoms/loader";
+import { StatCard, Stats } from "components/organisms/stat-card";
+import { Heading } from "components/atoms/heading";
 
 export function HomePage() {
-  const [timeSpan, setTimeSpan] = useState<number>(7);
+  const start = formatISO(subDays(new Date(), 7), {
+    representation: "date",
+  });
+  const end = formatISO(new Date(), {
+    representation: "date",
+  });
+
+  const { data, status } = useQuery(api.stats.get, {
+    range: {
+      start,
+      end,
+    },
+  });
+
+  if (status === "pending") {
+    return (
+      <Container as="section">
+        <Loader />
+      </Container>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <Container as="section">
+        <Card>
+          <p>Failed to load data</p>
+        </Card>
+      </Container>
+    );
+  }
 
   return (
     <>
-      <header className="pb-4 pt-6 bg-white sm:pb-6" data-testid="home__header">
-        <Container className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Cashflow
-          </h1>
-          <div className="order-last flex w-full gap-x-8 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:border-l sm:border-gray-200 sm:pl-6 sm:leading-7">
-            {secondaryNavigation.map((item) => (
-              <button
-                key={item.name}
-                className={cn("text-gray-700", {
-                  "text-black": item.value === timeSpan,
-                })}
-                onClick={() => {
-                  setTimeSpan(item.value);
-                }}
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
-        </Container>
-      </header>
+      <Container as="section" className="py-10 sm:flex sm:items-center">
+        <Heading title="Dashboard" description="An overview of your team" />
+      </Container>
+
+      <Container as="section">
+        <div className="grid grid-cols-4 gap-x-4">
+          {Object.entries(data).map(([key, value]) => (
+            <StatCard key={key} type={key as keyof Stats} value={value} />
+          ))}
+        </div>
+      </Container>
     </>
   );
 }

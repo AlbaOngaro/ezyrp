@@ -79,7 +79,10 @@ export const ScheduleSettings = forwardRef<HTMLDivElement, unknown>(
               required: true,
             }}
             render={({ field: { value, onChange } }) => {
-              const selected = HOURS.find((hour) => hour.value === value);
+              const selected = HOURS.find((hour) => hour.value === value) || {
+                label: "09:00",
+                value: "09:00",
+              };
 
               return (
                 <Select
@@ -108,7 +111,11 @@ export const ScheduleSettings = forwardRef<HTMLDivElement, unknown>(
               required: true,
             }}
             render={({ field: { value, onChange } }) => {
-              const selected = HOURS.find((hour) => hour.value === value);
+              const selected = HOURS.find((hour) => hour.value === value) || {
+                label: "17:00",
+                value: "17:00",
+              };
+
               return (
                 <Select
                   name="end"

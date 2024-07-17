@@ -26,6 +26,7 @@ import type * as invoices from "../invoices.js";
 import type * as items from "../items.js";
 import type * as notifications from "../notifications.js";
 import type * as settings from "../settings.js";
+import type * as stats from "../stats.js";
 import type * as storage from "../storage.js";
 import type * as tests from "../tests.js";
 import type * as utils from "../utils.js";
@@ -53,6 +54,7 @@ declare const fullApi: ApiFromModules<{
   items: typeof items;
   notifications: typeof notifications;
   settings: typeof settings;
+  stats: typeof stats;
   storage: typeof storage;
   tests: typeof tests;
   utils: typeof utils;

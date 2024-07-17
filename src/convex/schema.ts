@@ -79,6 +79,8 @@ export const variant = v.union(
   v.literal("rose"),
 );
 
+export const range = v.object({ start: v.string(), end: v.string() });
+
 export default defineSchema({
   settings: defineTable({
     user_id: v.string(),
