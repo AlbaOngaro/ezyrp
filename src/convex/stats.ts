@@ -56,6 +56,10 @@ async function getEntitiesInRange<TableName extends AllowedTableNames>(
   ).collect();
 }
 
+export function getPercentageChange(current: number, previous: number): number {
+  return ((current - previous) / Math.max(Math.abs(previous), 1)) * 100;
+}
+
 export const get = query({
   args: {
     range,
@@ -117,24 +121,37 @@ export const get = query({
       },
     });
 
+    const current_customers = customers_in_current_range.length;
+    const previous_customers = customers_in_previous_range.length;
+
+    const current_events = events_in_current_range.length;
+    const previous_events = events_in_previous_range.length;
+
+    const current_revenue =
+      invoices_in_current_range
+        .filter((invoice) => invoice.status === "paid")
+        .reduce((acc, curr) => acc + curr.amount, 0) / 100;
+
+    const previous_revenue =
+      invoices_in_previous_range
+        .filter((invoice) => invoice.status === "paid")
+        .reduce((acc, curr) => acc + curr.amount, 0) / 100;
+
     return {
       customers: {
-        current: customers_in_current_range.length,
-        previous: customers_in_previous_range.length,
+        current: current_customers,
+        previous: previous_customers,
+        growth: getPercentageChange(current_customers, previous_customers),
       },
       events: {
-        current: events_in_current_range.length,
-        previous: events_in_previous_range.length,
+        current: current_events,
+        previous: previous_events,
+        growth: getPercentageChange(current_events, previous_events),
       },
       revenue: {
-        current:
-          invoices_in_current_range
-            .filter((invoice) => invoice.status === "paid")
-            .reduce((acc, curr) => acc + curr.amount, 0) / 100,
-        previous:
-          invoices_in_previous_range
-            .filter((invoice) => invoice.status === "paid")
-            .reduce((acc, curr) => acc + curr.amount, 0) / 100,
+        current: current_revenue,
+        previous: previous_revenue,
+        growth: getPercentageChange(current_revenue, previous_revenue),
       },
     };
   },

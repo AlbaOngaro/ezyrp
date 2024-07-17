@@ -18,9 +18,9 @@ export function StatCard({ type, value }: Props) {
       return (
         <Card className="p-4 grid grid-cols-[2fr_1rem] gap-y-2 w-full justify-between items-center">
           {capitalize(type)} <UserPlus className="h-4 w-4" />
-          <strong className="text-2xl col-span-2">{value.current}</strong>
+          <strong className="text-2xl col-span-2">+{value.current}</strong>
           <small className="text-xs text-muted-foreground">
-            {value.previous}
+            {value.growth}%
           </small>
         </Card>
       );
@@ -29,9 +29,9 @@ export function StatCard({ type, value }: Props) {
       return (
         <Card className="p-4 grid grid-cols-[2fr_1rem] gap-y-2 w-full justify-between items-center">
           {capitalize(type)} <Calendar className="h-4 w-4" />
-          <strong className="text-2xl col-span-2">{value.current}</strong>
+          <strong className="text-2xl col-span-2">+{value.current}</strong>
           <small className="text-xs text-muted-foreground">
-            {value.previous}
+            {value.growth}%
           </small>
         </Card>
       );
@@ -44,7 +44,7 @@ export function StatCard({ type, value }: Props) {
             {CHF.format(value.current)}
           </strong>
           <small className="text-xs text-muted-foreground">
-            {CHF.format(value.previous)}
+            {value.growth}%
           </small>
         </Card>
       );
