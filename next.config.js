@@ -10,12 +10,6 @@ const nextConfig = {
   env: {
     PUSH_PUBLIC_KEY: process.env.PUSH_PUBLIC_KEY,
   },
-  compiler: {
-    reactRemoveProperties: { properties: ["^data-testid$"] },
-    removeConsole: {
-      exclude: ["error"],
-    },
-  },
 };
 
 module.exports = nextConfig;

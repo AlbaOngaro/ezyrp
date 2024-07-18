@@ -1,5 +1,13 @@
 import { ReactElement, useState } from "react";
-import { formatISO, parseISO, subDays } from "date-fns";
+import {
+  addMonths,
+  formatISO,
+  isSameMonth,
+  isSameYear,
+  parseISO,
+  subDays,
+  subMonths,
+} from "date-fns";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
@@ -9,8 +17,21 @@ import { Loader } from "components/atoms/loader";
 import { StatCard, Stats } from "components/organisms/stat-card";
 import { Heading } from "components/atoms/heading";
 import { DateRangePicker } from "components/organisms/date-range-picker";
+import { cn } from "lib/utils/cn";
+
+// note: export for testing
+export function getCanGoToNextMonth(date: Date) {
+  const today = new Date();
+
+  return (
+    isSameMonth(today, addMonths(date, 1)) &&
+    isSameYear(today, addMonths(date, 1))
+  );
+}
 
 export function HomePage() {
+  const [isNextDisabled, setIsNextDisabled] = useState(true);
+
   const [start, setStart] = useState(
     formatISO(subDays(new Date(), 7), {
       representation: "date",
@@ -32,9 +53,14 @@ export function HomePage() {
   return (
     <>
       <Container as="section" className="py-10 sm:flex sm:items-center">
-        <Heading title="Dashboard" description="An overview of your team" />
+        <Heading
+          testId="home__heading"
+          title="Dashboard"
+          description="An overview of your team"
+        />
 
         <DateRangePicker
+          defaultMonth={subMonths(parseISO(start), 1)}
           range={{
             from: parseISO(start),
             to: parseISO(end),
@@ -50,6 +76,14 @@ export function HomePage() {
             if (!!to) {
               setEnd(formatISO(to, { representation: "date" }));
             }
+          }}
+          classNames={{
+            nav_button_next: cn("absolute right-1", {
+              "pointer-events-none": isNextDisabled,
+            }),
+          }}
+          onMonthChange={(month) => {
+            setIsNextDisabled(getCanGoToNextMonth(month));
           }}
         />
       </Container>

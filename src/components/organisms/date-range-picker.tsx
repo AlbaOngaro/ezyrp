@@ -1,7 +1,7 @@
 import React, { HTMLAttributes, useState } from "react";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
+import { DateRange, DayPickerProps } from "react-day-picker";
 
 import { Button } from "components/atoms/button";
 import { Calendar } from "components/atoms/calendar";
@@ -12,10 +12,11 @@ import {
 } from "components/atoms/popover";
 import { cn } from "lib/utils/cn";
 
-type Props = Omit<HTMLAttributes<HTMLDivElement>, "onChange"> & {
-  range?: DateRange;
-  onChange?: (range: DateRange | undefined) => void;
-};
+type Props = Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "onSelect"> &
+  DayPickerProps & {
+    range: DateRange;
+    onChange: (range?: DateRange) => void;
+  };
 
 const defaultRange = {
   from: new Date(2022, 0, 20),
@@ -26,6 +27,8 @@ export function DateRangePicker({
   className,
   onChange,
   range = defaultRange,
+  defaultMonth,
+  ...rest
 }: Props) {
   const [date, setDate] = useState<DateRange>(range);
 
@@ -60,8 +63,9 @@ export function DateRangePicker({
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
+            defaultMonth={defaultMonth || date?.from}
             selected={date}
+            // @ts-ignore
             onSelect={(date) => {
               if (date) {
                 setDate(date);
@@ -72,6 +76,7 @@ export function DateRangePicker({
               }
             }}
             numberOfMonths={2}
+            {...rest}
           />
         </PopoverContent>
       </Popover>
