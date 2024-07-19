@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { addMonths, subDays, subMonths } from "date-fns";
 import userEvent from "@testing-library/user-event";
 
-import { useMutation, usePaginatedQuery } from "./__mocks__/convex/react";
+import { useMutation } from "./__mocks__/convex/react";
 import { convexMockServer } from "./__mocks__/convex/server";
 
 import HomePage from "pages";
@@ -15,10 +15,10 @@ vi.mock("next/router", () => require("next-router-mock"));
 
 vi.mock("convex/react", () => ({
   useMutation,
-  usePaginatedQuery,
 }));
 
 vi.mock("lib/hooks/useQuery");
+vi.mock("lib/hooks/usePaginatedQuery");
 
 let container: HTMLElement;
 

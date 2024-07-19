@@ -1,7 +1,8 @@
-import { usePaginatedQuery } from "convex/react";
 import { useState } from "react";
 import { formatISO } from "date-fns";
 import { Container } from "components/atoms/container";
+
+import { usePaginatedQuery } from "lib/hooks/usePaginatedQuery";
 
 import { EventsCalendar } from "components/organisms/events-calendar";
 import { api } from "convex/_generated/api";

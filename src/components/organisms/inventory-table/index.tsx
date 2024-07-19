@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
-import { useMutation, usePaginatedQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { useState } from "react";
-
 import { NameFilter } from "./components/name-filter";
+
+import { usePaginatedQuery } from "lib/hooks/usePaginatedQuery";
 import { Button } from "components/atoms/button";
 import { Card } from "components/atoms/card";
 import {

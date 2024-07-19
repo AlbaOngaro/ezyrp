@@ -2,7 +2,7 @@ import {
   Root as DialogRoot,
   Trigger as DialogTrigger,
 } from "@radix-ui/react-alert-dialog";
-import { useMutation, usePaginatedQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { useState } from "react";
 
 import { format, parseISO } from "date-fns";
@@ -17,6 +17,7 @@ import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
 import { api } from "convex/_generated/api";
 import { Card } from "components/atoms/card";
+import { usePaginatedQuery } from "lib/hooks/usePaginatedQuery";
 
 const PAGE_SIZE = 5;
 

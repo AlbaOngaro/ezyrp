@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { usePaginatedQuery } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
 import { StatusFilter } from "./components/status-filter";
 import { useMutation } from "lib/hooks/useMutation";
@@ -9,6 +8,8 @@ import { Badge } from "components/atoms/badge";
 import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
 import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
+
+import { usePaginatedQuery } from "lib/hooks/usePaginatedQuery";
 
 const PAGE_SIZE = 5;
 

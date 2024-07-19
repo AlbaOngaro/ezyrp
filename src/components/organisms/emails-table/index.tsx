@@ -1,5 +1,5 @@
-import { usePaginatedQuery } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
+import { usePaginatedQuery } from "lib/hooks/usePaginatedQuery";
 import { useMutation } from "lib/hooks/useMutation";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { Table } from "components/atoms/table";

@@ -3,11 +3,12 @@ import Link from "next/link";
 import { Link2Icon } from "@radix-ui/react-icons";
 import { useRouter } from "next/router";
 
-import { useMutation, usePaginatedQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { useState } from "react";
 
 import { StatusFilter } from "./components/status-filter";
 import { CustomerFilter } from "./components/customer-filter";
+import { usePaginatedQuery } from "lib/hooks/usePaginatedQuery";
 import { Table } from "components/atoms/table";
 import {
   Dialog,

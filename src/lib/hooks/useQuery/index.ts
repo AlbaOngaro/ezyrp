@@ -16,6 +16,12 @@ export function useQuery<Query extends FunctionReference<"query">>(
   const key = `${getFunctionName(query)}:${JSON.stringify(args || {})}`;
   const value = cache.get(key) || null;
 
+  console.debug({
+    cache,
+    value,
+    key,
+  });
+
   const data = usePreloadedQuery<Query>({
     _name: getFunctionName(query),
     // @ts-ignore

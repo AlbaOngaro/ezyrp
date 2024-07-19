@@ -2,11 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { useAuth, useOrganization } from "@clerk/clerk-react";
 import userEvent from "@testing-library/user-event";
-import {
-  useAction,
-  useMutation,
-  usePaginatedQuery,
-} from "./__mocks__/convex/react";
+import { useAction, useMutation } from "./__mocks__/convex/react";
 import { convexMockServer } from "./__mocks__/convex/server";
 
 import SettingsPage from "pages/settings";
@@ -17,10 +13,10 @@ vi.mock("@clerk/clerk-react");
 vi.mock("convex/react", () => ({
   useAction,
   useMutation,
-  usePaginatedQuery,
 }));
 
 vi.mock("lib/hooks/useQuery");
+vi.mock("lib/hooks/usePaginatedQuery");
 
 let container: HTMLElement;
 
