@@ -22,6 +22,7 @@ export function usePaginatedQuery<Query extends PaginatedQueryReference>(
 
   useEffect(() => {
     setStatus("LoadingFirstPage");
+    setCursor(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(args)]);
 

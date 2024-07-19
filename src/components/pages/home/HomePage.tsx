@@ -1,19 +1,33 @@
-import { Fragment, ReactElement, useMemo, useState } from "react";
-import { subDays } from "date-fns";
+import { ReactElement, useMemo, useState } from "react";
+import {
+  setHours,
+  setMilliseconds,
+  setMinutes,
+  setSeconds,
+  subDays,
+} from "date-fns";
+
+import { api } from "convex/_generated/api";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { Container } from "components/atoms/container";
-import { api } from "convex/_generated/api";
+
 import { StatCard, Stats } from "components/organisms/stat-card";
-import { Heading } from "components/atoms/heading";
 import { HomeStatsRangePicker } from "components/organisms/home-stats-range-picker";
-import { Skeleton } from "components/atoms/skeleton";
 import { HomeInvoicesCard } from "components/organisms/home-invoices-card";
-import { useQuery } from "lib/hooks/useQuery";
 import { HomeChart } from "components/organisms/home-chart";
 
+import { Container } from "components/atoms/container";
+import { Heading } from "components/atoms/heading";
+import { Skeleton } from "components/atoms/skeleton";
+
+import { useQuery } from "lib/hooks/useQuery";
+
 export function HomePage() {
-  const today = useMemo(() => new Date(), []);
+  const today = useMemo(
+    () =>
+      setMilliseconds(setSeconds(setMinutes(setHours(new Date(), 0), 0), 0), 0),
+    [],
+  );
 
   const [start, setStart] = useState(subDays(today, 7).getTime());
   const [end, setEnd] = useState(today.getTime());
