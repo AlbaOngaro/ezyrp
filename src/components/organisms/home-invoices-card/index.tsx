@@ -8,7 +8,7 @@ import { Id } from "convex/_generated/dataModel";
 import { CHF } from "lib/formatters/chf";
 
 type Props = {
-  invoices: FunctionReturnType<typeof api.stats.get>["invoices"];
+  invoices: FunctionReturnType<typeof api.stats.range>["invoices"];
   className?: string;
 };
 

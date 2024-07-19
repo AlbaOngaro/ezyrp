@@ -1,4 +1,4 @@
-import { Fragment, ReactElement, useState } from "react";
+import { Fragment, ReactElement, useMemo, useState } from "react";
 import { subDays } from "date-fns";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
@@ -10,12 +10,15 @@ import { HomeStatsRangePicker } from "components/organisms/home-stats-range-pick
 import { Skeleton } from "components/atoms/skeleton";
 import { HomeInvoicesCard } from "components/organisms/home-invoices-card";
 import { useQuery } from "lib/hooks/useQuery";
+import { HomeChart } from "components/organisms/home-chart";
 
 export function HomePage() {
-  const [start, setStart] = useState(subDays(new Date(), 7).getTime());
-  const [end, setEnd] = useState(new Date().getTime());
+  const today = useMemo(() => new Date(), []);
 
-  const { data, status } = useQuery(api.stats.get, {
+  const [start, setStart] = useState(subDays(today, 7).getTime());
+  const [end, setEnd] = useState(today.getTime());
+
+  const { data, status } = useQuery(api.stats.range, {
     range: {
       start,
       end,
@@ -57,10 +60,15 @@ export function HomePage() {
               />
             </>
           ) : (
-            Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-24 col-span-4" />
-            ))
+            <>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-28 col-span-4" />
+              ))}
+              <Skeleton className="col-span-5" />
+            </>
           )}
+
+          <HomeChart className="col-span-7" />
         </div>
       </Container>
     </>

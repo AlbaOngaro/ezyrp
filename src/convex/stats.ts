@@ -1,5 +1,13 @@
 import { filter } from "convex-helpers/server/filter";
-import { addDays, differenceInDays, isWithinInterval } from "date-fns";
+import {
+  addDays,
+  differenceInDays,
+  format,
+  isWithinInterval,
+  lastDayOfMonth,
+  setHours,
+  setMinutes,
+} from "date-fns";
 import {
   DocumentByInfo,
   GenericQueryCtx,
@@ -11,7 +19,7 @@ import { query } from "./_generated/server";
 import { getAuthData } from "./utils";
 import { DataModel, Doc } from "./_generated/dataModel";
 
-const range = v.object({
+const rangeArgValidator = v.object({
   start: v.number(),
   end: v.number(),
 });
@@ -76,7 +84,7 @@ async function getPaidInvoicesInRange(
         q.lte(q.field("_creationTime"), end),
       ),
     )
-    .collect();
+    .take(5);
 
   const invoices = [];
 
@@ -97,9 +105,9 @@ async function getPaidInvoicesInRange(
   return invoices;
 }
 
-export const get = query({
+export const range = query({
   args: {
-    range,
+    range: rangeArgValidator,
   },
   handler: async (ctx, { range }) => {
     const current_range_start = range.start;
@@ -197,5 +205,44 @@ export const get = query({
         ),
       },
     };
+  },
+});
+
+export const monthly = query({
+  args: {
+    year: v.number(),
+    months: v.array(v.number()),
+  },
+  handler: async (ctx, { year, months }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    const data = [];
+
+    for (const month of months) {
+      const start = new Date(year, month, 1).getTime();
+      const end = setMinutes(
+        setHours(lastDayOfMonth(new Date(year, month)), 23),
+        59,
+      ).getTime();
+
+      const docs = await ctx.db
+        .query("invoices")
+        .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+        .filter((q) =>
+          q.and(
+            q.eq(q.field("status"), "paid"),
+            q.gte(q.field("_creationTime"), start),
+            q.lte(q.field("_creationTime"), end),
+          ),
+        )
+        .collect();
+
+      data.push({
+        month: format(start, "MMM"),
+        invoices: docs.length,
+      });
+    }
+
+    return data;
   },
 });
