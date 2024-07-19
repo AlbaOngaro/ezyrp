@@ -16,6 +16,7 @@ type Props = Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "onSelect"> &
   DayPickerProps & {
     range: DateRange;
     onChange: (range?: DateRange) => void;
+    testId?: string;
   };
 
 const defaultRange = {
@@ -28,15 +29,17 @@ export function DateRangePicker({
   onChange,
   range = defaultRange,
   defaultMonth,
+  testId,
   ...rest
 }: Props) {
   const [date, setDate] = useState<DateRange>(range);
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid gap-2", className)} data-testid={testId}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            data-testid={testId ? `${testId}__button` : undefined}
             id="date"
             variant={"outline"}
             className={cn(
