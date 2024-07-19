@@ -74,7 +74,7 @@ describe("Workflows", () => {
 
     // note: forcing rerender to update the table
     // since mocks queries are not re-fetched automatically
-    page.rerender(<WorkflowsPage />);
+    page.rerender(<WorkflowsPage key="empty" />);
     expect(screen.getByTestId("table-body--empty")).toBeDefined();
   });
 

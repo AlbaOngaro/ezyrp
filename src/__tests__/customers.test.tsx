@@ -129,17 +129,28 @@ describe("Customers", () => {
       container,
     });
 
-    expect(screen.getByTestId("customers-table__search-input")).toBeDefined();
+    expect(
+      screen.getByTestId("customers-table__email-column--filter-btn"),
+    ).toBeDefined();
 
-    await userEvent.type(
-      screen.getByTestId("customers-table__search-input"),
-      "jane",
+    await userEvent.click(
+      screen.getByTestId("customers-table__email-column--filter-btn"),
     );
 
     expect(
-      screen.getByTestId<HTMLInputElement>("customers-table__search-input")
-        .value,
-    ).toBe("jane");
+      screen.getByTestId("customers-table__email-search-input"),
+    ).toBeDefined();
+
+    await userEvent.type(
+      screen.getByTestId("customers-table__email-search-input"),
+      "jane.doe@example.com",
+    );
+
+    expect(
+      screen.getByTestId<HTMLInputElement>(
+        "customers-table__email-search-input",
+      ).value,
+    ).toBe("jane.doe@example.com");
 
     await waitFor(() => {
       expect(
@@ -168,15 +179,25 @@ describe("Customers", () => {
       container,
     });
 
-    expect(screen.getByTestId("customers-table__search-input")).toBeDefined();
+    expect(
+      screen.getByTestId("customers-table__name-column--filter-btn"),
+    ).toBeDefined();
+
+    await userEvent.click(
+      screen.getByTestId("customers-table__name-column--filter-btn"),
+    );
+
+    expect(
+      screen.getByTestId("customers-table__name-search-input"),
+    ).toBeDefined();
 
     await userEvent.type(
-      screen.getByTestId("customers-table__search-input"),
+      screen.getByTestId("customers-table__name-search-input"),
       "John",
     );
 
     expect(
-      screen.getByTestId<HTMLInputElement>("customers-table__search-input")
+      screen.getByTestId<HTMLInputElement>("customers-table__name-search-input")
         .value,
     ).toBe("John");
 

@@ -1,22 +1,42 @@
+import { useState } from "react";
+import { usePaginatedQuery } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
+import { StatusFilter } from "./components/status-filter";
 import { useMutation } from "lib/hooks/useMutation";
 import { Table } from "components/atoms/table";
 import { api } from "convex/_generated/api";
-import { useQuery } from "lib/hooks/useQuery";
 import { Badge } from "components/atoms/badge";
 import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
 import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
 
+const PAGE_SIZE = 5;
+
 export function WorkflowsTable() {
+  const [workflowStatus, setWorkflowStatus] = useState<
+    "active" | "inactive" | undefined
+  >(undefined);
   const contextMenuItems = useGetContextMenuItems();
   const deleteWorkflow = useMutation(api.workflows.remove);
 
-  const { data: workflows = [], status } = useQuery(api.workflows.list);
+  const {
+    results: workflows = [],
+    status,
+    isLoading,
+    loadMore,
+  } = usePaginatedQuery(
+    api.workflows.search,
+    {
+      status: workflowStatus,
+    },
+    {
+      initialNumItems: PAGE_SIZE,
+    },
+  );
 
   return (
     <Table
-      loading={status === "pending"}
+      loading={isLoading}
       rows={workflows || []}
       columns={[
         {
@@ -29,6 +49,13 @@ export function WorkflowsTable() {
           field: "status",
           headerName: "Status",
           sortable: true,
+          filterable: true,
+          filterComponent: (
+            <StatusFilter
+              status={workflowStatus}
+              setStatus={setWorkflowStatus}
+            />
+          ),
           render: (invoice) => <Badge>{invoice.status}</Badge>,
         },
       ]}
@@ -69,6 +96,11 @@ export function WorkflowsTable() {
           />
         </DialogRoot>
       )}
+      pagination={{
+        status,
+        pageSize: PAGE_SIZE,
+        loadMore: () => loadMore(PAGE_SIZE),
+      }}
     />
   );
 }

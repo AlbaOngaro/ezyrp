@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { getYear, isSameDay, parseISO, setYear } from "date-fns";
+import { paginationOptsValidator } from "convex/server";
 import {
   internalAction,
   internalMutation,
@@ -37,6 +38,22 @@ export const get = query({
       id,
       table: "workflows",
     });
+  },
+});
+
+export const search = query({
+  args: {
+    status: v.optional(v.union(v.literal("active"), v.literal("inactive"))),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { status, paginationOpts }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    return await ctx.db
+      .query("workflows")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .filter((q) => (status ? q.eq(q.field("status"), status) : true))
+      .paginate(paginationOpts);
   },
 });
 

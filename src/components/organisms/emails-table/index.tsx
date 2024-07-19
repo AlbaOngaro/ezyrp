@@ -1,19 +1,33 @@
+import { usePaginatedQuery } from "convex/react";
 import { useGetContextMenuItems } from "./hooks/useGetContextMenuItems";
 import { useMutation } from "lib/hooks/useMutation";
 import { Doc, Id } from "convex/_generated/dataModel";
 import { Table } from "components/atoms/table";
-import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
 import { Button } from "components/atoms/button";
 
+const PAGE_SIZE = 5;
+
 export function EmailsTable() {
   const contextMenuItems = useGetContextMenuItems();
   const deleteEmail = useMutation(api.emails.remove);
-  const { data: emails = [] } = useQuery(api.emails.list);
+  const {
+    results: emails = [],
+    status,
+    loadMore,
+    isLoading,
+  } = usePaginatedQuery(
+    api.emails.search,
+    {},
+    {
+      initialNumItems: PAGE_SIZE,
+    },
+  );
 
   return (
     <Table<Omit<Doc<"emails">, "body">>
+      loading={isLoading}
       rows={emails}
       columns={[
         {
@@ -44,6 +58,11 @@ export function EmailsTable() {
           />
         </DialogRoot>
       )}
+      pagination={{
+        status,
+        pageSize: PAGE_SIZE,
+        loadMore: () => loadMore(PAGE_SIZE),
+      }}
     />
   );
 }
