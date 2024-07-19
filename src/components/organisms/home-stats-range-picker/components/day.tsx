@@ -15,7 +15,7 @@ export function Day({
   displayMonth,
   start,
   end,
-}: DayProps & { start: string; end: string }) {
+}: DayProps & { start: number; end: number }) {
   const button = useRef<HTMLButtonElement | null>(null);
   const { isHidden, buttonProps, divProps } = useDayRender(
     date,

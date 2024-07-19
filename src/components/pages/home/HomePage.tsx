@@ -1,26 +1,19 @@
 import { Fragment, ReactElement, useState } from "react";
-import { formatISO, subDays } from "date-fns";
+import { subDays } from "date-fns";
 
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 import { Container } from "components/atoms/container";
 import { api } from "convex/_generated/api";
-import { useQuery } from "lib/hooks/useQuery";
 import { StatCard, Stats } from "components/organisms/stat-card";
 import { Heading } from "components/atoms/heading";
 import { HomeStatsRangePicker } from "components/organisms/home-stats-range-picker";
 import { Skeleton } from "components/atoms/skeleton";
+import { HomeInvoicesCard } from "components/organisms/home-invoices-card";
+import { useQuery } from "lib/hooks/useQuery";
 
 export function HomePage() {
-  const [start, setStart] = useState(
-    formatISO(subDays(new Date(), 7), {
-      representation: "date",
-    }),
-  );
-  const [end, setEnd] = useState(
-    formatISO(new Date(), {
-      representation: "date",
-    }),
-  );
+  const [start, setStart] = useState(subDays(new Date(), 7).getTime());
+  const [end, setEnd] = useState(new Date().getTime());
 
   const { data, status } = useQuery(api.stats.get, {
     range: {
@@ -47,14 +40,27 @@ export function HomePage() {
       </Container>
 
       <Container as="section">
-        <div className="grid grid-cols-4 gap-x-4">
-          {status === "success"
-            ? Object.entries(data).map(([key, value]) => (
-                <StatCard key={key} type={key as keyof Stats} value={value} />
-              ))
-            : Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-24" />
+        <div className="grid grid-cols-12 gap-4">
+          {status === "success" ? (
+            <>
+              {Object.entries(data).map(([key, value]) => (
+                <StatCard
+                  key={key}
+                  type={key as keyof Stats}
+                  value={value}
+                  className="col-span-4"
+                />
               ))}
+              <HomeInvoicesCard
+                invoices={data.invoices}
+                className="col-span-5"
+              />
+            </>
+          ) : (
+            Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 col-span-4" />
+            ))
+          )}
         </div>
       </Container>
     </>
