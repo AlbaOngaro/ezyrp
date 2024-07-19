@@ -17,14 +17,25 @@ export interface Row
   _id: string;
 }
 
-export interface Column<R extends Row = Row> {
+type FilterProps =
+  | {
+      filterable?: false;
+      filterComponent?: never;
+    }
+  | {
+      filterable: true;
+      filterComponent: ReactNode;
+    };
+
+export type Column<R extends Row = Row> = {
   id: string;
   field: FlattenObjectKeys<R>;
   width?: number;
   headerName?: string;
   sortable?: boolean;
   render?: (row: R, index: number) => ReactNode;
-}
+  testId?: string;
+} & FilterProps;
 
 type TableContextMenuBaseItem<R extends Row = Row> = Omit<
   Extract<ContextMenuItem, { type: "item" }>,

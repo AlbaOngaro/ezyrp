@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 import { internalQuery, mutation, query } from "./_generated/server";
 import {
   getAuthData,
@@ -31,6 +32,20 @@ export const get = query({
 export const list = query({
   handler: async (ctx) => {
     return await getEntitiesInWorkspace(ctx, "emails");
+  },
+});
+
+export const search = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { paginationOpts }) => {
+    const { workspace } = await getAuthData(ctx);
+
+    return await ctx.db
+      .query("emails")
+      .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
+      .paginate(paginationOpts);
   },
 });
 

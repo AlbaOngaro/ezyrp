@@ -5,12 +5,15 @@ import {
   MinusIcon,
 } from "@radix-ui/react-icons";
 
+import { Filter } from "lucide-react";
 import { Skeleton } from "../skeleton";
+import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Props, Row, Sort } from "./types";
 import { TableRowRenderer } from "./RowRenderer";
 import { Pagination } from "./Pagination";
 import { cn } from "lib/utils/cn";
 import { Checkbox } from "components/atoms/checkbox";
+import { convertRemToPx } from "lib/utils/convertRemToPx";
 
 export function Table<R extends Row = Row>({
   className,
@@ -107,6 +110,7 @@ export function Table<R extends Row = Row>({
                 scope="col"
                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                 style={{ width: column.width }}
+                data-testid={column.testId}
               >
                 <span className="group inline-flex">
                   {column.headerName || column.field}
@@ -128,7 +132,10 @@ export function Table<R extends Row = Row>({
                           };
                         })
                       }
-                      className="ml-2 flex-none rounded bg-gray-100 text-gray-900 transition-colors duration-300 group-hover:bg-gray-200 group-hover:disabled:bg-gray-100 p-1 disabled:text-gray-400 disabled:cursor-not-allowed"
+                      className="ml-2 flex-none rounded bg-gray-100 text-gray-900 transition-colors duration-300 hover:bg-gray-200 group-hover:disabled:bg-gray-100 p-1 disabled:text-gray-400 disabled:cursor-not-allowed"
+                      data-testid={
+                        column.testId ? `${column.testId}--sort-btn` : ""
+                      }
                     >
                       {!sort || sort.field !== column.field ? (
                         <MinusIcon />
@@ -138,6 +145,27 @@ export function Table<R extends Row = Row>({
                         <ChevronUpIcon />
                       )}
                     </button>
+                  )}
+                  {column.filterable && (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          disabled={loading}
+                          className="ml-2 w-6 h-6 flex items-center justify-center rounded bg-gray-100 text-gray-900 transition-colors duration-300 hover:bg-gray-200 group-hover:disabled:bg-gray-100 p-1 disabled:text-gray-400 disabled:cursor-not-allowed"
+                          data-testid={
+                            column.testId ? `${column.testId}--filter-btn` : ""
+                          }
+                        >
+                          <Filter className="w-3 h-3" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        alignOffset={convertRemToPx(-1)}
+                        align="start"
+                      >
+                        {column.filterComponent}
+                      </PopoverContent>
+                    </Popover>
                   )}
                 </span>
               </th>
