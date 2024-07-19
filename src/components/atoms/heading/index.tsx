@@ -5,11 +5,12 @@ interface Props {
   title: ReactNode;
   description?: string;
   className?: string;
+  testId?: string;
 }
 
-export function Heading({ title, description, className }: Props) {
+export function Heading({ title, description, className, testId }: Props) {
   return (
-    <div className={cn("sm:flex-auto", className)}>
+    <div className={cn("sm:flex-auto", className)} data-testid={testId}>
       <h1 className="text-base font-semibold leading-6 text-gray-900">
         {title}
       </h1>

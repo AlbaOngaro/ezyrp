@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { GenericMutationCtx, paginationOptsValidator } from "convex/server";
 import { filter } from "convex-helpers/server/filter";
 
+import { isWithinInterval, parseISO } from "date-fns";
 import { internalQuery, mutation, query } from "./_generated/server";
 import { DataModel } from "./_generated/dataModel";
 import {
@@ -110,20 +111,36 @@ export const list = query({
 export const search = query({
   args: {
     query: v.optional(v.string()),
+    range: v.optional(v.object({ start: v.string(), end: v.string() })),
     paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, { query = "", paginationOpts }) => {
-    console.log("query:", query);
-
+  handler: async (ctx, { query = "", range, paginationOpts }) => {
     const { workspace } = await getAuthData(ctx);
 
     return await filter(
       ctx.db
         .query("customers")
         .withIndex("by_workspace", (q) => q.eq("workspace", workspace)),
-      (customer) =>
-        customer.name.toLowerCase().includes(query.toLowerCase()) ||
-        customer.email.toLowerCase().includes(query.toLowerCase()),
+      (customer) => {
+        const matchesQuery =
+          customer.name.toLowerCase().includes(query.toLowerCase()) ||
+          customer.email.toLowerCase().includes(query.toLowerCase());
+
+        let matchesRange = true;
+
+        if (!!range) {
+          const range_start = parseISO(range.start);
+          const range_end = parseISO(range.end);
+          const creation_time = new Date(customer._creationTime);
+
+          matchesRange = isWithinInterval(creation_time, {
+            start: range_start,
+            end: range_end,
+          });
+        }
+
+        return matchesQuery && matchesRange;
+      },
     ).paginate(paginationOpts);
   },
 });

@@ -1,42 +1,76 @@
-import { ReactElement, useState } from "react";
+import { Fragment, ReactElement, useMemo, useState } from "react";
+import { subDays } from "date-fns";
 
-import { Container } from "components/atoms/container";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
-import { cn } from "lib/utils/cn";
-
-const secondaryNavigation = [
-  { name: "Last 7 days", value: 7 },
-  { name: "Last 30 days", value: 30 },
-  { name: "All-time", value: -1 },
-];
+import { Container } from "components/atoms/container";
+import { api } from "convex/_generated/api";
+import { StatCard, Stats } from "components/organisms/stat-card";
+import { Heading } from "components/atoms/heading";
+import { HomeStatsRangePicker } from "components/organisms/home-stats-range-picker";
+import { Skeleton } from "components/atoms/skeleton";
+import { HomeInvoicesCard } from "components/organisms/home-invoices-card";
+import { useQuery } from "lib/hooks/useQuery";
+import { HomeChart } from "components/organisms/home-chart";
 
 export function HomePage() {
-  const [timeSpan, setTimeSpan] = useState<number>(7);
+  const today = useMemo(() => new Date(), []);
+
+  const [start, setStart] = useState(subDays(today, 7).getTime());
+  const [end, setEnd] = useState(today.getTime());
+
+  const { data, status } = useQuery(api.stats.range, {
+    range: {
+      start,
+      end,
+    },
+  });
 
   return (
     <>
-      <header className="pb-4 pt-6 bg-white sm:pb-6" data-testid="home__header">
-        <Container className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Cashflow
-          </h1>
-          <div className="order-last flex w-full gap-x-8 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:border-l sm:border-gray-200 sm:pl-6 sm:leading-7">
-            {secondaryNavigation.map((item) => (
-              <button
-                key={item.name}
-                className={cn("text-gray-700", {
-                  "text-black": item.value === timeSpan,
-                })}
-                onClick={() => {
-                  setTimeSpan(item.value);
-                }}
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
-        </Container>
-      </header>
+      <Container as="section" className="py-10 sm:flex sm:items-center">
+        <Heading
+          testId="home__heading"
+          title="Dashboard"
+          description="An overview of your team"
+        />
+
+        <HomeStatsRangePicker
+          start={start}
+          setStart={setStart}
+          end={end}
+          setEnd={setEnd}
+        />
+      </Container>
+
+      <Container as="section">
+        <div className="grid grid-cols-12 gap-4">
+          {status === "success" ? (
+            <>
+              {Object.entries(data).map(([key, value]) => (
+                <StatCard
+                  key={key}
+                  type={key as keyof Stats}
+                  value={value}
+                  className="col-span-4"
+                />
+              ))}
+              <HomeInvoicesCard
+                invoices={data.invoices}
+                className="col-span-5"
+              />
+            </>
+          ) : (
+            <>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-28 col-span-4" />
+              ))}
+              <Skeleton className="col-span-5" />
+            </>
+          )}
+
+          <HomeChart className="col-span-7" />
+        </div>
+      </Container>
     </>
   );
 }
