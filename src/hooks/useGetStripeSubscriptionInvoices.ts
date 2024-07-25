@@ -1,7 +1,8 @@
-import { useAction } from "convex/react";
 import { FunctionReturnType } from "convex/server";
 import { useEffect, useState } from "react";
 import { api } from "convex/_generated/api";
+
+import { useAction } from "lib/hooks/useAction";
 
 type Invoices = FunctionReturnType<typeof api.stripe.invoices.list>;
 type Args = (typeof api.stripe.invoices.list)["_args"];
@@ -16,7 +17,7 @@ export function useGetStripeSubscriptionInvoices({
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<Invoices | undefined>(undefined);
 
-  const refetch = (args: Args) => getInvoices(args);
+  const refetch = (args: Args) => getInvoices.revalidate(args);
 
   useEffect(() => {
     getInvoices({ subscription_id, limit })

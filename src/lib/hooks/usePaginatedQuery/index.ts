@@ -9,6 +9,9 @@ import { useLazyQuery } from "../useLazyQuery";
 
 type Status = "LoadingFirstPage" | "LoadingMore" | "CanLoadMore" | "Exhausted";
 
+/**
+ * This hook is a wrapper around `usePaginatedQuery` that adds caching to paginated queries.
+ */
 export function usePaginatedQuery<Query extends PaginatedQueryReference>(
   query: Query,
   args: PaginatedQueryArgs<Query> | "skip",

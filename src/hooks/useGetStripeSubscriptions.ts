@@ -1,7 +1,7 @@
 import { FunctionReturnType } from "convex/server";
 import { useEffect, useState } from "react";
-import { useAction } from "convex/react";
 import { api } from "convex/_generated/api";
+import { useAction } from "lib/hooks/useAction";
 
 type Subscriptions = FunctionReturnType<typeof api.stripe.subscriptions.list>;
 
@@ -12,7 +12,7 @@ export function useGetStripeSubscriptions() {
 
   const getStripeSubscriptions = useAction(api.stripe.subscriptions.list);
 
-  const refetch = () => getStripeSubscriptions();
+  const refetch = () => getStripeSubscriptions.revalidate();
 
   useEffect(() => {
     getStripeSubscriptions()

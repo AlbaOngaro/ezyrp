@@ -10,6 +10,9 @@ type PromiseResolve<Query extends FunctionReference<"query">> = (
 
 type PromiseReject = (error: Error) => void;
 
+/**
+ * This hook mimics `@apollo/client`'s `useLazyQuery` hook, allowing you to execute a query on demand.
+ */
 export function useLazyQuery<Query extends FunctionReference<"query">>(
   query: Query,
 ): ReturnTuple<Query> {

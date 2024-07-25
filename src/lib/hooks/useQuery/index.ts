@@ -7,6 +7,9 @@ import { ReturnType } from "./types";
 
 import { ConvexCacheContext } from "providers/convex-cache";
 
+/**
+ * This hook is a wrapper around `useQuery` from `convex/react` that adds caching.
+ */
 export function useQuery<Query extends FunctionReference<"query">>(
   query: Query,
   args?: OptionalRestArgsOrSkip<Query>[0],
