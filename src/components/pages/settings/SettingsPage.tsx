@@ -4,7 +4,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
 
 import { TeamSettings } from "components/organisms/team-settings";
-import { BillingSettings } from "components/organisms/billing-settings/BillingSettings";
+import { BillingSettings } from "components/organisms/billing-settings";
 import { ScheduleSettings } from "components/organisms/schedule-settings/ScheduleSettings";
 import { useHash } from "hooks/useHash";
 import { useGetIsAdmin } from "lib/hooks/useGetIsAdmin";
