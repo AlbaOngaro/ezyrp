@@ -37,7 +37,6 @@ export function useAction<Action extends FunctionReference<"action">>(
     const key = `${getFunctionName(action)}:${JSON.stringify(args || {})}`;
     const result = await performAction(...args);
     cache.set(key, result);
-
     return result;
   };
 

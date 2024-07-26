@@ -2,6 +2,8 @@ import { useAction } from "convex/react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { format } from "date-fns";
+import Stripe from "stripe";
+import { get } from "lodash";
 
 import { View } from "../types";
 
@@ -10,12 +12,17 @@ import { Skeleton } from "components/atoms/skeleton";
 import { Card } from "components/atoms/card";
 import { Button } from "components/atoms/button";
 import { useGetStripeSubscriptions } from "hooks/useGetStripeSubscriptions";
-import { dialogs } from "components/atoms/dialog";
 import { CHF } from "lib/formatters/chf";
+import { dialogs } from "components/atoms/dialog";
 
 type Props = {
   view: Extract<View, { type: "overview" }>;
   setView: Dispatch<SetStateAction<View>>;
+};
+
+type UpdatePlanArgs = {
+  subscription_id: string;
+  subscription_item_id: string;
 };
 
 export function BillingOverviewView({ setView }: Props) {
@@ -24,9 +31,48 @@ export function BillingOverviewView({ setView }: Props) {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const updatePaymentMethod = useAction(api.stripe.checkout.setup);
 
-  const [isCancellingSubscription, setIsCancellingSubscription] =
-    useState(false);
-  const cancelSubscription = useAction(api.stripe.subscriptions.cancel);
+  const [isUpdatingPlan, setIsUpdatingPlan] = useState(false);
+  const updatePlan = useAction(api.stripe.subscriptions.update);
+
+  const updateToFreePlan = async ({
+    subscription_id,
+    subscription_item_id,
+  }: UpdatePlanArgs) => {
+    try {
+      setIsUpdatingPlan(true);
+      await updatePlan({
+        plan: "free",
+        subscription_id,
+        subscription_item_id,
+      });
+
+      await refetch();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsUpdatingPlan(false);
+    }
+  };
+
+  const updateToProPlan = async ({
+    subscription_id,
+    subscription_item_id,
+  }: UpdatePlanArgs) => {
+    try {
+      setIsUpdatingPlan(true);
+      await updatePlan({
+        plan: "pro",
+        subscription_id,
+        subscription_item_id,
+      });
+
+      await refetch();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsUpdatingPlan(false);
+    }
+  };
 
   return (
     <>
@@ -37,6 +83,16 @@ export function BillingOverviewView({ setView }: Props) {
           {data?.data.map((subscription) => {
             switch (subscription.status) {
               case "active": {
+                const { plan } = subscription as Stripe.Subscription & {
+                  plan?: Stripe.Plan;
+                };
+
+                const subscription_id = subscription.id;
+                const subscription_item_id = subscription.items?.data?.[0]?.id;
+                const nickname = plan?.nickname;
+
+                console.log(subscription?.items?.data);
+
                 return (
                   <Card
                     key={subscription.id}
@@ -49,8 +105,8 @@ export function BillingOverviewView({ setView }: Props) {
                       <p className="inline-flex items-end gap-2">
                         <strong className="text-2xl">
                           {CHF.format(
-                            (subscription?.items?.data?.[0]?.plan?.amount ||
-                              1) / 100,
+                            get(subscription, "items.data[0].plan.amount", 0) /
+                              100,
                           )}
                         </strong>
                         <span className="text-muted-foreground">
@@ -105,36 +161,53 @@ export function BillingOverviewView({ setView }: Props) {
                         View payment history
                       </Button>
 
-                      <Button
-                        disabled={isCancellingSubscription}
-                        variant="link"
-                        className="text-left text-red-400 justify-start py-0 h-6 w-full"
-                        onClick={() =>
-                          dialogs.warning({
-                            title:
-                              "Do you really want to cancel your subscription?",
-                            description:
-                              "You'll be able to resume it later, if you change your mind",
-                            onConfirm: async () => {
-                              try {
-                                setIsCancellingSubscription(true);
-
-                                await cancelSubscription({
-                                  subscription_id: subscription.id,
-                                });
-
-                                await refetch();
-                              } catch (error) {
-                                console.error(error);
-                              } finally {
-                                setIsCancellingSubscription(false);
-                              }
-                            },
-                          })
+                      {(() => {
+                        switch (nickname) {
+                          case "pro": {
+                            return (
+                              <Button
+                                loading={isUpdatingPlan}
+                                variant="link"
+                                className="text-left text-red-400 justify-start py-0 h-6 w-full"
+                                onClick={() =>
+                                  dialogs.warning({
+                                    title:
+                                      "Are you sure you want to downgrade to the free plan?",
+                                    description:
+                                      "You will lose access to all the features of the Pro plan.",
+                                    onConfirm: () =>
+                                      updateToFreePlan({
+                                        subscription_id,
+                                        subscription_item_id,
+                                      }),
+                                  })
+                                }
+                              >
+                                Downgrade to Free
+                              </Button>
+                            );
+                          }
+                          case "free": {
+                            return (
+                              <Button
+                                loading={isUpdatingPlan}
+                                variant="link"
+                                className="text-left justify-start py-0 h-6 w-full"
+                                onClick={() =>
+                                  updateToProPlan({
+                                    subscription_id,
+                                    subscription_item_id,
+                                  })
+                                }
+                              >
+                                Upgrade to Pro
+                              </Button>
+                            );
+                          }
+                          default:
+                            return null;
                         }
-                      >
-                        Cancel Subscription
-                      </Button>
+                      })()}
                     </div>
                   </Card>
                 );

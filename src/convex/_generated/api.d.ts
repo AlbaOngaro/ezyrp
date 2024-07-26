@@ -30,7 +30,7 @@ import type * as settings from "../settings.js";
 import type * as stats from "../stats.js";
 import type * as storage from "../storage.js";
 import type * as stripe_checkout from "../stripe/checkout.js";
-import type * as stripe_client from "../stripe/client.js";
+import type * as stripe_constants from "../stripe/constants.js";
 import type * as stripe_customers from "../stripe/customers.js";
 import type * as stripe_invoices from "../stripe/invoices.js";
 import type * as stripe_subscriptions from "../stripe/subscriptions.js";
@@ -65,7 +65,7 @@ declare const fullApi: ApiFromModules<{
   stats: typeof stats;
   storage: typeof storage;
   "stripe/checkout": typeof stripe_checkout;
-  "stripe/client": typeof stripe_client;
+  "stripe/constants": typeof stripe_constants;
   "stripe/customers": typeof stripe_customers;
   "stripe/invoices": typeof stripe_invoices;
   "stripe/subscriptions": typeof stripe_subscriptions;

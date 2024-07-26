@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { action } from "../_generated/server";
-import { client } from "./client";
+import { PRICES, client } from "./constants";
 
 export const setup = action({
   args: {
@@ -22,11 +22,6 @@ export const setup = action({
     });
   },
 });
-
-const PRICES = {
-  free: "price_1PgZ6JFCTTTwOs5UzuyteYDt",
-  pro: "price_1Pg3fnFCTTTwOs5UnjddiMkg",
-};
 
 export const subscription = action({
   args: {

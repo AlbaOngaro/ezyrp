@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { internalAction } from "../_generated/server";
-import { client } from "./client";
+import { client } from "./constants";
 
 export const search = internalAction({
   args: {

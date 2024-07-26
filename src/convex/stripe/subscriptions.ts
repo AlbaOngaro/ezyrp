@@ -3,7 +3,8 @@ import Stripe from "stripe";
 import { ConvexError, v } from "convex/values";
 import { action } from "../_generated/server";
 import { internal } from "../_generated/api";
-import { client } from "./client";
+
+import { PRICES, client } from "./constants";
 
 export const list = action({
   handler: async (ctx): Promise<Stripe.ApiListPromise<Stripe.Subscription>> => {
@@ -51,5 +52,23 @@ export const resume = action({
   },
   handler: async (_, { subscription_id }) => {
     return await client.subscriptions.resume(subscription_id);
+  },
+});
+
+export const update = action({
+  args: {
+    subscription_id: v.string(),
+    subscription_item_id: v.string(),
+    plan: v.union(v.literal("free"), v.literal("pro")),
+  },
+  handler: async (_, { subscription_id, subscription_item_id, plan }) => {
+    return await client.subscriptions.update(subscription_id, {
+      items: [
+        {
+          id: subscription_item_id,
+          price: PRICES[plan],
+        },
+      ],
+    });
   },
 });

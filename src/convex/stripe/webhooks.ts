@@ -1,6 +1,6 @@
 import { clerkClient } from "@clerk/clerk-sdk-node";
 import { httpAction } from "../_generated/server";
-import { client } from "./client";
+import { client } from "./constants";
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 

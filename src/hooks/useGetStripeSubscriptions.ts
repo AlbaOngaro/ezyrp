@@ -12,7 +12,19 @@ export function useGetStripeSubscriptions() {
 
   const getStripeSubscriptions = useAction(api.stripe.subscriptions.list);
 
-  const refetch = () => getStripeSubscriptions.revalidate();
+  const refetch = async () => {
+    try {
+      setLoading(true);
+      const result = await getStripeSubscriptions.revalidate();
+      setData(result);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getStripeSubscriptions()
