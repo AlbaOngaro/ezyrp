@@ -5,7 +5,10 @@ const isPublicRoute = createRouteMatcher([
   "/bookings(.*)",
   "/accept-invite(.*)",
 ]);
-const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
+const isOnboardingRoute = createRouteMatcher([
+  "/onboarding(.*)",
+  "/success(.*)",
+]);
 
 export default clerkMiddleware((auth, req) => {
   if (!auth().userId && !isPublicRoute(req)) {

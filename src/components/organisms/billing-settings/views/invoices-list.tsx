@@ -47,13 +47,20 @@ export function BillingInvoicesList({
             _id: invoice.id,
           }))}
           columns={[
-            // @ts-ignore
             {
               id: "paid_at",
               headerName: "Date",
-              field: "status_transitions.paid_at",
-              render: ({ status_transitions }) =>
-                format(status_transitions.paid_at * 1000, "dd/MM/yyyy"),
+              field: "status_transitions",
+              render: ({ status_transitions }) => {
+                if (status_transitions && status_transitions?.paid_at) {
+                  return format(
+                    status_transitions.paid_at * 1000,
+                    "dd/MM/yyyy",
+                  );
+                }
+
+                return "N/A";
+              },
             },
             {
               id: "amount",
@@ -72,26 +79,32 @@ export function BillingInvoicesList({
               headerName: "Receipt",
               field: "invoice_pdf",
               width: convertRemToPx(3),
-              render: ({ invoice_pdf, hosted_invoice_url }) => (
-                <div className="flex flex-row gap-4">
-                  <a
-                    href={invoice_pdf}
-                    rel="noreferrer"
-                    className="text-blue-500"
-                    download
-                  >
-                    <Download className="w-4 h-4" />
-                  </a>
-                  <a
-                    href={hosted_invoice_url}
-                    rel="noreferrer"
-                    className="text-blue-500"
-                    target="_blank"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </a>
-                </div>
-              ),
+              render: ({ invoice_pdf, hosted_invoice_url }) => {
+                if (!invoice_pdf || !hosted_invoice_url) {
+                  return null;
+                }
+
+                return (
+                  <div className="flex flex-row gap-4">
+                    <a
+                      href={invoice_pdf}
+                      rel="noreferrer"
+                      className="text-blue-500"
+                      download
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
+                    <a
+                      href={hosted_invoice_url}
+                      rel="noreferrer"
+                      className="text-blue-500"
+                      target="_blank"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </a>
+                  </div>
+                );
+              },
             },
           ]}
         />

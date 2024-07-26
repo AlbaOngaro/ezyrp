@@ -16,7 +16,7 @@ export function UserProvider({ children }: PropsWithChildren) {
     }
 
     return isLoading;
-  }, [isLoading, __clerk_status, __clerk_ticket]);
+  }, [__clerk_status, __clerk_ticket, isLoading]);
 
   if (showLoader) {
     return (

@@ -22,7 +22,7 @@ export function BillingOverviewView({ setView }: Props) {
   const { data, loading, refetch } = useGetStripeSubscriptions();
 
   const [isLoadingSession, setIsLoadingSession] = useState(false);
-  const updatePaymentMethod = useAction(api.stripe.checkout.session);
+  const updatePaymentMethod = useAction(api.stripe.checkout.setup);
 
   const [isCancellingSubscription, setIsCancellingSubscription] =
     useState(false);
@@ -49,7 +49,8 @@ export function BillingOverviewView({ setView }: Props) {
                       <p className="inline-flex items-end gap-2">
                         <strong className="text-2xl">
                           {CHF.format(
-                            subscription.items.data[0].plan.amount / 100,
+                            (subscription?.items?.data?.[0]?.plan?.amount ||
+                              1) / 100,
                           )}
                         </strong>
                         <span className="text-muted-foreground">
@@ -71,11 +72,13 @@ export function BillingOverviewView({ setView }: Props) {
                           try {
                             setIsLoadingSession(true);
                             const session = await updatePaymentMethod({
-                              customer: subscription.customer,
+                              customer: subscription.customer as string,
                               subscription_id: subscription.id,
                             });
 
-                            window.open(session.url, "_self");
+                            if (session && session.url) {
+                              window.open(session.url, "_self");
+                            }
                           } catch (error) {
                             console.error(error);
                           } finally {

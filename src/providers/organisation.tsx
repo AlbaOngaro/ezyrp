@@ -4,6 +4,10 @@ import { PropsWithChildren, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader } from "components/atoms/loader";
 
+function isOnboardingRoute(path: string): boolean {
+  return path.includes("onboarding") || path.includes("success");
+}
+
 export function OrganisationProvider({ children }: PropsWithChildren) {
   const router = useRouter();
   const { isLoaded, setActive, userMemberships } = useOrganizationList({
@@ -29,7 +33,7 @@ export function OrganisationProvider({ children }: PropsWithChildren) {
     if (!isLoaded || !!orgId) return;
 
     if (userMemberships.count === 0) {
-      if (!router.asPath.includes("onboarding")) {
+      if (!isOnboardingRoute(router.asPath)) {
         router.push("/onboarding");
       }
       return;
