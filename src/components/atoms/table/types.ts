@@ -12,8 +12,7 @@ export type FlattenObjectKeys<
 
 type Extract<T, U> = T extends U ? T : never;
 
-export interface Row
-  extends Record<string, ReactNode | Partial<Row> | Partial<Row>[]> {
+export interface Row extends Record<string, unknown> {
   _id: string;
 }
 
@@ -84,6 +83,7 @@ type Pagination = {
 };
 
 export type Props<R extends Row = Row> = {
+  testId?: string;
   loading?: boolean;
   className?: string;
   columns: Column<R>[];

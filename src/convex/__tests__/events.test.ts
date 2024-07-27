@@ -11,6 +11,7 @@ afterEach(async () => {
 describe("Events", () => {
   test("User can only get events in his workspace", async () => {
     const tAuth1 = t.withIdentity({
+      tokenIdentifier: "https://testingasdf|userid1",
       // @ts-ignore
       websiteUrl: "workspace1",
       gender: "org:admin",
@@ -27,7 +28,6 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
-      organizer: "",
       type: event_type_1,
       status: "approved",
     });
@@ -36,12 +36,12 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       type: event_type_1,
-      organizer: "",
       guests: [],
       status: "approved",
     });
 
     const tAuth2 = t.withIdentity({
+      tokenIdentifier: "https://testingasdf|userid2",
       // @ts-ignore
       websiteUrl: "workspace2",
       gender: "org:admin",
@@ -57,7 +57,6 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
-      organizer: "",
       type: event_type_2,
       status: "approved",
     });
@@ -66,7 +65,6 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
-      organizer: "",
       type: event_type_2,
       status: "approved",
     });
@@ -121,24 +119,38 @@ describe("Events", () => {
   });
 
   test("Admin can get all events, Member can only get his", async () => {
+    await t.mutation(internal.users.upsert, {
+      clerk_id: "userid1",
+      workspace: "workspace1",
+      plan: "pro",
+      roles: ["org:admin"],
+    });
+
     const admin = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
       gender: "org:admin",
-      tokenIdentifier: "user1",
+      tokenIdentifier: "https://testingasdf|userid1",
+    });
+
+    await t.mutation(internal.users.upsert, {
+      clerk_id: "userid2",
+      workspace: "workspace1",
+      plan: "pro",
+      roles: ["org:member"],
     });
 
     const member = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
       gender: "org:member",
-      tokenIdentifier: "user2",
+      tokenIdentifier: "https://testingasdf|userid2",
     });
 
     const event_type_1 = await admin.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 1",
-      user_id: "user1",
+      user_id: "userid1",
       duration: 30,
     });
 
@@ -146,7 +158,6 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
-      organizer: "user1",
       type: event_type_1,
       status: "approved",
     });
@@ -155,7 +166,6 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
-      organizer: "user1",
       type: event_type_1,
       status: "approved",
     });
@@ -163,7 +173,7 @@ describe("Events", () => {
     const event_type_2 = await member.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 2",
-      user_id: "user2",
+      user_id: "userid2",
       duration: 30,
     });
 
@@ -171,7 +181,6 @@ describe("Events", () => {
       start: "2021-01-01",
       end: "2021-01-02",
       guests: [],
-      organizer: "user2",
       type: event_type_2,
       status: "approved",
     });

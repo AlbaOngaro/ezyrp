@@ -6,10 +6,12 @@ import { Table } from "components/atoms/table";
 import { api } from "convex/_generated/api";
 import { Dialog, DialogRoot, DialogTrigger } from "components/atoms/dialog";
 import { Button } from "components/atoms/button";
+import { useGetUserPlan } from "lib/hooks/useGetUserPlan";
 
 const PAGE_SIZE = 5;
 
 export function EmailsTable() {
+  const plan = useGetUserPlan();
   const contextMenuItems = useGetContextMenuItems();
   const deleteEmail = useMutation(api.emails.remove);
   const {
@@ -19,7 +21,7 @@ export function EmailsTable() {
     isLoading,
   } = usePaginatedQuery(
     api.emails.search,
-    {},
+    !plan || plan !== "pro" ? "skip" : {},
     {
       initialNumItems: PAGE_SIZE,
     },

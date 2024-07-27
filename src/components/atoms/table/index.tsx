@@ -16,6 +16,7 @@ import { Checkbox } from "components/atoms/checkbox";
 import { convertRemToPx } from "lib/utils/convertRemToPx";
 
 export function Table<R extends Row = Row>({
+  testId,
   className,
   columns,
   rows: initialRows,
@@ -85,6 +86,7 @@ export function Table<R extends Row = Row>({
         </div>
       )}
       <table
+        data-testid={testId}
         className={cn("min-w-full table-fixed divide-y divide-gray-300")}
         {...rest}
       >

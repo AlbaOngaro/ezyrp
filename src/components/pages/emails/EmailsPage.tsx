@@ -12,8 +12,10 @@ import { Card } from "components/atoms/card";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
 import { EmailsTable } from "components/organisms/emails-table";
+import { useProPlanDialog } from "hooks/useProPlanDialog";
 
 export function EmailsPage() {
+  useProPlanDialog();
   const router = useRouter();
   const createEmail = useMutation(api.emails.create);
 

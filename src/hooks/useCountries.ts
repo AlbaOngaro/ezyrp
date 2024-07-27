@@ -1,7 +1,7 @@
-import { useAction } from "convex/react";
 import { useEffect, useState } from "react";
 import { FunctionReturnType } from "convex/server";
 import { api } from "convex/_generated/api";
+import { useAction } from "lib/hooks/useAction";
 
 export function useCountries() {
   const [data, setData] = useState<
