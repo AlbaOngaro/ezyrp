@@ -137,9 +137,11 @@ describe("Customers", () => {
       screen.getByTestId("customers-table__email-column--filter-btn"),
     );
 
-    expect(
-      screen.getByTestId("customers-table__email-search-input"),
-    ).toBeDefined();
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("customers-table__email-search-input"),
+      ).toBeDefined();
+    });
 
     await userEvent.type(
       screen.getByTestId("customers-table__email-search-input"),
