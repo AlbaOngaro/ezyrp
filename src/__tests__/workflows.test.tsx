@@ -25,9 +25,15 @@ vi.mock("lib/hooks/usePaginatedQuery");
 
 let container: HTMLElement;
 
-beforeEach(() => {
+beforeEach(async () => {
   container = document.createElement("div");
   document.body.appendChild(container);
+  await convexMockServer.mutation(internal.users.upsert, {
+    clerk_id: "userid1",
+    workspace: "test",
+    plan: "pro",
+    roles: ["org:admin"],
+  });
 });
 
 afterEach(async () => {
@@ -46,7 +52,7 @@ describe("Workflows", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId("table-cell__checkbox")).toBeDefined();
+      expect(screen.getByTestId("workflows-table--loaded")).toBeDefined();
     });
 
     const checkbox = screen.getByTestId<HTMLInputElement>(

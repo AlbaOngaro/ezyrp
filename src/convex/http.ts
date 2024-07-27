@@ -1,12 +1,19 @@
 import { httpRouter } from "convex/server";
-import { webhook } from "./stripe/webhooks";
+import { webhook as stripeWebhook } from "./stripe/webhooks";
+import { webhook as clerkWebhook } from "./clerk/webhooks";
 
 const http = httpRouter();
 
 http.route({
-  path: "/webhook",
+  path: "/stripe/webhook",
   method: "POST",
-  handler: webhook,
+  handler: stripeWebhook,
+});
+
+http.route({
+  path: "/clerk/webhook",
+  method: "POST",
+  handler: clerkWebhook,
 });
 
 export default http;

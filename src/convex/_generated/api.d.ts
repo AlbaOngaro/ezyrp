@@ -16,6 +16,8 @@ import type {
 } from "convex/server";
 import type * as actions from "../actions.js";
 import type * as bookings from "../bookings.js";
+import type * as clerk_types from "../clerk/types.js";
+import type * as clerk_webhooks from "../clerk/webhooks.js";
 import type * as countries from "../countries.js";
 import type * as crons from "../crons.js";
 import type * as customers from "../customers.js";
@@ -36,6 +38,7 @@ import type * as stripe_invoices from "../stripe/invoices.js";
 import type * as stripe_subscriptions from "../stripe/subscriptions.js";
 import type * as stripe_webhooks from "../stripe/webhooks.js";
 import type * as tests from "../tests.js";
+import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 import type * as workflows from "../workflows.js";
 import type * as workspaces from "../workspaces.js";
@@ -51,6 +54,8 @@ import type * as workspaces from "../workspaces.js";
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
   bookings: typeof bookings;
+  "clerk/types": typeof clerk_types;
+  "clerk/webhooks": typeof clerk_webhooks;
   countries: typeof countries;
   crons: typeof crons;
   customers: typeof customers;
@@ -71,6 +76,7 @@ declare const fullApi: ApiFromModules<{
   "stripe/subscriptions": typeof stripe_subscriptions;
   "stripe/webhooks": typeof stripe_webhooks;
   tests: typeof tests;
+  users: typeof users;
   utils: typeof utils;
   workflows: typeof workflows;
   workspaces: typeof workspaces;

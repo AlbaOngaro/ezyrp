@@ -7,13 +7,21 @@ import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { Loader } from "components/atoms/loader";
 import { SidebarLayout } from "components/layouts/sidebar/SidebarLayout";
+import { useProPlanDialog } from "hooks/useProPlanDialog";
+import { useGetUserPlan } from "lib/hooks/useGetUserPlan";
 
 type Props = {
   id: Id<"emails">;
 };
 
 export function EditEmailPage({ id }: Props) {
-  const { data: email, status } = useQuery(api.emails.get, { id });
+  useProPlanDialog();
+  const plan = useGetUserPlan();
+
+  const { data: email, status } = useQuery(
+    api.emails.get,
+    !plan || plan !== "pro" ? "skip" : { id },
+  );
 
   if (status === "pending") {
     return (

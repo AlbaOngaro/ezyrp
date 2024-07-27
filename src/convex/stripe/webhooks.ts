@@ -31,12 +31,11 @@ export const webhook = httpAction(async (ctx, request) => {
     switch (event.type) {
       case "checkout.session.completed": {
         if (event.data.object.mode === "subscription") {
-          console.log("Subscription purchased for", event.data.object.metadata);
-
+          const plan = event.data.object.metadata?.plan;
           const user_id = event.data.object.metadata?.user_id;
           const workspace = event.data.object.metadata?.workspace;
 
-          if (!workspace || !user_id) {
+          if (!workspace || !user_id || !plan) {
             console.error("Missing subscription metadata");
             return new Response(null, {
               status: 400,
@@ -45,13 +44,39 @@ export const webhook = httpAction(async (ctx, request) => {
 
           const user = await clerkClient.users.getUser(user_id);
 
-          const org = await clerkClient.organizations.createOrganization({
+          await clerkClient.organizations.createOrganization({
             name: workspace,
             createdBy: user.id,
+            publicMetadata: {
+              plan,
+            },
           });
 
-          console.log("Created organization", org);
+          console.log("Subscription purchased for", event.data.object.metadata);
         }
+
+        return new Response(null, {
+          status: 200,
+        });
+      }
+      case "customer.subscription.updated": {
+        const plan = event.data.object.metadata?.plan;
+        const workspace = event.data.object.metadata?.workspace;
+
+        if (!plan || !workspace) {
+          console.error("Missing subscription metadata");
+          return new Response(null, {
+            status: 400,
+          });
+        }
+
+        await clerkClient.organizations.updateOrganization(workspace, {
+          publicMetadata: {
+            plan,
+          },
+        });
+
+        console.log("Subscription updated for", event.data.object.metadata);
 
         return new Response(null, {
           status: 200,
@@ -61,7 +86,7 @@ export const webhook = httpAction(async (ctx, request) => {
         // Handle the event
         console.log(`Unhandled event type ${event.type}`);
         return new Response(null, {
-          status: 200,
+          status: 404,
         });
       }
     }

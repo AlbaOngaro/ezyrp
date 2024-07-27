@@ -11,8 +11,10 @@ import { Button } from "components/atoms/button";
 import { Modal, ModalRoot, ModalTrigger } from "components/atoms/modal";
 import { Input } from "components/atoms/input";
 import { WorkflowsTable } from "components/organisms/workflows-table";
+import { useProPlanDialog } from "hooks/useProPlanDialog";
 
 export function WorkflowsPage() {
+  useProPlanDialog();
   const router = useRouter();
   const creatWorkflow = useMutation(api.workflows.create);
 

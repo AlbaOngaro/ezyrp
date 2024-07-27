@@ -52,7 +52,7 @@ export function usePaginatedQuery<Query extends PaginatedQueryReference>(
         setStatus(res.isDone ? "Exhausted" : "CanLoadMore");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [numItems, status]);
+  }, [numItems, status, JSON.stringify(args)]);
 
   useEffect(() => {
     setStatus("LoadingFirstPage");

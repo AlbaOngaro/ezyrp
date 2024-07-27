@@ -83,6 +83,7 @@ type Pagination = {
 };
 
 export type Props<R extends Row = Row> = {
+  testId?: string;
   loading?: boolean;
   className?: string;
   columns: Column<R>[];

@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { action } from "../_generated/server";
+import { plan } from "../schema";
 import { PRICES, client } from "./constants";
 
 export const setup = action({
@@ -25,10 +26,10 @@ export const setup = action({
 
 export const subscription = action({
   args: {
+    plan,
     user_id: v.string(),
     workspace: v.string(),
     customer_email: v.string(),
-    plan: v.union(v.literal("free"), v.literal("pro")),
   },
   handler: async (_, { customer_email, workspace, user_id, plan }) => {
     return await client.checkout.sessions.create({
@@ -46,6 +47,7 @@ export const subscription = action({
       metadata: {
         workspace,
         user_id,
+        plan,
       },
     });
   },

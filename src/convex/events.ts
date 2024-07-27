@@ -57,14 +57,16 @@ export const search = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { range, paginationOpts }) => {
-    const { workspace, user_id, role } = await getAuthData(ctx);
+    const { workspace, clerk_id, role } = await getAuthData(ctx);
+
+    console.debug("clerk_id", clerk_id);
 
     const events = await filter(
       ctx.db
         .query("events")
         .withIndex("by_workspace", (q) => q.eq("workspace", workspace))
         .filter((q) =>
-          role === "org:admin" ? true : q.eq(q.field("organizer"), user_id),
+          role === "org:admin" ? true : q.eq(q.field("organizer"), clerk_id),
         ),
       (event) => {
         if (!range) {
@@ -124,15 +126,11 @@ export const create = mutation({
     start: v.string(),
     notes: v.optional(v.string()),
     guests: v.array(v.id("customers")),
-    organizer: v.string(),
     type: v.id("eventTypes"),
     status: v.union(v.literal("approved"), v.literal("unapproved")),
   },
-  handler: async (
-    ctx,
-    { end, start, notes, type, guests, organizer, status },
-  ) => {
-    const { workspace } = await getAuthData(ctx);
+  handler: async (ctx, { end, start, notes, type, guests, status }) => {
+    const { workspace, clerk_id } = await getAuthData(ctx);
 
     const id = await ctx.db.insert("events", {
       workspace,
@@ -141,7 +139,7 @@ export const create = mutation({
       notes,
       guests,
       type,
-      organizer,
+      organizer: clerk_id,
       status,
     });
 

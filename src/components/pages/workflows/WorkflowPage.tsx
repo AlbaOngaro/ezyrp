@@ -9,13 +9,21 @@ import { FlowEditor } from "components/organisms/flow-editor";
 import { Loader } from "components/atoms/loader";
 import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
+import { useProPlanDialog } from "hooks/useProPlanDialog";
+import { useGetUserPlan } from "lib/hooks/useGetUserPlan";
 
 type Props = {
   id: Id<"workflows">;
 };
 
 export function WorkflowPage({ id }: Props) {
-  const { data: workflow, status } = useQuery(api.workflows.get, { id });
+  useProPlanDialog();
+  const plan = useGetUserPlan();
+
+  const { data: workflow, status } = useQuery(
+    api.workflows.get,
+    !plan || plan !== "pro" ? "skip" : { id },
+  );
 
   if (status === "pending") {
     return (

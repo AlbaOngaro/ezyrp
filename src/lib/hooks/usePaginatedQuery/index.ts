@@ -48,10 +48,14 @@ export function usePaginatedQuery<Query extends PaginatedQueryReference>(
       paginationOpts,
     };
 
-    loadQuery(queryArgs).then((res) => {
-      setCursor(res.continueCursor);
-      setStatus(res.isDone ? "Exhausted" : "CanLoadMore");
-    });
+    loadQuery(queryArgs)
+      .then((res) => {
+        setCursor(res.continueCursor);
+        setStatus(res.isDone ? "Exhausted" : "CanLoadMore");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numItems, status]);
 

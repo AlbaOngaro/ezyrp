@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import Stripe from "stripe";
 import { get } from "lodash";
 
+import { useSession } from "@clerk/clerk-react";
 import { View } from "../types";
 
 import { api } from "convex/_generated/api";
@@ -26,6 +27,7 @@ type UpdatePlanArgs = {
 };
 
 export function BillingOverviewView({ setView }: Props) {
+  const { session } = useSession();
   const { data, loading, refetch } = useGetStripeSubscriptions();
 
   const [isLoadingSession, setIsLoadingSession] = useState(false);
@@ -47,6 +49,7 @@ export function BillingOverviewView({ setView }: Props) {
       });
 
       await refetch();
+      await session?.reload();
     } catch (error) {
       console.error(error);
     } finally {
@@ -67,6 +70,7 @@ export function BillingOverviewView({ setView }: Props) {
       });
 
       await refetch();
+      await session?.reload();
     } catch (error) {
       console.error(error);
     } finally {
@@ -90,8 +94,6 @@ export function BillingOverviewView({ setView }: Props) {
                 const subscription_id = subscription.id;
                 const subscription_item_id = subscription.items?.data?.[0]?.id;
                 const nickname = plan?.nickname;
-
-                console.log(subscription?.items?.data);
 
                 return (
                   <Card

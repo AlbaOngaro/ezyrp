@@ -81,6 +81,8 @@ export const variant = v.union(
 
 export const range = v.object({ start: v.string(), end: v.string() });
 
+export const plan = v.union(v.literal("free"), v.literal("pro"));
+
 export default defineSchema({
   settings: defineTable({
     user_id: v.string(),
@@ -157,4 +159,12 @@ export default defineSchema({
     url: v.optional(v.string()),
     read: v.boolean(),
   }).index("by_workspace", ["workspace"]),
+  users: defineTable({
+    plan,
+    clerk_id: v.string(),
+    workspace: v.string(),
+    roles: v.array(v.string()),
+  })
+    .index("by_clerk_id", ["clerk_id"])
+    .index("by_workspace", ["workspace"]),
 });

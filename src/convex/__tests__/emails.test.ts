@@ -9,7 +9,15 @@ afterEach(async () => {
 
 describe("Emails", () => {
   test("User can only get emails in his workspace", async () => {
+    await t.mutation(internal.users.upsert, {
+      clerk_id: "userid1",
+      workspace: "workspace1",
+      roles: ["org:admin"],
+      plan: "pro",
+    });
+
     const tAuth1 = t.withIdentity({
+      tokenIdentifier: "https://testingasdf|userid1",
       // @ts-ignore
       websiteUrl: "workspace1",
       gender: "org:admin",
@@ -22,7 +30,15 @@ describe("Emails", () => {
       title: "Template 1",
     });
 
+    await t.mutation(internal.users.upsert, {
+      clerk_id: "userid2",
+      workspace: "workspace2",
+      roles: ["org:admin"],
+      plan: "pro",
+    });
+
     const tAuth2 = t.withIdentity({
+      tokenIdentifier: "https://testingasdf|userid2",
       // @ts-ignore
       websiteUrl: "workspace2",
       gender: "org:admin",
@@ -75,7 +91,15 @@ describe("Emails", () => {
   });
 
   test("Deleting email disables related workflows", async () => {
+    await t.mutation(internal.users.upsert, {
+      clerk_id: "userid1",
+      workspace: "test",
+      roles: ["org:admin"],
+      plan: "pro",
+    });
+
     const tAuth = t.withIdentity({
+      tokenIdentifier: "https://testingasdf|userid1",
       // @ts-ignore
       websiteUrl: "test",
       gender: "org:admin",

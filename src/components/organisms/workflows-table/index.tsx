@@ -10,10 +10,12 @@ import { Button } from "components/atoms/button";
 import { Id } from "convex/_generated/dataModel";
 
 import { usePaginatedQuery } from "lib/hooks/usePaginatedQuery";
+import { useGetUserPlan } from "lib/hooks/useGetUserPlan";
 
 const PAGE_SIZE = 5;
 
 export function WorkflowsTable() {
+  const plan = useGetUserPlan();
   const [workflowStatus, setWorkflowStatus] = useState<
     "active" | "inactive" | undefined
   >(undefined);
@@ -27,9 +29,11 @@ export function WorkflowsTable() {
     loadMore,
   } = usePaginatedQuery(
     api.workflows.search,
-    {
-      status: workflowStatus,
-    },
+    !plan || plan !== "pro"
+      ? "skip"
+      : {
+          status: workflowStatus,
+        },
     {
       initialNumItems: PAGE_SIZE,
     },
@@ -37,6 +41,7 @@ export function WorkflowsTable() {
 
   return (
     <Table
+      testId={`workflows-table--${isLoading ? "loading" : "loaded"}`}
       loading={isLoading}
       rows={workflows || []}
       columns={[

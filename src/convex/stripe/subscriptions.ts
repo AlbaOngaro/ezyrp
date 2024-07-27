@@ -4,6 +4,8 @@ import { ConvexError, v } from "convex/values";
 import { action } from "../_generated/server";
 import { internal } from "../_generated/api";
 
+import { getAuthData } from "../utils";
+import { plan } from "../schema";
 import { PRICES, client } from "./constants";
 
 export const list = action({
@@ -57,11 +59,13 @@ export const resume = action({
 
 export const update = action({
   args: {
+    plan,
     subscription_id: v.string(),
     subscription_item_id: v.string(),
-    plan: v.union(v.literal("free"), v.literal("pro")),
   },
-  handler: async (_, { subscription_id, subscription_item_id, plan }) => {
+  handler: async (ctx, { subscription_id, subscription_item_id, plan }) => {
+    const { workspace } = await getAuthData(ctx);
+
     return await client.subscriptions.update(subscription_id, {
       items: [
         {
@@ -69,6 +73,10 @@ export const update = action({
           price: PRICES[plan],
         },
       ],
+      metadata: {
+        plan,
+        workspace,
+      },
     });
   },
 });

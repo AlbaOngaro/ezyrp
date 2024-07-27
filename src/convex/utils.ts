@@ -25,6 +25,8 @@ import {
 
 type Ctx = GenericQueryCtx<any> | GenericMutationCtx<any>;
 
+const regex = /https:\/\/.*\|(.*)$/;
+
 /**
  * Extracts the user_id and workspace from the auth object.
  * Throws an error if the user is not authenticated or if the workspace is not found.
@@ -34,6 +36,7 @@ export async function getAuthData(ctx: Ctx | GenericActionCtx<any>): Promise<
     role: "org:admin" | "org:member";
     user_id: string;
     workspace: string;
+    clerk_id: string;
   }
 > {
   const identity = (await ctx.auth.getUserIdentity()) as UserIdentity & {
@@ -53,12 +56,54 @@ export async function getAuthData(ctx: Ctx | GenericActionCtx<any>): Promise<
     throw new ConvexError("Invalid role; Aborting.");
   }
 
+  const match = regex.exec(identity.tokenIdentifier);
+  if (!match || !match[1]) {
+    throw new ConvexError("Cannot get clerk_id from user identity; Aborting.");
+  }
+
+  const clerk_id = match[1];
+
   return {
     ...identity,
     role: identity.gender,
+    clerk_id,
     user_id: identity.tokenIdentifier,
     workspace: identity.websiteUrl,
   };
+}
+
+/**
+ * Gets the user by their clerk_id. Throws an error if not found.
+ */
+export async function getUserByClerkId(
+  ctx: Ctx,
+  {
+    clerk_id,
+  }: {
+    clerk_id: string;
+  },
+): Promise<Doc<"users">> {
+  const user = await ctx.db
+    .query("users")
+    .withIndex("by_clerk_id", (q) => q.eq("clerk_id", clerk_id))
+    .unique();
+
+  if (!user) {
+    throw new ConvexError("User not found");
+  }
+
+  return user;
+}
+
+/**
+ * Checks if the user is a pro user. Throws an error if not.
+ */
+export async function isProUserGuard(ctx: Ctx) {
+  const { clerk_id } = await getAuthData(ctx);
+  const user = await getUserByClerkId(ctx, { clerk_id });
+  if (user.plan !== "pro") {
+    throw new ConvexError("User is not a pro user");
+  }
 }
 
 type GetEntityByIdInWorkspaceArgs<

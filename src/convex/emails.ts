@@ -5,6 +5,7 @@ import {
   getAuthData,
   getEntitiesInWorkspace,
   getEntityByIdInWorkspace,
+  isProUserGuard,
   getValidUuid,
 } from "./utils";
 
@@ -22,6 +23,8 @@ export const get = query({
     id: v.id("emails"),
   },
   handler: async (ctx, { id }) => {
+    await isProUserGuard(ctx);
+
     return await getEntityByIdInWorkspace(ctx, {
       id,
       table: "emails",
@@ -31,6 +34,8 @@ export const get = query({
 
 export const list = query({
   handler: async (ctx) => {
+    await isProUserGuard(ctx);
+
     return await getEntitiesInWorkspace(ctx, "emails");
   },
 });
@@ -40,6 +45,8 @@ export const search = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, { paginationOpts }) => {
+    await isProUserGuard(ctx);
+
     const { workspace } = await getAuthData(ctx);
 
     return await ctx.db
@@ -54,6 +61,8 @@ export const create = mutation({
     title: v.string(),
   },
   handler: async (ctx, { title }) => {
+    await isProUserGuard(ctx);
+
     const { workspace } = await getAuthData(ctx);
 
     const sid = getValidUuid();
@@ -94,6 +103,8 @@ export const update = mutation({
     html: v.optional(v.id("_storage")),
   },
   handler: async (ctx, { id, title, body, html }) => {
+    await isProUserGuard(ctx);
+
     const email = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "emails",
@@ -117,6 +128,8 @@ export const remove = mutation({
     id: v.id("emails"),
   },
   handler: async (ctx, { id }) => {
+    await isProUserGuard(ctx);
+
     const { workspace } = await getAuthData(ctx);
     await getEntityByIdInWorkspace(ctx, {
       id,

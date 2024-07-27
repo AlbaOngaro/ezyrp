@@ -11,28 +11,63 @@ import {
   Bell,
 } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { JSXElementConstructor, useEffect } from "react";
 import { toast } from "sonner";
-
 import { useMutation } from "convex/react";
+
 import { cn } from "lib/utils/cn";
 import { Button } from "components/atoms/button";
 import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 import { Notification } from "components/atoms/notification";
+import { Plan, useGetUserPlan } from "lib/hooks/useGetUserPlan";
+import { Badge } from "components/atoms/badge";
+
+type NavItem = {
+  name: string;
+  href: string;
+  plans: Plan[];
+  icon: JSXElementConstructor<any>;
+};
 
 const navigation = [
-  { name: "Home", href: "/", icon: Home },
-  { name: "Customers", href: "/customers", icon: UserRound },
-  { name: "Inventory", href: "/inventory", icon: Package2 },
-  { name: "Invoices", href: "/invoices", icon: ReceiptText },
-  { name: "Schedule", href: "/schedule", icon: CalendarDays },
-  { name: "Email templates", href: "/emails", icon: Mail },
-  { name: "Workflows", href: "/workflows", icon: Workflow },
-];
+  { name: "Home", href: "/", icon: Home, plans: ["free", "pro"] },
+  {
+    name: "Customers",
+    href: "/customers",
+    icon: UserRound,
+    plans: ["free", "pro"],
+  },
+  {
+    name: "Inventory",
+    href: "/inventory",
+    icon: Package2,
+    plans: ["free", "pro"],
+  },
+  {
+    name: "Invoices",
+    href: "/invoices",
+    icon: ReceiptText,
+    plans: ["free", "pro"],
+  },
+  {
+    name: "Schedule",
+    href: "/schedule",
+    icon: CalendarDays,
+    plans: ["free", "pro"],
+  },
+  {
+    name: "Email templates",
+    href: "/emails",
+    icon: Mail,
+    plans: ["pro"],
+  },
+  { name: "Workflows", href: "/workflows", icon: Workflow, plans: ["pro"] },
+] satisfies NavItem[];
 
 export function Sidebar() {
   const router = useRouter();
+  const plan = useGetUserPlan();
   const updateNotification = useMutation(api.notifications.update);
   const { data: notifications = [] } = useQuery(api.notifications.search, {
     read: false,
@@ -114,6 +149,12 @@ export function Sidebar() {
               >
                 <item.icon className="h-5 w-5" />
                 <span>{item.name}</span>
+
+                {plan && !item.plans.includes(plan) && (
+                  <Badge variant="secondary" size="sm">
+                    pro
+                  </Badge>
+                )}
               </Link>
             ))}
           </nav>
