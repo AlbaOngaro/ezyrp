@@ -27,10 +27,10 @@ const HOURS = Array.from({ length: 48 }, (_, i) => {
 
 const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
-export const ScheduleSettings = forwardRef<HTMLDivElement, unknown>(
-  function ScheduleSettings(_, ref) {
+export const AvailabilitySettings = forwardRef<HTMLDivElement, unknown>(
+  function AvailabilitySettings(_, ref) {
     const [loadSettings] = useLazyQuery(api.settings.get);
-    const updateSettings = useMutation(api.settings.update);
+    const updateSettings = useMutation(api.settings.upsert);
 
     const {
       control,

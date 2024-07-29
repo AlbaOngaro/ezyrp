@@ -85,7 +85,7 @@ export const plan = v.union(v.literal("free"), v.literal("pro"));
 
 export default defineSchema({
   settings: defineTable({
-    user_id: v.string(),
+    user_id: v.id("users"),
     start: v.string(),
     end: v.string(),
     days: v.array(v.number()),
