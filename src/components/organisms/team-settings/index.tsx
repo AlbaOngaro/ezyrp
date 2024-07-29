@@ -19,7 +19,6 @@ import { dialogs } from "components/atoms/dialog";
 
 import { CreateInviteForm } from "components/organisms/create-invite-form/CreateInviteForm";
 
-import { convertRemToPx } from "lib/utils/convertRemToPx";
 import { api } from "convex/_generated/api";
 import {
   Tooltip,
@@ -155,19 +154,15 @@ export const TeamSettings = forwardRef<HTMLDivElement, unknown>(
               withMultiSelect
               columns={[
                 {
-                  id: "id",
-                  field: "_id",
-                  headerName: " ",
-                  width: convertRemToPx(1),
-                  render: ({ email }) => (
-                    <Avatar className="block" seed={email} />
-                  ),
-                },
-                {
                   id: "email",
                   field: "email",
                   sortable: true,
                   headerName: "Email",
+                  render: ({ email }) => (
+                    <span className="flex flex-row items-center gap-4">
+                      <Avatar className="block" seed={email} /> {email}
+                    </span>
+                  ),
                 },
                 {
                   id: "type",

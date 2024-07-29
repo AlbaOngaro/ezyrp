@@ -35,14 +35,15 @@ export function OnboardingPage() {
     _onSuccess,
     _onError,
   ) =>
-    handleSubmit(async ({ name, plan }) => {
+    handleSubmit(async ({ name, plan, teamMembers: team_members }) => {
       try {
         if (!!user) {
           const session = await startCheckoutSession({
-            customer_email: user?.primaryEmailAddress?.emailAddress!,
+            plan,
+            team_members,
             workspace: name,
             user_id: user.id,
-            plan,
+            customer_email: user?.primaryEmailAddress?.emailAddress!,
           });
 
           if (!!session && !!session.url) {

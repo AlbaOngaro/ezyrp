@@ -30,8 +30,16 @@ export const subscription = action({
     user_id: v.string(),
     workspace: v.string(),
     customer_email: v.string(),
+    team_members: v.array(
+      v.object({
+        email: v.string(),
+      }),
+    ),
   },
-  handler: async (_, { customer_email, workspace, user_id, plan }) => {
+  handler: async (
+    _,
+    { customer_email, workspace, user_id, team_members, plan },
+  ) => {
     return await client.checkout.sessions.create({
       customer_email,
       payment_method_types: ["card"],
@@ -45,6 +53,7 @@ export const subscription = action({
       cancel_url: `${process.env.WEB_URL}/onboarding`,
       mode: "subscription",
       metadata: {
+        team_members: team_members.map((member) => member.email).join(","),
         workspace,
         user_id,
         plan,

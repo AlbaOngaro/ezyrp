@@ -34,6 +34,9 @@ export const webhook = httpAction(async (ctx, request) => {
           const plan = event.data.object.metadata?.plan;
           const user_id = event.data.object.metadata?.user_id;
           const workspace = event.data.object.metadata?.workspace;
+          const team_members = (event.data.object.metadata?.team_members || "")
+            .split(",")
+            .filter((email) => !!email);
 
           if (!workspace || !user_id || !plan) {
             console.error("Missing subscription metadata");
@@ -44,13 +47,22 @@ export const webhook = httpAction(async (ctx, request) => {
 
           const user = await clerkClient.users.getUser(user_id);
 
-          await clerkClient.organizations.createOrganization({
+          const org = await clerkClient.organizations.createOrganization({
             name: workspace,
             createdBy: user.id,
             publicMetadata: {
               plan,
             },
           });
+
+          for (const team_member of team_members) {
+            await clerkClient.organizations.createOrganizationInvitation({
+              organizationId: org.id,
+              inviterUserId: user.id,
+              emailAddress: team_member,
+              role: "org:member",
+            });
+          }
 
           console.log("Subscription purchased for", event.data.object.metadata);
         }
