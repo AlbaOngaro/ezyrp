@@ -1,15 +1,15 @@
-import { useFormContext } from "react-hook-form";
-import { FormValue } from "../types";
 import { PRICES } from "../constants";
+import { useOnobardingFormContext } from "../hooks/useOnobardingFormContext";
 import { Heading } from "components/atoms/heading";
 import { Paragraph } from "components/atoms/typography";
 import { CHF } from "lib/formatters/chf";
 
 export function SummaryStep() {
-  const { getValues } = useFormContext<FormValue>();
+  const { getValues } = useOnobardingFormContext();
 
   const name = getValues("name");
   const plan = getValues("plan");
+  const teamMembers = getValues("teamMembers");
 
   return (
     <>
@@ -24,6 +24,13 @@ export function SummaryStep() {
         <strong>
           {plan} ({CHF.format(PRICES[plan])} / month)
         </strong>
+        <br />
+        <small>Team members:</small>
+        <ul>
+          {teamMembers.map((teamMember) => (
+            <li key={teamMember.email}>{teamMember.email}</li>
+          ))}
+        </ul>
       </Paragraph>
     </>
   );

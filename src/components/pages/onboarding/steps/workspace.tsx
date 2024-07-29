@@ -1,9 +1,8 @@
-import { useFormContext } from "react-hook-form";
-import { FormValue } from "../types";
+import { useOnobardingFormContext } from "../hooks/useOnobardingFormContext";
 import { Input } from "components/atoms/input";
 
 export function WorkspaceStep() {
-  const { register } = useFormContext<FormValue>();
+  const { register } = useOnobardingFormContext();
 
   return (
     <Input

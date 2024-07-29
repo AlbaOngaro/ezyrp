@@ -1,6 +1,6 @@
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { Controller, useFormContext } from "react-hook-form";
-import { FormValue } from "../types";
+import { Controller } from "react-hook-form";
+import { useOnobardingFormContext } from "../hooks/useOnobardingFormContext";
 import {
   Accordion,
   AccordionContent,
@@ -12,7 +12,7 @@ import { H3, Paragraph } from "components/atoms/typography";
 import { CHF } from "lib/formatters/chf";
 
 export function PlanStep() {
-  const { control } = useFormContext<FormValue>();
+  const { control } = useOnobardingFormContext();
 
   return (
     <Controller
@@ -47,7 +47,7 @@ export function PlanStep() {
                     variant="outline"
                     className="w-full data-[state=checked]:bg-black data-[state=checked]:text-white"
                   >
-                    Chose
+                    {value === "free" ? "Selected" : "Chose"}
                   </Button>
                 </RadioGroup.Item>
               </AccordionContent>
@@ -71,7 +71,7 @@ export function PlanStep() {
                     variant="outline"
                     className="w-full data-[state=checked]:bg-black data-[state=checked]:text-white"
                   >
-                    Chose
+                    {value === "pro" ? "Selected" : "Chose"}
                   </Button>
                 </RadioGroup.Item>
               </AccordionContent>
