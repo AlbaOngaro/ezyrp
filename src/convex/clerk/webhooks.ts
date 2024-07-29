@@ -1,9 +1,13 @@
 import { Webhook } from "svix";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import { httpAction } from "../_generated/server";
 import { internal } from "../_generated/api";
+import { plan } from "../schema";
 import { WebhookPayload } from "./types";
 
 const endpointSecret = process.env.CLERK_WEBHOOK_SECRET as string;
+
+type Plan = typeof plan.type;
 
 const wh = new Webhook(endpointSecret);
 
@@ -84,8 +88,43 @@ export const webhook = httpAction(async (ctx, request) => {
         status: 200,
       });
     }
+    case "organizationInvitation.accepted": {
+      console.log("organizationInvitation accepted event received");
+
+      const { data } = payload;
+
+      const org = await clerkClient.organizations.getOrganization({
+        organizationId: data.organization_id,
+      });
+
+      if (!org || !org.publicMetadata) {
+        return new Response(null, {
+          status: 400,
+        });
+      }
+
+      const { data: users } = await clerkClient.users.getUserList({
+        limit: 1,
+        emailAddress: [data.email_address],
+      });
+
+      console.log(users, data.email_address);
+
+      for (const user of users) {
+        await ctx.runMutation(internal.users.upsert, {
+          clerk_id: user.id,
+          workspace: data.organization_id,
+          roles: [data.role],
+          plan: org.publicMetadata.plan as Plan,
+        });
+      }
+
+      return new Response(null, {
+        status: 200,
+      });
+    }
     default: {
-      console.log("Unknown event type received");
+      console.log("Unknown event type received", payload.type);
       return new Response(null, {
         status: 200,
       });
