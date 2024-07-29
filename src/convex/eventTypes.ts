@@ -35,7 +35,7 @@ export const create = mutation({
     variant,
     description: v.optional(v.string()),
     duration: v.number(),
-    user_id: v.string(),
+    user_id: v.id("users"),
   },
   handler: async (ctx, { name, variant, description, duration, user_id }) => {
     const { workspace } = await getAuthData(ctx);
@@ -58,7 +58,7 @@ export const update = mutation({
     variant: v.optional(variant),
     description: v.optional(v.string()),
     duration: v.optional(v.number()),
-    user_id: v.optional(v.string()),
+    user_id: v.optional(v.id("users")),
   },
   handler: async (
     ctx,

@@ -83,12 +83,27 @@ export const range = v.object({ start: v.string(), end: v.string() });
 
 export const plan = v.union(v.literal("free"), v.literal("pro"));
 
+const interval = v.object({
+  start: v.string(),
+  end: v.string(),
+});
+
+export const day = v.array(interval);
+
+export const days = v.object({
+  monday: v.optional(day),
+  tuesday: v.optional(day),
+  wednesday: v.optional(day),
+  thursday: v.optional(day),
+  friday: v.optional(day),
+  saturday: v.optional(day),
+  sunday: v.optional(day),
+});
+
 export default defineSchema({
   settings: defineTable({
     user_id: v.id("users"),
-    start: v.string(),
-    end: v.string(),
-    days: v.array(v.number()),
+    days,
   }).index("by_user", ["user_id"]),
   customers: defineTable({
     workspace: v.string(),
@@ -125,7 +140,7 @@ export default defineSchema({
     variant,
     description: v.optional(v.string()),
     duration: v.number(),
-    user_id: v.string(),
+    user_id: v.id("users"),
   }).index("by_workspace", ["workspace"]),
   events: defineTable({
     workspace: v.string(),

@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { getAuthData, getUserByClerkId } from "./utils";
+import { days } from "./schema";
 
 export const get = query({
   handler: async (ctx) => {
@@ -17,11 +18,9 @@ export const get = query({
 export const create = internalMutation({
   args: {
     clerk_id: v.string(),
-    end: v.string(),
-    start: v.string(),
-    days: v.array(v.number()),
+    days,
   },
-  handler: async (ctx, { clerk_id, start, end, days }) => {
+  handler: async (ctx, { clerk_id, days }) => {
     const user = await getUserByClerkId(ctx, { clerk_id });
     const settings = await ctx.db
       .query("settings")
@@ -31,8 +30,6 @@ export const create = internalMutation({
     if (!settings) {
       await ctx.db.insert("settings", {
         user_id: user._id,
-        start,
-        end,
         days,
       });
 
@@ -46,11 +43,9 @@ export const create = internalMutation({
 
 export const upsert = mutation({
   args: {
-    end: v.string(),
-    start: v.string(),
-    days: v.array(v.number()),
+    days,
   },
-  handler: async (ctx, { start, end, days }) => {
+  handler: async (ctx, { days }) => {
     const { clerk_id } = await getAuthData(ctx);
     const user = await getUserByClerkId(ctx, { clerk_id });
 
@@ -62,8 +57,6 @@ export const upsert = mutation({
     if (!settings) {
       await ctx.db.insert("settings", {
         user_id: user._id,
-        start,
-        end,
         days,
       });
 
@@ -74,8 +67,6 @@ export const upsert = mutation({
     }
 
     await ctx.db.patch(settings._id, {
-      start,
-      end,
       days,
     });
 

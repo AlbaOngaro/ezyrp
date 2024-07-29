@@ -1,11 +1,13 @@
 import { format } from "date-fns";
 import { Fragment } from "react";
 
+import { has } from "lodash";
 import { EventItem } from "../components/event-item";
 import { Indicator } from "../components/indicator";
 import { useCalendarContext } from "../hooks/useCalendarContext";
 import { useGetDayStartAndEnd } from "../hooks/useGetDayStartAndEnd";
 
+import { WEEKDAYS } from "../constants";
 import { cn } from "lib/utils/cn";
 
 import { useSettings } from "hooks/useSettings";
@@ -251,7 +253,7 @@ export function Body() {
               {days.map((day, i) => {
                 return (
                   <Fragment key={day.date.toISOString()}>
-                    {settings?.days?.includes(i) ? (
+                    {has(settings, `days.${WEEKDAYS[i]}`) ? (
                       <>
                         <div
                           className="bg-gray-100/30 pointer-events-none"

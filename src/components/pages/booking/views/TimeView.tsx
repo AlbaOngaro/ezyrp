@@ -11,6 +11,7 @@ import {
 import { Controller, useFormContext } from "react-hook-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { FunctionReturnType } from "convex/server";
+import { has } from "lodash";
 import { View } from "../types";
 import { MonthWidget } from "components/atoms/month-widget";
 import { useBookingContext } from "components/pages/booking/BookingPage";
@@ -18,6 +19,7 @@ import { Button } from "components/atoms/button";
 import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 import { cn } from "lib/utils/cn";
+import { WEEKDAYS } from "components/organisms/events-calendar/constants";
 
 type Props = {
   slots: string[];
@@ -71,7 +73,7 @@ export function TimeView({ slots, eventType: { duration } }: Props) {
 
                 const day = date.getDay() === 0 ? 6 : date.getDay() - 1;
 
-                return !settings?.days.includes(day);
+                return !has(settings, `days.${WEEKDAYS[day]}`);
               }}
               isPrevDisabled={(date) => !isAfter(subMonths(date, 1), today)}
             />

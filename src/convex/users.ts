@@ -32,6 +32,16 @@ export const get = internalQuery({
   },
 });
 
+export const WEEKDAYS = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
+
 export const upsert = internalMutation({
   args: {
     plan,
@@ -55,15 +65,26 @@ export const upsert = internalMutation({
 
       await ctx.scheduler.runAfter(0, internal.settings.create, {
         clerk_id,
-        start: "09:00",
-        end: "17:00",
-        days: [0, 1, 2, 3, 4],
+        days: Array.from({ length: 5 })
+          .map(() => [
+            {
+              start: "09:00",
+              end: "17:00",
+            },
+          ])
+          .reduce(
+            (acc, curr, i) => ({
+              ...acc,
+              [WEEKDAYS[i]]: curr,
+            }),
+            {},
+          ),
       });
 
       return created;
     }
 
-    const patched = await ctx.db.patch(user._id, {
+    await ctx.db.patch(user._id, {
       roles: roles || user.roles,
       plan: plan || user.plan,
       workspace: workspace || user.workspace,
@@ -71,12 +92,23 @@ export const upsert = internalMutation({
 
     await ctx.scheduler.runAfter(0, internal.settings.create, {
       clerk_id,
-      start: "09:00",
-      end: "17:00",
-      days: [0, 1, 2, 3, 4],
+      days: Array.from({ length: 5 })
+        .map(() => [
+          {
+            start: "09:00",
+            end: "17:00",
+          },
+        ])
+        .reduce(
+          (acc, curr, i) => ({
+            ...acc,
+            [WEEKDAYS[i]]: curr,
+          }),
+          {},
+        ),
     });
 
-    return patched;
+    return user._id;
   },
 });
 

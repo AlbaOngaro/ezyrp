@@ -1,10 +1,12 @@
 import { format, isSameDay } from "date-fns";
 
+import { has } from "lodash";
 import { EventItem } from "../components/event-item";
 import { useCalendarContext } from "../hooks/useCalendarContext";
 import { Indicator } from "../components/indicator";
 
 import { useGetDayStartAndEnd } from "../hooks/useGetDayStartAndEnd";
+import { WEEKDAYS } from "../constants";
 import { MonthWidget } from "components/atoms/month-widget";
 
 import { useSettings } from "hooks/useSettings";
@@ -251,7 +253,7 @@ export function Body() {
               }}
               id="grid"
             >
-              {settings?.days?.includes(weekDay) ? (
+              {has(settings, `days.${WEEKDAYS[weekDay]}`) ? (
                 <>
                   <div
                     className="bg-gray-100/30 pointer-events-none"

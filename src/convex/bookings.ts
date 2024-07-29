@@ -1,14 +1,15 @@
 import { ConvexError, v } from "convex/values";
-import {
-  addMinutes,
-  intervalToDuration,
-  setHours,
-  setMinutes,
-  format,
-  parseISO,
-  isSameDay,
-} from "date-fns";
-import { filter } from "convex-helpers/server/filter";
+// import {
+//   addMinutes,
+//   intervalToDuration,
+//   setHours,
+//   setMinutes,
+//   format,
+//   parseISO,
+//   isSameDay,
+//   getDay,
+// } from "date-fns";
+// import { filter } from "convex-helpers/server/filter";
 
 import { mutation, query } from "./_generated/server";
 import { upsert } from "./customers";
@@ -34,66 +35,72 @@ export const slots = query({
     id: v.id("eventTypes"),
     day: v.string(),
   },
-  handler: async (ctx, { id, day }) => {
+  handler: async (ctx, { id }) => {
     const eventType = await ctx.db.get(id);
     if (!eventType) {
       return [];
     }
 
-    const { user_id, duration } = eventType;
+    return [];
 
-    const settings = await ctx.db
-      .query("settings")
-      .filter((q) => q.eq(q.field("user_id"), user_id))
-      .unique();
+    // const { user_id, duration } = eventType;
 
-    const [startHours, startMinutes] = (settings?.start || "09:00")
-      .split(":")
-      .map((t) => parseInt(t, 10));
-    const [endHours, endMinutes] = (settings?.end || "17:00")
-      .split(":")
-      .map((t) => parseInt(t, 10));
+    // const settings = await ctx.db
+    //   .query("settings")
+    //   .filter((q) => q.eq(q.field("user_id"), user_id))
+    //   .unique();
 
-    const date = new Date();
+    // const dayOfWeek = getDay(day);
 
-    const start = setHours(setMinutes(date, startMinutes), startHours);
-    const end = setHours(setMinutes(date, endMinutes), endHours);
+    // const [startHours, startMinutes] = (
+    //   settings?.days?.[dayOfWeek]?.start || "09:00"
+    // )
+    //   .split(":")
+    //   .map((t) => parseInt(t, 10));
+    // const [endHours, endMinutes] = (settings?.end || "17:00")
+    //   .split(":")
+    //   .map((t) => parseInt(t, 10));
 
-    try {
-      const { hours = 0, minutes = 0 } = intervalToDuration({
-        start,
-        end,
-      });
+    // const date = new Date();
 
-      const how_many_events_in_hours = hours * (60 / duration);
-      const how_many_events_in_minutes = Math.floor(minutes / duration);
+    // const start = setHours(setMinutes(date, startMinutes), startHours);
+    // const end = setHours(setMinutes(date, endMinutes), endHours);
 
-      const slots = Array.from({
-        length: how_many_events_in_hours + how_many_events_in_minutes,
-      }).map((_, i) => format(addMinutes(start, i * duration), "HH:mm"));
+    // try {
+    //   const { hours = 0, minutes = 0 } = intervalToDuration({
+    //     start,
+    //     end,
+    //   });
 
-      const events = await filter(ctx.db.query("events"), (e) => {
-        const dayDate = parseISO(day);
-        const eventDate = parseISO(e.start);
+    //   const how_many_events_in_hours = hours * (60 / duration);
+    //   const how_many_events_in_minutes = Math.floor(minutes / duration);
 
-        return (
-          isSameDay(eventDate, dayDate) &&
-          e.status === "approved" &&
-          e.type === id &&
-          e.organizer === user_id
-        );
-      }).collect();
+    //   const slots = Array.from({
+    //     length: how_many_events_in_hours + how_many_events_in_minutes,
+    //   }).map((_, i) => format(addMinutes(start, i * duration), "HH:mm"));
 
-      const booked_slots = events.map((e) => {
-        const result = /T(\d{2}:\d{2})/.exec(e.start);
-        return result ? result[1] : "";
-      });
+    //   const events = await filter(ctx.db.query("events"), (e) => {
+    //     const dayDate = parseISO(day);
+    //     const eventDate = parseISO(e.start);
 
-      return slots.filter((slot) => !booked_slots.includes(slot));
-    } catch (e) {
-      console.error(e);
-      return [];
-    }
+    //     return (
+    //       isSameDay(eventDate, dayDate) &&
+    //       e.status === "approved" &&
+    //       e.type === id &&
+    //       e.organizer === user_id
+    //     );
+    //   }).collect();
+
+    //   const booked_slots = events.map((e) => {
+    //     const result = /T(\d{2}:\d{2})/.exec(e.start);
+    //     return result ? result[1] : "";
+    //   });
+
+    //   return slots.filter((slot) => !booked_slots.includes(slot));
+    // } catch (e) {
+    //   console.error(e);
+    //   return [];
+    // }
   },
 });
 
