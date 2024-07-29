@@ -20,14 +20,14 @@ export default function SuccessPage() {
   return (
     <Container className="flex justify-center items-center w-screen h-screen">
       <Card className="p-4 flex flex-col justify-center">
-        <span className="bg-green-500 mx-auto p-4 w-14 h-14 text-white inline-flex justify-center items-center rounded-full">
+        <span className="bg-green-500 mx-auto p-4 w-12 h-12 text-white inline-flex justify-center items-center rounded-full">
           <Check className="w-10 h-10" />
         </span>
 
         <H4 className="text-center mt-4">Success!</H4>
 
         <Paragraph className="text-center">
-          You&lquot;ll be redirected to your workspace shortly.
+          You&lsquo;ll be redirected to your workspace shortly.
         </Paragraph>
       </Card>
     </Container>

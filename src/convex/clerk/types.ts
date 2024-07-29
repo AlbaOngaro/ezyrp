@@ -139,11 +139,11 @@ export namespace OrganizationMembership {
 //   object: "organizationInvitation";
 // };
 
-// type OrganizationInvitationAcceptedEvent = {
-//   type: "organizationInvitation.accepted";
-//   data: OrganzationInvitation.Data;
-//   object: "organizationInvitation";
-// };
+type OrganizationInvitationAcceptedEvent = {
+  type: "organizationInvitation.accepted";
+  data: OrganzationInvitation.Data;
+  object: "organizationInvitation";
+};
 
 type OrganizationCreatedEvent = {
   type: "organization.created";
@@ -185,7 +185,7 @@ export type WebhookPayload =
   // | UserCreatedEvent
   // | UserUpdatedEvent
   // | OrganizationInvitationRevokedEvent
-  // | OrganizationInvitationAcceptedEvent
+  | OrganizationInvitationAcceptedEvent
   | OrganizationCreatedEvent
   | OrganizationUpdatedEvent
   | OrganizationDeletedEvent
