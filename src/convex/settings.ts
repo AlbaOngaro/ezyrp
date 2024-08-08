@@ -1,7 +1,9 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { getAuthData, getUserByClerkId } from "./utils";
-import { days } from "./schema";
+import { day, days } from "./schema";
+
+export type Intervals = typeof day.type;
 
 export const get = query({
   handler: async (ctx) => {
