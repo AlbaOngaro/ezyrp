@@ -1,20 +1,19 @@
 import { ConvexError, v } from "convex/values";
-// import {
-//   addMinutes,
-//   intervalToDuration,
-//   setHours,
-//   setMinutes,
-//   format,
-//   parseISO,
-//   isSameDay,
-//   getDay,
-// } from "date-fns";
-// import { filter } from "convex-helpers/server/filter";
-
+import {
+  addMinutes,
+  format,
+  intervalToDuration,
+  isSameDay,
+  parseISO,
+  setHours,
+  setMinutes,
+} from "date-fns";
+import { filter } from "convex-helpers/server/filter";
 import { mutation, query } from "./_generated/server";
 import { upsert } from "./customers";
 import { getEntityByIdInWorkspace } from "./utils";
 import { Id } from "./_generated/dataModel";
+import { WEEKDAYS } from "./users";
 
 export const get = query({
   args: {
@@ -33,74 +32,81 @@ export const get = query({
 export const slots = query({
   args: {
     id: v.id("eventTypes"),
-    day: v.string(),
+    day: v.number(),
   },
-  handler: async (ctx, { id }) => {
+  handler: async (ctx, { id, day }) => {
     const eventType = await ctx.db.get(id);
     if (!eventType) {
       return [];
     }
 
-    return [];
+    const { user_id, duration } = eventType;
 
-    // const { user_id, duration } = eventType;
+    const settings = await ctx.db
+      .query("settings")
+      .filter((q) => q.eq(q.field("user_id"), user_id))
+      .unique();
 
-    // const settings = await ctx.db
-    //   .query("settings")
-    //   .filter((q) => q.eq(q.field("user_id"), user_id))
-    //   .unique();
+    const dateDay = new Date(day).getDay();
+    const dayOfWeek = WEEKDAYS[dateDay];
 
-    // const dayOfWeek = getDay(day);
+    const intervals = settings?.days?.[dayOfWeek];
+    if (!intervals || intervals.length === 0) {
+      return [];
+    }
 
-    // const [startHours, startMinutes] = (
-    //   settings?.days?.[dayOfWeek]?.start || "09:00"
-    // )
-    //   .split(":")
-    //   .map((t) => parseInt(t, 10));
-    // const [endHours, endMinutes] = (settings?.end || "17:00")
-    //   .split(":")
-    //   .map((t) => parseInt(t, 10));
+    const result = [];
 
-    // const date = new Date();
+    for (const interval of intervals) {
+      const [startHours, startMinutes] = interval.start
+        .split(":")
+        .map((t) => parseInt(t, 10));
+      const [endHours, endMinutes] = interval.end
+        .split(":")
+        .map((t) => parseInt(t, 10));
 
-    // const start = setHours(setMinutes(date, startMinutes), startHours);
-    // const end = setHours(setMinutes(date, endMinutes), endHours);
+      const date = new Date();
 
-    // try {
-    //   const { hours = 0, minutes = 0 } = intervalToDuration({
-    //     start,
-    //     end,
-    //   });
+      const start = setHours(setMinutes(date, startMinutes), startHours);
+      const end = setHours(setMinutes(date, endMinutes), endHours);
 
-    //   const how_many_events_in_hours = hours * (60 / duration);
-    //   const how_many_events_in_minutes = Math.floor(minutes / duration);
+      try {
+        const { hours = 0, minutes = 0 } = intervalToDuration({
+          start,
+          end,
+        });
 
-    //   const slots = Array.from({
-    //     length: how_many_events_in_hours + how_many_events_in_minutes,
-    //   }).map((_, i) => format(addMinutes(start, i * duration), "HH:mm"));
+        const how_many_events_in_hours = hours * (60 / duration);
+        const how_many_events_in_minutes = Math.floor(minutes / duration);
 
-    //   const events = await filter(ctx.db.query("events"), (e) => {
-    //     const dayDate = parseISO(day);
-    //     const eventDate = parseISO(e.start);
+        const slots = Array.from({
+          length: how_many_events_in_hours + how_many_events_in_minutes,
+        }).map((_, i) => format(addMinutes(start, i * duration), "HH:mm"));
 
-    //     return (
-    //       isSameDay(eventDate, dayDate) &&
-    //       e.status === "approved" &&
-    //       e.type === id &&
-    //       e.organizer === user_id
-    //     );
-    //   }).collect();
+        const events = await filter(ctx.db.query("events"), (e) => {
+          const dayDate = new Date(day);
+          const eventDate = parseISO(e.start);
 
-    //   const booked_slots = events.map((e) => {
-    //     const result = /T(\d{2}:\d{2})/.exec(e.start);
-    //     return result ? result[1] : "";
-    //   });
+          return (
+            isSameDay(eventDate, dayDate) &&
+            e.status === "approved" &&
+            e.type === id &&
+            e.organizer === user_id
+          );
+        }).collect();
 
-    //   return slots.filter((slot) => !booked_slots.includes(slot));
-    // } catch (e) {
-    //   console.error(e);
-    //   return [];
-    // }
+        const booked_slots = events.map((e) => {
+          const result = /T(\d{2}:\d{2})/.exec(e.start);
+          return result ? result[1] : "";
+        });
+
+        result.push(...slots.filter((slot) => !booked_slots.includes(slot)));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    return result;
   },
 });
 

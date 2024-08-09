@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { CalendarIcon, ClockIcon } from "@radix-ui/react-icons";
 import { FormEvent, createContext, useContext, useMemo, useState } from "react";
-import { addMinutes, format, formatISO, parseISO } from "date-fns";
+import { addMinutes, format, formatISO } from "date-fns";
 import { FormProvider, useForm } from "react-hook-form";
 import { Form } from "@radix-ui/react-form";
 
@@ -68,7 +68,7 @@ export function BookingPage({ eventtype }: Props) {
       return;
     }
 
-    return formatISO(parseISO(start), { representation: "date" });
+    return new Date(start).getTime();
   }, [start]);
 
   const { data: slots = [] } = useQuery(

@@ -33,13 +33,13 @@ export const get = internalQuery({
 });
 
 export const WEEKDAYS = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
+  "monday" as const,
+  "tuesday" as const,
+  "wednesday" as const,
+  "thursday" as const,
+  "friday" as const,
+  "saturday" as const,
+  "sunday" as const,
 ];
 
 export const upsert = internalMutation({
