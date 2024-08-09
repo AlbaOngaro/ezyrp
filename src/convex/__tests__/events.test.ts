@@ -43,7 +43,7 @@ describe("Events", () => {
     const event_type_1 = await tAuth1.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 1",
-      user_id: user1,
+      clerk_id: "userid1",
       duration: 30,
     });
 
@@ -66,7 +66,7 @@ describe("Events", () => {
     const event_type_2 = await tAuth2.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 2",
-      user_id: user2,
+      clerk_id: "userid2",
       duration: 30,
     });
     const workspace_2_event_1 = await tAuth2.mutation(api.events.create, {
@@ -169,7 +169,7 @@ describe("Events", () => {
     const event_type_1 = await admin.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 1",
-      user_id: user1,
+      clerk_id: "userid2",
       duration: 30,
     });
 
@@ -192,7 +192,7 @@ describe("Events", () => {
     const event_type_2 = await member.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 2",
-      user_id: user2,
+      clerk_id: "userid1",
       duration: 30,
     });
 

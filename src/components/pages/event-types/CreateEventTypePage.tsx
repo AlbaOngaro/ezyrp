@@ -11,7 +11,7 @@ import { api } from "convex/_generated/api";
 import { VARIANTS } from "components/organisms/event-type-form/constants";
 import { useGetIsAdmin } from "lib/hooks/useGetIsAdmin";
 
-type CreateEventTypeFn = typeof api.eventTypes.create;
+export type CreateEventTypeFn = typeof api.eventTypes.create;
 
 export function CreateEventTypePage() {
   const router = useRouter();
@@ -23,9 +23,7 @@ export function CreateEventTypePage() {
     defaultValues: {
       variant: VARIANTS[0],
       name: "",
-      user_id: isAdmin
-        ? ""
-        : `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${user?.id}`,
+      clerk_id: isAdmin ? "" : user?.id,
     },
   });
 

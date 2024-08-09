@@ -23,7 +23,7 @@ import { WEEKDAYS } from "components/organisms/events-calendar/constants";
 
 type Props = {
   slots: string[];
-  eventType: FunctionReturnType<typeof api.eventTypes.get>;
+  eventType: FunctionReturnType<typeof api.bookings.get>;
 };
 
 export function TimeView({ slots, eventType: { duration } }: Props) {

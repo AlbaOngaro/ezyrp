@@ -13,7 +13,7 @@ import { useLazyQuery } from "lib/hooks/useLazyQuery";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 
-type UpdateEventTypeFn = typeof api.eventTypes.update;
+export type UpdateEventTypeFn = typeof api.eventTypes.update;
 
 type Props = {
   id: Id<"eventTypes">;
@@ -34,11 +34,15 @@ export function EditEventTypePage({ id }: Props) {
         throw new Error("Event type not found");
       }
 
-      const { _id, _creationTime, workspace: _workspace, ...rest } = data;
+      const { _id, variant, name, user, description, duration } = data;
 
       return {
+        name,
         id: _id,
-        ...rest,
+        variant,
+        duration,
+        description,
+        clerk_id: user.clerk_id,
       };
     },
   });

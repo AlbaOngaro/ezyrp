@@ -1,6 +1,10 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthData, getEntityByIdInWorkspace } from "./utils";
+import {
+  getAuthData,
+  getEntityByIdInWorkspace,
+  getUserByClerkId,
+} from "./utils";
 import { variant } from "./schema";
 
 export const get = query({
@@ -8,10 +12,20 @@ export const get = query({
     id: v.id("eventTypes"),
   },
   handler: async (ctx, { id }) => {
-    return await getEntityByIdInWorkspace(ctx, {
+    const { user_id, ...eventType } = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "eventTypes",
     });
+
+    const user = await ctx.db.get(user_id);
+    if (!user) {
+      throw new ConvexError("User not found!");
+    }
+
+    return {
+      ...eventType,
+      user,
+    };
   },
 });
 
@@ -35,10 +49,12 @@ export const create = mutation({
     variant,
     description: v.optional(v.string()),
     duration: v.number(),
-    user_id: v.id("users"),
+    clerk_id: v.string(),
   },
-  handler: async (ctx, { name, variant, description, duration, user_id }) => {
+  handler: async (ctx, { name, variant, description, duration, clerk_id }) => {
     const { workspace } = await getAuthData(ctx);
+
+    const user = await getUserByClerkId(ctx, { clerk_id });
 
     return await ctx.db.insert("eventTypes", {
       workspace,
@@ -46,7 +62,7 @@ export const create = mutation({
       variant,
       description,
       duration,
-      user_id,
+      user_id: user._id,
     });
   },
 });
@@ -58,23 +74,34 @@ export const update = mutation({
     variant: v.optional(variant),
     description: v.optional(v.string()),
     duration: v.optional(v.number()),
-    user_id: v.optional(v.id("users")),
+    clerk_id: v.optional(v.string()),
   },
   handler: async (
     ctx,
-    { id, name, variant, description, duration, user_id },
+    { id, name, variant, description, duration, clerk_id },
   ) => {
     const eventType = await getEntityByIdInWorkspace(ctx, {
       id,
       table: "eventTypes",
     });
 
+    if (clerk_id) {
+      const user = await getUserByClerkId(ctx, { clerk_id });
+      await ctx.db.patch(id, {
+        name: name || eventType.name,
+        variant: variant || eventType.variant,
+        description: description || eventType.description,
+        duration: duration || eventType.duration,
+        user_id: user._id || eventType.user_id,
+      });
+      return;
+    }
+
     await ctx.db.patch(id, {
       name: name || eventType.name,
       variant: variant || eventType.variant,
       description: description || eventType.description,
       duration: duration || eventType.duration,
-      user_id: user_id || eventType.user_id,
     });
   },
 });
