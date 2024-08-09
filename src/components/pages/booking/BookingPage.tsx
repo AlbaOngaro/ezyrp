@@ -71,7 +71,7 @@ export function BookingPage({ eventtype }: Props) {
     return new Date(start).getTime();
   }, [start]);
 
-  const { data: slots = [] } = useQuery(
+  const { data: slots = [], status } = useQuery(
     api.bookings.slots,
     day ? { id: eventtype, day } : "skip",
   );
@@ -125,7 +125,13 @@ export function BookingPage({ eventtype }: Props) {
               {(() => {
                 switch (view) {
                   case View.Time:
-                    return <TimeView slots={slots} eventType={data} />;
+                    return (
+                      <TimeView
+                        loading={status === "pending"}
+                        slots={slots}
+                        eventType={data}
+                      />
+                    );
                   case View.Details:
                     return <DetailsView />;
                   case View.Success:
