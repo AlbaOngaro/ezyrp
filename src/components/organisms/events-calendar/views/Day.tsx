@@ -1,13 +1,17 @@
 import { format, isSameDay } from "date-fns";
 
+import { get, has } from "lodash";
+import { Fragment } from "react";
 import { EventItem } from "../components/event-item";
 import { useCalendarContext } from "../hooks/useCalendarContext";
 import { Indicator } from "../components/indicator";
 
-import { useGetDayStartAndEnd } from "../hooks/useGetDayStartAndEnd";
+import { WEEKDAYS } from "../constants";
+import { getGridPosFromTime } from "../helpers";
 import { MonthWidget } from "components/atoms/month-widget";
 
 import { useSettings } from "hooks/useSettings";
+import { Intervals } from "convex/settings";
 
 export function Body() {
   const {
@@ -15,7 +19,6 @@ export function Body() {
     dispatch,
   } = useCalendarContext();
   const { data: settings } = useSettings();
-  const { dayStartsAt, dayEndsAt } = useGetDayStartAndEnd();
   const weekDay = selected.getDay() === 0 ? 6 : selected.getDay() - 1;
 
   return (
@@ -251,21 +254,95 @@ export function Body() {
               }}
               id="grid"
             >
-              {settings?.days?.includes(weekDay) ? (
+              {has(settings, `days.${WEEKDAYS[weekDay]}`) ? (
                 <>
-                  <div
-                    className="bg-gray-100/30 pointer-events-none"
-                    style={{
-                      gridRow: `2 / ${dayStartsAt * 12 + 2}`,
-                    }}
-                  />
+                  {(
+                    get(settings, `days.${WEEKDAYS[weekDay]}`, []) as Intervals
+                  ).map(({ start, end }, index, array) => {
+                    const hasMultipleIntervals = array.length > 1;
+                    if (hasMultipleIntervals) {
+                      if (index === 0) {
+                        return (
+                          <Fragment key={index}>
+                            <div
+                              style={{
+                                gridRow: `2 / ${
+                                  getGridPosFromTime(start) * 12 + 2
+                                }`,
+                              }}
+                              className="bg-gray-100/30 pointer-events-none"
+                            />
 
-                  <div
-                    className="bg-gray-100/30 pointer-events-none"
-                    style={{
-                      gridRow: `${dayEndsAt * 12 + 2} / 288`,
-                    }}
-                  />
+                            <div
+                              style={{
+                                gridRow: `${
+                                  getGridPosFromTime(end) * 12 + 2
+                                } / ${
+                                  getGridPosFromTime(array[index + 1].start) *
+                                    12 +
+                                  2
+                                }`,
+                              }}
+                              className="bg-gray-100/30 pointer-events-none"
+                            />
+                          </Fragment>
+                        );
+                      }
+
+                      if (index === array.length - 1) {
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              gridRow: `${
+                                getGridPosFromTime(end) * 12 + 2
+                              } / 288`,
+                            }}
+                            className="bg-gray-100/30 pointer-events-none"
+                          />
+                        );
+                      }
+
+                      return (
+                        <Fragment key={index}>
+                          <div
+                            style={{
+                              gridRow: `${getGridPosFromTime(end) * 12 + 2} / ${
+                                getGridPosFromTime(array[index + 1].start) *
+                                  12 +
+                                2
+                              }`,
+                            }}
+                            className="bg-gray-100/30 pointer-events-none"
+                          />
+                        </Fragment>
+                      );
+                    }
+
+                    return (
+                      <Fragment key={index}>
+                        <div
+                          key={index}
+                          style={{
+                            gridRow: `2 / ${
+                              getGridPosFromTime(start) * 12 + 2
+                            }`,
+                          }}
+                          className="bg-gray-100/30 pointer-events-none"
+                        />
+
+                        <div
+                          key={index}
+                          style={{
+                            gridRow: `${
+                              getGridPosFromTime(end) * 12 + 2
+                            } / 288`,
+                          }}
+                          className="bg-gray-100/30 pointer-events-none"
+                        />
+                      </Fragment>
+                    );
+                  })}
                 </>
               ) : (
                 <div

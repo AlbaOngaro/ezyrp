@@ -1,19 +1,19 @@
 import { ConvexError, v } from "convex/values";
 import {
   addMinutes,
+  format,
   intervalToDuration,
+  isSameDay,
+  parseISO,
   setHours,
   setMinutes,
-  format,
-  parseISO,
-  isSameDay,
 } from "date-fns";
 import { filter } from "convex-helpers/server/filter";
-
 import { mutation, query } from "./_generated/server";
 import { upsert } from "./customers";
 import { getEntityByIdInWorkspace } from "./utils";
 import { Id } from "./_generated/dataModel";
+import { WEEKDAYS } from "./users";
 
 export const get = query({
   args: {
@@ -32,7 +32,7 @@ export const get = query({
 export const slots = query({
   args: {
     id: v.id("eventTypes"),
-    day: v.string(),
+    day: v.number(),
   },
   handler: async (ctx, { id, day }) => {
     const eventType = await ctx.db.get(id);
@@ -47,53 +47,66 @@ export const slots = query({
       .filter((q) => q.eq(q.field("user_id"), user_id))
       .unique();
 
-    const [startHours, startMinutes] = (settings?.start || "09:00")
-      .split(":")
-      .map((t) => parseInt(t, 10));
-    const [endHours, endMinutes] = (settings?.end || "17:00")
-      .split(":")
-      .map((t) => parseInt(t, 10));
+    const dateDay = new Date(day).getDay();
+    const dayOfWeek = WEEKDAYS[dateDay];
 
-    const date = new Date();
-
-    const start = setHours(setMinutes(date, startMinutes), startHours);
-    const end = setHours(setMinutes(date, endMinutes), endHours);
-
-    try {
-      const { hours = 0, minutes = 0 } = intervalToDuration({
-        start,
-        end,
-      });
-
-      const how_many_events_in_hours = hours * (60 / duration);
-      const how_many_events_in_minutes = Math.floor(minutes / duration);
-
-      const slots = Array.from({
-        length: how_many_events_in_hours + how_many_events_in_minutes,
-      }).map((_, i) => format(addMinutes(start, i * duration), "HH:mm"));
-
-      const events = await filter(ctx.db.query("events"), (e) => {
-        const dayDate = parseISO(day);
-        const eventDate = parseISO(e.start);
-
-        return (
-          isSameDay(eventDate, dayDate) &&
-          e.status === "approved" &&
-          e.type === id &&
-          e.organizer === user_id
-        );
-      }).collect();
-
-      const booked_slots = events.map((e) => {
-        const result = /T(\d{2}:\d{2})/.exec(e.start);
-        return result ? result[1] : "";
-      });
-
-      return slots.filter((slot) => !booked_slots.includes(slot));
-    } catch (e) {
-      console.error(e);
+    const intervals = settings?.days?.[dayOfWeek];
+    if (!intervals || intervals.length === 0) {
       return [];
     }
+
+    const result = [];
+
+    for (const interval of intervals) {
+      const [startHours, startMinutes] = interval.start
+        .split(":")
+        .map((t) => parseInt(t, 10));
+      const [endHours, endMinutes] = interval.end
+        .split(":")
+        .map((t) => parseInt(t, 10));
+
+      const date = new Date();
+
+      const start = setHours(setMinutes(date, startMinutes), startHours);
+      const end = setHours(setMinutes(date, endMinutes), endHours);
+
+      try {
+        const { hours = 0, minutes = 0 } = intervalToDuration({
+          start,
+          end,
+        });
+
+        const how_many_events_in_hours = hours * (60 / duration);
+        const how_many_events_in_minutes = Math.floor(minutes / duration);
+
+        const slots = Array.from({
+          length: how_many_events_in_hours + how_many_events_in_minutes,
+        }).map((_, i) => format(addMinutes(start, i * duration), "HH:mm"));
+
+        const events = await filter(ctx.db.query("events"), (e) => {
+          const dayDate = new Date(day);
+          const eventDate = parseISO(e.start);
+
+          return (
+            isSameDay(eventDate, dayDate) &&
+            e.status === "approved" &&
+            e.type === id &&
+            e.organizer === user_id
+          );
+        }).collect();
+
+        const booked_slots = events.map((e) => {
+          const result = /T(\d{2}:\d{2})/.exec(e.start);
+          return result ? result[1] : "";
+        });
+
+        result.push(...slots.filter((slot) => !booked_slots.includes(slot)));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    return result;
   },
 });
 

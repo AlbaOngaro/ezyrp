@@ -11,6 +11,7 @@ import {
 import { Controller, useFormContext } from "react-hook-form";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { FunctionReturnType } from "convex/server";
+import { has } from "lodash";
 import { View } from "../types";
 import { MonthWidget } from "components/atoms/month-widget";
 import { useBookingContext } from "components/pages/booking/BookingPage";
@@ -18,13 +19,16 @@ import { Button } from "components/atoms/button";
 import { useQuery } from "lib/hooks/useQuery";
 import { api } from "convex/_generated/api";
 import { cn } from "lib/utils/cn";
+import { WEEKDAYS } from "components/organisms/events-calendar/constants";
+import { Skeleton } from "components/atoms/skeleton";
 
 type Props = {
+  loading: boolean;
   slots: string[];
-  eventType: FunctionReturnType<typeof api.eventTypes.get>;
+  eventType: FunctionReturnType<typeof api.bookings.get>;
 };
 
-export function TimeView({ slots, eventType: { duration } }: Props) {
+export function TimeView({ loading, slots, eventType: { duration } }: Props) {
   const { control, setValue } = useFormContext();
   const { today, setView } = useBookingContext();
   const { data: settings } = useQuery(api.settings.get);
@@ -71,12 +75,12 @@ export function TimeView({ slots, eventType: { duration } }: Props) {
 
                 const day = date.getDay() === 0 ? 6 : date.getDay() - 1;
 
-                return !settings?.days.includes(day);
+                return !has(settings, `days.${WEEKDAYS[day]}`);
               }}
               isPrevDisabled={(date) => !isAfter(subMonths(date, 1), today)}
             />
 
-            <div className="absolute row-start-2 col-start-8 col-end-13 h-full w-full overflow-y-auto">
+            <div className="absolute row-start-2 col-start-8 col-end-13 h-full w-full overflow-y-auto pb-4">
               <RadioGroup.Root
                 asChild
                 className="flex flex-col gap-2 "
@@ -88,38 +92,46 @@ export function TimeView({ slots, eventType: { duration } }: Props) {
                 }}
               >
                 <ol>
-                  {slots.map((slot) => {
-                    const checked = slot === format(new Date(value), "HH:mm");
+                  {loading ? (
+                    <>
+                      <Skeleton className="h-10" />
+                      <Skeleton className="h-10" />
+                      <Skeleton className="h-10" />
+                    </>
+                  ) : (
+                    slots.map((slot) => {
+                      const checked = slot === format(new Date(value), "HH:mm");
 
-                    return (
-                      <li
-                        key={slot}
-                        className="grid grid-cols-2 gap-2 items-center"
-                      >
-                        <RadioGroup.Item
-                          value={slot}
-                          className={cn(
-                            "w-full text-center font-bold p-2 text-gray-400 border border-gray-400 rounded-sm cursor-pointer hover:bg-gray-50 focus:bg-gray-200 col-span-2",
-                            {
-                              "col-span-1 bg-gray-50": checked,
-                            },
-                          )}
-                          checked={checked}
+                      return (
+                        <li
+                          key={slot}
+                          className="grid grid-cols-2 gap-2 items-center"
                         >
-                          {slot}
-                        </RadioGroup.Item>
-                        <Button
-                          className={cn("hidden", {
-                            "flex items-center justify-center w-full h-full":
-                              checked,
-                          })}
-                          onClick={() => setView(View.Details)}
-                        >
-                          Next
-                        </Button>
-                      </li>
-                    );
-                  })}
+                          <RadioGroup.Item
+                            value={slot}
+                            className={cn(
+                              "w-full text-center font-bold p-2 text-gray-400 border border-gray-400 rounded-sm cursor-pointer hover:bg-gray-50 focus:bg-gray-200 col-span-2",
+                              {
+                                "col-span-1 bg-gray-50": checked,
+                              },
+                            )}
+                            checked={checked}
+                          >
+                            {slot}
+                          </RadioGroup.Item>
+                          <Button
+                            className={cn("hidden", {
+                              "flex items-center justify-center w-full h-full":
+                                checked,
+                            })}
+                            onClick={() => setView(View.Details)}
+                          >
+                            Next
+                          </Button>
+                        </li>
+                      );
+                    })
+                  )}
                 </ol>
               </RadioGroup.Root>
             </div>

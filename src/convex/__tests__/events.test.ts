@@ -10,6 +10,13 @@ afterEach(async () => {
 
 describe("Events", () => {
   test("User can only get events in his workspace", async () => {
+    const user1 = await t.mutation(internal.users.upsert, {
+      clerk_id: "userid1",
+      workspace: "workspace1",
+      roles: ["org:admin"],
+      plan: "pro",
+    });
+
     const tAuth1 = t.withIdentity({
       tokenIdentifier: "https://testingasdf|userid1",
       // @ts-ignore
@@ -17,10 +24,26 @@ describe("Events", () => {
       gender: "org:admin",
     });
 
+    const user2 = await t.mutation(internal.users.upsert, {
+      clerk_id: "userid2",
+      workspace: "workspace2",
+      roles: ["org:admin"],
+      plan: "pro",
+    });
+    const tAuth2 = t.withIdentity({
+      tokenIdentifier: "https://testingasdf|userid2",
+      // @ts-ignore
+      websiteUrl: "workspace2",
+      gender: "org:admin",
+    });
+
+    expect(user1).toBeDefined();
+    expect(user2).toBeDefined();
+
     const event_type_1 = await tAuth1.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 1",
-      user_id: "user1",
+      clerk_id: "userid1",
       duration: 30,
     });
 
@@ -40,17 +63,10 @@ describe("Events", () => {
       status: "approved",
     });
 
-    const tAuth2 = t.withIdentity({
-      tokenIdentifier: "https://testingasdf|userid2",
-      // @ts-ignore
-      websiteUrl: "workspace2",
-      gender: "org:admin",
-    });
-
     const event_type_2 = await tAuth2.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 2",
-      user_id: "user1",
+      clerk_id: "userid2",
       duration: 30,
     });
     const workspace_2_event_1 = await tAuth2.mutation(api.events.create, {
@@ -119,25 +135,28 @@ describe("Events", () => {
   });
 
   test("Admin can get all events, Member can only get his", async () => {
-    await t.mutation(internal.users.upsert, {
+    const user1 = await t.mutation(internal.users.upsert, {
       clerk_id: "userid1",
       workspace: "workspace1",
       plan: "pro",
       roles: ["org:admin"],
     });
 
+    const user2 = await t.mutation(internal.users.upsert, {
+      clerk_id: "userid2",
+      workspace: "workspace1",
+      plan: "pro",
+      roles: ["org:member"],
+    });
+
+    expect(user1).toBeDefined();
+    expect(user2).toBeDefined();
+
     const admin = t.withIdentity({
       // @ts-ignore
       websiteUrl: "workspace1",
       gender: "org:admin",
       tokenIdentifier: "https://testingasdf|userid1",
-    });
-
-    await t.mutation(internal.users.upsert, {
-      clerk_id: "userid2",
-      workspace: "workspace1",
-      plan: "pro",
-      roles: ["org:member"],
     });
 
     const member = t.withIdentity({
@@ -150,7 +169,7 @@ describe("Events", () => {
     const event_type_1 = await admin.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 1",
-      user_id: "userid1",
+      clerk_id: "userid2",
       duration: 30,
     });
 
@@ -173,7 +192,7 @@ describe("Events", () => {
     const event_type_2 = await member.mutation(api.eventTypes.create, {
       variant: "red",
       name: "Event Type 2",
-      user_id: "userid2",
+      clerk_id: "userid1",
       duration: 30,
     });
 

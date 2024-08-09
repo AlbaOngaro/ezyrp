@@ -10,14 +10,13 @@ import { Button } from "components/atoms/button";
 import { Input } from "components/atoms/input";
 import { TextArea } from "components/atoms/textarea";
 import { Select } from "components/atoms/select";
-import { Doc } from "convex/_generated/dataModel";
 import { useGetIsAdmin } from "lib/hooks/useGetIsAdmin";
+import { CreateEventTypeFn } from "components/pages/event-types/CreateEventTypePage";
+import { UpdateEventTypeFn } from "components/pages/event-types/EditEventTypePage";
 
 type Props = {
   className?: string;
 };
-
-type EventType = Doc<"eventTypes">;
 
 export function EventTypeForm({ className }: Props) {
   const {
@@ -25,7 +24,7 @@ export function EventTypeForm({ className }: Props) {
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
-  } = useFormContext<EventType>();
+  } = useFormContext<CreateEventTypeFn["_args"] | UpdateEventTypeFn["_args"]>();
   const { memberships, isLoaded } = useOrganization({
     memberships: {
       pageSize: 5,
@@ -47,11 +46,11 @@ export function EventTypeForm({ className }: Props) {
       {isAdmin && (
         <Controller
           control={control}
-          name="user_id"
+          name="clerk_id"
           render={({ field: { value, onChange } }) => {
             const options = memberships?.data?.map((membership) => ({
               label: membership.publicUserData.identifier,
-              value: `${process.env.NEXT_PUBLIC_CLERK_ISSUER}|${membership.publicUserData.userId}`,
+              value: membership.publicUserData.userId,
             }));
 
             const defaultValue = options?.find(
@@ -61,7 +60,7 @@ export function EventTypeForm({ className }: Props) {
             return (
               <Select
                 isLoading={!isLoaded}
-                name="user_id"
+                name="clerk_id"
                 options={options}
                 value={defaultValue}
                 defaultValue={defaultValue}

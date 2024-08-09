@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { internalMutation, internalQuery, query } from "./_generated/server";
 import { getAuthData, getUserByClerkId } from "./utils";
 import { plan } from "./schema";
+import { internal } from "./_generated/api";
 
 export const whoami = query({
   handler: async (ctx) => {
@@ -31,6 +32,16 @@ export const get = internalQuery({
   },
 });
 
+export const WEEKDAYS = [
+  "monday" as const,
+  "tuesday" as const,
+  "wednesday" as const,
+  "thursday" as const,
+  "friday" as const,
+  "saturday" as const,
+  "sunday" as const,
+];
+
 export const upsert = internalMutation({
   args: {
     plan,
@@ -45,19 +56,59 @@ export const upsert = internalMutation({
       .unique();
 
     if (!user) {
-      return await ctx.db.insert("users", {
+      const created = await ctx.db.insert("users", {
         workspace,
         clerk_id,
         roles,
         plan,
       });
+
+      await ctx.scheduler.runAfter(0, internal.settings.create, {
+        clerk_id,
+        days: Array.from({ length: 5 })
+          .map(() => [
+            {
+              start: "09:00",
+              end: "17:00",
+            },
+          ])
+          .reduce(
+            (acc, curr, i) => ({
+              ...acc,
+              [WEEKDAYS[i]]: curr,
+            }),
+            {},
+          ),
+      });
+
+      return created;
     }
 
-    return await ctx.db.patch(user._id, {
+    await ctx.db.patch(user._id, {
       roles: roles || user.roles,
       plan: plan || user.plan,
       workspace: workspace || user.workspace,
     });
+
+    await ctx.scheduler.runAfter(0, internal.settings.create, {
+      clerk_id,
+      days: Array.from({ length: 5 })
+        .map(() => [
+          {
+            start: "09:00",
+            end: "17:00",
+          },
+        ])
+        .reduce(
+          (acc, curr, i) => ({
+            ...acc,
+            [WEEKDAYS[i]]: curr,
+          }),
+          {},
+        ),
+    });
+
+    return user._id;
   },
 });
 

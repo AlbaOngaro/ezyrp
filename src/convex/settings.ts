@@ -1,64 +1,80 @@
-import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { v } from "convex/values";
+import { internalMutation, mutation, query } from "./_generated/server";
+import { getAuthData, getUserByClerkId } from "./utils";
+import { day, days } from "./schema";
+
+export type Intervals = typeof day.type;
 
 export const get = query({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError(
-        "Called get preference without authentication present",
-      );
-    }
+    const { clerk_id } = await getAuthData(ctx);
+    const user = await getUserByClerkId(ctx, { clerk_id });
 
     return await ctx.db
       .query("settings")
-      .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
+      .withIndex("by_user", (q) => q.eq("user_id", user._id))
       .unique();
   },
 });
 
-export const update = mutation({
+export const create = internalMutation({
   args: {
-    end: v.string(),
-    start: v.string(),
-    days: v.array(v.number()),
+    clerk_id: v.string(),
+    days,
   },
-  handler: async (ctx, { start, end, days }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError(
-        "Called get preference without authentication present",
-      );
-    }
-
+  handler: async (ctx, { clerk_id, days }) => {
+    const user = await getUserByClerkId(ctx, { clerk_id });
     const settings = await ctx.db
       .query("settings")
-      .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
+      .withIndex("by_user", (q) => q.eq("user_id", user._id))
       .unique();
 
     if (!settings) {
       await ctx.db.insert("settings", {
-        user_id: identity.tokenIdentifier,
-        start,
-        end,
+        user_id: user._id,
         days,
       });
 
       return await ctx.db
         .query("settings")
-        .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
+        .withIndex("by_user", (q) => q.eq("user_id", user._id))
+        .unique();
+    }
+  },
+});
+
+export const upsert = mutation({
+  args: {
+    days,
+  },
+  handler: async (ctx, { days }) => {
+    const { clerk_id } = await getAuthData(ctx);
+    const user = await getUserByClerkId(ctx, { clerk_id });
+
+    const settings = await ctx.db
+      .query("settings")
+      .withIndex("by_user", (q) => q.eq("user_id", user._id))
+      .unique();
+
+    if (!settings) {
+      await ctx.db.insert("settings", {
+        user_id: user._id,
+        days,
+      });
+
+      return await ctx.db
+        .query("settings")
+        .withIndex("by_user", (q) => q.eq("user_id", user._id))
         .unique();
     }
 
     await ctx.db.patch(settings._id, {
-      start,
-      end,
       days,
     });
 
     return await ctx.db
       .query("settings")
-      .withIndex("by_user", (q) => q.eq("user_id", identity.tokenIdentifier))
+      .withIndex("by_user", (q) => q.eq("user_id", user._id))
       .unique();
   },
 });

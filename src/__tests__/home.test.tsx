@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 
 import { addMonths, subDays, subMonths } from "date-fns";
 import userEvent from "@testing-library/user-event";
@@ -52,11 +52,18 @@ describe("HomePage", () => {
 
     const today = new Date();
 
-    expect(screen.getByTestId("home__stats-range-picker--start")).toBeDefined();
+    await waitFor(() => {
+      expect(
+        screen.getAllByTestId("home__stats-range-picker--start"),
+      ).toBeDefined();
+    });
+
     expect(screen.getByTestId("home__stats-range-picker--end")).toBeDefined();
 
     expect(
-      screen.getByTestId("home__stats-range-picker--start").textContent?.trim(),
+      screen
+        .getAllByTestId("home__stats-range-picker--start")[0]
+        .textContent?.trim(),
     ).toBe(subDays(today, 7).getDate().toString());
 
     expect(
