@@ -38,7 +38,7 @@ export function BookingPage({ eventtype }: Props) {
   const today = useMemo(() => new Date(), []);
   const [view, setView] = useState(View.Time);
 
-  const bookEvent = useMutation(api.bookings.create);
+  const [bookEvent] = useMutation(api.bookings.create);
   const [loadEventType, { data, loading }] = useLazyQuery(api.bookings.get);
 
   const { handleSubmit, ...methods } = useForm<BookEventFn["_args"]>({

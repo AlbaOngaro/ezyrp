@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { getAuthData, getUserByClerkId } from "./utils";
-import { day, days } from "./schema";
+import { day, days, interval } from "./schema";
 
 export type Intervals = typeof day.type;
 
@@ -33,6 +33,7 @@ export const create = internalMutation({
       await ctx.db.insert("settings", {
         user_id: user._id,
         days,
+        vacations: [],
       });
 
       return await ctx.db
@@ -46,8 +47,9 @@ export const create = internalMutation({
 export const upsert = mutation({
   args: {
     days,
+    vacations: v.optional(v.array(interval)),
   },
-  handler: async (ctx, { days }) => {
+  handler: async (ctx, { days, vacations = [] }) => {
     const { clerk_id } = await getAuthData(ctx);
     const user = await getUserByClerkId(ctx, { clerk_id });
 
@@ -59,6 +61,7 @@ export const upsert = mutation({
     if (!settings) {
       await ctx.db.insert("settings", {
         user_id: user._id,
+        vacations,
         days,
       });
 
@@ -69,7 +72,8 @@ export const upsert = mutation({
     }
 
     await ctx.db.patch(settings._id, {
-      days,
+      days: days || settings.days,
+      vacations: vacations || settings.vacations,
     });
 
     return await ctx.db

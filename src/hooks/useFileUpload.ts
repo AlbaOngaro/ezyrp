@@ -5,7 +5,7 @@ import { Id } from "convex/_generated/dataModel";
 
 export function useFileUpload() {
   const [getStorageUrl] = useLazyQuery(api.storage.get);
-  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
+  const [generateUploadUrl] = useMutation(api.storage.generateUploadUrl);
 
   return async (file: File) => {
     const postUrl = await generateUploadUrl();

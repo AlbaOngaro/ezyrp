@@ -4,12 +4,24 @@ import * as modals from "./modals";
 import { Props } from "./types";
 import { cn } from "lib/utils/cn";
 
-function Modal({ title, description, children, forceMount, className }: Props) {
+function Modal({
+  title,
+  description,
+  children,
+  forceMount,
+  className,
+  closeOnClickOutside = true,
+}: Props) {
   return (
     <RUIModal.Portal forceMount={forceMount}>
       <RUIModal.Overlay className="bg-black opacity-40 fixed inset-0 z-40" />
       <RUIModal.Content
-        onInteractOutside={() => {
+        onInteractOutside={(e) => {
+          if (!closeOnClickOutside) {
+            e.preventDefault();
+            return;
+          }
+
           setTimeout(() => (document.body.style.pointerEvents = ""), 0);
         }}
         className={cn(

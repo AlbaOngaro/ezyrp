@@ -6,9 +6,9 @@ import { api } from "convex/_generated/api";
 export function useEventTypes() {
   const { data, status } = useQuery(api.eventTypes.list);
 
-  const create = useMutation(api.eventTypes.create);
-  const update = useMutation(api.eventTypes.update);
-  const remove = useMutation(api.eventTypes.remove);
+  const [create] = useMutation(api.eventTypes.create);
+  const [update] = useMutation(api.eventTypes.update);
+  const [remove] = useMutation(api.eventTypes.remove);
 
   return {
     data,

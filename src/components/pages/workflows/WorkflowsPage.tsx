@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { Form } from "@radix-ui/react-form";
 import { useMutation } from "lib/hooks/useMutation";
@@ -16,9 +16,7 @@ import { useProPlanDialog } from "hooks/useProPlanDialog";
 export function WorkflowsPage() {
   useProPlanDialog();
   const router = useRouter();
-  const creatWorkflow = useMutation(api.workflows.create);
-
-  const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false);
+  const [creatWorkflow, { loading }] = useMutation(api.workflows.create);
 
   return (
     <>
@@ -39,15 +37,12 @@ export function WorkflowsPage() {
                   const formData = new FormData(e.currentTarget);
 
                   try {
-                    setIsCreatingWorkflow(true);
                     const _id = await creatWorkflow({
                       title: (formData.get("title") || "") as string,
                     });
                     return router.push(`/workflows/${_id}/edit`);
                   } catch (error) {
                     console.error(error);
-                  } finally {
-                    setIsCreatingWorkflow(false);
                   }
                 }}
               >
@@ -59,11 +54,7 @@ export function WorkflowsPage() {
                     valueMissing: "Please enter a title",
                   }}
                 />
-                <Button
-                  className="ml-auto"
-                  type="submit"
-                  loading={isCreatingWorkflow}
-                >
+                <Button className="ml-auto" type="submit" loading={loading}>
                   Create
                 </Button>
               </Form>

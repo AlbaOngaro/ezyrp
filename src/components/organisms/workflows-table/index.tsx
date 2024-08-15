@@ -20,7 +20,7 @@ export function WorkflowsTable() {
     "active" | "inactive" | undefined
   >(undefined);
   const contextMenuItems = useGetContextMenuItems();
-  const deleteWorkflow = useMutation(api.workflows.remove);
+  const [deleteWorkflow] = useMutation(api.workflows.remove);
 
   const {
     results: workflows = [],

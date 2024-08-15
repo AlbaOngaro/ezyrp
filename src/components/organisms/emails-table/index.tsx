@@ -13,7 +13,7 @@ const PAGE_SIZE = 5;
 export function EmailsTable() {
   const plan = useGetUserPlan();
   const contextMenuItems = useGetContextMenuItems();
-  const deleteEmail = useMutation(api.emails.remove);
+  const [deleteEmail] = useMutation(api.emails.remove);
   const {
     results: emails = [],
     status,

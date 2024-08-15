@@ -17,7 +17,7 @@ type OnValueChangeArgs = [id: Id<"emails">, options?: OnValueChangeOptions];
 export function useOnValueChange(
   ...[id, { autoSave = true } = {}]: OnValueChangeArgs
 ) {
-  const updateEmail = useMutation(api.emails.update);
+  const [updateEmail] = useMutation(api.emails.update);
   const uploadEmail = useFileUpload();
 
   return debounce(async (body: Descendant[]) => {
