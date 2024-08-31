@@ -58,7 +58,7 @@ export function EventTypesContents() {
           </DialogRoot>
         )}
       </Container>
-      <Container className="grid grid-cols-4 gap-x-4 max-w-none max-h-[calc(100vh_-_122px)] overflow-y-scroll">
+      <Container className="grid grid-cols-4 gap-x-4 max-h-[calc(100vh_-_122px)] overflow-y-scroll">
         {eventTypes.data?.map((event) => (
           <EventTypeItem
             event={event}

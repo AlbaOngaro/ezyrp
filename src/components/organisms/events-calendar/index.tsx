@@ -12,7 +12,7 @@ import {
 } from "./hooks/useCalendarReducer";
 
 import * as MonthView from "./views/Month";
-import * as WeekView from "./views/Week";
+import * as WeekView from "./views/week";
 import * as DayView from "./views/Day";
 import * as YearView from "./views/Year";
 import { Event } from "./types";

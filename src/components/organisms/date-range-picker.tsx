@@ -14,14 +14,15 @@ import { cn } from "lib/utils/cn";
 
 type Props = Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "onSelect"> &
   DayPickerProps & {
-    range: DateRange;
-    onChange: (range?: DateRange) => void;
+    range?: DateRange;
+    onChange?: (range?: DateRange) => void;
     testId?: string;
+    fullWidth?: boolean;
   };
 
 const defaultRange = {
-  from: new Date(2022, 0, 20),
-  to: addDays(new Date(2022, 0, 20), 20),
+  from: new Date(),
+  to: addDays(new Date(), 14),
 };
 
 export function DateRangePicker({
@@ -30,6 +31,7 @@ export function DateRangePicker({
   range = defaultRange,
   defaultMonth,
   testId,
+  fullWidth,
   ...rest
 }: Props) {
   const [date, setDate] = useState<DateRange>(range);
@@ -45,6 +47,7 @@ export function DateRangePicker({
             className={cn(
               "w-[300px] justify-start text-left font-normal",
               !date && "text-muted-foreground",
+              { "w-full": fullWidth },
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />

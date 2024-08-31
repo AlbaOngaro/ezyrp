@@ -22,7 +22,7 @@ export function useOnSave(): [SaveFn, SaveState] {
   } = useContext(WorkflowContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const updateWorfklow = useMutation(api.workflows.update);
+  const [updateWorfklow] = useMutation(api.workflows.update);
 
   const onSave = useCallback(async () => {
     try {

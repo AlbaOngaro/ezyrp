@@ -8,6 +8,7 @@ export interface Props extends PropsWithChildren {
   description?: string;
   className?: string;
   forceMount?: true;
+  closeOnClickOutside?: boolean;
 }
 
 export interface InputModalProps extends Props {

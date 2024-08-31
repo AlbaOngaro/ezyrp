@@ -2,9 +2,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { get, isEmpty } from "lodash";
 import { Plus, X } from "lucide-react";
 import { addHours, format } from "date-fns";
-import { Fragment } from "react";
-import { Settings } from "./schema";
-import { DAYS, HOURS } from "./constants";
+import { Settings } from "../schema";
+import { DAYS, HOURS } from "../constants";
 import { Select } from "components/atoms/select";
 import { Button } from "components/atoms/button";
 

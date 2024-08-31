@@ -83,7 +83,7 @@ export const range = v.object({ start: v.string(), end: v.string() });
 
 export const plan = v.union(v.literal("free"), v.literal("pro"));
 
-const interval = v.object({
+export const interval = v.object({
   start: v.string(),
   end: v.string(),
 });
@@ -102,8 +102,9 @@ export const days = v.object({
 
 export default defineSchema({
   settings: defineTable({
-    user_id: v.id("users"),
     days,
+    user_id: v.id("users"),
+    vacations: v.optional(v.array(interval)),
   }).index("by_user", ["user_id"]),
   customers: defineTable({
     workspace: v.string(),

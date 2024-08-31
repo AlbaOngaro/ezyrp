@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { Form } from "@radix-ui/react-form";
 import { useMutation } from "lib/hooks/useMutation";
@@ -17,9 +17,7 @@ import { useProPlanDialog } from "hooks/useProPlanDialog";
 export function EmailsPage() {
   useProPlanDialog();
   const router = useRouter();
-  const createEmail = useMutation(api.emails.create);
-
-  const [isCreatingEmail, setIsCreatingEmail] = useState(false);
+  const [createEmail, { loading }] = useMutation(api.emails.create);
 
   return (
     <>
@@ -43,15 +41,12 @@ export function EmailsPage() {
                   const formData = new FormData(e.currentTarget);
 
                   try {
-                    setIsCreatingEmail(true);
                     const _id = await createEmail({
                       title: (formData.get("title") || "") as string,
                     });
                     return router.push(`/emails/${_id}/edit`);
                   } catch (error) {
                     console.error(error);
-                  } finally {
-                    setIsCreatingEmail(false);
                   }
                 }}
               >
@@ -64,11 +59,7 @@ export function EmailsPage() {
                     valueMissing: "Please enter a title",
                   }}
                 />
-                <Button
-                  className="ml-auto"
-                  type="submit"
-                  loading={isCreatingEmail}
-                >
+                <Button className="ml-auto" type="submit" loading={loading}>
                   Create
                 </Button>
               </Form>

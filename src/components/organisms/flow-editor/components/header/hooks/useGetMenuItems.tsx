@@ -11,8 +11,8 @@ import { modals } from "components/atoms/modal";
 export function useGetMenuItems() {
   const id = useWorkflowId();
   const router = useRouter();
-  const deleteWorkflow = useMutation(api.workflows.remove);
-  const updateWorkflow = useMutation(api.workflows.update);
+  const [deleteWorkflow] = useMutation(api.workflows.remove);
+  const [updateWorkflow] = useMutation(api.workflows.update);
   const { data: workflow } = useQuery(api.workflows.get, { id });
 
   return [

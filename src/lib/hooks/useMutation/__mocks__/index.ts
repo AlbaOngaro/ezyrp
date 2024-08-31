@@ -4,9 +4,10 @@ import {
   FunctionReturnType,
   OptionalRestArgs,
 } from "convex/server";
-import { ReactMutation, useMutation as useConvexMutation } from "convex/react";
+import { ReactMutation } from "convex/react";
 import { useState } from "react";
 import { OptimisticUpdate } from "convex/browser";
+import { convexMockServer } from "__tests__/__mocks__/convex/server";
 
 export function useMutation<Mutation extends FunctionReference<"mutation">>(
   mutation: Mutation,
@@ -14,14 +15,12 @@ export function useMutation<Mutation extends FunctionReference<"mutation">>(
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const mutate = useConvexMutation(mutation);
-
   const fn = async (
     args: OptionalRestArgs<Mutation>[number],
   ): Promise<FunctionReturnType<Mutation>> => {
     try {
       setLoading(true);
-      return await mutate(args);
+      return await convexMockServer.mutation(mutation, args);
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {
@@ -33,9 +32,9 @@ export function useMutation<Mutation extends FunctionReference<"mutation">>(
   };
 
   fn.withOptimisticUpdate = (
-    optimisticUpdate: OptimisticUpdate<FunctionArgs<Mutation>>,
+    _optimisticUpdate: OptimisticUpdate<FunctionArgs<Mutation>>,
   ) => {
-    return mutate.withOptimisticUpdate(optimisticUpdate);
+    return Promise.reject();
   };
 
   // @ts-ignore

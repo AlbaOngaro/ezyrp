@@ -11,8 +11,8 @@ export function useGetContextMenuItems(): TableContextMenuItem<
   Omit<Doc<"emails">, "body">
 >[] {
   const router = useRouter();
-  const updateEmail = useMutation(api.emails.update);
-  const deleteEmail = useMutation(api.emails.remove);
+  const [updateEmail] = useMutation(api.emails.update);
+  const [deleteEmail] = useMutation(api.emails.remove);
   const [downloadEmailHhtml] = useDownloadEmailHtml();
 
   return [

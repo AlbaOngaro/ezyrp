@@ -9,7 +9,7 @@ export function useGetContextMenuItems(): TableContextMenuItem<
   Doc<"workflows">
 >[] {
   const router = useRouter();
-  const deleteWorkflow = useMutation(api.workflows.remove);
+  const [deleteWorkflow] = useMutation(api.workflows.remove);
 
   return [
     {
